@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jqradar:schema:validate:1",
+  "title": "jqradar validate.json",
+  "description": "`validate`의 산출물(§6.3, §7). **`validated ≠ 등가 증명`**(D20) — 도구는 모르는 것(의미 등가)을 안다고 말하지 않는다(B.5). L2 샌드박스 안에서만 생성된다(§6.6).",
+  "type": "object",
+  "required": ["finding", "branch", "build", "tests", "equivalence_basis", "verdict", "note"],
+  "allOf": [
+    {
+      "if": { "properties": { "verdict": { "const": "validated" } }, "required": ["verdict"] },
+      "then": {
+        "required": ["validated_tree_id", "validated_analysis_input_id", "validated_head_sha", "validation_scope"],
+        "description": "§6.3 5a·D89 — **검증은 결과와 검증 입력 정체성의 쌍이다.** 이 넷이 없는 `validated`는 `validated`가 아니고, 원장은 그런 `passed`를 `none`으로 취급한다(§5.5, B.4 둘째 원칙)."
+      }
+    },
+    {
+      "if": { "properties": { "verdict": { "const": "not_validated" } }, "required": ["verdict"] },
+      "then": {
+        "properties": { "not_validated_reasons": { "minItems": 1 } },
+        "required": ["not_validated_reasons"],
+        "description": "§6.1 — 검증하지 못한 변경은 사유를 쓴다. 조용히 통과시키지 않는다."
+      }
+    }
+  ],
+  "properties": {
+    "finding": { "type": "string", "description": "대상 finding ID(§6.2 `validate`)." },
+    "branch": { "type": "string", "description": "`jqradar/<finding-id>` 브랜치(§6.1, D7). 기본 브랜치는 어떤 모듈도 건드리지 않는다." },
+    "option": { "type": "string", "description": "`propose`가 낸 옵션 ID(§6.2). LLM은 이 집합 밖의 값을 낼 수 없다 — 구조적 방어(§6.6, D33)." },
+    "sandbox": {
+      "type": "object",
+      "description": "실행 격리(§6.6, D21). 컨테이너/VM, 호스트 마운트 없음, 임시 작업공간.",
+      "properties": {
+        "id": { "type": "string" },
+        "network": { "enum": ["deny", "allowlist"], "description": "기본 차단(§6.6). 의존성은 사전 적재 캐시 + 락파일 검증으로 해결하고 허용 목록은 캐시 미스 시 폴백이다(D33)." },
+        "dependency_source": { "enum": ["cache", "allowlist"], "description": "§6.6. 허용 저장소 손상 시나리오는 P9에 포함된다." },
+        "timeout_s": { "type": "integer", "description": "자원 상한(§6.6, 기본 1800). 초과하면 `not_validated: timeout`." },
+        "policy_hash": { "type": "string", "description": "샌드박스 정책 해시 — 감사 로그의 필드이기도 하다(§6.6, D97)." }
+      }
+    },
+    "build": { "enum": ["passed", "failed"], "description": "§6.3.1." },
+    "tests": {
+      "type": "object",
+      "description": "§6.3.2. 커버리지는 **라인 커버리지로만**, 일시 jacoco(D16). 라인 실행 ≠ 행위 단언이다(§12).",
+      "properties": {
+        "ran": { "type": "integer" },
+        "failed": { "type": "integer" },
+        "coverage_source": { "type": "string", "description": "예: `jacoco-transient`(§6.3, D16)." },
+        "changed_line_coverage": { "type": ["number", "null"], "description": "변경 라인 커버리지, 기본 하한 0.8(§6.3). 측정 불가면 null + `not_validated: no_line_coverage_data`." },
+        "coverage_basis": {
+          "enum": ["measured", "not_applicable_no_executable_lines"],
+          "description": "§6.3.2·D105 — 변경된 **실행 가능 라인이 0**(상수·DTO 이동, 어노테이션·시그니처만 변경)이면 커버리지 검사는 `not_applicable`이며 **실패가 아니다**. 그때 검증은 빌드·전체 테스트·재스캔·`equivalence_basis`로 성립한다."
+        }
+      }
+    },
+    "validated_head_sha": { "type": "string", "description": "검증이 돈 커밋(§6.3 5a, D89)." },
+    "validated_tree_id": { "type": "string", "description": "검증이 돈 트리의 `repository_state_id`(§2.8, §6.3 5a). **검증 대상이 무엇이었는지**를 브랜치 이름이 아니라 트리로 못 박는다(D86)." },
+    "validated_analysis_input_id": { "type": "string", "description": "그때의 `analysis_input_id`(§2.8, D89)." },
+    "validation_scope": {
+      "enum": ["pre_merge", "post_merge"],
+      "description": "§5.5·D90. 머지는 새 트리를 만들므로 tree equality 자체를 요구하지 않고, 검증 트리 ≠ 머지 트리는 `merge_drift`로 **표기**한다(실패가 아니라 구분자). post-merge 검증을 요구할지는 조직이 `check`에 적는다(B.6)."
+    },
+    "metric_validation": {
+      "type": "object",
+      "description": "§6.3.3 — **목표 개선 합격 함수(지표별)**. 240→239가 '개선'이면 엔진은 편법을 찾는다(D32).",
+      "properties": {
+        "target_improvement": {
+          "type": "object",
+          "properties": {
+            "rule": { "enum": ["duplication", "cycle", "complexity"], "description": "§6.3.3 발견 종류별 합격 함수." },
+            "metric": { "type": "string" },
+            "target_pairs": { "type": "array", "items": { "type": "string" }, "description": "`propose`가 명시한 쌍 전부(§6.3, D41). 기본은 대상 파일의 모든 쌍이며, 부분만 겨누면 PR에 '부분 해소(k/n 쌍)'를 표기한다. 원장에서는 `partially_resolved`가 되고 `validator_mismatch`가 아니다(D103)." },
+            "resolved_pairs": { "type": "array", "items": { "type": "string" }, "description": "실제로 `pair_dup_tokens = 0`이 된 쌍(§6.3). 합격은 `target_pairs` **전부**를 요구한다." },
+            "before": { "type": "number" },
+            "after": { "type": "number" },
+            "accepted": { "type": "boolean", "description": "중복: `target_pairs` 전부 0 **이고** 새 `new_duplication` 없음. 순환: SCC 소멸 **이고** 새 SCC 없음. 복잡도: 목표 메서드 CYCLO ≥ 20% 감소 **이고** 파일 내 최대 CYCLO 비증가 — 20%는 실증되지 않은 **기본 휴리스틱**이고 조직이 바꿀 수 있다(D98)." }
+          }
+        },
+        "new_findings": {
+          "type": "object",
+          "description": "신규 발견 차등(§6.3.3). BLOCK(새 순환·새 CPD ≥100·새 P1) → `not_validated`; WARN(P2) 표기; INFO(P3) 기록.",
+          "properties": {
+            "block": { "type": "array", "items": { "type": "object" } },
+            "warn": { "type": "array", "items": { "type": "object" } },
+            "info": { "type": "array", "items": { "type": "object" } }
+          }
+        }
+      }
+    },
+    "relocation": {
+      "type": "object",
+      "description": "§6.4 재배치 플래그. **나쁨의 판정이 아니다** — 좋은 Extract Method도 질량을 옮긴다. 그래서 FAIL이 아니고, 계산 가능한 증거를 붙여 사람이 본다(D22와 같은 자리).",
+      "properties": {
+        "flag": { "type": "boolean", "description": "목표 파일 `cx`가 30% 이상 떨어졌는데 리포 총 `cx` 변화가 5% 미만이면 true(§6.4)." },
+        "repo_cx": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2, "description": "`[before, after]` 리포 총 cx(§6.4)." },
+        "target_cx": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+        "dup_delta": { "type": "number", "description": "증거 — `union_dup_tokens` 델타(§6.4)." },
+        "component_edge_delta": { "type": "integer", "description": "증거 — 의존 표면의 변화(§6.4)." },
+        "public_member_delta": { "type": "integer", "description": "증거 — public 멤버 수 델타(§6.4)." }
+      }
+    },
+    "equivalence_basis": {
+      "enum": ["structural", "tests", "none"],
+      "description": "§6.5·D31. `structural`은 '토큰·타입 수준 구조가 보존됨'이며 **증명이 아니다** — 스택 트레이스·리플렉션·동기화 경계 같은 관측 가능한 비기능 차이는 있을 수 있다. §6.5 전제조건 전부를 충족해야 쓸 수 있고 하나라도 어긋나면 근거는 `tests`다. **`none` → `not_validated`**(§6.3.5)."
+    },
+    "diff_lines": { "type": "integer", "description": "§6.3.6 — > 400이면 사람 리뷰 필수를 표기한다." },
+    "verdict": { "enum": ["validated", "not_validated"], "description": "§6.3 최종어(D20)." },
+    "not_validated_reasons": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "예: `no_line_coverage_data`, `timeout`, `equivalence_none`(§6.3, §6.6). 검증 실패는 정직한 결과다 — 테스트가 빈약한 브라운필드에서 `apply`의 대부분이 여기로 온다(§12 '검증 부담'). S4는 성공이 아니라 정직한 완주다(D109)."
+    },
+    "note": {
+      "type": "string",
+      "description": "고정 문구(§6.3, D20): `validated ≠ 등가 증명. 라인 실행 ≠ 행위 단언.` 커버리지 0.9의 `validated`도 단언 없는 테스트 위에 서 있을 수 있다(§12)."
+    }
+  }
+}
