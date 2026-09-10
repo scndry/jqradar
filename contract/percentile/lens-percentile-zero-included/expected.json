@@ -1,0 +1,209 @@
+{
+  "case": "lens-percentile-zero-included",
+  "generated_by": "contract/percentile/compute.py",
+  "contract_refs": [
+    "§2.5 렌즈 백분위",
+    "§3.7 interpretation",
+    "§3.3 F"
+  ],
+  "what_this_pins": "렌즈 백분위는 렌즈 값 자체를 그 렌즈의 모집단에서 다시 랭킹한 것이고, null인 렌즈 값은 제외하되 0은 포함한다. F는 나이 미상이면 null(0이 아니다, D37)이므로 모집단 크기(26)와 랭킹 집합 크기(21)가 다르다 — 인쇄된 n 하나로는 pct를 재계산할 수 없어 n_population과 n_ranked를 나눈다(README 미해결 2번). 14개의 0은 동점 평균 순위 7.5를 공유해 pct 0.325를 받고 interpretation은 context다 — '대부분 0인 F에서 investigate_first는 사실상 F>0 중 상위'라는 §2.5의 의도된 동작.",
+  "parameters": {
+    "percentile.min_population": 20
+  },
+  "lens_percentiles": {
+    "F": {
+      "population": "all",
+      "n_population": 26,
+      "n_ranked": 21,
+      "files": {
+        "f01": {
+          "value": 0,
+          "rank_avg": 7.5,
+          "pct": 0.325,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f02": {
+          "value": 0,
+          "rank_avg": 7.5,
+          "pct": 0.325,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f03": {
+          "value": 0,
+          "rank_avg": 7.5,
+          "pct": 0.325,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f04": {
+          "value": 0,
+          "rank_avg": 7.5,
+          "pct": 0.325,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f05": {
+          "value": 0,
+          "rank_avg": 7.5,
+          "pct": 0.325,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f06": {
+          "value": 0,
+          "rank_avg": 7.5,
+          "pct": 0.325,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f07": {
+          "value": 0,
+          "rank_avg": 7.5,
+          "pct": 0.325,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f08": {
+          "value": 0,
+          "rank_avg": 7.5,
+          "pct": 0.325,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f09": {
+          "value": 0,
+          "rank_avg": 7.5,
+          "pct": 0.325,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f10": {
+          "value": 0,
+          "rank_avg": 7.5,
+          "pct": 0.325,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f11": {
+          "value": 0,
+          "rank_avg": 7.5,
+          "pct": 0.325,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f12": {
+          "value": 0,
+          "rank_avg": 7.5,
+          "pct": 0.325,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f13": {
+          "value": 0,
+          "rank_avg": 7.5,
+          "pct": 0.325,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f14": {
+          "value": 0,
+          "rank_avg": 7.5,
+          "pct": 0.325,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f15": {
+          "value": 40,
+          "rank_avg": 15,
+          "pct": 0.7,
+          "reason": null,
+          "interpretation": "context"
+        },
+        "f16": {
+          "value": 55,
+          "rank_avg": 16,
+          "pct": 0.75,
+          "reason": null,
+          "interpretation": "investigate"
+        },
+        "f17": {
+          "value": 60,
+          "rank_avg": 17,
+          "pct": 0.8,
+          "reason": null,
+          "interpretation": "investigate"
+        },
+        "f18": {
+          "value": 72.5,
+          "rank_avg": 18,
+          "pct": 0.85,
+          "reason": null,
+          "interpretation": "investigate"
+        },
+        "f19": {
+          "value": 80,
+          "rank_avg": 19,
+          "pct": 0.9,
+          "reason": null,
+          "interpretation": "investigate_first"
+        },
+        "f20": {
+          "value": 90,
+          "rank_avg": 20,
+          "pct": 0.95,
+          "reason": null,
+          "interpretation": "investigate_first"
+        },
+        "f21": {
+          "value": 96.5,
+          "rank_avg": 21,
+          "pct": 1,
+          "reason": null,
+          "interpretation": "investigate_first"
+        },
+        "f22": {
+          "value": null,
+          "rank_avg": null,
+          "pct": null,
+          "reason": "age_unknown",
+          "interpretation": null
+        },
+        "f23": {
+          "value": null,
+          "rank_avg": null,
+          "pct": null,
+          "reason": "age_unknown",
+          "interpretation": null
+        },
+        "f24": {
+          "value": null,
+          "rank_avg": null,
+          "pct": null,
+          "reason": "age_unknown",
+          "interpretation": null
+        },
+        "f25": {
+          "value": null,
+          "rank_avg": null,
+          "pct": null,
+          "reason": "age_unknown",
+          "interpretation": null
+        },
+        "f26": {
+          "value": null,
+          "rank_avg": null,
+          "pct": null,
+          "reason": "age_unknown",
+          "interpretation": null
+        }
+      }
+    }
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "arithmetic": "exact rational (fractions.Fraction)",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

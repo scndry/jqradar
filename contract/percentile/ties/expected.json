@@ -1,0 +1,171 @@
+{
+  "case": "ties",
+  "generated_by": "contract/percentile/compute.py",
+  "contract_refs": [
+    "§2.5 성분 백분위",
+    "§3.7 confidence"
+  ],
+  "what_this_pins": "동점 평균 순위. 같은 값을 가진 파일은 그 값이 차지한 1-based 위치들의 평균을 받는다. 결과로 최소값이 pct 0을 받지 않고(3중 동점이면 rank_avg 2 -> pct 0.05), 동점 다음 값의 순위는 건너뛴다. N=21이라 min_population(20)은 넘고 confidence 임계 50에는 못 미친다.",
+  "parameters": {
+    "percentile.min_population": 20
+  },
+  "populations": {
+    "active": {
+      "commit_granularity": "fine",
+      "measures": {
+        "cx": {
+          "lang": "java",
+          "n": 21,
+          "n_declared": 21,
+          "valid_n": 21,
+          "unknown_n": 0,
+          "spread": {
+            "min": 10,
+            "q1": 30,
+            "median": 80,
+            "q3": 130,
+            "iqr": 100,
+            "max": 180
+          },
+          "confidence": "low",
+          "confidence_reasons": [
+            "n_below_50"
+          ],
+          "percentiles": {
+            "f01": {
+              "value": 10,
+              "rank_avg": 2,
+              "pct": 0.05,
+              "reason": null
+            },
+            "f02": {
+              "value": 10,
+              "rank_avg": 2,
+              "pct": 0.05,
+              "reason": null
+            },
+            "f03": {
+              "value": 10,
+              "rank_avg": 2,
+              "pct": 0.05,
+              "reason": null
+            },
+            "f04": {
+              "value": 20,
+              "rank_avg": 4.5,
+              "pct": 0.175,
+              "reason": null
+            },
+            "f05": {
+              "value": 20,
+              "rank_avg": 4.5,
+              "pct": 0.175,
+              "reason": null
+            },
+            "f06": {
+              "value": 30,
+              "rank_avg": 6,
+              "pct": 0.25,
+              "reason": null
+            },
+            "f07": {
+              "value": 40,
+              "rank_avg": 7,
+              "pct": 0.3,
+              "reason": null
+            },
+            "f08": {
+              "value": 50,
+              "rank_avg": 8,
+              "pct": 0.35,
+              "reason": null
+            },
+            "f09": {
+              "value": 60,
+              "rank_avg": 9,
+              "pct": 0.4,
+              "reason": null
+            },
+            "f10": {
+              "value": 70,
+              "rank_avg": 10,
+              "pct": 0.45,
+              "reason": null
+            },
+            "f11": {
+              "value": 80,
+              "rank_avg": 11,
+              "pct": 0.5,
+              "reason": null
+            },
+            "f12": {
+              "value": 90,
+              "rank_avg": 12,
+              "pct": 0.55,
+              "reason": null
+            },
+            "f13": {
+              "value": 100,
+              "rank_avg": 13,
+              "pct": 0.6,
+              "reason": null
+            },
+            "f14": {
+              "value": 110,
+              "rank_avg": 14,
+              "pct": 0.65,
+              "reason": null
+            },
+            "f15": {
+              "value": 120,
+              "rank_avg": 15,
+              "pct": 0.7,
+              "reason": null
+            },
+            "f16": {
+              "value": 130,
+              "rank_avg": 16,
+              "pct": 0.75,
+              "reason": null
+            },
+            "f17": {
+              "value": 140,
+              "rank_avg": 17,
+              "pct": 0.8,
+              "reason": null
+            },
+            "f18": {
+              "value": 150,
+              "rank_avg": 18,
+              "pct": 0.85,
+              "reason": null
+            },
+            "f19": {
+              "value": 160,
+              "rank_avg": 19,
+              "pct": 0.9,
+              "reason": null
+            },
+            "f20": {
+              "value": 170,
+              "rank_avg": 20,
+              "pct": 0.95,
+              "reason": null
+            },
+            "f21": {
+              "value": 180,
+              "rank_avg": 21,
+              "pct": 1,
+              "reason": null
+            }
+          }
+        }
+      }
+    }
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "arithmetic": "exact rational (fractions.Fraction)",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

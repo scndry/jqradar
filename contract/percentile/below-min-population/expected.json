@@ -1,0 +1,158 @@
+{
+  "case": "below-min-population",
+  "generated_by": "contract/percentile/compute.py",
+  "contract_refs": [
+    "§2.5 성분 백분위"
+  ],
+  "what_this_pins": "N = 19 < percentile.min_population(20) -> 전원 pct null, reason insufficient_population. 값이 전부 서로 달라 순위를 매길 수 있는데도 null이다 — 임계는 '순위를 낼 수 있는가'가 아니라 '리포 내부 백분위가 의미를 갖는가'를 묻는다. 경계 바로 아래를 잡는 케이스이므로 값 하나만 더해도 통과해서는 안 된다.",
+  "parameters": {
+    "percentile.min_population": 20
+  },
+  "populations": {
+    "active": {
+      "commit_granularity": "fine",
+      "measures": {
+        "cx": {
+          "lang": "java",
+          "n": 19,
+          "n_declared": 19,
+          "valid_n": 19,
+          "unknown_n": 0,
+          "spread": {
+            "min": 1,
+            "q1": 5.5,
+            "median": 10,
+            "q3": 14.5,
+            "iqr": 9,
+            "max": 19
+          },
+          "confidence": "low",
+          "confidence_reasons": [
+            "n_below_50"
+          ],
+          "percentiles": {
+            "f01": {
+              "value": 1,
+              "rank_avg": 1,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f02": {
+              "value": 2,
+              "rank_avg": 2,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f03": {
+              "value": 3,
+              "rank_avg": 3,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f04": {
+              "value": 4,
+              "rank_avg": 4,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f05": {
+              "value": 5,
+              "rank_avg": 5,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f06": {
+              "value": 6,
+              "rank_avg": 6,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f07": {
+              "value": 7,
+              "rank_avg": 7,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f08": {
+              "value": 8,
+              "rank_avg": 8,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f09": {
+              "value": 9,
+              "rank_avg": 9,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f10": {
+              "value": 10,
+              "rank_avg": 10,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f11": {
+              "value": 11,
+              "rank_avg": 11,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f12": {
+              "value": 12,
+              "rank_avg": 12,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f13": {
+              "value": 13,
+              "rank_avg": 13,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f14": {
+              "value": 14,
+              "rank_avg": 14,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f15": {
+              "value": 15,
+              "rank_avg": 15,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f16": {
+              "value": 16,
+              "rank_avg": 16,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f17": {
+              "value": 17,
+              "rank_avg": 17,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f18": {
+              "value": 18,
+              "rank_avg": 18,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f19": {
+              "value": 19,
+              "rank_avg": 19,
+              "pct": null,
+              "reason": "insufficient_population"
+            }
+          }
+        }
+      }
+    }
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "arithmetic": "exact rational (fractions.Fraction)",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}
