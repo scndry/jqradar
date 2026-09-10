@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Gradle / build (§4.1 — jqradar-core 이하 모듈이 생기면 쓰인다)
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# 이력 캐시 (§4.5) — 파생물이라 커밋하지 않는다
+build/jqradar/history-cache/
+
+# Python (contract/ 계산 스크립트용)
+__pycache__/
+*.pyc
+.venv/
