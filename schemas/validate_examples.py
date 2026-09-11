@@ -32,7 +32,7 @@ BLOCKS = [
     ("report",   "report.schema.json",   "재계산 검증 대상"),
     ("gate",     "gate.schema.json",     "`check`의 출력 `gate.json`"),
     ("validate", "validate.schema.json", "`validate`의 출력 `validate.json`"),
-    ("fixture_change", None,             "`expected.json` 변경 커밋에 동반되는 기록"),
+    ("fixture_change", "fixture_change.schema.json", "`expected.json` 변경 커밋에 동반되는 기록"),
     ("campaign", "campaign.schema.json", "`campaign.json`(조직 소유)"),
     ("event",    "event.schema.json",    "사건 파일"),
     ("ledger_row", None,                 "원장 뷰 한 행"),
@@ -103,49 +103,70 @@ def _delete(path: list):
     return apply
 
 
+# 변조 표. 각 행은 (대상, 스키마, kind, 기구, 근거, 설명, 변조함수).
+#
+# kind 판정 기준 — **계약을 모르는 사람이 §7 예시만 보고 스키마를 써도 잡혔을까?**
+#   "hard_rule"  아니오. 거부하려면 특정 하드룰·D번호를 알고 스키마에 구조를
+#                넣었어야 한다(additionalProperties:false / not / if-then / const,
+#                또는 어휘 자체가 하드룰인 enum).
+#   "structural" 예. 타입·범위·required·전사한 enum이라 계약을 몰라도 잡힌다.
+#
+# 구조 오류만 잔뜩이면 스키마는 문법 검사이지 계약이 아니다(§2.9, D124).
 NEGATIVE = [
-    ("event", "event.schema.json",
-     "D48·D108 — 사건 파일에 이름·이메일·핸들을 저장할 수 없다",
+    ("event", "event.schema.json", "hard_rule", "additionalProperties:false", "D48·D108",
+     "사건 파일에 이름·이메일·핸들을 저장할 수 없다",
      _set(["author_email"], "someone@example.com")),
-    ("event", "event.schema.json",
-     "D55 — 사건 파일에 코드 상태(원장 상태)를 저장할 수 없다",
+    ("event", "event.schema.json", "hard_rule", "additionalProperties:false", "D55·D61",
+     "사건 파일에 코드 상태(원장 상태)를 저장할 수 없다",
      _set(["status"], "closed")),
-    ("event", "event.schema.json",
-     "D89 — validated_tree_id 없는 passed는 passed가 아니다",
+    ("event", "event.schema.json", "hard_rule", "if/then", "D89",
+     "validated_tree_id 없는 passed는 passed가 아니다",
      _delete(["validation", "validated_tree_id"])),
-    ("event", "event.schema.json",
-     "§5.5 — 쓰는 사건은 claimed·validation_passed·validation_failed뿐",
+    ("event", "event.schema.json", "hard_rule", "enum(어휘가 계약)", "D72·D99",
+     "머지는 쓰는 사건이 아니라 git 파생이다",
      _set(["validation", "result"], "merged")),
-    ("validate", "validate.schema.json",
-     "§6.3 5a·D89 — validated는 검증 입력 정체성을 요구한다",
+    ("validate", "validate.schema.json", "hard_rule", "if/then", "§6.3 5a·D89",
+     "validated는 검증 입력 정체성 넷을 요구한다",
      _delete(["validated_tree_id"])),
-    ("validate", "validate.schema.json",
-     "§6.3.5·D31 — equivalence_basis는 세 값뿐",
+    ("validate", "validate.schema.json", "structural", "enum(전사)", "D31",
+     "equivalence_basis는 세 값뿐(by_construction은 v3.3에서 기각된 값)",
      _set(["equivalence_basis"], "by_construction")),
-    ("campaign", "campaign.schema.json",
-     "D112 — 앵커 봉인은 repository_state_id다",
+    ("campaign", "campaign.schema.json", "hard_rule", "required(중재된 필드)", "D112",
+     "앵커 봉인은 repository_state_id다 — 세 절이 서로 다르게 적던 자리",
      _delete(["anchor", "repository_state_id"])),
-    ("campaign", "campaign.schema.json",
-     "D78 — target_driven인데 목표가 없을 수 없다",
+    ("campaign", "campaign.schema.json", "hard_rule", "if/then", "D78",
+     "target_driven인데 목표가 없을 수 없다",
      _delete(["targets"])),
-    ("gate", "gate.schema.json",
-     "§5.3 — 게이트 결과 어휘는 PASS·WARN·FAIL·context_changed뿐",
+    ("gate", "gate.schema.json", "hard_rule", "if/then", "D98",
+     "context_changed는 nccd_increase 전용 — 다른 규칙의 판정 탈출구가 될 수 없다",
+     _set(["checks", 0, "result"], "context_changed")),
+    ("gate", "gate.schema.json", "structural", "enum(전사)", "§5.3",
+     "게이트 결과 어휘는 PASS·WARN·FAIL·context_changed뿐",
      _set(["checks", 0, "result"], "BAD")),
-    ("report", "report.schema.json",
-     "§3.7·D34 — interpretation은 세 값뿐(판정 어휘 아님)",
+    ("report", "report.schema.json", "hard_rule", "enum(어휘가 계약)", "D67·D34",
+     "interpretation에 판정 어휘를 넣을 수 없다",
      _set(["findings", 0, "interpretation"], "bad")),
-    ("report", "report.schema.json",
-     "§2.5·D38 — percentile_population.reason은 정해진 네 값뿐",
+    ("report", "report.schema.json", "structural", "enum(전사)", "D38",
+     "percentile_population.reason은 정해진 네 값뿐",
      _set(["files", 1, "percentile_population", "chg_commits", "reason"], "dunno")),
-    ("report", "report.schema.json",
-     "§2.5 — 백분위는 0..1이다",
+    ("report", "report.schema.json", "structural", "range", "§2.5",
+     "백분위는 0..1이다",
      _set(["files", 0, "percentiles", "cx"], 97)),
-    ("report", "report.schema.json",
-     "§2.2 — 테스트 클래스는 그래프에 들어가지 않는다",
+    ("report", "report.schema.json", "hard_rule", "const", "§2.2",
+     "테스트 클래스는 그래프에 들어가지 않는다",
      _set(["reproduce", "bytecode_scope", "test_classes_included"], True)),
-    ("report", "report.schema.json",
-     "§2.5 — 분위 방법은 type-7 하나로 선언되어 있다",
+    ("report", "report.schema.json", "hard_rule", "const", "D114",
+     "분위 방법은 모든 분위에 대한 단일 선언이다",
      _set(["reproduce", "percentile_method", "quantile"], "type6")),
+    ("report", "report.schema.json", "hard_rule", "required", "D116·D122",
+     "백분위의 분모(n_ranked)를 인쇄하지 않으면 pct를 재계산할 수 없다",
+     _delete(["files", 0, "lens_percentiles", "H", "n_ranked"])),
+    ("fixture_change", "fixture_change.schema.json", "hard_rule", "required(장치의 전부)", "P11·§2.9",
+     "원인 분류 없는 fixture_change는 '새 정답을 손으로 승인하는 도장'이다",
+     _delete(["fixture_change", "reason"])),
+    ("fixture_change", "fixture_change.schema.json", "structural", "enum(전사)", "§2.9",
+     "reason은 세 분류뿐",
+     _set(["fixture_change", "reason"], "updated_expectation")),
 ]
 
 
@@ -159,7 +180,7 @@ CHANGE_SELFTEST = {
     "base": {"ref": "origin/main", "sha": "base-sha"},
     "head": {"sha": "head-sha"},
     "items": {
-        "complexity": {
+        "complexity_delta": {
             "value_base": 18420, "value_head": 18512, "delta": 92,
             "evidence": [{"file": "f:order-service", "measure": "cx",
                           "value_base": 80, "value_head": 87, "delta": 7}]
@@ -182,20 +203,28 @@ CHANGE_SELFTEST = {
 }
 
 CHANGE_NEGATIVE = [
-    ("§5.1 — 항목에 판정 단어를 둘 수 없다",
-     lambda d: d["items"]["complexity"].update({"verdict": "worse"})),
-    ("§5.1 — 항목은 value_base·value_head·delta를 갖는다",
-     lambda d: d["items"]["complexity"].pop("delta")),
-    ("§5.5 정본 어휘·D110 — validated는 원장 상태가 아니다",
+    ("hard_rule", "not", "§5.1·B.2", "항목에 판정 단어를 둘 수 없다",
+     lambda d: d["items"]["complexity_delta"].update({"verdict": "worse"})),
+    ("hard_rule", "additionalProperties:false", "D120",
+     "items의 키는 여섯으로 닫힌다 — 이름 없는 항목은 계약이 아니다",
+     lambda d: d["items"].update({"vibe_check": {"value_base": 1, "value_head": 2, "delta": 1}})),
+    ("structural", "required", "§5.1", "항목은 value_base·value_head·delta를 갖는다",
+     lambda d: d["items"]["complexity_delta"].pop("delta")),
+    ("hard_rule", "enum(어휘가 계약)", "D110",
+     "validated는 PR 검증 결과이지 원장 상태가 아니다",
      lambda d: d["touched_legacy_findings"][0].update({"status_before": "validated"})),
-    ("§5.5 — anchor_class는 high·medium·low뿐",
+    ("hard_rule", "required", "D117",
+     "claimed_by_this_pr은 필수 — 선택이면 전이 귀속과 어긋난다",
+     lambda d: d["touched_legacy_findings"][0].pop("claimed_by_this_pr")),
+    ("structural", "enum(전사)", "§5.5", "anchor_class는 high·medium·low뿐",
      lambda d: d["touched_legacy_findings"][0].update({"anchor_class": "critical"})),
-    ("§5.1·D48 — declared_ai_assistance는 true·false·unknown뿐(추론 없음)",
+    ("hard_rule", "enum(어휘가 계약)", "D48",
+     "declared_ai_assistance는 선언된 것만 — 'probably'는 추론이다",
      lambda d: d.update({"declared_ai_assistance": "probably"})),
 ]
 
 
-def run_change_selftest(validator_cls) -> int:
+def run_change_selftest(validator_cls, tally) -> int:
     import copy
     schema = json.loads((SCHEMAS / "change.schema.json").read_text(encoding="utf-8"))
     validator = validator_cls(schema)
@@ -210,32 +239,52 @@ def run_change_selftest(validator_cls) -> int:
     else:
         print("ok        change: §5.1 최소 문서 통과")
 
-    for why, mutate in CHANGE_NEGATIVE:
+    for kind, mech, ref, why, mutate in CHANGE_NEGATIVE:
         document = copy.deepcopy(CHANGE_SELFTEST)
         mutate(document)
+        tally.append((kind, "change", mech, ref, why))
         if list(validator.iter_errors(document)):
-            print(f"ok(거부)  change: {why}")
+            print(f"ok(거부)  [{kind:10}] change  {ref:12} {why}  <- {mech}")
         else:
             problems += 1
-            print(f"HOLE      change: {why} — 스키마가 이 변조를 통과시켰다")
+            print(f"HOLE      [{kind:10}] change  {ref:12} {why} — 통과시켰다")
     return problems
 
 
 def run_negative(blocks: dict, validator_cls) -> int:
     """변조본이 전부 거부되는지 본다. 통과해 버리면 그것이 실패다."""
     holes = 0
-    for name, schema_file, why, mutate in NEGATIVE:
+    tally: list[tuple] = []
+    for name, schema_file, kind, mech, ref, why, mutate in NEGATIVE:
         document = json.loads(strip_jsonc(blocks[name]))
         mutate(document)
         schema = json.loads((SCHEMAS / schema_file).read_text(encoding="utf-8"))
         errors = list(validator_cls(schema).iter_errors(document))
+        tally.append((kind, name, mech, ref, why))
         if errors:
-            print(f"ok(거부)  {name}: {why}")
+            print(f"ok(거부)  [{kind:10}] {name:14} {ref:12} {why}  <- {mech}")
         else:
             holes += 1
-            print(f"HOLE      {name}: {why} — 스키마가 이 변조를 통과시켰다")
-    holes += run_change_selftest(validator_cls)
+            print(f"HOLE      [{kind:10}] {name:14} {ref:12} {why} — 통과시켰다")
+    holes += run_change_selftest(validator_cls, tally)
+
     print()
+    hard = [t for t in tally if t[0] == "hard_rule"]
+    struct = [t for t in tally if t[0] == "structural"]
+    print(f"변조 {len(tally)}종 = 하드룰 {len(hard)} + 구조 {len(struct)}")
+    per: dict[str, list[str]] = {}
+    for kind, target, mech, ref, _ in tally:
+        per.setdefault(target, []).append(kind)
+    print("스키마별 (하드룰/전체):")
+    for target in sorted(per):
+        kinds = per[target]
+        mark = "" if any(k == "hard_rule" for k in kinds) else "   <- 하드룰 변조 없음(D124 미충족)"
+        print(f"  {target:16} {sum(1 for k in kinds if k == 'hard_rule')}/{len(kinds)}{mark}")
+    mechs: dict[str, int] = {}
+    for kind, _, mech, _, _ in tally:
+        if kind == "hard_rule":
+            mechs[mech] = mechs.get(mech, 0) + 1
+    print("하드룰을 잡은 기구:", ", ".join(f"{m} {c}" for m, c in sorted(mechs.items())))
     if holes:
         print(f"{holes}개 하드룰이 스키마에 반영되지 않았다.")
     else:

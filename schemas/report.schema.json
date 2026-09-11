@@ -5,36 +5,6 @@
   "description": "`jqradar scan`의 산출물 — 지도(§3). §7의 통합 JSON 스키마 스케치를 기계 검증 가능하게 옮긴 것이다. 이 문서의 예시는 `contract/lens/sample-service/expected.json` 픽스처이며 CI가 measures로부터 재계산해 대조한다(§7 머리말, D26).",
   "type": "object",
   "required": ["schema", "project", "reproduce", "population", "system", "components", "files", "findings"],
-  "x-jqradar-contract-subset": {
-    "description": "적합성 스위트(§2.9)가 재계산으로 대조하는 부분집합. 여기 든 경로는 손으로 쓴 값이 아니라 measures로부터 계산되어야 하며, 바뀌면 `fixture_change`가 필요하다(§2.9 끝, P11). 나머지 경로(project, zone_note 등)는 설명이라 재계산 대상이 아니다.",
-    "reproduce": {
-      "paths": ["/reproduce"],
-      "contract": "§2.8",
-      "pins": "정체성 셋의 분리와 완전성. `analysis_input_id`에 들어간 모든 입력이 여기 값 또는 해시로 나타나야 한다(D111). 픽스처는 `contract/reproducibility/`."
-    },
-    "measurements": {
-      "paths": ["/population", "/files/*/measures", "/system", "/components", "/duplicate_clusters", "/duplication_pairs", "/hidden_couplings"],
-      "contract": "§2.1–§2.4, §2.6",
-      "pins": "엔진에서 나온 원값과 그 집계. 픽스처는 `contract/cpd/`·`contract/graph/`·`contract/history/`.",
-      "naming_note": "CLAUDE.md §3.3은 이 부분집합을 `measurements`라 부르지만 prd.md 본문에 그 이름은 없다. prd.md의 이름은 파일 단위가 `measures`(§2.1), 모집단 분포가 `population`(§2.5), 시스템·컴포넌트가 `system`·`components`(§2.2–2.3)다."
-    },
-    "derived": {
-      "paths": ["/files/*/percentiles", "/files/*/percentile_population", "/files/*/lens_percentiles", "/files/*/lenses", "/findings"],
-      "contract": "§2.5, §3",
-      "pins": "원값에서 백분위·렌즈·finding으로 올라가는 계산. 픽스처는 `contract/percentile/`(G0)와 `contract/lens/`(G1)."
-    },
-    "delta": {
-      "paths": [],
-      "contract": "§5.1",
-      "pins": "델타는 report.json에 없다 — `change.json`의 각 항목이 갖는 `{value_base, value_head, delta, evidence[]}`가 그 자리다. `schemas/change.schema.json`을 본다."
-    },
-    "conflicts": {
-      "paths": [],
-      "contract": null,
-      "pins": null,
-      "unresolved": "CLAUDE.md §3.3이 `conflicts`를 contract 부분집합의 하나로 들지만 prd.md 본문(§1–§12) 어디에도 그 이름의 필드·개념이 없다. 무엇을 가리키는지 결정되기 전까지 이 슬롯은 비워 둔다 — 추측으로 계약을 채우지 않는다(CLAUDE.md §7)."
-    }
-  },
   "properties": {
     "schema": {
       "const": "jqradar/3",
@@ -84,7 +54,7 @@
       "type": ["number", "null"],
       "minimum": 0,
       "maximum": 1,
-      "description": "백분위 `pct(x) = (rank_avg(x) − 1)/(N − 1)`(§2.5). N = 1 또는 N < `percentile.min_population`이면 null."
+      "description": "백분위 `pct(x) = (rank_avg(x) − 1)/(N − 1)`(§2.5). N = 1 또는 N < `percentile.min_population`이면 null. **계산은 정확 유리수, 직렬화는 소수 4자리 HALF_EVEN**(§2.5 산술 계약, D115) — 임계 비교(`pct ≥ 0.90`)는 반올림 전 값으로 한다."
     },
     "populationName": {
       "enum": ["active", "dx", "all"],
@@ -361,11 +331,12 @@
           "description": "성분마다 어느 모집단에서 몇 개를 상대로 잰 값인가(§2.5). **'값이 null'과 '모집단에서 제외'를 구분한다**(D38).",
           "additionalProperties": {
             "type": "object",
-            "required": ["population", "n"],
+            "required": ["population", "n_ranked"],
             "properties": {
               "population": { "$ref": "#/$defs/populationName" },
               "lang": { "type": "string", "description": "`cx`처럼 언어별로 재는 성분(§2.5, D12)." },
-              "n": { "type": "integer" },
+              "n_ranked": { "type": "integer", "description": "공식 `(rank_avg−1)/(N−1)`의 **분모** — 그 성분 값이 non-null인 파일 수(§2.5, D116·D122). 인쇄된 분모로 pct를 재계산할 수 없으면 그 pct는 의견이다(B.4)." },
+              "n_population": { "type": "integer", "description": "모집단 크기. **`n_ranked`와 다를 때만** 적는다(D122) — 예: `age_last_days`는 `all` 340 중 유효 338." },
               "reason": {
                 "enum": ["not_in_active", "no_twins", "age_unknown", "insufficient_population"],
                 "description": "pct가 null인 이유(§2.5, D38). 값이 없는 것과 모집단에 없는 것은 다르다."
@@ -389,11 +360,12 @@
           "description": "렌즈 값 자체의 백분위(§2.5) — `interpretation`의 **유일한** 근거(D34). null인 렌즈 값은 제외하고 **0은 포함**한다.",
           "additionalProperties": {
             "type": ["object", "null"],
-            "required": ["pct", "population", "n"],
+            "required": ["pct", "population", "n_ranked"],
             "properties": {
               "pct": { "$ref": "#/$defs/percentileValue" },
               "population": { "$ref": "#/$defs/populationName" },
-              "n": { "type": "integer", "description": "모집단 크기. **주의**: 랭킹 집합(렌즈 값이 null이 아닌 파일)과 다를 수 있고, 그러면 인쇄된 n으로 pct를 재계산할 수 없다 — `contract/percentile/README.md` 미해결 2번." }
+              "n_ranked": { "type": "integer", "description": "공식의 **분모** — 그 렌즈 값이 non-null인 파일 수(D116·D122). 나이 미상이면 F = null이라 랭킹에서 빠지므로 모집단 크기와 갈린다." },
+              "n_population": { "type": "integer", "description": "모집단 크기. **`n_ranked`와 다를 때만** 적는다(D122)." }
             }
           }
         },
@@ -491,7 +463,8 @@
               "value": { "type": ["number", "null"] },
               "pct": { "$ref": "#/$defs/percentileValue" },
               "population": { "$ref": "#/$defs/populationName" },
-              "n": { "type": "integer" },
+              "n_ranked": { "type": "integer", "description": "그 성분 백분위의 분모(D122)." },
+              "n_population": { "type": "integer", "description": "모집단과 다를 때만(D122)." },
               "p90_all": { "type": "number", "description": "F의 나이 문턱(§3.3) — 지시변수의 근거라 성분이 아니다(§3.7)." },
               "min_days": { "type": "integer", "description": "F의 180일 하한(§3.3, D14)." }
             }

@@ -5,10 +5,10 @@
   "description": "`jqradar change --base <ref>`의 산출물 — **1차 표면**(A.1, D47). '이 변경이 시스템을 BASE보다 어떻게 바꿨나'가 매일 쓰는 산출물이고 `scan`은 그 아래의 지도다. 새 측정은 없다 — 두 스캔의 델타를 재구성한 것이다. `check`는 이 파일만 읽는 정책 소비자다(§5.3).",
   "type": "object",
   "required": ["schema", "base", "head", "items"],
+  "x-jqradar-top-level": "§5.1·D120 — 최상위는 셋이다. 모양이 다르기 때문이다: `items`(델타 항목 여섯, 키 고정) · `touched_legacy_findings[]`(§5.7의 레코드 배열) · `declared_ai_assistance`(이 변경의 속성, 델타가 아니다). 모양이 다른 것을 같은 어휘에 묶지 않는다.",
   "x-jqradar-unresolved": {
-    "item_names": "§5.1은 항목의 **모양**(`{value_base, value_head, delta, evidence[]}`)은 고정하지만 항목의 **이름**은 고정하지 않는다 — 표의 왼쪽 열은 질문 문장이다. 그래서 `items`의 키를 enum으로 닫지 않았다. §5.1의 일곱 질문: (1) 복잡도가 얼마나 늘었나 (2) 변경이 어디에 집중되나 (3) 중복이 새로 생겼나 (4) 의존성이 어느 방향으로 확장됐나 (5) 과거 취약 영역이 더 취약해졌나 (6) 리팩터링이 위험을 줄였나 (7) 이 변경이 닿은 기존 부채. 이름을 정하는 것은 계약 개정이지 스키마의 일이 아니다(CLAUDE.md §7).",
     "reproduce_shape": "change는 두 스캔에서 나오는데(§4.2) `reproduce`를 하나 두는지 BASE·HEAD 각각 두는지 §2.8·§5.1 어디에도 없다. 여기서는 각 스냅샷이 자기 `reproduce`를 갖는 것으로 뒀다 — §5.1의 '앵커는 각 스냅샷의 HEAD 시각'과 §4.5의 '백엔드가 다른 두 실행 사이의 델타는 거부'가 둘을 비교 가능하게 인쇄할 것을 요구하기 때문이다.",
-    "touched_legacy_findings_fields": "§5.7은 `{id, anchor_class, status_before, delta, status_after_if_merged, claimed_by_this_pr}`, §7 마지막 줄은 `claimed_by_this_pr` 없이 다섯을 적는다. 여기서는 여섯 번째를 선택 필드로 뒀다."
+    "schema_value": "`schema` 필드의 값은 계약에 없다. §7은 report의 `jqradar/3`와 event의 `jqradar-event/1`만 고정한다."
   },
   "properties": {
     "schema": { "type": "string", "description": "산출물 스키마 버전. §7은 report의 `jqradar/3`와 event의 `jqradar-event/1`만 고정한다 — change의 값은 계약에 없어 const로 닫지 않았다." },
@@ -17,8 +17,16 @@
     "head": { "$ref": "#/$defs/snapshot" },
     "items": {
       "type": "object",
-      "description": "§5.1의 질문마다 하나. 각 항목은 `{value_base, value_head, delta, evidence[]}`를 갖고 **판정 단어는 없다** — 판정은 `check`(정책)와 사람이 한다(B.2, D47).",
-      "additionalProperties": { "$ref": "#/$defs/changeItem" }
+      "description": "§5.1의 델타 항목 — **여섯 키로 닫힌다**(D120). `check` 규칙과 렌더러 B1–B5가 이 이름을 참조하므로 이름 없는 항목은 계약이 아니다. 각 항목은 `{value_base, value_head, delta, evidence[]}`를 갖고 **판정 단어는 없다** — 판정은 `check`(정책)와 사람이 한다(B.2, D47). 여섯이 모두 필수는 아니다: `remediation_effect`는 수정 브랜치에만 있다(§5.1).",
+      "additionalProperties": false,
+      "properties": {
+        "complexity_delta": { "$ref": "#/$defs/changeItem", "description": "복잡도가 얼마나 늘었나 — 변경 파일별 `cx` 원값 델타, 리포 총 `cx` 델타, 변경 파일의 최대 메서드 CYCLO 델타(§5.1)." },
+        "change_concentration": { "$ref": "#/$defs/changeItem", "description": "변경이 어디에 집중되나 — 변경 파일 ∩ BASE H top-decile(자격 고정), 컴포넌트 분포, BASE Dx·F 상위와의 겹침(§5.1)." },
+        "new_duplication": { "$ref": "#/$defs/changeItem", "description": "중복이 새로 생겼나 — **발생 수준**, rename 매핑(§5.2, D40)." },
+        "dependency_direction": { "$ref": "#/$defs/changeItem", "description": "의존성이 어느 방향으로 확장됐나 — 컴포넌트 간선 집합 델타, 새 SCC, `external` 간선 수 변화(§5.1)." },
+        "fragile_area_exposure": { "$ref": "#/$defs/changeItem", "description": "과거 취약 영역이 더 취약해졌나 — BASE Dx·F 상위 파일 중 변경된 것의 `union_dup_tokens`·`fan_in` 델타(§5.1)." },
+        "remediation_effect": { "$ref": "#/$defs/changeItem", "description": "리팩터링이 위험을 줄였나 — 수정 브랜치라면 `validate.json` 연결(§5.1, §6.3)." }
+      }
     },
     "declared_ai_assistance": {
       "enum": [true, false, "unknown"],
@@ -103,7 +111,7 @@
     "touchedLegacyFinding": {
       "type": "object",
       "description": "§5.7. 원장 상태는 저장되지 않고 파생 ⊕ 사건으로 계산되므로(D55) 여기 실리는 상태도 **그 시점의 파생값**이다.",
-      "required": ["id", "anchor_class", "status_before", "delta"],
+      "required": ["id", "anchor_class", "status_before", "delta", "claimed_by_this_pr"],
       "properties": {
         "id": { "type": "string", "description": "finding 정체성(§5.5 표, D70)." },
         "anchor_class": {
@@ -116,7 +124,7 @@
           "allOf": [{ "$ref": "#/$defs/ledgerState" }],
           "description": "§5.7 — **예고**다. 실제 상태는 머지 뒤 전이 이력으로 계산되고 귀속은 전이가 일어난 커밋이 갖는다(D99·D100)."
         },
-        "claimed_by_this_pr": { "type": "boolean", "description": "§5.7. 이 PR이 사건 파일을 실었는가(§5.5, D61). §7 마지막 줄에는 이 필드가 없다 — x-jqradar-unresolved 참고." }
+        "claimed_by_this_pr": { "type": "boolean", "description": "§5.7 — **필수**(D117). 이 PR이 그 finding의 사건 파일을 실었는가는 파생 가능한 사실이고, 선택으로 두면 전이 귀속(§5.5, D100)과 어긋난다." }
       }
     },
     "ledgerState": {

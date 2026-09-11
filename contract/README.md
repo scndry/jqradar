@@ -16,11 +16,12 @@
 | `expected.json` | 계약의 **결론** — 손으로 쓰지 않는다. 계산 스크립트가 만든다 |
 | 계산 스크립트 (`compute.py` 등) | `input` → `expected`의 재계산 경로. 함께 커밋한다 |
 
-**케이스 모양은 계약에 따라 다르다.** `percentile/`·`cpd/`·`graph/`는 순수 수치 계약이라 git 이력이 필요 없고 `input.json` 하나면 전제가 완결된다. `history/`·`ledger/`는 이력 자체가 계약이라 합성 리포와 커밋 생성 스크립트가 있어야 한다. §2.9 첫 문장의 "합성 리포(트리 + 스크립트 생성 git 이력)"는 후자의 모양이다.
+**케이스 모양은 계약에 따라 다르다**(§2.9). `percentile/`·`cpd/`·`graph/`·`schema/`는 순수 수치·구조 계약이라 `input.json` 하나로 전제가 완결된다. `history/`·`ledger/`·`gate/`는 이력 자체가 입력이라 합성 리포(트리 + 스크립트 생성 이력)가 있어야 한다. `reproducibility/`도 합성 리포 쪽이다 — `analysis_input_id`의 입력에 창 안 커밋 SHA 목록과 `window_anchor`가 들어가므로(§2.8) 트리만으로는 전제가 닫히지 않는다.
 
 ## 하드룰
 
-- **`expected.json`을 손으로 고치지 않는다.** 기대값을 바꾸는 커밋은 `fixture_change {reason ∈ {library_behavior_change, contract_change, bug_fix}, library?, old?, new?, measure, note, fixtures[]}`를 반드시 동반한다(§2.9 끝, P11). 원인 분류 없이는 머지 불가 — 회귀 테스트가 "새 정답을 손으로 승인하는 테스트"로 변질되는 것을 막는 장치다.
+- **`expected.json`을 손으로 고치지 않는다.** 기대값을 바꾸는 커밋은 `fixture_change` 레코드를 반드시 동반한다(§2.9 끝, P11) — [`fixture-changes/`](fixture-changes/)에 파일 하나, 스키마는 [`schemas/fixture_change.schema.json`](../schemas/fixture_change.schema.json). 원인 분류 없이는 머지 불가 — 회귀 테스트가 "새 정답을 손으로 승인하는 테스트"로 변질되는 것을 막는 장치다.
+- **산술은 정확 유리수**(§2.5 산술 계약, D115·D121). 파생은 전정밀에서, 반올림은 마지막에 한 번. IEEE-754 `double`은 §2.5의 픽스처 예 `18.1`조차 재현하지 못한다.
 - **숫자는 계산에서 나온다.** 예시조차 픽스처다(B.4, D26).
 - 실패 메시지는 **어느 계약(§n)이 깨졌는지** 말해야 한다(CLAUDE.md §4).
 
@@ -28,7 +29,8 @@
 
 | 디렉터리 | 무엇을 고정하나 | 게이트 | 현재 |
 |---|---|---|---|
-| [`percentile/`](percentile/) | §2.5 성분·렌즈 백분위, type-7 분위, §3.7 confidence | **G0** | 6/8 케이스 |
+| [`percentile/`](percentile/) | §2.5 성분·렌즈 백분위, type-7 분위, §3.7 confidence | **G0** | 6/9 케이스 |
+| `schema/` | §7 스키마 7종 × 긍정 1 + 하드룰 변조 ≥ 1(D124) | **G0** | 아직 `schemas/validate_examples.py` 안 |
 | [`reproducibility/`](reproducibility/) | §2.8 정체성 셋의 분리와 `reproduce` 완전성(D111) | **G0** | 스켈레톤 |
 | [`cpd/`](cpd/) | §2.6 클러스터·합집합·쌍 투영 | **G0** | 스켈레톤 |
 | [`history/`](history/) | §2.7 앵커·창·rename, 그리고 blame 금지의 강제(D113) | **G0** | 스켈레톤 |
