@@ -1,12 +1,15 @@
 # G0 교차 검토 패킷
 
+> **입구는 [`review/README.md`](review/README.md)다. 이 문서는 참고 자료다.**
+> 먼저 읽을 필요는 없다 — `python3 docs/review/g0-review.py`가 필요한 것을 꺼내 준다.
+
 **G0 체크리스트(§9)에서 남은 항목은 #1 하나다.**
 
 > 1. **§2.1–2.9** 계약이 리뷰어 2명의 **교차 검토**(계약 간 충돌 점검 포함)를 통과. … **§6.3–6.6은 여기서 빠진다** — 그 계약들의 값 층 픽스처가 G3에 오므로 지금 검토하면 문장만 읽게 되고, "검토했다"가 "문장만 읽었다"를 감춘다. G3 입장 조건으로 옮긴다(D136).
 
 나머지 여섯(#2–#7)은 기계가 지킨다 — CI가 매 PR에서 돌고 실패하면 머지가 막힌다. #1은 기계가 대신할 수 없는 자리이고, 이 문서는 그 검토를 **30분 안에 시작할 수 있게** 만드는 것이 목적이다.
 
-- 대상: `prd.md` **v3.8.0**
+- 대상: `prd.md` **v3.8.3**(스크립트가 실행 시점의 판을 다시 인쇄한다)
 - 리포: `scndry/jqradar` (private)
 - 패킷 작성: 2026-09-11
 
@@ -119,87 +122,7 @@
 
 ## 3. 검토자가 30분 안에 스스로 확인할 것
 
-전제: Java 21, Python 3.10+, git. 네트워크(Maven Central) 필요.
-
-```sh
-git clone https://github.com/scndry/jqradar && cd jqradar
-python3 -m pip install -r schemas/requirements.txt
-```
-
-### 3.1 적합성 스위트 — 케이스 75종
-
-```sh
-python3 contract/percentile/compute.py      --check    # ok ×6
-python3 contract/cpd/compute.py             --check    # ok ×5
-python3 contract/history/compute.py         --check    # ok ×10
-python3 contract/graph/compute.py           --check    # ok ×8
-python3 contract/reproducibility/compute.py --check    # ok ×1
-python3 contract/schema/compute.py          --check    # ok ×45
-```
-
-`--check`는 **재생성 결과가 커밋된 것과 바이트 동일한지** 본다. 손으로 고친 기대값은 여기서 걸린다. `--check` 없이 부르면 재생성한다 — 돌린 뒤 `git diff`가 비어야 한다.
-
-### 3.2 하드룰 집계 — 스키마가 계약인가 문법 검사인가
-
-```sh
-python3 contract/schema/compute.py --check | tail -14
-```
-
-기대 출력:
-
-```
-케이스 45 = 긍정 9 + 변조 36(하드룰 29 + 구조 7)
-대상별 (하드룰/변조):
-  campaign         3/3
-  change           5/7
-  event            4/4
-  fixture_change   1/2
-  gate             2/3
-  report          10/12
-  scale_lint       2/2
-  validate         2/3
-```
-
-**대상 하나라도 하드룰 변조가 0이면 그 줄에 `D124 미충족`이 찍힌다.** 지금은 없다. `gate`가 실제로 그렇게 걸린 적이 있고(그래서 D98을 `if/then`으로 넣었다), 집계가 그것을 찾았다.
-
-판정 기준은 하나다 — *계약을 모르는 사람이 §7 예시만 보고 스키마를 써도 잡혔을까? 아니오면 하드룰.* **엄격하게 세면 29가 아니라 25다**: `required` 기구 4건은 문법적으로 평범하고 그 필드가 *필수여야 한다는 결정*만이 계약이다. 두 셈을 모두 표시해 두었다.
-
-### 3.3 자체 ArchUnit 규칙 — 규칙이 사는지
-
-```sh
-./gradlew build          # BUILD SUCCESSFUL, 11 tests
-```
-
-규칙마다 **둘을** 단언한다: 우리 코드에서 통과하고, 일부러 어긴 반례에 걸면 **반드시 실패**한다. G0의 모듈은 소스셋이 거의 비어 있어 규칙 1·2·4는 공집합에 대해 통과한다 — 그 상태의 "통과"는 "검사하지 않았다"와 구별되지 않으므로 반례가 증명을 진다. 자세한 것은 `docs/modules.md`.
-
-### 3.4 CI — 3잡
-
-```sh
-gh pr checks <최근 PR 번호>
-```
-
-`적합성 스위트 (§2.9)` · `G0 — expected.json 변경에 fixture_change` · `빌드와 자체 ArchUnit 규칙`.
-
-**가드가 무는지 직접 확인하려면**:
-
-```sh
-# expected.json 하나를 손으로 고치고 레코드 없이 커밋한 뒤
-sh ci/check-fixture-change.sh main HEAD     # exit 1, 어느 커밋·어느 파일인지 인쇄
-```
-
-### 3.5 본문 수치가 계산에서 나오는지 (샘플 셋)
-
-| 본문 | 어디 | 확인 |
-|---|---|---|
-| §2.5 P90 `[1..9,100]` = **18.1** | `contract/percentile/p90-type7/expected.json` | `.quantiles[0].value` |
-| §2.6 겹침 합집합 = **150** | `contract/cpd/overlap-merge/expected.json` | `.duplication_pairs[0].pair_dup_tokens` |
-| §2.3 N=41·CCD=512 → **185.48 / 12.49 / 0.305 / 2.76** | `contract/graph/nccd-cross-check/expected.json` | `.system.display` |
-
-```sh
-python3 -c "import json;print(json.load(open('contract/graph/nccd-cross-check/expected.json'))['system']['display'])"
-```
-
----
+**스크립트가 대신한다.** `python3 docs/review/g0-review.py` — 적합성 스위트(케이스 82종), 하드룰 변조 집계, 자체 ArchUnit 규칙, CI 잡, 본문 수치(18.1·150·185.48·2.76)가 계산에서 나오는지까지 한 표로 낸다. 여기에 손으로 적어 두면 케이스 수·잡 수가 늘 때마다 낡고, 낡은 숫자는 "검토했다"를 "옛 리포를 검토했다"로 만든다.
 
 ## 4. 독립성 — 이 패킷을 만든 도구는 리뷰어가 아니다
 

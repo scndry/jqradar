@@ -77,6 +77,15 @@ def dig(obj, path):
     return obj
 
 
+def ci_jobs() -> list[str]:
+    """CI 잡 이름을 워크플로에서 읽는다. 손으로 적으면 잡이 늘 때마다 낡는다."""
+    wf = ROOT / ".github" / "workflows" / "contract.yml"
+    if not wf.exists():
+        return []
+    names = re.findall(r"^    name: (.+)$", wf.read_text(encoding="utf-8"), re.M)
+    return [n.strip() for n in names]
+
+
 def prd_version() -> str:
     first = PRD.read_text(encoding="utf-8").splitlines()[0]
     m = re.search(r"v\d+\.\d+(\.\d+)?", first)
@@ -137,7 +146,9 @@ def verify() -> bool:
         print(f"  {'✅' if ok else '❌'}  {label.ljust(width)}  {note}")
     print("─" * (width + 40))
     print("  Gradle 빌드·자체 ArchUnit 규칙은 여기서 돌리지 않는다 — Maven Central이 필요하다.")
-    print("  직접 보려면: ./gradlew build   (BUILD SUCCESSFUL, 11 tests — CI 4잡 중 셋째)")
+    jobs = ci_jobs()
+    where = f"CI {len(jobs)}잡 중 '{jobs[-1]}'" if jobs else "CI"
+    print(f"  직접 보려면: ./gradlew build   (BUILD SUCCESSFUL, 11 tests — {where})")
     return all_ok
 
 
@@ -164,7 +175,7 @@ PAIRS = [
         "id": 3,
         "title": "analysis_input_id ↔ 캐시 키 ↔ '두 머신 바이트 동일'",
         "sections": ["2.8", "4.5", "2.9"],
-        "history": "D87(포함되지 않은 입력은 결과에 영향을 주면 안 된다)·D111(포함된 입력은 reproduce에 나타난다)·D138(정규 인코딩 = RFC 8785). 사고 §0-22: 재현성 계약 자신이 git 시각 포맷에 의존하고 있었다.",
+        "history": "D87(포함되지 않은 입력은 결과에 영향을 주면 안 된다)·D111(포함된 입력은 reproduce에 나타난다)·D138(정규 인코딩 = RFC 8785). 재현성 계약 자신이 git 시각 포맷(`%cI`가 UTC를 `Z`로도 `+00:00`으로도 쓴다)에 의존해 CI가 잡은 적이 있다 — `contract/reproducibility/compute.py`와 `contract/history/compute.py`의 주석. prd.md에는 없다.",
         "ask": "§2.8의 입력 목록에 없는데 값에 영향을 주는 것이 §2.1–2.7 어디에 있는가(환경변수·로케일·git 버전·시계). reproduce 예시(§7)만으로 id를 다시 계산할 수 있는가.",
     },
     {
@@ -333,6 +344,30 @@ def selftest() -> int:
             section_text(sec)  # 없으면 SystemExit — PAIRS와 prd.md의 절 번호가 어긋난 것
     checks.append(("PAIRS의 모든 절이 prd.md에 있다", True))
 
+    # 쌍의 '이력'·'질문'이 인용하는 D 번호와 §0 항목이 실제로 있는가.
+    # 없는 것을 가리키면 리뷰어가 첫 발을 헛디딘다. 절 번호만 보던 검사에
+    # 이것이 빠져 있었고, 실제로 하나가 어긋나 있었다(쌍 3이 git 시각 포맷 사고를
+    # §0-22로 가리켰는데 §0-22는 정규 인코딩·결정 착지다).
+    #
+    # **이 검사는 존재만 본다.** 인용이 가리키는 내용이 맞는지는 기계가 모른다 —
+    # 위 사례도 §0-22가 '있었기' 때문에 존재 검사로는 잡히지 않았을 것이다.
+    # 내용은 사람이 본다.
+    prd_text = PRD.read_text(encoding="utf-8")
+    have_d = set(re.findall(r"^- ~?~?D(\d+) ", prd_text, re.M))
+    have_zero = set(re.findall(r"^### (0-\d+)\.", prd_text, re.M))
+    dangling = []
+    for p in PAIRS:
+        blob = p["history"] + " " + p["ask"]
+        dangling += [f"쌍{p['id']}:D{d}" for d in re.findall(r"\bD(\d+)\b", blob)
+                     if d not in have_d]
+        dangling += [f"쌍{p['id']}:§{z}" for z in re.findall(r"§(0-\d+)", blob)
+                     if z not in have_zero]
+    # 머리말(QUESTIONS)의 인용도 같은 자리에서 본다 — 리뷰어가 가장 먼저 읽는 줄이다.
+    qblob = " ".join(str(q) for q in QUESTIONS)
+    dangling += [f"머리말:D{d}" for d in re.findall(r"\bD(\d+)\b", qblob)
+                 if d not in have_d]
+    checks.append((f"쌍이 인용하는 D 번호·§0 항목이 prd.md에 있다"
+                   + (f" — 없는 것 {dangling}" if dangling else ""), not dangling))
     bad = [name for name, ok in checks if not ok]
     for name, ok in checks:
         print(f"  {'ok ' if ok else 'BAD'}  {name}")
