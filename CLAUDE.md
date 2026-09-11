@@ -37,10 +37,10 @@ jQRadar는 jQRadar로 만든다(§1 B.7). 이 리포가 첫 대상이다. 지금
 G0 통과 조건은 `prd.md` §9 "G0 체크리스트" 7항목. 순서:
 
 1. **읽기.** `prd.md` §1(철학), §2(측정 계약), §2.9(적합성 스위트), §5(변경·원장·게이트), §6.3–6.6(검증·보안), §7·§7.1(스키마·렌더러), §9(검증 계획·자기 적용), §10(결정 D1–D109). 제안하기 전에 D 번호로 근거를 댄다.
-2. **`contract/` 스켈레톤과 G0 픽스처.** 디렉터리: `percentile/ reproducibility/ cpd/ history/ graph/`(G0) · `lens/ gate/ renderer/`(G1) · `ledger/ validation/ security/`(G2b·G3). 각 케이스 = 합성 리포를 스크립트로 생성 + `expected.json`. 최소 케이스 목록은 §2.9 표. **기대값은 계산으로 만들고, 계산 스크립트를 함께 커밋한다.**
-3. **JSON Schema 6종** → `schemas/`: `report`, `change`, `gate`, `validate`, `campaign`, `event`. §7의 jsonc 스케치를 기계 검증 가능하게. `contract` 부분집합(`reproduce·measurements·conflicts·delta`)을 스키마에 명시.
+2. **`contract/` 스켈레톤과 G0 픽스처.** 디렉터리: `percentile/ schema/ reproducibility/ cpd/ history/ graph/`(G0) · `lens/ gate/ renderer/`(G1) · `ledger/ validation/ security/`(G2b·G3). 입력 모양은 계약별(§2.9): git 이력이 입력인 계약만 합성 리포, 나머지는 `input.json`. 각 케이스 = 합성 리포를 스크립트로 생성 + `expected.json`. 최소 케이스 목록은 §2.9 표. **기대값은 계산으로 만들고, 계산 스크립트를 함께 커밋한다.**
+3. **JSON Schema 7종** → `schemas/`: `report`, `change`, `gate`, `validate`, `campaign`, `event`, `fixture_change`(D119 — G0 체크리스트 #6의 CI가 검사할 대상). §7의 jsonc 스케치를 기계 검증 가능하게. **스키마마다 거부되어야 할 변조 입력 ≥ 1**(D118) — 첫 실행에 전부 통과하는 스키마는 아무것도 지키지 않는다. 긍정·변조 케이스는 `contract/schema/`에 두어 픽스처 루프(§4)가 돌게 한다(D124). 하드룰은 설명이 아니라 구조로 막는다(`additionalProperties: false`, `not`, `if/then`). "contract 부분집합"이라는 개념은 jQRadar에 없다.
 4. **Gradle 멀티모듈 골격**: `jqradar-core`, `jqradar-cli`, `jqradar-gradle-plugin`, `jqradar-ledger`, `jqradar-mcp`, `jqradar-remediation`(§4.1). 의존 버전은 `gradle/libs.versions.toml`에 major.minor.patch로 고정(§2.8 `environment`).
-5. **자체 ArchUnit 규칙**(우리 코드에만): `jqradar-core`가 `people` 정책 없이 `PersonIdent` 이름·이메일을 산출물로 내보내지 않는다; `scan`/`change` 경로에서 `BlameCommand` 호출 없음; `.jqradar/` 쓰기는 `jqradar-ledger`만.
+5. **자체 ArchUnit 규칙**(우리 코드에만): `jqradar-core`가 `people` 정책 없이 `PersonIdent` 이름·이메일을 산출물로 내보내지 않는다; `scan`/`change` 경로에서 `BlameCommand` 호출 없음; `.jqradar/` 쓰기는 `jqradar-ledger`만; **측정·순위 경로에서 `double`·`float` 사용 금지**(D115 — 정확 유리수, √는 표시값에만 `BigDecimal`).
 6. **P1a 사전 등록** → `docs/preregistration/p1a.md`: 기준선 넷(random / cx-only / chg-only / H), 개입 제외 규칙, `evaluation_cutoff`·180일 완전 관측 코호트, 부트스트랩 95% CI. 배터리 B 전에 바꾸지 않는다.
 7. **배터리 리포 확정** → `docs/battery.md`: 나이·크기로만 선정(§9). 이 리포는 S1 이후 내부자 데이터.
 
@@ -53,6 +53,7 @@ G0 전에는 **core 측정 코드를 쓰지 않는다.** 계약과 픽스처가 
 - Java 21, Gradle(Kotlin DSL), JUnit 5. Kotlin은 대상 언어이지 구현 언어가 아니다.
 - 모듈 경계: `core`는 빌드 도구·IDE·LLM 무지. `ledger`만 `.jqradar/`에 쓴다. `remediation`은 L2 샌드박스 안에서만 실행된다(§6.6).
 - 측정은 순수 함수로: 같은 `analysis_input_id` → 같은 출력. 시간은 `HEAD_TIME`(HEAD 커미터 시각)에서만 읽는다(§2.7). `System.currentTimeMillis()`는 `scanned_at` 외에 쓰지 않는다.
+- **산술**(§2.5, D115): 백분위·분위·임계 비교는 정확 유리수(`BigInteger` 분수 또는 유한 `BigDecimal`)로, 반올림 전 값으로 비교한다. 렌즈 순위는 `pct × pct`의 정확 비교로 내고 √는 표시값에만 `BigDecimal.sqrt(MathContext(34, HALF_EVEN))`. 직렬화는 렌즈 1자리·백분위 4자리 HALF_EVEN.
 - 캐시 키는 커밋이 아니라 **내용**(`content_id` + 엔진 버전)이다(§4.5).
 - 픽스처 테스트는 `contract/`를 파라미터화 테스트로 돈다. 실패 메시지는 어느 계약(§n)이 깨졌는지 말한다.
 - 렌더러(d3 인라인, 자립형 단일 HTML)는 JSON의 순수 함수. 네트워크 요청 0건(§7.1).
@@ -62,7 +63,8 @@ G0 전에는 **core 측정 코드를 쓰지 않는다.** 계약과 픽스처가 
 ## 5. 커밋·PR 규율 (S0부터 — 나중에 우리 이력이 분석 대상이 된다)
 
 - **머지 커밋 유지, 스쿼시 금지.** 이동·개명은 `git mv`. `chg_commits`·rename 매핑·`succession`이 우리 이력에서 계산 가능해야 한다(§2.7).
-- `Co-authored-by:` 트레일러를 지우지 않는다 — `declared_ai_assistance`의 자료다(§5.1).
+- `Co-authored-by:` 트레일러를 지우지 않는다 — `declared_ai_assistance`의 자료다(§5.1). 전역 `commit-msg` 훅이 트레일러를 막으면 트레일러를 빼는 게 아니라 이 리포의 `core.hooksPath`를 리포 로컬로 두어 해제한다. **소유자가 쓴 커밋에 도구 트레일러를 붙이지 않는다** — 거짓 선언이고 D48이 막는 자리다.
+- **첫 push 이후 main 이력은 재작성하지 않는다.** 공개 전 신원 정리 목적의 재작성은 1회만 허용하고 `docs/status.md`에 기록한다. `analysis_input_id`는 창 안 커밋 SHA 목록을 포함하고 캠페인 앵커는 SHA로 봉인되므로(§2.8·§5.4), `docs/self/` 첫 리포트(S1)와 첫 앵커(S3) 이후의 재작성은 앵커와 캐시를 깬다. PR 브랜치의 force-with-lease는 머지 전까지 정상.
 - 커밋 메시지 첫 줄에 계약 참조: `feat(core): §2.5 percentile engine (type-7 quantile)`.
 - PR 본문에 반드시: 구현한 계약(§), 통과한 픽스처, `prd.md` 변경 여부와 §0 항목, "PRD 충돌" 섹션(없으면 "없음").
 - `prd.md`를 고치면: §0에 항목, 결정이면 §10에 D 번호(기존 결정은 지우지 않고 취소선 + 대체 참조).
@@ -76,10 +78,13 @@ G0 전에는 **core 측정 코드를 쓰지 않는다.** 계약과 픽스처가 
 - [ ] `prd.md`와 충돌이 없는가 — 있으면 코드가 아니라 문서를 고치는 PR을 먼저.
 - [ ] 하드룰 §2 위반이 없는가(blame·`.jqradar/`·정체·판정 어휘·네 번째 엔진).
 - [ ] 이력 규율(머지 커밋·`git mv`·트레일러)을 지켰는가.
+- [ ] "PRD 공백"으로 멈춘 자리를 PR에 적었는가(추측으로 채우지 않았는가 — §7).
 - [ ] 다음 세션이 이어받을 상태를 `docs/status.md`에 3줄로.
 
 ---
 
 ## 7. 모르면
+
+**이 파일과 `prd.md`가 어긋나면 `prd.md`가 이긴다.** 이 파일은 작업 지시이지 계약이 아니다 — 지시에 있는데 본문에 없는 이름은 계약이 아니라 오염일 수 있으니, 채우지 말고 "PRD 공백"으로 적어라(첫 구현 세션의 "contract 부분집합"이 그 사례다 — D119).
 
 추측으로 계약을 채우지 않는다. `prd.md`에 답이 없으면 (1) §10 열어둔 것(O·)에 해당하는지 보고, (2) 해당하면 그 결정 조건을 갖춘 실험이나 픽스처를 제안하고, (3) 해당하지 않으면 "PRD 공백"으로 PR에 적고 멈춘다. 계약 없는 구현보다 멈추는 것이 싸다.

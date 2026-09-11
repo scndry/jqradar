@@ -1,6 +1,6 @@
-# 📡 jQRadar (Java Quality Radar) — PRD v3.7.5
+# 📡 jQRadar (Java Quality Radar) — PRD v3.7.7
 
-작성 2026-09-07 · **브라운필드 판.** "기준선을 잠그면 기존 부채는 어떻게 되나"라는 소유자의 질문에 답하면서 "지키는 것" 셋(B.2·B.3·B.6)을 고쳤다 — 철학은 헌법이 아니라 결정이다. 셋째 표면 **부채 원장**(파생 층 ⊕ 사건 층, 저장은 리포 안 `.jqradar/`), 조직이 등록하는 **캠페인 앵커**, **앵커에 얼린 분류**, **한정 blame**을 넣었고 일정을 17주로 늘렸다. **v3.6.1**(2026-09-08)은 기능 추가 없이 원장의 판정 의미를 닫았다 — finding 정체성·후속 판정, 사건 × 파생 상태표, scope 회계, 필드 개명(§0-8). **v3.7**(2026-09-08)은 **자기 적용(self-application) 계약** — jQRadar는 jQRadar로 만든다. 도구가 자기 리포의 첫 대상이고, 자기 PR의 게이트이며, 첫 캠페인이고, 첫 파일럿이다(§9 자기 적용, B.7). **v3.7.1**(2026-09-09)은 기능 추가 없이 **증거 사슬 identity → validation → merge → ledger**를 닫는다 — 재현성 정체성 셋, 검증의 트리 결속, `validated_not_resolved` 4분기, reanchor 계보, 멱등성, P1a 코호트(§0-10). 다음 단계는 본문이 아니라 픽스처다. **v3.7.2**(2026-09-09)는 철학 수정 — **저작 무관의 사회적 논거를 철회**한다. 저작 여부는 도구가 소유할 수 없는 조직의 정책이고(B.6), 금지는 효과도 없었다(`git blame`은 어디에나 있다). 금지 → 기본 꺼짐 + 조직 정책, 하드룰은 셋만 남긴다(§0-11). **v3.7.3**(2026-09-10)은 원장 상태를 스냅샷 × 최종 사건이 아니라 **전이 이력**으로 계산해 오귀속을 없앴고(§0-12), **v3.7.4**(2026-09-10)는 경계 조건 — 내용 주소 캐시, 순환 finding 전이의 바이트코드 한계, 실행 라인 0 커버리지, 계보 분모·시그니처 보조, S4 정직한 완주 — 를 닫았다(§0-13). **v3.7.5**(2026-09-10)는 Claude Code 첫 읽기 세션이 찾은 절 간 불일치 5건·관찰 4건을 정합시켰다(§0-14).
+작성 2026-09-07 · **브라운필드 판.** "기준선을 잠그면 기존 부채는 어떻게 되나"라는 소유자의 질문에 답하면서 "지키는 것" 셋(B.2·B.3·B.6)을 고쳤다 — 철학은 헌법이 아니라 결정이다. 셋째 표면 **부채 원장**(파생 층 ⊕ 사건 층, 저장은 리포 안 `.jqradar/`), 조직이 등록하는 **캠페인 앵커**, **앵커에 얼린 분류**, **한정 blame**을 넣었고 일정을 17주로 늘렸다. **v3.6.1**(2026-09-08)은 기능 추가 없이 원장의 판정 의미를 닫았다 — finding 정체성·후속 판정, 사건 × 파생 상태표, scope 회계, 필드 개명(§0-8). **v3.7**(2026-09-08)은 **자기 적용(self-application) 계약** — jQRadar는 jQRadar로 만든다. 도구가 자기 리포의 첫 대상이고, 자기 PR의 게이트이며, 첫 캠페인이고, 첫 파일럿이다(§9 자기 적용, B.7). **v3.7.1**(2026-09-09)은 기능 추가 없이 **증거 사슬 identity → validation → merge → ledger**를 닫는다 — 재현성 정체성 셋, 검증의 트리 결속, `validated_not_resolved` 4분기, reanchor 계보, 멱등성, P1a 코호트(§0-10). 다음 단계는 본문이 아니라 픽스처다. **v3.7.2**(2026-09-09)는 철학 수정 — **저작 무관의 사회적 논거를 철회**한다. 저작 여부는 도구가 소유할 수 없는 조직의 정책이고(B.6), 금지는 효과도 없었다(`git blame`은 어디에나 있다). 금지 → 기본 꺼짐 + 조직 정책, 하드룰은 셋만 남긴다(§0-11). **v3.7.3**(2026-09-10)은 원장 상태를 스냅샷 × 최종 사건이 아니라 **전이 이력**으로 계산해 오귀속을 없앴고(§0-12), **v3.7.4**(2026-09-10)는 경계 조건 — 내용 주소 캐시, 순환 finding 전이의 바이트코드 한계, 실행 라인 0 커버리지, 계보 분모·시그니처 보조, S4 정직한 완주 — 를 닫았다(§0-13). **v3.7.5**(2026-09-10)는 Claude Code 첫 읽기 세션이 찾은 절 간 불일치 5건·관찰 4건을 정합시켰고, **v3.7.6**(2026-09-10)은 첫 구현 세션이 찾은 계약의 빈칸 다섯 — 분위 적용 범위, 산술 방법, 백분위 분모, `change.json` 항목 이름, 픽스처 입력 모양 — 을 채웠고, **v3.7.7**(2026-09-11)은 그 결정들을 본문에 내려보내면서 composite 산술과 §7 예시의 재계산 가능성을 닫았다(§0-16).
 
 ---
 
@@ -166,6 +166,32 @@ Claude Code 첫 세션(P0 프롬프트)이 `prd.md`를 읽고 **본문 안에서
 | 관찰 | P16 결번 | 결번으로 표기, 재사용 금지 |
 읽기 노트가 보인 것 하나 더: 리포가 아직 git으로 초기화되지 않았다 — S0 이력 규율은 첫 커밋에서 시작한다.
 
+### 0-15. v3.7.5 → v3.7.6 (G0 첫 구현 PR의 PRD 충돌 5건, 2026-09-11)
+`contract/percentile/`과 `schemas/`를 만드는 첫 구현 세션이 계약의 빈칸 다섯을 찾았다. 전부 "계약을 쓸 때는 안 보이다가 계산하려는 순간 보이는" 종류다.
+| # | 빈칸 | 결정 |
+|---|---|---|
+| 1 | 지시에 있던 contract 부분집합(`reproduce·measurements·conflicts·delta`)이 본문에 없다 | **jQRadar의 계약이 아니다** — 다른 설계의 스키마가 지시에 섞였다. 개념 자체를 두지 않는다(MCP가 LLM에 넘기는 범위는 §6.6이 따로 정한다). 스키마의 해당 필드는 삭제 |
+| 2 | `median`·`IQR`의 분위 방법 미지정 | type-7은 **모든 분위**에 대한 단일 선언. `median = Q(0.5)`, `IQR = Q(0.75) − Q(0.25)` — §2.5 |
+| 3 | `18.1`이 double로 재현되지 않는데 산술 방법이 계약에 없다 | **산술 계약 두 층**: 순위·분위·비교는 정확 유리수, √는 표시값에만 `BigDecimal MathContext(34, HALF_EVEN)`, 직렬화 스케일 고정, 측정·순위 경로에서 `double` 금지 — §2.5. 렌즈의 `sqrt`는 유리수로 닫히지 않으므로 `contract/lens/`(G1)에서 반드시 부딪힌다 |
+| 4 | `lens_percentiles.n`이 모집단인지 랭킹 집합인지 | **공식의 분모 = `n_ranked`**(필수), 다를 때만 `n_population` 병기. §7 예시의 F를 338/340으로 정정 — §2.5·§7 |
+| 5 | `change.json` 항목 이름 미지정 | 키 여덟으로 **닫는다**(`complexity_delta` … `declared_ai_assistance`). `claimed_by_this_pr`은 필수 — §5.1·§5.7 |
+| 관찰 | 순수 수치 계약에 합성 리포는 과하다 | 입력 모양을 계약별로 — §2.9 |
+| 관찰 | `fixture_change`·원장 뷰에 스키마가 없다 | `fixture_change.schema.json`은 G0(체크리스트 #6이 검사할 대상), 원장 뷰는 G2b — §2.9 |
+첫 구현 세션이 보고한 것 하나 더: §7 예시 다섯이 스키마를 첫 실행에 전부 통과했고, 변조 테스트를 덧붙이자 스키마 버그(`path_base_mapped`가 null 불가)가 나왔다. 그래서 §2.9에 "긍정 케이스만으로 통과시키지 않는다"를 넣었다.
+
+### 0-16. v3.7.6 → v3.7.7 (v3.7.6 검토 — 결정과 본문의 어긋남, 2026-09-11)
+구현 세션이 v3.7.6을 검토해 **결정은 옳은데 본문이 따라오지 않은 셋**과 **새 계약이 못 잡은 넷**을 냈다. 계약을 결정으로만 적고 본문에 내려보내지 않으면 다음 구현이 또 추측한다 — 문서 규칙 2가 겨누는 바로 그 자리다.
+| # | 지적 | 처치 |
+|---|---|---|
+| A1 | D117 "여덟 키로 닫는다"인데 본문 §5.1 표에 이름이 하나뿐 | 여섯 델타 항목에 키 열 신설 |
+| A2 | `declared_ai_assistance`·`touched_legacy_findings`는 `{value_base, value_head, delta}` 모양이 아니다 | `change.json` 최상위를 셋으로 — `items`(여섯) · `touched_legacy_findings[]` · `declared_ai_assistance`. D117 개정 |
+| A3 | D115가 composite를 다루지 않고, 경계에서 실제로 갈린다(전정밀 71.5 vs 표시값 71.4) | **파생은 전정밀에서, 반올림은 마지막에 한 번.** composite 순위도 34자리 값으로. `contract/lens/`에 갈리는 경계 케이스 필수 — §2.5 |
+| B1 | §7의 pct가 분모를 고쳐도 역산되지 않는다(랭크가 정수·.5가 아님) | **예시를 랭크 배정에서 재계산**했다 — 입력(랭크)을 §7에 적고 pct·렌즈·composite·lens_pct를 전부 다시 냈다. `contract/lens/sample-service/input.json`의 스펙이 된다 |
+| B2 | 스키마 변조 케이스를 둘 자리가 §2.9에 없다 | `schema/` 행 신설(G0). 변조는 구조 오류가 아니라 **하드룰**을 겨눈다 |
+| B3 | `reproducibility/`는 순수 수치가 아니다(커밋 SHA 목록이 입력) | 합성 리포 쪽으로 재분류 |
+| B4·E | 성분 백분위에 `n_population` 규칙이 없고, 렌즈와 이름이 갈린다 | 성분도 `n_ranked`(+`n_population?`) — 한 이름 |
+| C1·C2·D | 훅 범위, 재작성 기록, PR #1의 계약 위반 | 문서가 아니라 리포 작업 — 후속 PR |
+
 **문서 규칙(v3.7.2)** — 본문(§1–§12)에는 계약·근거·결정만 쓴다. "언제 뭘 고쳤다"는 판 이력은 §0에만 남긴다 — 본문의 편집 메모는 읽는 사람이 아니라 쓰는 사람을 위한 것이었다. 문장 단위 "(vX.Y)" 태그는 본문(§1–§9, §11–§12)에서 제거했다 — 변경점은 §0와 git diff가 갖는다. §10 결정 기록의 판 표기는 기록의 일부(언제 결정·개정됐나)라 유지한다.
 
 **문서 규칙 2 — 본문은 언제나 자기 완결이어야 한다.** "이전 판과 같음"·"vX §n 그대로"·"나머지는 vY"라는 참조를 본문에 쓰지 않는다. 그것은 다음 재작성에서 내용이 사라지는 가장 확실한 경로였다 — §4·§8·§10 D1–D23·§6.5 전제조건·§9 P3–P6와 매트릭스·§7 예시가 그렇게 사라졌고, 참조가 가리키던 판은 이미 없었다. 줄이려면 본문을 줄이고, 옮기려면 옮긴 자리를 §n으로 가리킨다. 이전 판을 가리키는 문장이 본문에 있으면 리뷰에서 반려한다.
@@ -274,19 +300,27 @@ Claude Code 첫 세션(P0 프롬프트)이 `prd.md`를 읽고 **본문 안에서
 **성분 백분위**
 - 모집단 셋: `active`(W 안 `chg_commits ≥ 1`) — H; `dx`(`active` ∩ `twins ≥ 1`) — Dx; `all`(모든 적격 main 소스) — F. `cx`는 각 모집단 안에서 언어별.
 - 방법: 경험적 CDF, 동점 평균 순위, `pct(x) = (rank_avg(x) − 1)/(N − 1)`. N = 1 → null; N < `percentile.min_population`(20) → null.
-- 기록: 파일마다 `percentile_population.<field> = {population, lang?, n, reason?}`. `reason ∈ {not_in_active, no_twins, age_unknown, insufficient_population}` — **"값이 null"과 "모집단에서 제외"를 구분**한다.
+- 기록: 파일마다 `percentile_population.<field> = {population, lang?, n_ranked, n_population?, reason?}` — 렌즈와 **같은 이름, 같은 뜻**이다(`n_ranked` = 공식의 분모 = 그 성분이 non-null인 파일 수, 모집단과 다를 때만 `n_population` 병기). `age_last_days`처럼 유효값이 모집단보다 적은 성분에서 갈린다. `reason ∈ {not_in_active, no_twins, age_unknown, insufficient_population}` — **"값이 null"과 "모집단에서 제외"를 구분**한다.
 - 표시: 원값·모집단 분포(중앙값·IQR·최대)와 함께. IQR < 중앙값의 25% → `population_note`.
 
 **렌즈 백분위 — `interpretation`의 유일한 근거**
 - 렌즈 값 자체의 백분위를 그 렌즈의 모집단에서 다시 계산한다: H는 `active`, Dx는 `dx`, F는 `all`. null인 렌즈 값은 제외, **0은 포함**. F는 대부분 0이므로 `investigate_first`는 사실상 "F > 0인 파일 중 cx×fan_in 상위" — 의도된 동작.
-- 순위·동점·작은 N 규칙은 성분 백분위와 동일. 파일마다 `lens_percentiles.<lens>` 기록. §3.7의 `interpretation`은 이 값만 쓴다 — `H ≥ 90` 같은 절대 임계가 아니다.
+- 순위·동점·작은 N 규칙은 성분 백분위와 동일. 파일마다 `lens_percentiles.<lens> = {pct, population, n_ranked[, n_population]}` 기록. **`n_ranked`는 공식 `(rank_avg−1)/(N−1)`의 분모, 즉 그 렌즈 값이 non-null인 파일 수**이고, 모집단 크기와 다를 때만 `n_population`을 함께 적는다 — 분모가 아닌 수를 인쇄하면 그 자리에서 pct를 재계산할 수 없다(B.4). 성분 백분위의 `n`도 같은 뜻이다. §3.7의 `interpretation`은 이 값만 쓴다 — `H ≥ 90` 같은 절대 임계가 아니다.
 
-**분위(quantile) 계약 — F의 P90**
+**분위(quantile) 계약 — 모든 분위에 하나의 방법**
 - 방법: **type-7 선형 보간**(Hyndman–Fan). 정렬된 유효값 `x₁…x_N`, 위치 `h = 1 + q·(N − 1)`, `Q(q) = x_⌊h⌋ + (h − ⌊h⌋)·(x_⌊h⌋₊₁ − x_⌊h⌋)`. `(rank−1)/(N−1)`의 역함수와 일관.
+- **적용 범위는 F의 P90에 그치지 않는다**: `median = Q(0.5)`, `IQR = Q(0.75) − Q(0.25)`도 같은 방법이다 — 이 둘을 §2.5 표시 규칙(`IQR < 중앙값의 25%` → `population_note`)과 §3.7 confidence(`IQR = 0`, `IQR < 0.25·median`)가 쓰므로 방법이 갈리면 confidence가 갈린다. `reproduce.percentile_method.quantile`은 **단일 선언**이다.
 - 픽스처 예: `[1,2,3,4,5,6,7,8,9,100]`, q = 0.9 → h = 9.1 → `9 + 0.1×91 = 18.1`.
 - `P90(age_last_days)`는 **유효 나이만**(`≠ null`)으로. `population.all.age_last_days.valid_n` 기록.
-- `reproduce.percentile_method = {rank: "average", formula: "(rank_avg-1)/(N-1)", quantile: "type7-linear"}`.
+- `reproduce.percentile_method = {rank: "average", formula: "(rank_avg-1)/(N-1)", quantile: "type7-linear", arithmetic: "exact-rational", output: {sqrt: "BigDecimal MathContext(34, HALF_EVEN)", lens_scale: 1, pct_scale: 4, rounding: "HALF_EVEN"}}`.
 - **게이트는 원값**(§5).
+
+**산술 계약 — 두 층.** 위 픽스처 예 `18.1`은 IEEE-754 `double`로 재현되지 않는다(`1 + 0.9·9 = 9.1`의 소수부가 `0.09999999999999964`가 되어 `18.099999999999966`이 나온다). "두 머신 바이트 동일"(§2.9 `reproducibility/`)과 "손으로 쓴 숫자 금지"를 함께 지키려면 산술이 계약이어야 한다.
+- **순위·분위·비교는 정확 유리수**(Java: `BigInteger` 분수 또는 유한 `BigDecimal`). 백분위·median·IQR·분위, 그리고 모든 임계 비교(`pct ≥ 0.90`, `IQR < 0.25·median`, 합격 함수의 `≥ 20% 감소`)는 **반올림 전 정확값**으로 판정한다 — 직렬화된 값으로 비교하면 경계에서 흔들린다.
+- **무리수는 크기 출력에만.** 렌즈 값의 `sqrt`(`H = 100·√(pct×pct)`)는 유리수로 닫히지 않는다. 렌즈 **순위**는 √가 단조이므로 `pct × pct`의 정확 비교로 내고, √는 **표시할 값에만** `BigDecimal.sqrt(MathContext(34, HALF_EVEN))`으로 계산한다.
+- **파생은 전정밀에서, 반올림은 마지막에 한 번.** composite(§3.6 = `0.5·H + 0.3·Dx + 0.2·F`)는 √를 산술 입력으로 쓰므로 위의 "√는 표시값에만"이 닿지 않는다 — **34자리 렌즈 값으로 가중합한 뒤 한 번만 반올림**한다. 표시값으로 더하면 갈린다: 예컨대 H = 95.4934…, Dx = 79.0443…이면 전정밀 경로는 71.4600 → **71.5**, 표시값(95.5·79.0) 경로는 71.45 → **71.4**. composite **순위**도 √의 가중합이라 `pct × pct` 정확 비교가 통하지 않으므로 34자리 값으로 비교한다 — 정확값은 아니지만 MathContext가 고정이라 재현된다. `contract/lens/`는 두 경로가 갈리는 경계 케이스를 반드시 포함한다.
+- **직렬화**: 렌즈 값·composite 소수 1자리, 백분위 4자리, 둘 다 HALF_EVEN. 같은 입력이면 어느 머신에서도 같은 바이트가 나온다.
+- **측정·순위 경로에서 `double`·`float` 금지.** 자체 ArchUnit 규칙으로 강제하고 `contract/reproducibility/`가 회귀를 잡는다.
 
 ### 2.6 CPD 집계 계약
 - 스캔당 1회, main 소스, `minimumTokens=100`, identifier·literal 무시.
@@ -319,22 +353,23 @@ Claude Code 첫 세션(P0 프롬프트)이 `prd.md`를 읽고 **본문 안에서
 - **`environment`**: 분석 도구 버전(pmd·archunit·jgit·git). major.minor.patch.
 
 ### 2.9 적합성 스위트
-`contract/<계약>/<케이스>/` = 합성 리포(트리 + 스크립트 생성 git 이력) + `expected.json`. 모든 예시 JSON은 이 스위트의 픽스처이며 CI가 measures로부터 재계산해 대조한다(손으로 쓴 숫자 금지).
+`contract/<계약>/<케이스>/` = 입력 + `expected.json`. 입력의 모양은 계약이 무엇을 먹는가에 따른다 — **git 이력이 입력인 계약**(`history/`·`ledger/`·`gate/`)은 합성 리포(트리 + 스크립트 생성 이력), **순수 수치·구조 계약**(`percentile/`·`cpd/`·`graph/`·`schema/`)은 `input.json` 하나로 전제가 완결된다. `reproducibility/`는 중간이다 — `analysis_input_id`의 입력에 창 안 커밋 SHA 목록과 `window_anchor`가 들어가므로(§2.8) 최소 트리와 이력이 필요하고, 합성 리포 쪽에 둔다. 모든 예시 JSON은 이 스위트의 픽스처이며 CI가 입력으로부터 재계산해 대조한다(손으로 쓴 숫자 금지). **스키마 픽스처는 긍정 케이스만으로 통과시키지 않는다** — 계약마다 거부되어야 할 변조 입력 ≥ 1.
 | 디렉터리 | 케이스(최소) | 게이트 |
 |---|---|---|
-| `percentile/` | 동점, N=1, N<20, 언어 분리, 0 팽창, **렌즈 백분위(H/Dx/F 각 모집단, 0 포함)**, **P90 type-7 예시(18.1)**, **IQR=0 → low** | G0 |
+| `percentile/` | 동점, N=1, N<20, 언어 분리, 0 팽창, **렌즈 백분위(H/Dx/F 각 모집단, 0 포함)**, **P90 type-7 예시(18.1)**, **IQR=0 → low**, `median`·`IQR`도 type-7, `n_ranked ≠ n_population` | G0 |
+| `schema/` | 산출물 스키마 7종(report·change·gate·validate·campaign·event·fixture_change)마다 **긍정 1 + 거부되어야 할 변조 ≥ 1**. 변조는 구조 오류만이 아니라 **하드룰**을 겨눈다 — 사건에 정체 필드(D48), 원장 사건에 코드 상태(D55), `change` 항목에 판정 단어·점수(B.2), `validated`인데 `validated_tree_id` 없음(D89) | G0 |
 | `reproducibility/` | 같은 트리·다른 PMD 버전 → `analysis_input_id` 다름·`repository_state_id` 같음; 파라미터 하나 변경 → id 변경; `reproduce`에 없는 환경 변수를 바꿔도 결과 불변(원칙 검사); 두 머신 바이트 동일 | G0 |
 | `cpd/` | 겹침 합집합(150), 무순서 쌍, 자기 중복, 임계 경계, **같은 열 4발생 = 클러스터 1개** | G0 |
 | `history/` | 앵커 고정(같은 HEAD 다른 날짜), 머지 제외, rename(tie-break·`rename_ambiguous`), 상한 두 종류, coarse, **shallow clone → `age_unknown`**, 음수 나이 → `invalid_metadata`, **`scan`·`change` 경로에서 blame 호출 시 실패** | G0 |
 | `graph/` | 외부 의사 노드, auto 전략 4종, 순환, NCCD 검산 | G0 |
-| `lens/` | H/Dx/F 각 모집단, composite null, confidence 최소 집계, tie-break, **F null(나이 미상)** | G1 |
+| `lens/` | H/Dx/F 각 모집단, composite null, confidence 최소 집계, tie-break, **F null(나이 미상)**, **composite 전정밀 vs 표시값 경로가 갈리는 경계 케이스**, §7 `sample-service`(랭크 배정이 입력) | G1 |
 | `gate/` | BASE 자격 고정, 모집단 드리프트 무영향, **발생 수준 새 중복(A↔B→A↔C는 잡고, B→C rename은 무시)** | G1 |
 | `validation/` | 합격 함수(**`target_pairs` 전부**), BLOCK/WARN/INFO, relocation 증거, `structural` 위반 8종, **`validated_tree_id` 기록·`validation_scope` pre/post**, **실행 가능 라인 0 변경 → 커버리지 `not_applicable`**, **`merged_without_effect` 사유 4종 각 1건**(`validator_mismatch` — 검증 트리 재스캔에서 선언 범위 open / `partially_resolved` — 선언 부분집합만 해소 / `merge_drift` — 머지 트리 ≠ 검증 트리 / `superseded` — 다른 커밋이 먼저 해소) + 해소 뒤 재악화 → `regressed` | G3 |
 | `security/` | P9 벡터 | G3 |
 | `ledger/` | 앵커 등록·`anchor_class` 얼림; **후속 판정 6종**(same/moved/split/merged/removed/unknown — A→B 이동+분할+C 예제 포함, 후속 집합에 합격 함수); **전이 모델 전 조합**(전이 종류 × 전이 커밋의 사건); **오귀속 5종 실패 사례**: ① 효과 없는 claim 머지 뒤 무관 PR이 해소 → `closed_unclaimed` + claim은 `merged_without_effect`, ② 먼저 해소한 무관 PR 뒤 오래된 claim 머지 → `superseded`, ③ 검증 실패 claim 머지 뒤 무관 PR이 해소 → `closed_unclaimed`(`closed_unverified` 아님), ④ claim 없이 해소 뒤 회귀 → `regressed`, ⑤ `target_pairs` 부분 선언 해소 → `partially_resolved`(`validator_mismatch` 아님); **인터페이스 추출로 재작성된 분할 → 시그니처 계보로 `split`**; **순환 finding의 과거 커밋 전이 → `transition_basis: source_imports` 표기**; "validated 뒤 머지 전 다른 PR 먼저 머지", "validated 머지 후 재악화 → regressed", "validated 머지 후 여전히 open → merged_without_effect + 사유"; **scope 탈출 → `relocated_out_of_scope`**, **split 혼합(≥50% 밖 / 미만)**, scope 목표와 전역 가드레일; **reanchor → `supersedes` 계보, 옛 캠페인 불변**; 같은 finding 중복 claim; **(campaign, finding, pr) 멱등 재시도 → 파일 1개**; **툴체인 변경 시 앵커 재스캔 + 저장된 `anchor_class` 불변**; `--live`의 `stale_claim`; **재구성 결정성**(같은 커밋 → 바이트 동일 뷰, 아카이브 후 `--at` = 아카이브 전); `first_observed_estimate` 3방법; **매 스캔·매 change 경로에서 `.jqradar/` 쓰기 시 실패**(blame 호출 검사는 `history/`로) | G2b |
 | `renderer/` | HTML에서 추출한 모든 숫자가 JSON에 존재(순수 함수), 판정 어휘 사전 검사(bad/poor/나쁨/위험/불량 …) 통과, aspect 토글 상태가 URL 해시에서 복원, 네트워크 요청 0건(자립형), 파일 5,000개 픽스처 렌더 시간 | G2 |
 
-**`expected.json` 변경 규칙**: 기대값을 바꾸는 커밋은 `fixture_change {reason ∈ {library_behavior_change, contract_change, bug_fix}, library?, old?, new?, measure, note}`를 반드시 동반한다. 원인 분류 없이는 머지 불가 — 회귀 테스트가 "새 정답을 손으로 승인하는 테스트"로 변질되는 것을 막는 장치(P11).
+**`expected.json` 변경 규칙**: 기대값을 바꾸는 커밋은 `fixture_change {reason ∈ {library_behavior_change, contract_change, bug_fix}, library?, old?, new?, measure, note}`를 반드시 동반한다. 원인 분류 없이는 머지 불가 — 회귀 테스트가 "새 정답을 손으로 승인하는 테스트"로 변질되는 것을 막는 장치(P11). 이 레코드는 G0 체크리스트 #6의 CI 규칙이 검사하는 대상이므로 **스키마가 있어야 한다**(`fixture_change.schema.json`, G0). 원장 뷰 한 행의 스키마는 G2b.
 ---
 
 ## 3. 렌즈 — 지도(`scan`)
@@ -366,7 +401,7 @@ Tornhill 핫스팟에서 복잡도 프록시를 파일 CYCLO 합으로 바꾼 �
 - `priority` = 렌즈 값. 정렬 tie-break: `priority desc, path asc, id asc`.
 - `interpretation`: **`lens_percentiles.<lens>`**(§2.5 렌즈 백분위) `≥ 0.90` → `investigate_first`, `≥ 0.75` → `investigate`, 그 외 `context`. 렌즈 값이 null이면 null. 백분위 임계이며 개수 자르기가 아니다.
 - `confidence`(성분별): `low` ⇔ N < 50 **또는 IQR = 0** **또는** (중앙값 > 0 ∧ IQR < 0.25·중앙값) **또는** (`coarse` ∧ 성분이 `chg_commits`); `high` ⇔ N ≥ 200 ∧ 위 조건 없음; 그 외 `medium`. **렌즈 confidence = 기여 성분의 최소.** 기여 성분은 렌즈 식의 백분위 성분이다 — H: `cx`·`chg_commits`, Dx: `union_dup_tokens`·`active_twin_ratio`, F: `cx`·`fan_in`(나이 조건은 지시변수라 성분이 아니다). (`IQR = 0`을 따로 두는 이유: median = 0이면 `IQR < 0.25·median`은 0 < 0이 되어 완전 무분산을 놓친다.)
-- `evidence`: 성분마다 `{measure, value, pct, population, n}` + 렌즈 `lens_pct`.
+- `evidence`: 성분마다 `{measure, value, pct, population, n_ranked}` + 렌즈 `lens_pct`.
 ---
 
 ## 4. 시스템 구조
@@ -437,17 +472,19 @@ MCP propose → apply(브랜치) ──► sandbox.validate ──► validate.j
 두 방향(A.1): **보호**는 `jqradar change --base <ref>` — 이 변경이 merge-base 대비 무엇을 바꿨나. **개선**은 부채 원장 — 조직이 앵커를 찍은 캠페인에서 부채가 실제로 줄고 있나(§5.4–5.7). `check`는 둘 위에 조직 정책을 얹는 소비자다. `scan`·`change`·`ledger`는 무설정(`jqradar.yml`의 `people` 절만 예외 — §4.3), `check` 프로필·캠페인 정의·`people` 절만 조직이 적는다(B.6).
 
 ### 5.1 `change.json` — A.1의 질문 그대로
-| 질문 | 계산 |
-|---|---|
-| 복잡도가 얼마나 늘었나 | 변경 파일별 `cx` 원값 델타, 리포 총 `cx` 델타, 변경 파일의 최대 메서드 CYCLO 델타 |
-| 변경이 어디에 집중되나 | 변경 파일 ∩ BASE H top-decile(자격 고정), 변경 파일의 컴포넌트 분포, BASE Dx·F 상위 파일과의 겹침 |
-| 중복이 새로 생겼나 | `new_duplication`(발생 수준, rename 매핑 — §5.2) |
-| 의존성이 어느 방향으로 확장됐나 | 컴포넌트 간선 집합 델타(추가·삭제 간선), 새 SCC, `external` 간선 수 변화 |
-| 과거 취약 영역이 더 취약해졐나 | BASE Dx·F 상위 파일 중 변경된 것의 `union_dup_tokens`·`fan_in` 델타 |
-| 리팩터링이 위험을 줄였나 | 수정 브랜치라면 `validate.json` 연결 |
-| 이 변경이 닿은 기존 부채 | 변경 파일 안의 원장 finding과 각각의 델타·상태 전이 예고(§5.7) |
-| 이 변경에 도구 관여가 선언됐나 | `declared_ai_assistance ∈ {true, false, unknown}` — 커밋 트레일러에서 선언된 것만, 추론 없음. 렌즈·원장·점수에 안 들어가며 사람 단위로 안 나온다. 조직이 `check`에서 정책(예: 선언된 AI 관여 변경에 post-merge 검증 요구)을 적을 수 있게, 그리고 A.3을 배터리에서 검증할 수 있게(P17). 선언이라 하한선이고 생략으로 우회 가능함을 표기 |
-각 항목은 `{value_base, value_head, delta, evidence[]}`를 갖고 **판정 단어는 없다** — 판정은 `check`(정책)와 사람이 한다. A.4의 설명 문장("이 변경으로 … 증가했고, … 겹치며, … 두 위치에도 존재한다")은 렌더러가 이 구조에서 조립한다. 앵커는 각 스냅샷의 HEAD 시각이며 델타 조건은 시간 무관(§2.7).
+최상위는 셋이다 — 모양이 다르기 때문이다: **`items`**(델타 항목 여섯, 키 고정), **`touched_legacy_findings[]`**(§5.7의 레코드 배열), **`declared_ai_assistance`**(이 변경의 속성, 델타가 아니다).
+
+**`items` — 여섯 키로 닫힌다**(`check` 규칙과 렌더러 B1–B5가 이 이름을 참조하므로 이름 없는 항목은 계약이 아니다)
+| 키 | 질문 | 계산 |
+|---|---|---|
+| `complexity_delta` | 복잡도가 얼마나 늘었나 | 변경 파일별 `cx` 원값 델타, 리포 총 `cx` 델타, 변경 파일의 최대 메서드 CYCLO 델타 |
+| `change_concentration` | 변경이 어디에 집중되나 | 변경 파일 ∩ BASE H top-decile(자격 고정), 변경 파일의 컴포넌트 분포, BASE Dx·F 상위 파일과의 겹침 |
+| `new_duplication` | 중복이 새로 생겼나 | 발생 수준, rename 매핑 — §5.2 |
+| `dependency_direction` | 의존성이 어느 방향으로 확장됐나 | 컴포넌트 간선 집합 델타(추가·삭제 간선), 새 SCC, `external` 간선 수 변화 |
+| `fragile_area_exposure` | 과거 취약 영역이 더 취약해졌나 | BASE Dx·F 상위 파일 중 변경된 것의 `union_dup_tokens`·`fan_in` 델타 |
+| `remediation_effect` | 리팩터링이 위험을 줄였나 | 수정 브랜치라면 `validate.json` 연결 |
+**`declared_ai_assistance ∈ {true, false, unknown}`** — 이 변경에 도구 관여가 선언됐나. — 커밋 트레일러에서 선언된 것만, 추론 없음. 렌즈·원장·점수에 안 들어가며 사람 단위로 안 나온다. 조직이 `check`에서 정책(예: 선언된 AI 관여 변경에 post-merge 검증 요구)을 적을 수 있게, 그리고 A.3을 배터리에서 검증할 수 있게(P17). 선언이라 하한선이고 생략으로 우회 가능함을 표기 |
+`items`의 각 항목은 `{value_base, value_head, delta, evidence[]}`를 갖고 **판정 단어는 없다** — 판정은 `check`(정책)와 사람이 한다. A.4의 설명 문장("이 변경으로 … 증가했고, … 겹치며, … 두 위치에도 존재한다")은 렌더러가 이 구조에서 조립한다. 앵커는 각 스냅샷의 HEAD 시각이며 델타 조건은 시간 무관(§2.7).
 
 ### 5.2 새 중복의 정체성
 클러스터 해시만으로는 부족하다: `BASE: A↔B`, `HEAD: A↔C`는 같은 클러스터 해시라 "기존"으로 보여 새 사본 C를 놓친다. **발생 수준**으로 정의한다:
@@ -607,7 +644,7 @@ exit 0/1/2. `jqradar.yml` 선택, `check`만. 정책 이름·해시·출처를 `
 - `debt_age = HEAD_TIME − coalesce(first_observed_estimate.value, first_seen)`.
 
 ### 5.7 변경 리포트와 원장의 연결
-`change.json`에 **`touched_legacy_findings[]`**: 변경 파일 안의 캠페인 finding(파생) 각각에 대해 `{id, anchor_class, status_before, delta, status_after_if_merged, claimed_by_this_pr}`. "이 PR은 부채 3개를 건드렸고 1개 개선, 2개 그대로." 브라운필드에서 가장 센 문장이다 — **당신이 만지는 곳의 부채부터 줄인다.** 판정 단어는 없다.
+`change.json`에 **`touched_legacy_findings[]`**: 변경 파일 안의 캠페인 finding(파생) 각각에 대해 `{id, anchor_class, status_before, delta, status_after_if_merged, claimed_by_this_pr}` — `claimed_by_this_pr`은 **필수**다(이 PR이 그 finding의 사건 파일을 실었는가는 파생 가능한 사실이고, 선택으로 두면 전이 귀속(§5.5)과 어긋난다). "이 PR은 부채 3개를 건드렸고 1개 개선, 2개 그대로." 브라운필드에서 가장 센 문장이다 — **당신이 만지는 곳의 부채부터 줄인다.** 판정 단어는 없다.
 ---
 
 ## 6. 수정 워크플로
@@ -685,7 +722,9 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
 
 ## 7. 통합 JSON 스키마 — 이 예시는 `contract/lens/sample-service/expected.json` 픽스처이며 CI가 재계산 검증한다
 
-재계산 검증 대상: `H = 100·√(0.97·0.94) = 95.5`, `Dx = 100·√(0.88·0.71) = 79.0`, `composite = 0.5·95.49 + 0.3·79.04 + 0.2·0 = 71.5`, `NCCD = 512/185.48 = 2.76`, `F(OrderPolicy) = 100·√(0.95·0.98) = 96.5`, confidence 집계, 그리고 **`lens_percentiles`**(합성 리포 전체에서 렌즈 값의 백분위 — 파일 하나의 measures로는 재계산되지 않으며 리포 전체 픽스처가 결정한다).
+**픽스처 입력은 랭크 배정이다.** 백분위는 측정값 하나로 나오지 않으므로 `contract/lens/sample-service/input.json`이 각 성분·렌즈의 `(rank_avg, n_ranked)`를 정하고, 아래 값은 전부 거기서 계산된다 — 손으로 고른 pct가 아니다(B.4·D26). 이 예시의 배정: `cx` 189/194 · `chg_commits` 199/212 · `union_dup_tokens` 33/37 · `active_twin_ratio` 26.5/37(동점) · `cx(OrderPolicy)` 296/312 · `fan_in` 333/340 · 렌즈 `H` 197/212 · `Dx` 30/37 · `F(OrderService)` 150.5/338(0 동점군) · `F(OrderPolicy)` 335/338.
+
+재계산 검증 대상: `pct = (rank_avg−1)/(n_ranked−1)` 정확 유리수 → 4자리 표시(`cx` 188/193 = 0.9741 …), `H = 100·√(188/193 · 198/211) = 95.6`, `Dx = 100·√(32/36 · 25.5/36) = 79.3`, `F(OrderPolicy) = 100·√(295/311 · 332/339) = 96.4`, `composite = 0.5·95.60742… + 0.3·79.34920… + 0.2·0 = 71.6`(전정밀 가중합 뒤 1회 반올림 — §2.5), `NCCD = 512/185.48 = 2.76`, confidence 집계.
 
 ```jsonc
 {
@@ -728,23 +767,24 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
                     "chg_commits": 18, "chg_days": 14, "churn": 2210,
                     "union_dup_tokens": 240, "dup_extent": 0.046, "self_dup_tokens": 0, "twins": 2, "active_twins": 1, "active_twin_ratio": 0.5,
                     "fan_in": 24, "age_last_days": 6 },
-      "percentiles": { "cx": 0.97, "chg_commits": 0.94, "union_dup_tokens": 0.88, "active_twin_ratio": 0.71 },
-      "percentile_population": { "cx": {"population":"active","lang":"java","n":194}, "chg_commits": {"population":"active","n":212},
-                                 "union_dup_tokens": {"population":"dx","n":37}, "active_twin_ratio": {"population":"dx","n":37} },
-      "lenses": { "H": 95.5, "Dx": 79.0, "F": 0.0, "composite": 71.5, "composite_note": null },
-      "lens_percentiles": { "H": {"pct": 0.93, "population": "active", "n": 212}, "Dx": {"pct": 0.81, "population": "dx", "n": 37}, "F": {"pct": 0.45, "population": "all", "n": 340} },
+      "percentiles": { "cx": 0.9741, "chg_commits": 0.9384, "union_dup_tokens": 0.8889, "active_twin_ratio": 0.7083 },
+      "percentile_population": { "cx": {"population":"active","lang":"java","n_ranked":194}, "chg_commits": {"population":"active","n_ranked":212},
+                                 "union_dup_tokens": {"population":"dx","n_ranked":37}, "active_twin_ratio": {"population":"dx","n_ranked":37} },
+      "lenses": { "H": 95.6, "Dx": 79.3, "F": 0.0, "composite": 71.6, "composite_note": null },
+      "lens_percentiles": { "H": {"pct": 0.9289, "population": "active", "n_ranked": 212}, "Dx": {"pct": 0.8056, "population": "dx", "n_ranked": 37},
+                            "F": {"pct": 0.4436, "population": "all", "n_ranked": 338, "n_population": 340} },  // 나이 미상 2건은 F = null이라 랭킹에서 빠진다
       "arch_context": { "I": 0.38, "A": 0.0, "D": 0.62, "zone": "stable-concrete", "cycle_id": "cyc-1" } },
     { "id": "f:order-policy", "path": "src/main/java/…/order/OrderPolicy.java", "component": "….order", "lang": "java",
       "measures": { "cx": 80, "cx_method": "cyclo", "loc": 410, "file_tokens": 3300, "smells": {"p1":0,"p2":1,"p3":4,"total":5},
                     "chg_commits": 0, "chg_days": 0, "churn": 0,
                     "union_dup_tokens": 0, "dup_extent": 0.0, "self_dup_tokens": 0, "twins": 0, "active_twins": 0, "active_twin_ratio": null,
                     "fan_in": 35, "age_last_days": 1250 },
-      "percentiles": { "cx": 0.95, "fan_in": 0.98, "chg_commits": null, "union_dup_tokens": null, "active_twin_ratio": null },
-      "percentile_population": { "cx": {"population":"all","lang":"java","n":312}, "fan_in": {"population":"all","n":340},
-                                 "chg_commits": {"population":"active","n":212,"reason":"not_in_active"},
-                                 "union_dup_tokens": {"population":"dx","n":37,"reason":"no_twins"}, "active_twin_ratio": {"population":"dx","n":37,"reason":"no_twins"} },
-      "lenses": { "H": null, "Dx": null, "F": 96.5, "composite": null, "composite_note": "H,Dx null — not in active/dx population" },
-      "lens_percentiles": { "H": null, "Dx": null, "F": {"pct": 0.99, "population": "all", "n": 340} },
+      "percentiles": { "cx": 0.9486, "fan_in": 0.9794, "chg_commits": null, "union_dup_tokens": null, "active_twin_ratio": null },
+      "percentile_population": { "cx": {"population":"all","lang":"java","n_ranked":312}, "fan_in": {"population":"all","n_ranked":340},
+                                 "chg_commits": {"population":"active","n_ranked":212,"reason":"not_in_active"},
+                                 "union_dup_tokens": {"population":"dx","n_ranked":37,"reason":"no_twins"}, "active_twin_ratio": {"population":"dx","n_ranked":37,"reason":"no_twins"} },
+      "lenses": { "H": null, "Dx": null, "F": 96.4, "composite": null, "composite_note": "H,Dx null — not in active/dx population" },
+      "lens_percentiles": { "H": null, "Dx": null, "F": {"pct": 0.9911, "population": "all", "n_ranked": 338, "n_population": 340} },
       "arch_context": { "I": 0.38, "A": 0.0, "D": 0.62, "zone": "stable-concrete", "cycle_id": "cyc-1" } }
   ],
   "duplicate_clusters": [ { "id": "dup:<token_hash>:120", "tokens": 120,
@@ -754,16 +794,16 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
   "duplication_pairs": [ { "a": "…/OldOrderService.java", "b": "…/OrderService.java", "pair_dup_tokens": 240 } ],
   "hidden_couplings": [ { "a": "…/OrderService.java", "b": "…/InvoiceMapper.java", "shared": 9, "tc": 0.75, "static_dependency": false } ],
   "findings": [
-    { "id": "fnd:h-order-service", "kind": "hotspot", "lens": "H", "file": "f:order-service", "priority": 95.5, "lens_pct": 0.93,
+    { "id": "fnd:h-order-service", "kind": "hotspot", "lens": "H", "file": "f:order-service", "priority": 95.6, "lens_pct": 0.9289,
       "interpretation": "investigate_first", "confidence": "medium",              // cx n=194 → medium, chg n=212 → high, min = medium
-      "evidence": [ {"measure":"cx","value":87,"pct":0.97,"population":"active","n":194}, {"measure":"chg_commits","value":18,"pct":0.94,"population":"active","n":212} ] },
-    { "id": "fnd:dx-order-service", "kind": "duplication_exposure", "lens": "Dx", "file": "f:order-service", "priority": 79.0, "lens_pct": 0.81,
+      "evidence": [ {"measure":"cx","value":87,"pct":0.9741,"population":"active","n_ranked":194}, {"measure":"chg_commits","value":18,"pct":0.9384,"population":"active","n_ranked":212} ] },
+    { "id": "fnd:dx-order-service", "kind": "duplication_exposure", "lens": "Dx", "file": "f:order-service", "priority": 79.3, "lens_pct": 0.8056,
       "interpretation": "investigate", "confidence": "low",                      // dx n=37 < 50
-      "evidence": [ {"ref":"dup:<token_hash>:120"}, {"measure":"union_dup_tokens","value":240,"pct":0.88,"population":"dx","n":37},
-                    {"measure":"active_twin_ratio","value":0.5,"pct":0.71,"population":"dx","n":37} ] },
-    { "id": "fnd:f-order-policy", "kind": "frozen_core", "lens": "F", "file": "f:order-policy", "priority": 96.5, "lens_pct": 0.99,
+      "evidence": [ {"ref":"dup:<token_hash>:120"}, {"measure":"union_dup_tokens","value":240,"pct":0.8889,"population":"dx","n_ranked":37},
+                    {"measure":"active_twin_ratio","value":0.5,"pct":0.7083,"population":"dx","n_ranked":37} ] },
+    { "id": "fnd:f-order-policy", "kind": "frozen_core", "lens": "F", "file": "f:order-policy", "priority": 96.4, "lens_pct": 0.9911,
       "interpretation": "investigate_first", "confidence": "high",              // all n=312/340 ≥ 200, 조건 없음
-      "evidence": [ {"measure":"cx","value":80,"pct":0.95,"population":"all","n":312}, {"measure":"fan_in","value":35,"pct":0.98,"population":"all","n":340},
+      "evidence": [ {"measure":"cx","value":80,"pct":0.9486,"population":"all","n_ranked":312}, {"measure":"fan_in","value":35,"pct":0.9794,"population":"all","n_ranked":340},
                     {"measure":"age_last_days","value":1250,"p90_all":900,"min_days":180} ] },
     { "id": "fnd:cyc-1", "kind": "component_cycle", "component": "….order", "cycle": "cyc-1", "confidence": "high" }
   ]
@@ -828,7 +868,7 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
 ```jsonc
 { "id": "fnd:dx:dup:3f9a…:120@…/OrderService.java", "kind": "duplication_exposure", "campaign": "debt-2026Q4",
   "origin": "baseline", "anchor_class": "high",
-  "anchor_values": {"Dx": 79.0, "union_dup_tokens": 240, "lens_pct": 0.81}, "current_values": {"union_dup_tokens": 0},
+  "anchor_values": {"Dx": 79.3, "union_dup_tokens": 240, "lens_pct": 0.8056}, "current_values": {"union_dup_tokens": 0},
   "first_seen": "2026-10-05T09:00:00Z", "first_observed_estimate": {"value": "2024-03-11T14:02:51Z", "method": "pickaxe", "confidence": "medium"},
   "succession": {"kind": "same"}, "current_priority": {"Dx": null, "interpretation": null, "note": "중복 해소로 dx 모집단 이탈"},
   "debt_age_days": 953, "change_exposure_90d": 7,
@@ -1142,6 +1182,21 @@ CodeScene 조사(2026-09)에서 가져온 것과 이유를 항목마다 적는�
 - D111 `analysis_input_id`에 들어가는 모든 입력은 `reproduce`에 값 또는 해시로 나타난다(커밋 목록은 `commit_list_sha256`). `contract/reproducibility/`가 "reproduce만으로 id 재계산"을 검사한다.
 - D112 캠페인 앵커 필드의 정본은 `{tag, sha, repository_state_id, analysis_input_id_at_creation, window_anchor}`.
 - D113 blame 금지 픽스처는 `contract/history/`(G0) — 강제 장치는 대상 코드보다 앞선다.
+
+**v3.7.6 결정 — 산술과 이름**
+- D114 type-7은 모든 분위에 대한 단일 선언(`median`·`IQR` 포함). `reproduce.percentile_method.quantile` 하나가 지배한다.
+- D115 산술 두 층: 순위·분위·임계 비교는 **정확 유리수**, √는 표시값에만 `BigDecimal MathContext(34, HALF_EVEN)`, 직렬화는 렌즈 1자리·백분위 4자리 HALF_EVEN. 측정·순위 경로에서 `double`·`float` 금지(자체 ArchUnit 규칙).
+- D116 백분위의 `n`은 공식의 분모(랭킹 집합). 렌즈는 `n_ranked` 필수, 모집단과 다르면 `n_population` 병기.
+- D117 `change.json` 항목 키는 여덟으로 닫는다. `touched_legacy_findings[].claimed_by_this_pr`은 필수.
+- D118 픽스처 입력 모양은 계약별(git 이력이 입력인 계약만 합성 리포). 스키마 계약은 변조 입력 거부 케이스를 반드시 포함한다.
+- D119 `fixture_change.schema.json`은 G0 산출물. "contract 부분집합"이라는 개념은 jQRadar에 없다.
+
+**v3.7.7 결정 — 본문 정합과 composite 산술**
+- D120 ~~D117의 "여덟 키"~~ → `change.json` 최상위는 셋: `items`(여섯 델타 항목, 키 고정) · `touched_legacy_findings[]` · `declared_ai_assistance`. 모양이 다른 것을 같은 어휘에 묶지 않는다.
+- D121 파생은 전정밀에서, 반올림은 마지막에 한 번. composite는 34자리 렌즈 값으로 가중합하고 순위도 그 값으로 비교한다. `contract/lens/`에 두 경로가 갈리는 경계 케이스 필수.
+- D122 백분위의 분모 이름은 성분·렌즈 공통 `n_ranked`, 모집단과 다르면 `n_population` 병기.
+- D123 §7 예시의 백분위는 `contract/lens/sample-service/input.json`의 **랭크 배정**에서 계산된다. 예시에 랭크를 적는다 — pct를 고르는 것이 아니라 랭크를 고른다.
+- D124 `contract/schema/`(G0)는 스키마 7종마다 긍정 1 + 하드룰을 겨눈 변조 ≥ 1. `reproducibility/`는 합성 리포 계약.
 
 **열어둔 것**
 - O3 WARN→FAIL 승격 — 조직 결정.
