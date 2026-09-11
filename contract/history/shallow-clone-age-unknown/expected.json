@@ -58,7 +58,14 @@
       ],
       "age_last_days": null,
       "age_reason": "age_unknown",
-      "age_basis": "shallow_boundary_commit"
+      "age_basis": "shallow_boundary_commit",
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
     },
     "src/New.java": {
       "chg_commits": 2,
@@ -68,9 +75,32 @@
         "9942c3432",
         "6c310081f"
       ],
-      "age_last_days": 0
+      "age_last_days": 0,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
     }
   },
+  "pairs": [
+    {
+      "a": "src/New.java",
+      "b": "src/Old.java",
+      "shared": 1,
+      "chg_commits_a": 2,
+      "chg_commits_b": 1,
+      "denominator": 1,
+      "tc": 1,
+      "reported": false,
+      "static_dependency": null,
+      "hidden_coupling": false,
+      "commit_granularity": "fine"
+    }
+  ],
+  "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
   "non_terminating": {},
   "_fixture": {
     "generated_by": "contract/history/compute.py",

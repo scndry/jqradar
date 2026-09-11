@@ -1,0 +1,156 @@
+{
+  "case": "identity-absent-when-attribution-off",
+  "contract_refs": [
+    "§2.1",
+    "§2.7",
+    "D48",
+    "D108",
+    "D131",
+    "D135"
+  ],
+  "what_this_pins": "`people.attribution=off`에서 저자 정체가 **산출물에 없다**(§2.7). 이것은 값을 대조하는 것이 아니라 **부재**를 보는 검사이므로 `must_be_caught`와 `must_not_be_caught`를 함께 둔다(D131).\n\n**모양으로 가르지 않는다 — 출처로 가른다**(D135). 산출물에는 `sha256:`이 정당하게 가득하다: `repository_state_id`·`analysis_input_id`·`classes_id`·중복 클러스터의 토큰 해시. 저자 이메일의 sha256과 이것들은 **둘 다 64 hex라 문자열 모양으로 가를 방법이 없다.** 대신 합성 리포의 저자 식별자를 우리가 정했으므로 그 값들의 해시(sha256·sha1·md5 × 전체·접두 8·12·16자)를 미리 계산해 **그 특정 문자열이 산출물에 없음**을 본다. 무해한 해시를 무해하다고 증명할 필요 없이 유해한 해시의 부재를 증명하면 된다.\n\n접두도 보는 이유: 12자만 실어도 재식별에 충분하다. §2.7이 '해시도 저장하지 않는다(재식별 가능)'고 적은 자리다.\n\n금지 문자열 자체는 expected.json에 적지 않는다 — 적으면 그것이 정체의 사본이다. 개수와 판정만 기록한다.",
+  "check": "identity_absence",
+  "authors": {
+    "a": {
+      "name": "Author A",
+      "email": "a@example.invalid"
+    },
+    "b": {
+      "name": "Author B",
+      "email": "b@example.invalid"
+    },
+    "c": {
+      "name": "Author C",
+      "email": "c@example.invalid"
+    }
+  },
+  "must_be_caught": [
+    {
+      "name": "저자 이메일의 sha256을 measures에 심음",
+      "why": "가장 직접적인 위반. 필드 이름이 무엇이든(`author_id`) 값이 저자에서 왔으면 정체다",
+      "document": {
+        "schema": "jqradar/3",
+        "project": "fixture",
+        "reproduce": {
+          "repository_state_id": "sha256:a8f12a994e28d3db544e80c21fc54fe187cb9985ccb19435ac74a6b9add08071",
+          "analysis_input_id": "sha256:669479e7e87d9077d5c06855eeba55d3a763041a6bfc5c28026d406b49d9ed96",
+          "classes_id": "sha256:60690fe311536b8771723efe14880f71e8523e47571ed392d1b49b33717f5425"
+        },
+        "duplicate_clusters": [
+          {
+            "id": "dup:dbf1763ae7f74f4eeacf2add429c209c31fd527ce478d6b74bde6efcfebd7d4c:120",
+            "tokens": 120
+          }
+        ],
+        "files": [
+          {
+            "id": "f:a",
+            "path": "src/A.java",
+            "lang": "java",
+            "measures": {
+              "distinct_authors_90d": 3,
+              "ownership_max_share": 0.9,
+              "minor_contributor_share": 0,
+              "author_id": "2f761a0ba6fc6541787d69b3833f6979dadb036ef2c610f73e3ecb0ad843eb76"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "저자 이메일의 sha1 접두 12자",
+      "why": "**접두만으로도 재식별된다.** 전체 해시만 보면 이것이 빠져나간다 — §2.7이 '해시도 저장하지 않는다'고 적은 이유",
+      "document": {
+        "schema": "jqradar/3",
+        "project": "fixture",
+        "reproduce": {
+          "repository_state_id": "sha256:a8f12a994e28d3db544e80c21fc54fe187cb9985ccb19435ac74a6b9add08071",
+          "analysis_input_id": "sha256:669479e7e87d9077d5c06855eeba55d3a763041a6bfc5c28026d406b49d9ed96",
+          "classes_id": "sha256:60690fe311536b8771723efe14880f71e8523e47571ed392d1b49b33717f5425"
+        },
+        "duplicate_clusters": [
+          {
+            "id": "dup:dbf1763ae7f74f4eeacf2add429c209c31fd527ce478d6b74bde6efcfebd7d4c:120",
+            "tokens": 120
+          }
+        ],
+        "files": [
+          {
+            "id": "f:a",
+            "path": "src/A.java",
+            "lang": "java",
+            "measures": {
+              "distinct_authors_90d": 3,
+              "ownership_max_share": 0.9,
+              "minor_contributor_share": 0,
+              "contributor_key": "959fe1be7eb2"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "must_not_be_caught": [
+    {
+      "name": "정상 산출물 — repository_state_id·analysis_input_id·classes_id",
+      "why": "§2.8의 정체성 셋이다. 저자 해시와 **같은 64 hex 모양**이지만 출처가 트리·입력·클래스 바이트다. 모양으로 가르려 하면 이것이 오탐으로 걸린다",
+      "document": {
+        "schema": "jqradar/3",
+        "project": "fixture",
+        "reproduce": {
+          "repository_state_id": "sha256:a8f12a994e28d3db544e80c21fc54fe187cb9985ccb19435ac74a6b9add08071",
+          "analysis_input_id": "sha256:669479e7e87d9077d5c06855eeba55d3a763041a6bfc5c28026d406b49d9ed96",
+          "classes_id": "sha256:60690fe311536b8771723efe14880f71e8523e47571ed392d1b49b33717f5425"
+        },
+        "duplicate_clusters": [
+          {
+            "id": "dup:dbf1763ae7f74f4eeacf2add429c209c31fd527ce478d6b74bde6efcfebd7d4c:120",
+            "tokens": 120
+          }
+        ],
+        "files": [
+          {
+            "id": "f:a",
+            "path": "src/A.java",
+            "lang": "java",
+            "measures": {
+              "distinct_authors_90d": 3,
+              "ownership_max_share": 0.9,
+              "minor_contributor_share": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "중복 클러스터의 토큰 해시",
+      "why": "`dup:<정규화 토큰 해시>:<토큰 수>`(§2.6). 역시 64 hex이고 출처는 코드 토큰이다",
+      "document": {
+        "duplicate_clusters": [
+          {
+            "id": "dup:dbf1763ae7f74f4eeacf2add429c209c31fd527ce478d6b74bde6efcfebd7d4c:120",
+            "tokens": 120
+          }
+        ]
+      }
+    },
+    {
+      "name": "익명 집계만 담은 measures",
+      "why": "`distinct_authors_90d`·`ownership_max_share`·`minor_contributor_share`는 저자에서 **파생**되지만 정체가 아니라 개수·비중이다. 이것이 걸리면 계약이 요구하는 값을 낼 수 없다",
+      "document": {
+        "files": [
+          {
+            "id": "f:a",
+            "path": "src/A.java",
+            "lang": "java",
+            "measures": {
+              "distinct_authors_90d": 3,
+              "ownership_max_share": 0.9,
+              "minor_contributor_share": 0
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

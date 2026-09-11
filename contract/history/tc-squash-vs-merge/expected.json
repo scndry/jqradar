@@ -1,0 +1,412 @@
+{
+  "case": "tc-squash-vs-merge",
+  "contract_refs": [
+    "§2.4",
+    "§2.7",
+    "D134",
+    "O4"
+  ],
+  "what_this_pins": "**같은 작업을 두 이력으로 만들어 `tc`가 얼마와 얼마가 되는지를 값으로 고정한다.** '부풀린다'가 아니라 두 수다 — 판정은 도구가 하지 않고 `commit_granularity` 표기만 붙는다(§2.4).\n\n작업 단위 다섯이 각각 세 커밋이다: A만, B만, 둘 다. 비스쿼시에서는 A가 10커밋·B가 10커밋을 받고 함께 만진 커밋은 5개뿐이라 `tc = 5/10 = 1/2`이다. 스쿼시에서는 단위가 한 커밋으로 접혀 A·B가 각각 5커밋이고 그 5개가 모두 공유라 `tc = 5/5 = 1`이다. **분모가 작아진 만큼 `tc`가 올라간다** — 같은 작업인데 결합 신호가 두 배다.\n\n이것이 O4(스쿼시 리포 PR 그룹핑)와 P2가 보려는 축이고, 실물 확인은 배터리가 진다 — `docs/battery.md`의 실측이 commons-lang·netty·elasticsearch를 머지 0%, spring-framework를 30%, ghidra를 48%로 갈라 놓았다. 픽스처가 축을 합성으로 고정하고 배터리가 실물로 확인한다.",
+  "variants": {
+    "unsquashed": {
+      "window_anchor": {
+        "type": "head_committer_time",
+        "timestamp": "2026-04-05T02:00:00+00:00"
+      },
+      "head": "db2d463c3",
+      "window_applied": {
+        "months": 12,
+        "max_commits": 2000,
+        "bound_hit": "none",
+        "commits_in_window": 15,
+        "merge_commits_excluded": 0
+      },
+      "commits": [
+        {
+          "sha": "db2d463c3",
+          "at": "2026-04-05T02:00:00+00:00",
+          "subject": "u5: touch both",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "582f3e2cb",
+          "at": "2026-04-05T01:00:00+00:00",
+          "subject": "u5: touch B",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "f919dc54d",
+          "at": "2026-04-05T00:00:00+00:00",
+          "subject": "u5: touch A",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "c571b29c1",
+          "at": "2026-04-04T02:00:00+00:00",
+          "subject": "u4: touch both",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "47600680e",
+          "at": "2026-04-04T01:00:00+00:00",
+          "subject": "u4: touch B",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "4afd4a0cf",
+          "at": "2026-04-04T00:00:00+00:00",
+          "subject": "u4: touch A",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "cca4b2737",
+          "at": "2026-04-03T02:00:00+00:00",
+          "subject": "u3: touch both",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "6a8e66b04",
+          "at": "2026-04-03T01:00:00+00:00",
+          "subject": "u3: touch B",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "0e8d57942",
+          "at": "2026-04-03T00:00:00+00:00",
+          "subject": "u3: touch A",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "1ce879b7f",
+          "at": "2026-04-02T02:00:00+00:00",
+          "subject": "u2: touch both",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "e31848c7f",
+          "at": "2026-04-02T01:00:00+00:00",
+          "subject": "u2: touch B",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "95b16aee2",
+          "at": "2026-04-02T00:00:00+00:00",
+          "subject": "u2: touch A",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "d99c57861",
+          "at": "2026-04-01T02:00:00+00:00",
+          "subject": "u1: touch both",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "804d9a88f",
+          "at": "2026-04-01T01:00:00+00:00",
+          "subject": "u1: touch B",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "114c2accc",
+          "at": "2026-04-01T00:00:00+00:00",
+          "subject": "u1: touch A",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        }
+      ],
+      "median_files_per_commit": 1,
+      "commit_granularity": "fine",
+      "renames": [],
+      "files": {
+        "src/A.java": {
+          "chg_commits": 10,
+          "chg_days": 5,
+          "churn": 29,
+          "touched_by": [
+            "db2d463c3",
+            "f919dc54d",
+            "c571b29c1",
+            "4afd4a0cf",
+            "cca4b2737",
+            "0e8d57942",
+            "1ce879b7f",
+            "95b16aee2",
+            "d99c57861",
+            "114c2accc"
+          ],
+          "age_last_days": 0,
+          "distinct_authors_90d": 1,
+          "contributor_count": 1,
+          "ownership_max_share": 1,
+          "minor_contributor_share": 0,
+          "contribution_shares_sorted": [
+            1
+          ]
+        },
+        "src/B.java": {
+          "chg_commits": 10,
+          "chg_days": 5,
+          "churn": 29,
+          "touched_by": [
+            "db2d463c3",
+            "582f3e2cb",
+            "c571b29c1",
+            "47600680e",
+            "cca4b2737",
+            "6a8e66b04",
+            "1ce879b7f",
+            "e31848c7f",
+            "d99c57861",
+            "804d9a88f"
+          ],
+          "age_last_days": 0,
+          "distinct_authors_90d": 1,
+          "contributor_count": 1,
+          "ownership_max_share": 1,
+          "minor_contributor_share": 0,
+          "contribution_shares_sorted": [
+            1
+          ]
+        }
+      },
+      "pairs": [
+        {
+          "a": "src/A.java",
+          "b": "src/B.java",
+          "shared": 5,
+          "chg_commits_a": 10,
+          "chg_commits_b": 10,
+          "denominator": 10,
+          "tc": 0.5,
+          "reported": true,
+          "static_dependency": false,
+          "hidden_coupling": true,
+          "commit_granularity": "fine"
+        }
+      ],
+      "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다."
+    },
+    "squashed": {
+      "window_anchor": {
+        "type": "head_committer_time",
+        "timestamp": "2026-04-05T00:00:00+00:00"
+      },
+      "head": "fafa52fad",
+      "window_applied": {
+        "months": 12,
+        "max_commits": 2000,
+        "bound_hit": "none",
+        "commits_in_window": 5,
+        "merge_commits_excluded": 0
+      },
+      "commits": [
+        {
+          "sha": "fafa52fad",
+          "at": "2026-04-05T00:00:00+00:00",
+          "subject": "unit 5 (squashed)",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "d9365464b",
+          "at": "2026-04-04T00:00:00+00:00",
+          "subject": "unit 4 (squashed)",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "a522f8230",
+          "at": "2026-04-03T00:00:00+00:00",
+          "subject": "unit 3 (squashed)",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "7d6cd9821",
+          "at": "2026-04-02T00:00:00+00:00",
+          "subject": "unit 2 (squashed)",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "2edf6e826",
+          "at": "2026-04-01T00:00:00+00:00",
+          "subject": "unit 1 (squashed)",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        }
+      ],
+      "median_files_per_commit": 2,
+      "commit_granularity": "fine",
+      "renames": [],
+      "files": {
+        "src/A.java": {
+          "chg_commits": 5,
+          "chg_days": 5,
+          "churn": 18,
+          "touched_by": [
+            "fafa52fad",
+            "d9365464b",
+            "a522f8230",
+            "7d6cd9821",
+            "2edf6e826"
+          ],
+          "age_last_days": 0,
+          "distinct_authors_90d": 1,
+          "contributor_count": 1,
+          "ownership_max_share": 1,
+          "minor_contributor_share": 0,
+          "contribution_shares_sorted": [
+            1
+          ]
+        },
+        "src/B.java": {
+          "chg_commits": 5,
+          "chg_days": 5,
+          "churn": 18,
+          "touched_by": [
+            "fafa52fad",
+            "d9365464b",
+            "a522f8230",
+            "7d6cd9821",
+            "2edf6e826"
+          ],
+          "age_last_days": 0,
+          "distinct_authors_90d": 1,
+          "contributor_count": 1,
+          "ownership_max_share": 1,
+          "minor_contributor_share": 0,
+          "contribution_shares_sorted": [
+            1
+          ]
+        }
+      },
+      "pairs": [
+        {
+          "a": "src/A.java",
+          "b": "src/B.java",
+          "shared": 5,
+          "chg_commits_a": 5,
+          "chg_commits_b": 5,
+          "denominator": 5,
+          "tc": 1,
+          "reported": true,
+          "static_dependency": false,
+          "hidden_coupling": true,
+          "commit_granularity": "fine"
+        }
+      ],
+      "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다."
+    }
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

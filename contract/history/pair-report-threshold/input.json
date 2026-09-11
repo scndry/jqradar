@@ -1,0 +1,128 @@
+{
+  "case": "pair-report-threshold",
+  "contract_refs": [
+    "§2.4",
+    "§3.5",
+    "D134"
+  ],
+  "what_this_pins": "§2.4의 보고 기준 `shared ≥ 5 ∧ tc ≥ 0.5`을 **양쪽에서** 밟는다. 세 쌍이 경계를 다르게 지난다 — (A,B)는 `shared=5`·`tc=5/10=1/2`로 **둘 다 정확히 임계**라 보고되고, (C,D)는 `tc`는 1/2인데 `shared=4`로 미달, (E,F)는 `shared=5`인데 `tc=5/12`로 미달이다. '이상'을 '초과'로 읽으면 (A,B)가 사라지고, `tc`를 직렬화된 값으로 비교하면 5/12(≈0.4167)가 반올림에 따라 흔들린다 — 임계 비교는 반올림 전 정확값으로 한다(§2.5 산술 계약).\n\n`static_dependency`는 **명세가 준다.** 그래프는 이 계약의 입력이 아니다(§2.2의 일이다) — §2.4가 '정적 의존 없으면 숨은 결합'이라 말할 때 그 판정의 입력일 뿐이다. (A,B)는 정적 의존이 없어 `hidden_coupling`이고, (E,F)는 있지만 보고 기준에 미달해 목록에 오르지 않는다. §3.5가 '점수가 아니라 목록'이라 한 자리다 — 판정 단어는 없다.",
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-03-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "ab",
+        "at_seconds": 0,
+        "repeat": 5,
+        "step_seconds": 3600,
+        "message": "touch A.java+B.java",
+        "write": {
+          "src/A.java": "class X { int v{k}; }\n",
+          "src/B.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "a",
+        "at_seconds": 100000,
+        "repeat": 5,
+        "step_seconds": 3600,
+        "message": "touch A.java",
+        "write": {
+          "src/A.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "b",
+        "at_seconds": 200000,
+        "repeat": 5,
+        "step_seconds": 3600,
+        "message": "touch B.java",
+        "write": {
+          "src/B.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "cd",
+        "at_seconds": 300000,
+        "repeat": 4,
+        "step_seconds": 3600,
+        "message": "touch C.java+D.java",
+        "write": {
+          "src/C.java": "class X { int v{k}; }\n",
+          "src/D.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "c",
+        "at_seconds": 400000,
+        "repeat": 4,
+        "step_seconds": 3600,
+        "message": "touch C.java",
+        "write": {
+          "src/C.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "d",
+        "at_seconds": 500000,
+        "repeat": 4,
+        "step_seconds": 3600,
+        "message": "touch D.java",
+        "write": {
+          "src/D.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "ef",
+        "at_seconds": 600000,
+        "repeat": 5,
+        "step_seconds": 3600,
+        "message": "touch E.java+F.java",
+        "write": {
+          "src/E.java": "class X { int v{k}; }\n",
+          "src/F.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "e",
+        "at_seconds": 700000,
+        "repeat": 7,
+        "step_seconds": 3600,
+        "message": "touch E.java",
+        "write": {
+          "src/E.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "f",
+        "at_seconds": 800000,
+        "repeat": 7,
+        "step_seconds": 3600,
+        "message": "touch F.java",
+        "write": {
+          "src/F.java": "class X { int v{k}; }\n"
+        }
+      }
+    ]
+  },
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "static_dependency": {
+    "src/A.java|src/B.java": false,
+    "src/C.java|src/D.java": true,
+    "src/E.java|src/F.java": true
+  },
+  "measure_files": [
+    "src/A.java",
+    "src/B.java",
+    "src/C.java",
+    "src/D.java",
+    "src/E.java",
+    "src/F.java"
+  ]
+}

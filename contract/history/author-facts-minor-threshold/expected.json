@@ -1,0 +1,571 @@
+{
+  "case": "author-facts-minor-threshold",
+  "contract_refs": [
+    "§2.1",
+    "§2.7",
+    "D48",
+    "D135"
+  ],
+  "what_this_pins": "§2.1의 저자 사실 셋을 커밋별 저자가 다른 합성 리포에서 고정하고, **마이너 기여자 임계 `< 5%`의 경계를 양쪽에서 밟는다.** `Boundary20.java`는 20커밋(A 18·B 1·C 1)이라 B·C가 **정확히 5%**이고 '미만'이 아니므로 마이너가 아니다 — `minor_contributor_share = 0`. `Boundary21.java`는 21커밋(A 19·B 1·C 1)이라 1/21 ≈ 4.76%로 미만이고 둘이 마이너다 — `minor_contributor_share = 2/21`. '이하'로 읽으면 20커밋 쪽이 0.1이 되어 Bird 등의 마이너 기여자 신호가 부풀고, 비중 비교를 직렬화된 값으로 하면 1/21이 경계에서 흔들린다.\n\n`distinct_authors_90d`와 나머지 둘의 **창이 다르다**: §2.1이 앞은 '최근 90일'이라 하고 뒤 둘은 '(W 안)'을 명시한다. 계약이 구별하므로 계산기도 구별한다.\n\n**저자 정체는 expected.json에 없다.** 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다 — 익명 집계(개수·비중)만 기록된다(§2.7·D48·D135). 픽스처가 자기가 검사하는 규칙을 지키지 않으면 그 픽스처는 증거가 아니다.",
+  "shallow_depth": null,
+  "window_anchor": {
+    "type": "head_committer_time",
+    "timestamp": "2026-05-06T21:40:00+00:00"
+  },
+  "head": "fb9a630c4",
+  "window_applied": {
+    "months": 12,
+    "max_commits": 2000,
+    "bound_hit": "none",
+    "commits_in_window": 41,
+    "merge_commits_excluded": 0
+  },
+  "commits": [
+    {
+      "sha": "fb9a630c4",
+      "at": "2026-05-06T21:40:00+00:00",
+      "subject": "c -> Boundary21.java",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "7358af37b",
+      "at": "2026-05-06T18:53:20+00:00",
+      "subject": "b -> Boundary21.java",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "6b86b7258",
+      "at": "2026-05-05T05:20:00+00:00",
+      "subject": "a -> Boundary21.java #19",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "8744d8d2e",
+      "at": "2026-05-05T04:20:00+00:00",
+      "subject": "a -> Boundary21.java #18",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "d2b6b2b98",
+      "at": "2026-05-05T03:20:00+00:00",
+      "subject": "a -> Boundary21.java #17",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "76169b472",
+      "at": "2026-05-05T02:20:00+00:00",
+      "subject": "a -> Boundary21.java #16",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "ec41b9e0a",
+      "at": "2026-05-05T01:20:00+00:00",
+      "subject": "a -> Boundary21.java #15",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "585090d74",
+      "at": "2026-05-05T00:20:00+00:00",
+      "subject": "a -> Boundary21.java #14",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "da1ab4553",
+      "at": "2026-05-04T23:20:00+00:00",
+      "subject": "a -> Boundary21.java #13",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "ef7bdd3c5",
+      "at": "2026-05-04T22:20:00+00:00",
+      "subject": "a -> Boundary21.java #12",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "3fc250f77",
+      "at": "2026-05-04T21:20:00+00:00",
+      "subject": "a -> Boundary21.java #11",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "aa688d554",
+      "at": "2026-05-04T20:20:00+00:00",
+      "subject": "a -> Boundary21.java #10",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "b5970a6d8",
+      "at": "2026-05-04T19:20:00+00:00",
+      "subject": "a -> Boundary21.java #9",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "0419a7d60",
+      "at": "2026-05-04T18:20:00+00:00",
+      "subject": "a -> Boundary21.java #8",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "78d369fd4",
+      "at": "2026-05-04T17:20:00+00:00",
+      "subject": "a -> Boundary21.java #7",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "6fb6a113f",
+      "at": "2026-05-04T16:20:00+00:00",
+      "subject": "a -> Boundary21.java #6",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "d0ba0a349",
+      "at": "2026-05-04T15:20:00+00:00",
+      "subject": "a -> Boundary21.java #5",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "8b6d4fd12",
+      "at": "2026-05-04T14:20:00+00:00",
+      "subject": "a -> Boundary21.java #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "65c776f94",
+      "at": "2026-05-04T13:20:00+00:00",
+      "subject": "a -> Boundary21.java #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "efb6958e9",
+      "at": "2026-05-04T12:20:00+00:00",
+      "subject": "a -> Boundary21.java #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "7485615db",
+      "at": "2026-05-04T11:20:00+00:00",
+      "subject": "a -> Boundary21.java #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary21.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "54ea82623",
+      "at": "2026-05-03T10:20:00+00:00",
+      "subject": "c -> Boundary20.java",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "96c6eb759",
+      "at": "2026-05-03T07:33:20+00:00",
+      "subject": "b -> Boundary20.java",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "018c5346c",
+      "at": "2026-05-01T17:00:00+00:00",
+      "subject": "a -> Boundary20.java #18",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "2a1d619cb",
+      "at": "2026-05-01T16:00:00+00:00",
+      "subject": "a -> Boundary20.java #17",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "be09f33d1",
+      "at": "2026-05-01T15:00:00+00:00",
+      "subject": "a -> Boundary20.java #16",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "5e4f00ea1",
+      "at": "2026-05-01T14:00:00+00:00",
+      "subject": "a -> Boundary20.java #15",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "3f9248967",
+      "at": "2026-05-01T13:00:00+00:00",
+      "subject": "a -> Boundary20.java #14",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "0054f9aa6",
+      "at": "2026-05-01T12:00:00+00:00",
+      "subject": "a -> Boundary20.java #13",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "6150ba7e1",
+      "at": "2026-05-01T11:00:00+00:00",
+      "subject": "a -> Boundary20.java #12",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "c719e28ec",
+      "at": "2026-05-01T10:00:00+00:00",
+      "subject": "a -> Boundary20.java #11",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "4342e39e4",
+      "at": "2026-05-01T09:00:00+00:00",
+      "subject": "a -> Boundary20.java #10",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "06b6e9748",
+      "at": "2026-05-01T08:00:00+00:00",
+      "subject": "a -> Boundary20.java #9",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "ac0e02095",
+      "at": "2026-05-01T07:00:00+00:00",
+      "subject": "a -> Boundary20.java #8",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "73e9e2b1b",
+      "at": "2026-05-01T06:00:00+00:00",
+      "subject": "a -> Boundary20.java #7",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "3114ef46e",
+      "at": "2026-05-01T05:00:00+00:00",
+      "subject": "a -> Boundary20.java #6",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "65ebbeb57",
+      "at": "2026-05-01T04:00:00+00:00",
+      "subject": "a -> Boundary20.java #5",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "3bfe31c9b",
+      "at": "2026-05-01T03:00:00+00:00",
+      "subject": "a -> Boundary20.java #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "c19d44122",
+      "at": "2026-05-01T02:00:00+00:00",
+      "subject": "a -> Boundary20.java #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "108c342d1",
+      "at": "2026-05-01T01:00:00+00:00",
+      "subject": "a -> Boundary20.java #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "d7fdd3f80",
+      "at": "2026-05-01T00:00:00+00:00",
+      "subject": "a -> Boundary20.java #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Boundary20.java"
+      ],
+      "in_window": true
+    }
+  ],
+  "median_files_per_commit": 1,
+  "commit_granularity": "fine",
+  "renames": [],
+  "files": {
+    "src/Boundary20.java": {
+      "chg_commits": 20,
+      "chg_days": 2,
+      "churn": 39,
+      "touched_by": [
+        "54ea82623",
+        "96c6eb759",
+        "018c5346c",
+        "2a1d619cb",
+        "be09f33d1",
+        "5e4f00ea1",
+        "3f9248967",
+        "0054f9aa6",
+        "6150ba7e1",
+        "c719e28ec",
+        "4342e39e4",
+        "06b6e9748",
+        "ac0e02095",
+        "73e9e2b1b",
+        "3114ef46e",
+        "65ebbeb57",
+        "3bfe31c9b",
+        "c19d44122",
+        "108c342d1",
+        "d7fdd3f80"
+      ],
+      "age_last_days": 3.472222222222,
+      "distinct_authors_90d": 3,
+      "contributor_count": 3,
+      "ownership_max_share": 0.9,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        0.9,
+        0.05,
+        0.05
+      ]
+    },
+    "src/Boundary21.java": {
+      "chg_commits": 21,
+      "chg_days": 3,
+      "churn": 41,
+      "touched_by": [
+        "fb9a630c4",
+        "7358af37b",
+        "6b86b7258",
+        "8744d8d2e",
+        "d2b6b2b98",
+        "76169b472",
+        "ec41b9e0a",
+        "585090d74",
+        "da1ab4553",
+        "ef7bdd3c5",
+        "3fc250f77",
+        "aa688d554",
+        "b5970a6d8",
+        "0419a7d60",
+        "78d369fd4",
+        "6fb6a113f",
+        "d0ba0a349",
+        "8b6d4fd12",
+        "65c776f94",
+        "efb6958e9",
+        "7485615db"
+      ],
+      "age_last_days": 0,
+      "distinct_authors_90d": 3,
+      "contributor_count": 3,
+      "ownership_max_share": 0.904761904762,
+      "minor_contributor_share": 0.095238095238,
+      "contribution_shares_sorted": [
+        0.904761904762,
+        0.047619047619,
+        0.047619047619
+      ]
+    }
+  },
+  "pairs": [],
+  "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
+  "non_terminating": {
+    "/files/src/Boundary20.java/age_last_days": "125/36",
+    "/files/src/Boundary21.java/ownership_max_share": "19/21",
+    "/files/src/Boundary21.java/minor_contributor_share": "2/21",
+    "/files/src/Boundary21.java/contribution_shares_sorted/0": "19/21",
+    "/files/src/Boundary21.java/contribution_shares_sorted/1": "1/21",
+    "/files/src/Boundary21.java/contribution_shares_sorted/2": "1/21"
+  },
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

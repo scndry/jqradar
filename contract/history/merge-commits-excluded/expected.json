@@ -74,7 +74,14 @@
         "dd250449a",
         "567f3927e"
       ],
-      "age_last_days": 0.083333333333
+      "age_last_days": 0.083333333333,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
     },
     "src/B.java": {
       "chg_commits": 1,
@@ -83,9 +90,18 @@
       "touched_by": [
         "ba01025f8"
       ],
-      "age_last_days": 0.041666666667
+      "age_last_days": 0.041666666667,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
     }
   },
+  "pairs": [],
+  "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
   "non_terminating": {
     "/files/src/A.java/age_last_days": "1/12",
     "/files/src/B.java/age_last_days": "1/24"

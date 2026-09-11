@@ -9,6 +9,8 @@
 - **rename** tie-break = 유사도 → 경로 편집 거리 → 사전순. 앞 둘이 동률이면 `rename_ambiguous`.
 - **나이** = `HEAD_TIME − 마지막 비머지 커밋 시각`. 결정 불가·음수면 **null**(0이 아니다, D37).
 - **blame 금지**(D18·D113). 예외는 캠페인 생성 1회뿐이다(§5.6·D57).
+- **파일 쌍**(§2.4·D134) — `shared` = 두 파일을 함께 만진 비머지 커밋 수, `tc = shared / min(chg_commits_a, chg_commits_b)`, 보고 기준 `shared ≥ 5 ∧ tc ≥ 0.5`. `static_dependency`는 **명세가 준다** — 그래프는 이 계약의 입력이 아니다(§2.2의 일이다).
+- **저자 사실**(§2.1·D135) — `distinct_authors_90d`(최근 90일) · `ownership_max_share`·`minor_contributor_share`(W 안). **익명 집계만 기록한다.** 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다 — 정체는 `expected.json`에 들어가지 않는다(D48).
 
 ## 케이스 모양 — 합성 리포다
 
@@ -32,6 +34,10 @@
 | [`shallow-clone-age-unknown/`](shallow-clone-age-unknown/) | graft 경계 커밋에서 읽은 나이는 **null**(D37) |
 | [`negative-age-invalid-metadata/`](negative-age-invalid-metadata/) | 음수 나이 → null + `invalid_metadata`(0으로 자르지 않는다) |
 | [`blame-forbidden-on-scan-change/`](blame-forbidden-on-scan-change/) | **D113** — scan·change 경로에 blame이 없다 |
+| [`pair-report-threshold/`](pair-report-threshold/) | §2.4 보고 기준 `shared ≥ 5 ∧ tc ≥ 0.5`을 **양쪽에서** 밟는다. 세 쌍이 경계를 다르게 지난다 |
+| [`tc-squash-vs-merge/`](tc-squash-vs-merge/) | 같은 작업을 두 이력으로 — `tc`가 **0.5와 1**. 판정은 없고 두 수다 |
+| [`author-facts-minor-threshold/`](author-facts-minor-threshold/) | 마이너 기여자 `< 5%` 경계. 20커밋에서 0.05는 미만이 아니고, 21커밋에서 1/21은 미만이다 |
+| [`identity-absent-when-attribution-off/`](identity-absent-when-attribution-off/) | **D48·D135** — 정체가 산출물에 없다. 모양이 아니라 **출처**로 가른다 |
 
 ## blame 검사는 값이 아니라 부재를 본다
 
@@ -44,6 +50,24 @@
 둘 다 실제 구멍을 찾았다:
 - `git blame`(띄어쓰기) 마커가 `new ProcessBuilder("git", "blame", "-p")`를 놓쳤다
 - 넓힌 마커가 이번엔 `@DisplayName("어기면 잡는다 — git.blame()")`을 잡았다 — **이 리포에 있는 문장**이다
+
+## 정체 부재는 출처로 가른다 (D135)
+
+`identity-absent-when-attribution-off`가 §2.4·저자 사실 중 가장 까다로운 자리다.
+
+산출물에는 `sha256:`이 **정당하게** 가득하다 — `repository_state_id`·`analysis_input_id`·`classes_id`·중복 클러스터의 토큰 해시·정책 해시. 저자 이메일의 sha256과 이것들은 **둘 다 64 hex라 문자열 모양으로 가를 방법이 없다.**
+
+그래서 가르는 축을 구문에서 **출처**로 옮긴다. 합성 리포의 저자 식별자는 우리가 정했으므로 그 값들의 해시(sha256·sha1·md5 × 전체·접두 8·12·16자, 72개)를 미리 계산해 **그 특정 문자열이 산출물에 없음**을 본다. 무해한 해시를 무해하다고 증명할 필요 없이 **유해한 해시의 부재**를 증명하면 된다.
+
+접두까지 보는 이유: **12자만 실어도 재식별에 충분하다.** §2.7이 "해시도 저장하지 않는다(재식별 가능)"고 적은 자리다.
+
+금지 문자열 자체는 `expected.json`에 적지 않는다 — 적으면 그것이 정체의 사본이다. 개수와 판정만 기록한다.
+
+부재 검사이므로 `must_be_caught`(2) + `must_not_be_caught`(3)를 함께 둔다(D131). 후자가 특히 중요하다: 모양으로 가르려 하면 정상 산출물의 `repository_state_id`가 오탐으로 걸린다.
+
+## 미해결 — 계약이 답하지 않는 것
+
+**`distinct_authors_90d`와 `max_commits`의 상호작용.** §2.1은 이 값을 "최근 90일"로 정하고 나머지 둘은 "(W 안)"을 명시한다 — 계약이 둘을 구별하므로 계산기도 90일 창을 W의 `max_commits` 상한과 **무관하게** 돈다. 그런데 커밋이 매우 많은 리포에서 `max_commits`(2,000)가 90일보다 짧은 구간을 남기면, `chg_commits`는 잘린 창을 보고 `distinct_authors_90d`는 안 잘린 90일을 봐서 두 값의 기준이 갈린다. 그것이 의도인지(90일은 비용 상한과 무관한 의미 창인지) 계약이 말하지 않는다.
 
 ## 실행
 

@@ -74,7 +74,14 @@
       "touched_by": [
         "f3f55f5d4"
       ],
-      "age_last_days": 1
+      "age_last_days": 1,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
     },
     "src/legacy/archive/OldOrderServiceBackup.java": {
       "chg_commits": 1,
@@ -83,9 +90,18 @@
       "touched_by": [
         "91868cbda"
       ],
-      "age_last_days": 0
+      "age_last_days": 0,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
     }
   },
+  "pairs": [],
+  "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
   "non_terminating": {},
   "_fixture": {
     "generated_by": "contract/history/compute.py",
