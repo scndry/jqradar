@@ -8,7 +8,7 @@
     "D137"
   ],
   "what_this_pins": "**도달 불가 커밋은 값에도 id에도 영향을 주지 않는다.** §2.7의 창은 HEAD에서 도달 가능한 비머지 커밋이고, `analysis_input_id`의 입력은 그 창 안 커밋 SHA 목록이다 — 버려진 브랜치의 커밋은 둘 다에서 밖이다.\n\n두 리포가 `main`은 완전히 같고 하나만 버려진 브랜치를 더 갖는다. HEAD SHA가 **동일**하고 (도달 불가 커밋은 HEAD의 조상이 아니다) 작업트리도 같으므로 `repository_state_id`와 `analysis_input_id`가 **함께 같아야** 한다. 그래서 이 케이스에서 원칙의 양면 — id의 동일성과 값의 독립성 — 이 한 번에 닫힌다.\n\n**`max_commits`로 잘린 커밋으로는 이 쌍을 만들 수 없다.** 커밋 SHA가 조상을 물고 가므로 창 밖이 달라지면 창 안 SHA도 달라지고, `commit_list_sha256`이 달라져 `analysis_input_id`가 구조적으로 갈린다(실험으로 확인했다). 그쪽은 **값의 독립성만** 시험할 수 있고 `contract/history/authors-window-truncated-by-count`가 그 일을 한다. 두 케이스가 같은 원칙의 서로 다른 절반을 진다.\n\n잡는 실패: 구현이 `git log --all`이나 `--branches`로 이력을 읽는 것. 그러면 도달 불가 커밋이 창에 섞여 값이 갈리는데 **id는 같다** — 재현성 주장이 조용히 샌다. 버려진 브랜치의 저자가 `distinct_authors_90d`에 세어지는 것도 같은 경로다.",
-  "canonical_encoding": "sorted-key compact UTF-8 JSON, separators=(',',':')",
+  "canonical_encoding": "RFC8785-JCS",
   "variants": {
     "without_abandoned_branch": {
       "unreachable_commit_count": 0,

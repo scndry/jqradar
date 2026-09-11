@@ -11,7 +11,7 @@
 
 **산술·해시는 정확값으로.** 부동소수점을 쓰지 않는다(D115).
 
-미해결 — 아래 `CANONICAL_ENCODING` 참고.
+**정규 인코딩은 RFC 8785 JCS**(§2.8, D138). `contract/tools/jcs.py`.
 """
 
 from __future__ import annotations
@@ -28,20 +28,22 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 CASE_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(CASE_DIR.parent / "tools"))
+import jcs  # noqa: E402
+
 GENERATED_BY = "contract/reproducibility/compute.py"
 
-# §2.8은 `analysis_input_id`의 **입력 목록**은 정하지만 그것을 바이트로 펴는
-# **정규 인코딩**은 정하지 않는다. 해시는 인코딩에 의존하므로, 두 구현이 같은 입력에서
-# 같은 id를 내려면 이것도 계약이어야 한다. 여기서는 아래를 선언하고 쓴다:
-#   정렬된 키의 UTF-8 JSON, 구분자 (",", ":"), ensure_ascii=False -> sha256
-# 이 케이스가 검사하는 성질(같은 트리 → 같은 repository_state_id, 다른 툴체인 →
-# 다른 analysis_input_id)은 인코딩 선택과 무관하므로 케이스는 유효하다.
-CANONICAL_ENCODING = "sorted-key compact UTF-8 JSON, separators=(',',':')"
+# §2.8 — `analysis_input_id`의 **정규 인코딩은 RFC 8785 JCS**(D138). 해시는 바이트에
+# 대한 것이므로 입력을 바이트로 펴는 방법이 계약이다. 이전 판은 여기서
+# "sorted-key compact UTF-8 JSON"을 자리표시자로 **선언하고** 썼다(계약에 없었다).
+# 두 인코딩은 지금 입력 영역(ASCII 키·정수·문자열)에서 바이트 동일하고,
+# `jcs-canonical-encoding` 케이스가 그것을 증명한다 — 그래서 기존 두 케이스의
+# 해시는 움직이지 않고 선언 문자열만 바뀐다.
+CANONICAL_ENCODING = "RFC8785-JCS"
 
 
 def canonical(obj) -> bytes:
-    return json.dumps(obj, sort_keys=True, ensure_ascii=False,
-                      separators=(",", ":")).encode("utf-8")
+    return jcs.encode(obj)
 
 
 def sha256(obj) -> str:
@@ -200,8 +202,86 @@ def run_repo_variants(case_dir: Path, inp: dict) -> dict:
     }
 
 
+def naive_sorted_key(obj) -> bytes:
+    """이전 판이 쓰던 인코딩. **계약이 아니다** — JCS와 갈리는지 보려고만 둔다."""
+    return json.dumps(obj, sort_keys=True, ensure_ascii=False,
+                      separators=(",", ":")).encode("utf-8")
+
+
+def run_canonical_vectors(inp: dict) -> dict:
+    """§2.8·D138 — 정규 인코딩이 RFC 8785 JCS라는 것을 벡터로 못 박는다.
+
+    일치만 보이는 검사는 아무것도 증명하지 않으므로(D131) 세 가지를 같이 본다:
+    RFC 벡터를 **재현하는가**, 순진한 sorted-key 인코딩이 그 벡터에서 **갈리는가**,
+    그리고 id 입력 영역에서는 둘이 **바이트 동일한가**(기존 해시가 안 움직이는 근거).
+    """
+    spec = inp["canonical_vectors"]
+    vectors, assertions = [], {}
+
+    for vec in spec["rfc_vectors"]:
+        parsed = json.loads(vec["input_json"])
+        produced = jcs.dumps(parsed)
+        naive = naive_sorted_key(parsed).decode("utf-8")
+        entry = {"name": vec["name"], "source": vec["source"],
+                 "jcs": produced, "naive_sorted_key": naive,
+                 "naive_diverges": produced != naive}
+        if "expected_property_order" in vec:
+            entry["property_order"] = list(json.loads(produced).values())
+            entry["reproduces_rfc"] = \
+                entry["property_order"] == vec["expected_property_order"]
+            entry["naive_property_order"] = list(json.loads(naive).values())
+            entry["naive_reproduces_rfc"] = \
+                entry["naive_property_order"] == vec["expected_property_order"]
+        else:
+            entry["reproduces_rfc"] = produced == vec["expected_canonical"]
+        vectors.append(entry)
+        assertions[f"rfc_{vec['name'].replace('-', '_')}_reproduced"] = entry["reproduces_rfc"]
+
+    sorting = next(v for v in vectors if v["name"] == "property-sorting")
+    # 검사가 무는 것을 보인다: 순진한 인코딩은 이 벡터에서 RFC와 다르다.
+    assertions["naive_sorted_key_diverges_on_rfc_vector"] = sorting["naive_diverges"]
+    assertions["naive_sorted_key_fails_rfc_vector"] = not sorting["naive_reproduces_rfc"]
+
+    # id 입력 영역(§2.8): ASCII 키·정수·문자열. 여기서는 둘이 바이트 동일하다.
+    sample = spec["id_input_domain_sample"]
+    jcs_bytes, naive_bytes = jcs.encode(sample), naive_sorted_key(sample)
+    domain = {
+        "jcs_sha256": "sha256:" + hashlib.sha256(jcs_bytes).hexdigest(),
+        "naive_sha256": "sha256:" + hashlib.sha256(naive_bytes).hexdigest(),
+        "bytes_identical": jcs_bytes == naive_bytes,
+        "byte_length": len(jcs_bytes),
+    }
+    assertions["id_input_domain_bytes_identical"] = domain["bytes_identical"]
+
+    rejected = []
+    for case in spec["rejected_inputs"]:
+        parsed = json.loads(case["input_json"])
+        try:
+            jcs.dumps(parsed)
+            caught, detail = False, "통과해 버렸다"
+        except jcs.FloatInCanonicalInput as exc:
+            caught, detail = True, str(exc)
+        rejected.append({"name": case["name"], "why": case["why"],
+                         "rejected": caught, "detail": detail})
+        assertions[f"rejects_{case['name'].replace('-', '_')}"] = caught
+
+    return {
+        "case": inp["case"],
+        "generated_by": GENERATED_BY,
+        "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"],
+        "canonical_encoding": CANONICAL_ENCODING,
+        "rfc_vectors": vectors,
+        "id_input_domain": domain,
+        "rejected_inputs": rejected,
+        "assertions": assertions,
+    }
+
+
 def run_case(case_dir: Path) -> dict:
     inp = json.loads((case_dir / "input.json").read_text(encoding="utf-8"))
+    if "canonical_vectors" in inp:
+        return run_canonical_vectors(inp)
     if "repo_variants" in inp:
         return run_repo_variants(case_dir, inp)
     tree = case_dir / inp["repo"]["tree"]

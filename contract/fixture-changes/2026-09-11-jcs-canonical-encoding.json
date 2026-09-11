@@ -1,0 +1,13 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "reproducibility.canonical_encoding",
+    "old": "sorted-key compact UTF-8 JSON, separators=(',',':')",
+    "new": "RFC8785-JCS",
+    "note": "값 불변 — 인쇄되는 인코딩 **선언 문자열 하나**만 바뀐다. D138이 `analysis_input_id`의 정규 인코딩을 RFC 8785 JCS로 정했고, `contract/reproducibility/compute.py`가 자기 자리표시자 인코딩을 버리고 `contract/tools/jcs.py`를 쓴다. 두 케이스의 `repository_state_id`·`analysis_input_id`·`commit_list_sha256`는 **하나도 움직이지 않았다**(재계산 diff가 `canonical_encoding` 줄 둘뿐이다) — 두 인코딩이 지금 id 입력 영역(ASCII 키·정수·문자열)에서 바이트 동일하기 때문이고, 그 사실 자체를 새 케이스 `jcs-canonical-encoding`의 `id_input_domain.bytes_identical`이 증명한다. 그럼에도 contract_change인 이유: 이전 판은 정규 인코딩이 **계약에 없어서** 계산기가 자기 주석에 선언하고 썼다(`미해결`). 선언이 계약이 된 것이므로 계약이 움직인 것이고, 값이 안 움직였다는 사실은 이 note가 진다(P11의 원인 분류를 흐리지 않기 위해 — D132와 같은 부류).",
+    "fixtures": [
+      "reproducibility/same-tree-different-pmd",
+      "reproducibility/unreachable-commits-do-not-leak"
+    ]
+  }
+}
