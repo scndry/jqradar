@@ -1,0 +1,20 @@
+{
+  "case": "change-without-claimed-by-this-pr",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "change.schema.json",
+  "base": "file:base/change.json",
+  "mechanism": "required",
+  "contract_ref": "D117",
+  "what": "claimed_by_this_pr은 필수 — 선택이면 전이 귀속과 어긋난다",
+  "patch": [
+    {
+      "op": "remove",
+      "path": [
+        "touched_legacy_findings",
+        0,
+        "claimed_by_this_pr"
+      ]
+    }
+  ]
+}

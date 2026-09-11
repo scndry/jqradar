@@ -1,0 +1,21 @@
+{
+  "case": "report-judgment-interpretation",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "enum(어휘가 계약)",
+  "contract_ref": "D67·D34",
+  "what": "interpretation에 판정 어휘를 넣을 수 없다",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "findings",
+        0,
+        "interpretation"
+      ],
+      "value": "bad"
+    }
+  ]
+}

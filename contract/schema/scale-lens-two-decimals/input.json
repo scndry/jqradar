@@ -1,0 +1,15 @@
+{
+  "case": "scale-lens-two-decimals",
+  "check": "scale_lint",
+  "kind": "hard_rule",
+  "base": "prd:§7:report",
+  "mechanism": "원문 린트(스키마 아님)",
+  "contract_ref": "D115·D125",
+  "what": "렌즈 값은 소수 1자리다 — multipleOf로는 못 잡는다(95.6 % 0.1이 이진 부동소수점에서 거짓)",
+  "text_patch": [
+    {
+      "find": "\"H\": 95.6",
+      "replace": "\"H\": 95.63"
+    }
+  ]
+}

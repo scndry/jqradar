@@ -1,0 +1,23 @@
+{
+  "case": "report-unknown-reason",
+  "check": "schema",
+  "kind": "structural",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "enum(전사)",
+  "contract_ref": "D38",
+  "what": "percentile_population.reason은 정해진 네 값뿐",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "files",
+        1,
+        "percentile_population",
+        "chg_commits",
+        "reason"
+      ],
+      "value": "dunno"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "case": "report-percentile-out-of-range",
+  "check": "schema",
+  "kind": "structural",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "range",
+  "contract_ref": "§2.5",
+  "what": "백분위는 0..1이다",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "files",
+        0,
+        "percentiles",
+        "cx"
+      ],
+      "value": 97
+    }
+  ]
+}

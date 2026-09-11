@@ -1,0 +1,9 @@
+{
+  "case": "accept-campaign",
+  "check": "schema",
+  "kind": "positive",
+  "schema": "campaign.schema.json",
+  "base": "prd:§7:campaign",
+  "contract_ref": "§7",
+  "what": "§7의 campaign 예시가 스키마를 통과한다 — 긍정 케이스가 없으면 변조 테스트는 무의미하다"
+}

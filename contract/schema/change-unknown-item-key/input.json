@@ -1,0 +1,24 @@
+{
+  "case": "change-unknown-item-key",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "change.schema.json",
+  "base": "file:base/change.json",
+  "mechanism": "additionalProperties:false",
+  "contract_ref": "D120",
+  "what": "items의 키는 여섯으로 닫힌다 — 이름 없는 항목은 계약이 아니다",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "items",
+        "vibe_check"
+      ],
+      "value": {
+        "value_base": 1,
+        "value_head": 2,
+        "delta": 1
+      }
+    }
+  ]
+}

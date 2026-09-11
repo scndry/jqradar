@@ -1,0 +1,11 @@
+{
+  "case": "accept-fixture-change",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "positive",
+  "contract_ref": "§7",
+  "what": "§7의 fixture-change 예시가 스키마를 통과한다 — 긍정 케이스가 없으면 변조 테스트는 무의미하다",
+  "schema": "fixture_change.schema.json",
+  "verdict": "accept",
+  "rejected_at": []
+}

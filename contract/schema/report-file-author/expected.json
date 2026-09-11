@@ -1,0 +1,14 @@
+{
+  "case": "report-file-author",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D48·D126",
+  "what": "파일 레코드에 저자를 실을 수 없다 — .jqradar/ 밖이어도 정체는 산출물에 안 나간다",
+  "mechanism": "additionalProperties:false",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/files/0"
+  ]
+}

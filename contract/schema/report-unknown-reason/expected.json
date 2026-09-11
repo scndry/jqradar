@@ -1,0 +1,14 @@
+{
+  "case": "report-unknown-reason",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "structural",
+  "contract_ref": "D38",
+  "what": "percentile_population.reason은 정해진 네 값뿐",
+  "mechanism": "enum(전사)",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/files/1/percentile_population/chg_commits/reason"
+  ]
+}

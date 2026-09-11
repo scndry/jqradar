@@ -1,0 +1,14 @@
+{
+  "case": "campaign-target-driven-without-targets",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D78",
+  "what": "target_driven인데 목표가 없을 수 없다",
+  "mechanism": "if/then",
+  "schema": "campaign.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "case": "fixture-change-without-reason",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "P11·§2.9",
+  "what": "원인 분류 없는 fixture_change는 '새 정답을 손으로 승인하는 도장'이다",
+  "mechanism": "required(장치의 전부)",
+  "schema": "fixture_change.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/fixture_change"
+  ]
+}

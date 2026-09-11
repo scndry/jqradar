@@ -1,0 +1,19 @@
+{
+  "case": "validate-equivalence-by-construction",
+  "check": "schema",
+  "kind": "structural",
+  "schema": "validate.schema.json",
+  "base": "prd:§7:validate",
+  "mechanism": "enum(전사)",
+  "contract_ref": "D31",
+  "what": "equivalence_basis는 세 값뿐 — by_construction은 v3.3에서 기각됐다",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "equivalence_basis"
+      ],
+      "value": "by_construction"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "case": "change-judgment-word",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "§5.1·B.2",
+  "what": "항목에 판정 단어를 둘 수 없다",
+  "mechanism": "not",
+  "schema": "change.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/items/complexity_delta",
+    "/items/complexity_delta"
+  ]
+}

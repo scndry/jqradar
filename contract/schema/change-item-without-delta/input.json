@@ -1,0 +1,20 @@
+{
+  "case": "change-item-without-delta",
+  "check": "schema",
+  "kind": "structural",
+  "schema": "change.schema.json",
+  "base": "file:base/change.json",
+  "mechanism": "required",
+  "contract_ref": "§5.1",
+  "what": "항목은 value_base·value_head·delta를 갖는다",
+  "patch": [
+    {
+      "op": "remove",
+      "path": [
+        "items",
+        "complexity_delta",
+        "delta"
+      ]
+    }
+  ]
+}

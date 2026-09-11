@@ -1,0 +1,14 @@
+{
+  "case": "report-judgment-in-zone-note",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D67·D127",
+  "what": "자유 텍스트에 판정 어휘를 넣을 수 없다 — 렌더러는 JSON의 순수 함수라 그대로 표시된다 (zone_note)",
+  "mechanism": "pattern(공유 사전)",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/components/0/zone_note"
+  ]
+}

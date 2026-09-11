@@ -1,0 +1,21 @@
+{
+  "case": "change-judgment-word",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "change.schema.json",
+  "base": "file:base/change.json",
+  "mechanism": "not",
+  "contract_ref": "§5.1·B.2",
+  "what": "항목에 판정 단어를 둘 수 없다",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "items",
+        "complexity_delta",
+        "verdict"
+      ],
+      "value": "worse"
+    }
+  ]
+}

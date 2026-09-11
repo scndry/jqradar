@@ -1,0 +1,14 @@
+{
+  "case": "fixture-change-unknown-reason",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "structural",
+  "contract_ref": "§2.9",
+  "what": "reason은 세 분류뿐",
+  "mechanism": "enum(전사)",
+  "schema": "fixture_change.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/fixture_change/reason"
+  ]
+}

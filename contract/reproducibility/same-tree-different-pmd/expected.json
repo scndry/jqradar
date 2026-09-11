@@ -1,0 +1,58 @@
+{
+  "case": "same-tree-different-pmd",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.8 정체성 셋",
+    "D86",
+    "D87",
+    "D111"
+  ],
+  "what_this_pins": "같은 트리를 다른 툴체인으로 분석하면 `repository_state_id`는 **같고** `analysis_input_id`는 **달라야** 한다. 툴체인 버전이 캐시 키에서 빠지면 PMD 7.16과 7.17이 같은 키를 만들어 잘못된 캐시 적중이 생긴다(§2.8) — 이 케이스가 그 회귀를 잡는다. 반대 방향도 함께 고정한다: `reproduce`에 없는 환경 변수를 바꿔도 두 id 모두 불변이어야 한다(원칙 검사, D87).",
+  "canonical_encoding": "sorted-key compact UTF-8 JSON, separators=(',',':')",
+  "tree": {
+    "file_count": 2,
+    "files": [
+      {
+        "path": "src/main/java/com/example/order/OrderPolicy.java",
+        "content_id": "f702286af9f0b8ba882ba4d98bd392e4c126c0bf"
+      },
+      {
+        "path": "src/main/java/com/example/order/OrderService.java",
+        "content_id": "34a52383165a4ae6efe7831d196121af4d7c60a2"
+      }
+    ]
+  },
+  "history": {
+    "commit_shas": [
+      "2a058a7ad3612992c0013e256a87bbef635ef45e",
+      "04c5de269bd939509087a13312869a28d540f773"
+    ],
+    "head": "04c5de269bd939509087a13312869a28d540f773",
+    "head_committer_time": "2026-01-03T03:04:05+00:00"
+  },
+  "runs": {
+    "a": {
+      "environment": {
+        "pmd": "7.16.0",
+        "archunit": "1.5.0",
+        "jgit": "7.3.0"
+      },
+      "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+      "analysis_input_id": "sha256:de4597e92228ad5f8e1dbb748eb94394497dc6177b0f477f4694135a836d1159"
+    },
+    "b": {
+      "environment": {
+        "pmd": "7.17.0",
+        "archunit": "1.5.0",
+        "jgit": "7.3.0"
+      },
+      "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+      "analysis_input_id": "sha256:46a90b9dc2a648803f44023473c0241cf4a9bdf0c3e2b75be5188f98a5a37770"
+    }
+  },
+  "assertions": {
+    "repository_state_id_equal": true,
+    "analysis_input_id_differs": true,
+    "irrelevant_env_change_is_inert": true
+  }
+}

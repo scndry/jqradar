@@ -1,0 +1,11 @@
+{
+  "case": "accept-change",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "positive",
+  "contract_ref": "§5.1",
+  "what": "§5.1에서 만든 최소 change.json이 스키마를 통과한다(§7에 예시가 없다)",
+  "schema": "change.schema.json",
+  "verdict": "accept",
+  "rejected_at": []
+}

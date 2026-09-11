@@ -1,0 +1,14 @@
+{
+  "case": "change-unknown-anchor-class",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "structural",
+  "contract_ref": "§5.5",
+  "what": "anchor_class는 high·medium·low뿐",
+  "mechanism": "enum(전사)",
+  "schema": "change.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/touched_legacy_findings/0/anchor_class"
+  ]
+}

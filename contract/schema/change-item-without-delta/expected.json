@@ -1,0 +1,14 @@
+{
+  "case": "change-item-without-delta",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "structural",
+  "contract_ref": "§5.1",
+  "what": "항목은 value_base·value_head·delta를 갖는다",
+  "mechanism": "required",
+  "schema": "change.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/items/complexity_delta"
+  ]
+}

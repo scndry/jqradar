@@ -1,0 +1,19 @@
+{
+  "case": "event-passed-without-tree-id",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "event.schema.json",
+  "base": "prd:§7:event",
+  "mechanism": "if/then",
+  "contract_ref": "D89",
+  "what": "validated_tree_id 없는 passed는 passed가 아니다",
+  "patch": [
+    {
+      "op": "remove",
+      "path": [
+        "validation",
+        "validated_tree_id"
+      ]
+    }
+  ]
+}

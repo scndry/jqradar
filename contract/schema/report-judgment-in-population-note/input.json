@@ -1,0 +1,20 @@
+{
+  "case": "report-judgment-in-population-note",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "pattern(공유 사전)",
+  "contract_ref": "D67·D127",
+  "what": "자유 텍스트에 판정 어휘를 넣을 수 없다 — 렌더러는 JSON의 순수 함수라 그대로 표시된다 (population_note)",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "population",
+        "population_note"
+      ],
+      "value": "이 모집단은 불량하다"
+    }
+  ]
+}

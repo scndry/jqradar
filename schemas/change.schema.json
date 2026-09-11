@@ -4,41 +4,83 @@
   "title": "jqradar change.json",
   "description": "`jqradar change --base <ref>`의 산출물 — **1차 표면**(A.1, D47). '이 변경이 시스템을 BASE보다 어떻게 바꿨나'가 매일 쓰는 산출물이고 `scan`은 그 아래의 지도다. 새 측정은 없다 — 두 스캔의 델타를 재구성한 것이다. `check`는 이 파일만 읽는 정책 소비자다(§5.3).",
   "type": "object",
-  "required": ["schema", "base", "head", "items"],
+  "required": [
+    "schema",
+    "base",
+    "head",
+    "items"
+  ],
   "x-jqradar-top-level": "§5.1·D120 — 최상위는 셋이다. 모양이 다르기 때문이다: `items`(델타 항목 여섯, 키 고정) · `touched_legacy_findings[]`(§5.7의 레코드 배열) · `declared_ai_assistance`(이 변경의 속성, 델타가 아니다). 모양이 다른 것을 같은 어휘에 묶지 않는다.",
   "x-jqradar-unresolved": {
     "reproduce_shape": "change는 두 스캔에서 나오는데(§4.2) `reproduce`를 하나 두는지 BASE·HEAD 각각 두는지 §2.8·§5.1 어디에도 없다. 여기서는 각 스냅샷이 자기 `reproduce`를 갖는 것으로 뒀다 — §5.1의 '앵커는 각 스냅샷의 HEAD 시각'과 §4.5의 '백엔드가 다른 두 실행 사이의 델타는 거부'가 둘을 비교 가능하게 인쇄할 것을 요구하기 때문이다.",
     "schema_value": "`schema` 필드의 값은 계약에 없다. §7은 report의 `jqradar/3`와 event의 `jqradar-event/1`만 고정한다."
   },
   "properties": {
-    "schema": { "type": "string", "description": "산출물 스키마 버전. §7은 report의 `jqradar/3`와 event의 `jqradar-event/1`만 고정한다 — change의 값은 계약에 없어 const로 닫지 않았다." },
-    "project": { "type": "string" },
-    "base": { "$ref": "#/$defs/snapshot", "description": "보호 기준선(§5, B.3) — PR의 merge-base. **BASE는 보호 기준이지 품질의 면죄부가 아니다**(A.1)." },
-    "head": { "$ref": "#/$defs/snapshot" },
+    "schema": {
+      "type": "string",
+      "description": "산출물 스키마 버전. §7은 report의 `jqradar/3`와 event의 `jqradar-event/1`만 고정한다 — change의 값은 계약에 없어 const로 닫지 않았다."
+    },
+    "project": {
+      "type": "string"
+    },
+    "base": {
+      "$ref": "#/$defs/snapshot",
+      "description": "보호 기준선(§5, B.3) — PR의 merge-base. **BASE는 보호 기준이지 품질의 면죄부가 아니다**(A.1)."
+    },
+    "head": {
+      "$ref": "#/$defs/snapshot"
+    },
     "items": {
       "type": "object",
       "description": "§5.1의 델타 항목 — **여섯 키로 닫힌다**(D120). `check` 규칙과 렌더러 B1–B5가 이 이름을 참조하므로 이름 없는 항목은 계약이 아니다. 각 항목은 `{value_base, value_head, delta, evidence[]}`를 갖고 **판정 단어는 없다** — 판정은 `check`(정책)와 사람이 한다(B.2, D47). 여섯이 모두 필수는 아니다: `remediation_effect`는 수정 브랜치에만 있다(§5.1).",
       "additionalProperties": false,
       "properties": {
-        "complexity_delta": { "$ref": "#/$defs/changeItem", "description": "복잡도가 얼마나 늘었나 — 변경 파일별 `cx` 원값 델타, 리포 총 `cx` 델타, 변경 파일의 최대 메서드 CYCLO 델타(§5.1)." },
-        "change_concentration": { "$ref": "#/$defs/changeItem", "description": "변경이 어디에 집중되나 — 변경 파일 ∩ BASE H top-decile(자격 고정), 컴포넌트 분포, BASE Dx·F 상위와의 겹침(§5.1)." },
-        "new_duplication": { "$ref": "#/$defs/changeItem", "description": "중복이 새로 생겼나 — **발생 수준**, rename 매핑(§5.2, D40)." },
-        "dependency_direction": { "$ref": "#/$defs/changeItem", "description": "의존성이 어느 방향으로 확장됐나 — 컴포넌트 간선 집합 델타, 새 SCC, `external` 간선 수 변화(§5.1)." },
-        "fragile_area_exposure": { "$ref": "#/$defs/changeItem", "description": "과거 취약 영역이 더 취약해졌나 — BASE Dx·F 상위 파일 중 변경된 것의 `union_dup_tokens`·`fan_in` 델타(§5.1)." },
-        "remediation_effect": { "$ref": "#/$defs/changeItem", "description": "리팩터링이 위험을 줄였나 — 수정 브랜치라면 `validate.json` 연결(§5.1, §6.3)." }
+        "complexity_delta": {
+          "$ref": "#/$defs/changeItem",
+          "description": "복잡도가 얼마나 늘었나 — 변경 파일별 `cx` 원값 델타, 리포 총 `cx` 델타, 변경 파일의 최대 메서드 CYCLO 델타(§5.1)."
+        },
+        "change_concentration": {
+          "$ref": "#/$defs/changeItem",
+          "description": "변경이 어디에 집중되나 — 변경 파일 ∩ BASE H top-decile(자격 고정), 컴포넌트 분포, BASE Dx·F 상위와의 겹침(§5.1)."
+        },
+        "new_duplication": {
+          "$ref": "#/$defs/changeItem",
+          "description": "중복이 새로 생겼나 — **발생 수준**, rename 매핑(§5.2, D40)."
+        },
+        "dependency_direction": {
+          "$ref": "#/$defs/changeItem",
+          "description": "의존성이 어느 방향으로 확장됐나 — 컴포넌트 간선 집합 델타, 새 SCC, `external` 간선 수 변화(§5.1)."
+        },
+        "fragile_area_exposure": {
+          "$ref": "#/$defs/changeItem",
+          "description": "과거 취약 영역이 더 취약해졌나 — BASE Dx·F 상위 파일 중 변경된 것의 `union_dup_tokens`·`fan_in` 델타(§5.1)."
+        },
+        "remediation_effect": {
+          "$ref": "#/$defs/changeItem",
+          "description": "리팩터링이 위험을 줄였나 — 수정 브랜치라면 `validate.json` 연결(§5.1, §6.3)."
+        }
       }
     },
     "declared_ai_assistance": {
-      "enum": [true, false, "unknown"],
+      "enum": [
+        true,
+        false,
+        "unknown"
+      ],
       "description": "§5.1 — 커밋 트레일러(`Co-authored-by:` 봇, `Generated-by:`)에서 **선언된 것만** 읽고 **추론하지 않는다**(D48). 렌즈·원장·점수에 들어가지 않고 사람 단위로 나오지 않는다. 조직이 `check`에서 정책을 적을 수 있게, 그리고 A.3을 배터리에서 검증할 수 있게(P17) 있다. 선언이라 **하한선이고 생략으로 우회 가능함을 UI에 표기한다**."
     },
     "touched_legacy_findings": {
       "type": "array",
       "description": "§5.7 — 변경 파일 안의 캠페인 finding(파생). '이 PR은 부채 3개를 건드렸고 1개 개선, 2개 그대로.' 브라운필드에서 가장 센 문장이다 — **당신이 만지는 곳의 부채부터 줄인다**(A.8). 판정 단어는 없다.",
-      "items": { "$ref": "#/$defs/touchedLegacyFinding" }
+      "items": {
+        "$ref": "#/$defs/touchedLegacyFinding"
+      }
     },
     "validate_ref": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "§5.1 — 수정 브랜치라면 `validate.json` 연결(§6.3)."
     }
   },
@@ -46,96 +88,247 @@
     "snapshot": {
       "type": "object",
       "description": "한쪽 스냅샷(§4.2 — BASE·HEAD 두 스캔이 change의 입력이다).",
-      "required": ["sha"],
+      "required": [
+        "sha"
+      ],
       "properties": {
-        "ref": { "type": "string" },
-        "sha": { "type": "string" },
+        "ref": {
+          "type": "string"
+        },
+        "sha": {
+          "type": "string"
+        },
         "reproduce": {
           "type": "object",
           "description": "그 스캔의 재현 블록(§2.8). 두 스냅샷의 `history_backend`가 다르면 델타를 거부한다(§4.5, D17).",
           "additionalProperties": true
         }
-      }
+      },
+      "additionalProperties": false
     },
     "changeItem": {
       "type": "object",
       "description": "§5.1의 항목 하나. 델타 조건은 **시간 무관**이고 앵커는 각 스냅샷의 HEAD 시각이다(§2.7). 게이트가 읽는 값은 백분위가 아니라 **원값**이다(D19).",
-      "required": ["value_base", "value_head", "delta"],
+      "required": [
+        "value_base",
+        "value_head",
+        "delta"
+      ],
       "not": {
         "anyOf": [
-          { "required": ["verdict"] },
-          { "required": ["severity"] },
-          { "required": ["score"] },
-          { "required": ["rank"] },
-          { "required": ["grade"] }
+          {
+            "required": [
+              "verdict"
+            ]
+          },
+          {
+            "required": [
+              "severity"
+            ]
+          },
+          {
+            "required": [
+              "score"
+            ]
+          },
+          {
+            "required": [
+              "rank"
+            ]
+          },
+          {
+            "required": [
+              "grade"
+            ]
+          }
         ]
       },
       "properties": {
-        "value_base": { "type": ["number", "integer", "string", "null", "array", "object"], "description": "BASE 쪽 원값(§5.1)." },
-        "value_head": { "type": ["number", "integer", "string", "null", "array", "object"], "description": "HEAD 쪽 원값(§5.1)." },
-        "delta": { "type": ["number", "integer", "null", "array", "object"], "description": "원값 델타(§5.1, D19). 백분위 드리프트에 영향받지 않는다." },
+        "value_base": {
+          "type": [
+            "number",
+            "integer",
+            "string",
+            "null",
+            "array",
+            "object"
+          ],
+          "description": "BASE 쪽 원값(§5.1)."
+        },
+        "value_head": {
+          "type": [
+            "number",
+            "integer",
+            "string",
+            "null",
+            "array",
+            "object"
+          ],
+          "description": "HEAD 쪽 원값(§5.1)."
+        },
+        "delta": {
+          "type": [
+            "number",
+            "integer",
+            "null",
+            "array",
+            "object"
+          ],
+          "description": "원값 델타(§5.1, D19). 백분위 드리프트에 영향받지 않는다."
+        },
         "evidence": {
           "type": "array",
           "description": "A.4의 설명 문장('이 변경으로 … 증가했고, … 겹치며, … 두 위치에도 존재한다')을 **렌더러가 이 구조에서 조립한다**(§5.1, §7.1 B4). 문장을 여기 저장하지 않는다.",
-          "items": { "$ref": "#/$defs/evidenceItem" }
+          "items": {
+            "$ref": "#/$defs/evidenceItem"
+          }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "evidenceItem": {
       "type": "object",
       "description": "증거 하나. 새 중복은 **발생 수준**이라 여기에 `{path_head, path_base_mapped, cluster_id, tokens}`가 온다(§5.2, D40) — 클러스터 해시만 보면 `BASE: A↔B` → `HEAD: A↔C`를 '기존'으로 오인해 새 사본 C를 놓친다.",
       "properties": {
-        "file": { "type": "string" },
-        "measure": { "type": "string" },
-        "value_base": { "type": ["number", "null"] },
-        "value_head": { "type": ["number", "null"] },
-        "delta": { "type": ["number", "null"] },
-        "path_head": { "type": "string", "description": "§5.2." },
-        "path_base_mapped": { "type": ["string", "null"], "description": "rename 매핑 후 BASE 경로(§5.2). 단순 rename(B→C, 내용 동일)은 매핑이 흡수한다. **진짜 새 발생이면 null이다** — `new_duplication`의 정의가 'BASE의 어떤 클러스터 발생에도 없는 것'이므로 대응하는 BASE 경로가 존재하지 않는다." },
-        "cluster_id": { "type": "string", "description": "`dup:<해시>:<토큰 수>`(§2.6)." },
-        "tokens": { "type": "integer" },
-        "component": { "type": "string" },
+        "file": {
+          "type": "string"
+        },
+        "measure": {
+          "type": "string"
+        },
+        "value_base": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "value_head": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "delta": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "path_head": {
+          "type": "string",
+          "description": "§5.2."
+        },
+        "path_base_mapped": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "rename 매핑 후 BASE 경로(§5.2). 단순 rename(B→C, 내용 동일)은 매핑이 흡수한다. **진짜 새 발생이면 null이다** — `new_duplication`의 정의가 'BASE의 어떤 클러스터 발생에도 없는 것'이므로 대응하는 BASE 경로가 존재하지 않는다."
+        },
+        "cluster_id": {
+          "type": "string",
+          "description": "`dup:<해시>:<토큰 수>`(§2.6)."
+        },
+        "tokens": {
+          "type": "integer"
+        },
+        "component": {
+          "type": "string"
+        },
         "edge": {
           "type": "object",
           "description": "컴포넌트 간선 델타(§5.1) — 추가·삭제를 방향으로만 구분하고 좋고 나쁨 색을 주지 않는다(§7.1 B2, D67).",
           "properties": {
-            "from": { "type": "string" },
-            "to": { "type": "string" },
-            "change": { "enum": ["added", "removed"] }
-          }
+            "from": {
+              "type": "string"
+            },
+            "to": {
+              "type": "string"
+            },
+            "change": {
+              "enum": [
+                "added",
+                "removed"
+              ]
+            }
+          },
+          "additionalProperties": false
         },
-        "scc": { "type": "string", "description": "새 SCC(§5.1, §5.3 — 1개라도 FAIL)." },
-        "in_base_top_decile": { "type": "boolean", "description": "BASE H top-decile 자격(§5.1, §5.3). BASE에서 얼린다(D19)." }
-      }
+        "scc": {
+          "type": "string",
+          "description": "새 SCC(§5.1, §5.3 — 1개라도 FAIL)."
+        },
+        "in_base_top_decile": {
+          "type": "boolean",
+          "description": "BASE H top-decile 자격(§5.1, §5.3). BASE에서 얼린다(D19)."
+        }
+      },
+      "additionalProperties": false
     },
     "touchedLegacyFinding": {
       "type": "object",
       "description": "§5.7. 원장 상태는 저장되지 않고 파생 ⊕ 사건으로 계산되므로(D55) 여기 실리는 상태도 **그 시점의 파생값**이다.",
-      "required": ["id", "anchor_class", "status_before", "delta", "claimed_by_this_pr"],
+      "required": [
+        "id",
+        "anchor_class",
+        "status_before",
+        "delta",
+        "claimed_by_this_pr"
+      ],
       "properties": {
-        "id": { "type": "string", "description": "finding 정체성(§5.5 표, D70)." },
+        "id": {
+          "type": "string",
+          "description": "finding 정체성(§5.5 표, D70)."
+        },
         "anchor_class": {
-          "enum": ["high", "medium", "low"],
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ],
           "description": "§5.5 — 앵커 시점 렌즈 백분위(`≥0.90` high, `≥0.75` medium)로 **얼린** 분류. finding당 불변이고 저장되는 결정 산출물이다(D56). **판결이 아니라 착수 순서**이며(B.2), 얼리는 이유는 개선이 보이게 하기 위해서다 — 움직이는 백분위로는 최악을 고쳐도 다음 10%가 올라와 이길 수 없다."
         },
-        "status_before": { "$ref": "#/$defs/ledgerState" },
-        "delta": { "type": "object", "description": "이 PR이 만든 원값 델타(§5.7).", "additionalProperties": true },
+        "status_before": {
+          "$ref": "#/$defs/ledgerState"
+        },
+        "delta": {
+          "type": "object",
+          "description": "이 PR이 만든 원값 델타(§5.7).",
+          "additionalProperties": true
+        },
         "status_after_if_merged": {
-          "allOf": [{ "$ref": "#/$defs/ledgerState" }],
+          "allOf": [
+            {
+              "$ref": "#/$defs/ledgerState"
+            }
+          ],
           "description": "§5.7 — **예고**다. 실제 상태는 머지 뒤 전이 이력으로 계산되고 귀속은 전이가 일어난 커밋이 갖는다(D99·D100)."
         },
-        "claimed_by_this_pr": { "type": "boolean", "description": "§5.7 — **필수**(D117). 이 PR이 그 finding의 사건 파일을 실었는가는 파생 가능한 사실이고, 선택으로 두면 전이 귀속(§5.5, D100)과 어긋난다." }
-      }
+        "claimed_by_this_pr": {
+          "type": "boolean",
+          "description": "§5.7 — **필수**(D117). 이 PR이 그 finding의 사건 파일을 실었는가는 파생 가능한 사실이고, 선택으로 두면 전이 귀속(§5.5, D100)과 어긋난다."
+        }
+      },
+      "additionalProperties": false
     },
     "ledgerState": {
       "enum": [
-        "open", "improving", "introduced", "removed",
-        "closed", "closed_unclaimed", "closed_unverified",
-        "regressed", "relocated_out_of_scope", "id_drift",
+        "open",
+        "improving",
+        "introduced",
+        "removed",
+        "closed",
+        "closed_unclaimed",
+        "closed_unverified",
+        "regressed",
+        "relocated_out_of_scope",
+        "id_drift",
         "merged_without_effect",
-        "in_progress", "stale_claim"
+        "in_progress",
+        "stale_claim"
       ],
       "description": "§5.5 **정본 어휘**(D110) — 이 목록이 유일한 원장 상태 집합이고 다른 절이 다른 어휘를 쓰면 이 목록이 이긴다. `in_progress`·`stale_claim`은 `--live` 전용이다(D74). `validated`·`rejected`는 **PR의 검증 결과이지 원장 상태가 아니다**. `merged_without_effect`의 사유(`validator_mismatch | partially_resolved | merge_drift | superseded`)는 상태가 아니라 부속 판정이다(D103)."
     }
-  }
+  },
+  "additionalProperties": false
 }

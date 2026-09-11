@@ -1,0 +1,14 @@
+{
+  "case": "event-merged-as-event",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D72·D99",
+  "what": "머지는 쓰는 사건이 아니라 git 파생이다",
+  "mechanism": "enum(어휘가 계약)",
+  "schema": "event.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/validation/result"
+  ]
+}

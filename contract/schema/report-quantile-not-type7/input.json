@@ -1,0 +1,21 @@
+{
+  "case": "report-quantile-not-type7",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "const",
+  "contract_ref": "D114",
+  "what": "분위 방법은 모든 분위에 대한 단일 선언이다",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "reproduce",
+        "percentile_method",
+        "quantile"
+      ],
+      "value": "type6"
+    }
+  ]
+}

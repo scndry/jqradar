@@ -1,0 +1,15 @@
+{
+  "case": "scale-pct-five-decimals",
+  "check": "scale_lint",
+  "kind": "hard_rule",
+  "base": "prd:§7:report",
+  "mechanism": "원문 린트(스키마 아님)",
+  "contract_ref": "D115·D125",
+  "what": "백분위는 소수 4자리다",
+  "text_patch": [
+    {
+      "find": "\"lens_pct\": 0.9289",
+      "replace": "\"lens_pct\": 0.92891"
+    }
+  ]
+}

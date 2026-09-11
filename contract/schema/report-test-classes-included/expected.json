@@ -1,0 +1,14 @@
+{
+  "case": "report-test-classes-included",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "§2.2",
+  "what": "테스트 클래스는 그래프에 들어가지 않는다",
+  "mechanism": "const",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/reproduce/bytecode_scope/test_classes_included"
+  ]
+}

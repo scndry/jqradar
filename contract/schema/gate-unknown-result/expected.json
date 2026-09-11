@@ -1,0 +1,14 @@
+{
+  "case": "gate-unknown-result",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "structural",
+  "contract_ref": "§5.3",
+  "what": "게이트 결과 어휘는 PASS·WARN·FAIL·context_changed뿐",
+  "mechanism": "enum(전사)",
+  "schema": "gate.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/checks/0/result"
+  ]
+}

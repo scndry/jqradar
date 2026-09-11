@@ -1,0 +1,14 @@
+{
+  "case": "validate-equivalence-by-construction",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "structural",
+  "contract_ref": "D31",
+  "what": "equivalence_basis는 세 값뿐 — by_construction은 v3.3에서 기각됐다",
+  "mechanism": "enum(전사)",
+  "schema": "validate.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/equivalence_basis"
+  ]
+}

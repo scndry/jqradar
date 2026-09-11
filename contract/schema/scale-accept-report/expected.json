@@ -1,0 +1,10 @@
+{
+  "case": "scale-accept-report",
+  "generated_by": "contract/schema/compute.py",
+  "check": "scale_lint",
+  "kind": "positive",
+  "contract_ref": "D115·D125",
+  "what": "§7 report의 직렬화 스케일이 렌즈 1자리·백분위 4자리를 지킨다(원문 텍스트로 검사)",
+  "verdict": "accept",
+  "violations": []
+}

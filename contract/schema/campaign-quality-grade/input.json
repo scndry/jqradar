@@ -1,0 +1,19 @@
+{
+  "case": "campaign-quality-grade",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "campaign.schema.json",
+  "base": "prd:§7:campaign",
+  "mechanism": "additionalProperties:false",
+  "contract_ref": "B.3·D126",
+  "what": "캠페인에 품질 등급을 실을 수 없다 — 리포 간 비교 가능한 절대 등급은 비목표다",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "quality_grade"
+      ],
+      "value": "C"
+    }
+  ]
+}

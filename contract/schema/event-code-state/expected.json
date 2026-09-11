@@ -1,0 +1,14 @@
+{
+  "case": "event-code-state",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D55·D61",
+  "what": "사건 파일에 코드 상태(원장 상태)를 저장할 수 없다",
+  "mechanism": "additionalProperties:false",
+  "schema": "event.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/"
+  ]
+}
