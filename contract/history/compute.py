@@ -24,7 +24,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from fractions import Fraction
 from pathlib import Path
 
@@ -108,10 +108,15 @@ def read_history(workdir: Path) -> list[dict]:
 
     # §2.7의 창은 "비머지 커밋"이지 first-parent 한정이 아니다. 브랜치에서 만든
     # 커밋도 머지되어 도달 가능하면 세고, 머지 커밋 자체만 뺀다.
-    raw = git("log", "--format=%H%x00%P%x00%cI%x00%s")
+    # `%cI`가 아니라 `%ct`(unix 초)를 읽는다. git 버전에 따라 `%cI`가 UTC를
+    # `Z`로도 `+00:00`으로도 쓰고, 그러면 "두 머신 바이트 동일"(§2.9)이 깨진다 —
+    # CI가 실제로 이것을 잡았다. 커밋 SHA는 플랫폼 사이에 같았고 문자열 포맷만
+    # 갈렸다. 여기서 UTC로 정규화한다: §2.1의 `chg_days`도 UTC 날짜 기준이다.
+    raw = git("log", "--format=%H%x00%P%x00%ct%x00%s")
     commits = []
     for line in raw.strip().splitlines():
-        sha, parents, when, subject = line.split("\x00")
+        sha, parents, epoch, subject = line.split("\x00")
+        when = datetime.fromtimestamp(int(epoch), timezone.utc).isoformat()
         parent_list = parents.split() if parents else []
         # 머지 커밋은 어차피 창에서 빠지므로 numstat을 읽지 않는다.
         stat = "" if len(parent_list) >= 2 else git("show", "--numstat", "--format=", sha)
