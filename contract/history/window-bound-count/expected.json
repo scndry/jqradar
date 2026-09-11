@@ -1,0 +1,99 @@
+{
+  "case": "window-bound-count",
+  "contract_refs": [
+    "§2.7"
+  ],
+  "what_this_pins": "상한 두 종류 중 **개수**가 먼저 닥치는 경우. 전부 12개월 안이지만 `max_commits`가 3이라 최신 셋만 남는다 — `bound_hit: count`. 어느 상한이 걸렸는지를 `reproduce.window_applied`에 인쇄하지 않으면 '왜 이 파일의 `chg_commits`가 3인가'를 재현할 수 없다(B.4).",
+  "shallow_depth": null,
+  "window_anchor": {
+    "type": "head_committer_time",
+    "timestamp": "2026-03-05T00:00:00+00:00"
+  },
+  "head": "ccf82e65f",
+  "window_applied": {
+    "months": 12,
+    "max_commits": 3,
+    "bound_hit": "count",
+    "commits_in_window": 3,
+    "merge_commits_excluded": 0
+  },
+  "commits": [
+    {
+      "sha": "ccf82e65f",
+      "at": "2026-03-05T00:00:00+00:00",
+      "subject": "5",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "8bef3e9a0",
+      "at": "2026-03-04T00:00:00+00:00",
+      "subject": "4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "8ba5051f7",
+      "at": "2026-03-03T00:00:00+00:00",
+      "subject": "3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "9abdd28a8",
+      "at": "2026-03-02T00:00:00+00:00",
+      "subject": "2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": false
+    },
+    {
+      "sha": "1d62807a5",
+      "at": "2026-03-01T00:00:00+00:00",
+      "subject": "1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": false
+    }
+  ],
+  "median_files_per_commit": 1,
+  "commit_granularity": "fine",
+  "renames": [],
+  "files": {
+    "src/A.java": {
+      "chg_commits": 3,
+      "chg_days": 3,
+      "churn": 6,
+      "touched_by": [
+        "ccf82e65f",
+        "8bef3e9a0",
+        "8ba5051f7"
+      ],
+      "age_last_days": 0
+    }
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

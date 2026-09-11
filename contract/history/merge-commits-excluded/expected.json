@@ -1,0 +1,98 @@
+{
+  "case": "merge-commits-excluded",
+  "contract_refs": [
+    "§2.7",
+    "§2.1"
+  ],
+  "what_this_pins": "부모가 둘 이상인 커밋은 창에 들어가지 않는다(§2.7). `chg_commits`는 H·tc의 변경 단위로 **잠긴** 값이므로(D27) 머지를 세면 머지 전략에 따라 핫스팟 순위가 갈린다 — 같은 작업이 스쿼시 리포에서는 1, 머지 리포에서는 2가 된다. 창은 first-parent 한정이 **아니다**: 브랜치에서 만든 커밋도 도달 가능하면 세고 머지 커밋 자체만 뺀다. 여기서 `feature: edit A`는 세고 `merge feature`는 빼서 `src/A.java`의 `chg_commits`가 2다.",
+  "shallow_depth": null,
+  "window_anchor": {
+    "type": "head_committer_time",
+    "timestamp": "2026-02-01T03:00:00+00:00"
+  },
+  "head": "e412b5eca",
+  "window_applied": {
+    "months": 12,
+    "max_commits": 2000,
+    "bound_hit": "none",
+    "commits_in_window": 3,
+    "merge_commits_excluded": 1
+  },
+  "commits": [
+    {
+      "sha": "e412b5eca",
+      "at": "2026-02-01T03:00:00+00:00",
+      "subject": "merge feature",
+      "is_merge": true,
+      "shallow_boundary": false,
+      "paths": [],
+      "in_window": false
+    },
+    {
+      "sha": "ba01025f8",
+      "at": "2026-02-01T02:00:00+00:00",
+      "subject": "main: add B",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "dd250449a",
+      "at": "2026-02-01T01:00:00+00:00",
+      "subject": "feature: edit A",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "567f3927e",
+      "at": "2026-02-01T00:00:00+00:00",
+      "subject": "seed",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": true
+    }
+  ],
+  "median_files_per_commit": 1,
+  "commit_granularity": "fine",
+  "renames": [],
+  "files": {
+    "src/A.java": {
+      "chg_commits": 2,
+      "chg_days": 1,
+      "churn": 3,
+      "touched_by": [
+        "dd250449a",
+        "567f3927e"
+      ],
+      "age_last_days": 0.083333333333
+    },
+    "src/B.java": {
+      "chg_commits": 1,
+      "chg_days": 1,
+      "churn": 1,
+      "touched_by": [
+        "ba01025f8"
+      ],
+      "age_last_days": 0.041666666667
+    }
+  },
+  "non_terminating": {
+    "/files/src/A.java/age_last_days": "1/12",
+    "/files/src/B.java/age_last_days": "1/24"
+  },
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

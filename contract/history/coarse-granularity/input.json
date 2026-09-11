@@ -1,0 +1,120 @@
+{
+  "case": "coarse-granularity",
+  "contract_refs": [
+    "§2.7",
+    "§3.7"
+  ],
+  "what_this_pins": "커밋당 변경 파일 수의 중앙값이 20을 **초과**하면 `commit_granularity: coarse`다(§2.7). coarse이면 `chg_commits` 성분의 confidence가 low로 내려간다(§3.7) — 25개 파일을 한 커밋에 넣는 리포에서 '이 파일이 자주 바뀐다'는 신호는 그 파일이 아니라 커밋 습관을 말한다. 여기서 중앙값이 25라 coarse이고, 경계를 '이상'이 아니라 '초과'로 읽는 것도 함께 고정한다.",
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-04-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "c1",
+        "at_seconds": 0,
+        "message": "bulk 1",
+        "write": {
+          "src/pkg/F01.java": "class F01 { int v1; }\n",
+          "src/pkg/F02.java": "class F02 { int v1; }\n",
+          "src/pkg/F03.java": "class F03 { int v1; }\n",
+          "src/pkg/F04.java": "class F04 { int v1; }\n",
+          "src/pkg/F05.java": "class F05 { int v1; }\n",
+          "src/pkg/F06.java": "class F06 { int v1; }\n",
+          "src/pkg/F07.java": "class F07 { int v1; }\n",
+          "src/pkg/F08.java": "class F08 { int v1; }\n",
+          "src/pkg/F09.java": "class F09 { int v1; }\n",
+          "src/pkg/F10.java": "class F10 { int v1; }\n",
+          "src/pkg/F11.java": "class F11 { int v1; }\n",
+          "src/pkg/F12.java": "class F12 { int v1; }\n",
+          "src/pkg/F13.java": "class F13 { int v1; }\n",
+          "src/pkg/F14.java": "class F14 { int v1; }\n",
+          "src/pkg/F15.java": "class F15 { int v1; }\n",
+          "src/pkg/F16.java": "class F16 { int v1; }\n",
+          "src/pkg/F17.java": "class F17 { int v1; }\n",
+          "src/pkg/F18.java": "class F18 { int v1; }\n",
+          "src/pkg/F19.java": "class F19 { int v1; }\n",
+          "src/pkg/F20.java": "class F20 { int v1; }\n",
+          "src/pkg/F21.java": "class F21 { int v1; }\n",
+          "src/pkg/F22.java": "class F22 { int v1; }\n",
+          "src/pkg/F23.java": "class F23 { int v1; }\n",
+          "src/pkg/F24.java": "class F24 { int v1; }\n",
+          "src/pkg/F25.java": "class F25 { int v1; }\n"
+        }
+      },
+      {
+        "id": "c2",
+        "at_seconds": 86400,
+        "message": "bulk 2",
+        "write": {
+          "src/pkg/F01.java": "class F01 { int v2; }\n",
+          "src/pkg/F02.java": "class F02 { int v2; }\n",
+          "src/pkg/F03.java": "class F03 { int v2; }\n",
+          "src/pkg/F04.java": "class F04 { int v2; }\n",
+          "src/pkg/F05.java": "class F05 { int v2; }\n",
+          "src/pkg/F06.java": "class F06 { int v2; }\n",
+          "src/pkg/F07.java": "class F07 { int v2; }\n",
+          "src/pkg/F08.java": "class F08 { int v2; }\n",
+          "src/pkg/F09.java": "class F09 { int v2; }\n",
+          "src/pkg/F10.java": "class F10 { int v2; }\n",
+          "src/pkg/F11.java": "class F11 { int v2; }\n",
+          "src/pkg/F12.java": "class F12 { int v2; }\n",
+          "src/pkg/F13.java": "class F13 { int v2; }\n",
+          "src/pkg/F14.java": "class F14 { int v2; }\n",
+          "src/pkg/F15.java": "class F15 { int v2; }\n",
+          "src/pkg/F16.java": "class F16 { int v2; }\n",
+          "src/pkg/F17.java": "class F17 { int v2; }\n",
+          "src/pkg/F18.java": "class F18 { int v2; }\n",
+          "src/pkg/F19.java": "class F19 { int v2; }\n",
+          "src/pkg/F20.java": "class F20 { int v2; }\n",
+          "src/pkg/F21.java": "class F21 { int v2; }\n",
+          "src/pkg/F22.java": "class F22 { int v2; }\n",
+          "src/pkg/F23.java": "class F23 { int v2; }\n",
+          "src/pkg/F24.java": "class F24 { int v2; }\n",
+          "src/pkg/F25.java": "class F25 { int v2; }\n"
+        }
+      },
+      {
+        "id": "c3",
+        "at_seconds": 172800,
+        "message": "bulk 3",
+        "write": {
+          "src/pkg/F01.java": "class F01 { int v3; }\n",
+          "src/pkg/F02.java": "class F02 { int v3; }\n",
+          "src/pkg/F03.java": "class F03 { int v3; }\n",
+          "src/pkg/F04.java": "class F04 { int v3; }\n",
+          "src/pkg/F05.java": "class F05 { int v3; }\n",
+          "src/pkg/F06.java": "class F06 { int v3; }\n",
+          "src/pkg/F07.java": "class F07 { int v3; }\n",
+          "src/pkg/F08.java": "class F08 { int v3; }\n",
+          "src/pkg/F09.java": "class F09 { int v3; }\n",
+          "src/pkg/F10.java": "class F10 { int v3; }\n",
+          "src/pkg/F11.java": "class F11 { int v3; }\n",
+          "src/pkg/F12.java": "class F12 { int v3; }\n",
+          "src/pkg/F13.java": "class F13 { int v3; }\n",
+          "src/pkg/F14.java": "class F14 { int v3; }\n",
+          "src/pkg/F15.java": "class F15 { int v3; }\n",
+          "src/pkg/F16.java": "class F16 { int v3; }\n",
+          "src/pkg/F17.java": "class F17 { int v3; }\n",
+          "src/pkg/F18.java": "class F18 { int v3; }\n",
+          "src/pkg/F19.java": "class F19 { int v3; }\n",
+          "src/pkg/F20.java": "class F20 { int v3; }\n",
+          "src/pkg/F21.java": "class F21 { int v3; }\n",
+          "src/pkg/F22.java": "class F22 { int v3; }\n",
+          "src/pkg/F23.java": "class F23 { int v3; }\n",
+          "src/pkg/F24.java": "class F24 { int v3; }\n",
+          "src/pkg/F25.java": "class F25 { int v3; }\n"
+        }
+      }
+    ]
+  },
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "measure_files": [
+    "src/pkg/F01.java"
+  ]
+}

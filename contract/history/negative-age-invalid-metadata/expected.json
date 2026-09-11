@@ -1,0 +1,74 @@
+{
+  "case": "negative-age-invalid-metadata",
+  "contract_refs": [
+    "§2.1"
+  ],
+  "what_this_pins": "커미터 시각이 뒤죽박죽이면 `HEAD_TIME − 마지막 변경 시각`이 **음수**가 된다. git은 시각 순서를 강제하지 않으므로 잘못된 시계·수입된 이력에서 실제로 생긴다. 음수 나이는 0으로 자르지 않고 **null + `invalid_metadata`**다(§2.1) — 0으로 자르면 '방금 바뀐 파일'이 되어 F에서 빠지고, 음수를 그대로 두면 `P90(age_last_days)` 분위가 망가진다. 여기서 HEAD(`c2`)의 시각이 부모(`c1`)보다 하루 **이르다**.",
+  "shallow_depth": null,
+  "window_anchor": {
+    "type": "head_committer_time",
+    "timestamp": "2026-08-02T00:00:00+00:00"
+  },
+  "head": "39b38b7a3",
+  "window_applied": {
+    "months": 12,
+    "max_commits": 2000,
+    "bound_hit": "none",
+    "commits_in_window": 2,
+    "merge_commits_excluded": 0
+  },
+  "commits": [
+    {
+      "sha": "39b38b7a3",
+      "at": "2026-08-02T00:00:00+00:00",
+      "subject": "HEAD with earlier timestamp",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "8339ea0a0",
+      "at": "2026-08-03T00:00:00+00:00",
+      "subject": "later timestamp",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": true
+    }
+  ],
+  "median_files_per_commit": 1,
+  "commit_granularity": "fine",
+  "renames": [],
+  "files": {
+    "src/A.java": {
+      "chg_commits": 1,
+      "chg_days": 1,
+      "churn": 1,
+      "touched_by": [
+        "8339ea0a0"
+      ],
+      "age_last_days": null,
+      "age_reason": "invalid_metadata"
+    },
+    "src/B.java": {
+      "chg_commits": 1,
+      "chg_days": 1,
+      "churn": 1,
+      "touched_by": [
+        "39b38b7a3"
+      ],
+      "age_last_days": 0
+    }
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

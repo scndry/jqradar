@@ -1,0 +1,59 @@
+{
+  "case": "rename-tiebreak",
+  "contract_refs": [
+    "§2.7"
+  ],
+  "what_this_pins": "rename 후보가 여럿일 때의 tie-break: **유사도 → 경로 편집 거리 → 사전순**(§2.7). 여기서 두 후보의 내용이 완전히 같아 **유사도가 동률**이므로 둘째 기준으로 넘어가고, `src/OrderService2.java`(편집 거리 1)가 `src/legacy/archive/OldOrderServiceBackup.java`(훨씬 멂)를 이긴다 — `decided_by: path_edit_distance`, `rename_ambiguous: false`. 사전순은 여기까지 오지 않는다(온 경우는 `rename-ambiguous` 케이스).\n\n유사도를 케이스가 선언하는 이유: JGit의 유사도 지표를 스크립트가 흉내 내면 픽스처가 계약이 아니라 그 구현을 고정한다(§4.5·D17이 네이티브 백엔드를 옵트인으로 둔 이유). rename이 틀리면 `chg_commits`가 갈리고 H 순위가 통째로 움직인다.",
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-05-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "c1",
+        "at_seconds": 0,
+        "message": "seed",
+        "write": {
+          "src/OrderService.java": "class OrderService { void run() {} }\n"
+        }
+      },
+      {
+        "id": "c2",
+        "at_seconds": 86400,
+        "message": "move and copy",
+        "delete": [
+          "src/OrderService.java"
+        ],
+        "write": {
+          "src/OrderService2.java": "class OrderService { void run() {} }\n",
+          "src/legacy/archive/OldOrderServiceBackup.java": "class OrderService { void run() {} }\n"
+        }
+      }
+    ]
+  },
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "renames": [
+    {
+      "from": "src/OrderService.java",
+      "candidates": [
+        {
+          "path": "src/legacy/archive/OldOrderServiceBackup.java",
+          "similarity": 100
+        },
+        {
+          "path": "src/OrderService2.java",
+          "similarity": 100
+        }
+      ]
+    }
+  ],
+  "measure_files": [
+    "src/OrderService2.java",
+    "src/legacy/archive/OldOrderServiceBackup.java"
+  ]
+}

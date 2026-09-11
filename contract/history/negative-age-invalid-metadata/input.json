@@ -1,0 +1,40 @@
+{
+  "case": "negative-age-invalid-metadata",
+  "contract_refs": [
+    "§2.1"
+  ],
+  "what_this_pins": "커미터 시각이 뒤죽박죽이면 `HEAD_TIME − 마지막 변경 시각`이 **음수**가 된다. git은 시각 순서를 강제하지 않으므로 잘못된 시계·수입된 이력에서 실제로 생긴다. 음수 나이는 0으로 자르지 않고 **null + `invalid_metadata`**다(§2.1) — 0으로 자르면 '방금 바뀐 파일'이 되어 F에서 빠지고, 음수를 그대로 두면 `P90(age_last_days)` 분위가 망가진다. 여기서 HEAD(`c2`)의 시각이 부모(`c1`)보다 하루 **이르다**.",
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-08-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "c1",
+        "at_seconds": 172800,
+        "message": "later timestamp",
+        "write": {
+          "src/A.java": "class A {}\n"
+        }
+      },
+      {
+        "id": "c2",
+        "at_seconds": 86400,
+        "message": "HEAD with earlier timestamp",
+        "write": {
+          "src/B.java": "class B {}\n"
+        }
+      }
+    ]
+  },
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "measure_files": [
+    "src/A.java",
+    "src/B.java"
+  ]
+}

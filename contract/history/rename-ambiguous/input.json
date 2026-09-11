@@ -1,0 +1,59 @@
+{
+  "case": "rename-ambiguous",
+  "contract_refs": [
+    "§2.7"
+  ],
+  "what_this_pins": "유사도와 경로 편집 거리가 **둘 다** 동률이면 사전순이 결정하되 `rename_ambiguous`를 표기한다(§2.7). 여기서 `Xxx.java`의 두 후보 `Aaa.java`·`Bbb.java`는 내용이 같고(유사도 동률) 경로 편집 거리도 같다(세 글자 모두 다름). 사전순이 `Aaa`를 고르지만 **사전순이 결정했다는 사실 자체가 신호**다 — 숨기면 rename 추적 실패가 조용히 `chg_commits`에 섞인다. 원장에서 같은 일을 하는 것이 §7.1 C3의 Lost findings다.",
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-06-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "c1",
+        "at_seconds": 0,
+        "message": "seed",
+        "write": {
+          "src/Xxx.java": "class X {}\n"
+        }
+      },
+      {
+        "id": "c2",
+        "at_seconds": 86400,
+        "message": "two identical copies",
+        "delete": [
+          "src/Xxx.java"
+        ],
+        "write": {
+          "src/Aaa.java": "class X {}\n",
+          "src/Bbb.java": "class X {}\n"
+        }
+      }
+    ]
+  },
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "renames": [
+    {
+      "from": "src/Xxx.java",
+      "candidates": [
+        {
+          "path": "src/Bbb.java",
+          "similarity": 100
+        },
+        {
+          "path": "src/Aaa.java",
+          "similarity": 100
+        }
+      ]
+    }
+  ],
+  "measure_files": [
+    "src/Aaa.java",
+    "src/Bbb.java"
+  ]
+}
