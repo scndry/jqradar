@@ -24,6 +24,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 CASE_DIR = Path(__file__).resolve().parent
@@ -83,7 +84,6 @@ def build_history(tree: Path, spec: dict, workdir: Path) -> dict:
                               check=True, capture_output=True, text=True, **kw).stdout.strip()
 
     git("init", "-q", "-b", "main")
-    from datetime import datetime, timedelta
     base = datetime.fromisoformat(spec["base_time"])
     shas = []
     for i, commit in enumerate(spec["history"]):
@@ -94,7 +94,12 @@ def build_history(tree: Path, spec: dict, workdir: Path) -> dict:
             git("add", "--", rel)
         git("commit", "-q", "-m", commit["message"])
         shas.append(git("rev-parse", "HEAD"))
-    head_time = git("show", "-s", "--format=%cI", "HEAD")
+    # `%cI`가 아니라 `%ct`(unix 초). git 버전에 따라 UTC를 `Z`로도 `+00:00`으로도
+    # 써서 두 머신에서 문자열이 갈리고, 이 값은 `analysis_input_id`에 **해시로
+    # 들어간다** — 그러면 같은 트리·같은 툴체인인데 id가 달라진다. 이 계약이
+    # 막아야 할 바로 그것을 이 계산기가 하고 있었다(CI가 잡았다).
+    head_time = datetime.fromtimestamp(
+        int(git("show", "-s", "--format=%ct", "HEAD")), timezone.utc).isoformat()
     return {"commit_shas": shas, "head": shas[-1], "head_committer_time": head_time}
 
 
@@ -201,6 +206,13 @@ def main() -> int:
                 failures += 1
                 print(f"FAIL  {case_dir.name}: expected.json "
                       f"{'없음' if current is None else '다름'} — §2.8 정체성 계약")
+                if current is not None:
+                    import difflib
+                    for line in list(difflib.unified_diff(
+                            current.splitlines(), text.splitlines(),
+                            fromfile="committed", tofile="recomputed",
+                            lineterm="", n=1))[:30]:
+                        print(f"      {line}")
         else:
             target.write_text(text, encoding="utf-8")
             print(f"wrote {case_dir.name}/expected.json")
