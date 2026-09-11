@@ -1,0 +1,15 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "percentile.serialization",
+    "note": "값 불변, 직렬화만. contract/percentile/이 자기 직렬화 사본을 버리고 공용 contract/tools/exact.py를 쓴다. 바뀐 것은 expected.json의 메타데이터 배치뿐이다 — `generated_by`가 최상위에서 `_fixture` 안으로 들어가고 `_fixture.arithmetic` 문구가 공용 문구로 통일된다. pct·spread·confidence·quantile 값은 **하나도 바뀌지 않았다**(`_fixture`와 `generated_by`를 뺀 구조가 여섯 케이스 모두 바이트 동일). 그럼에도 contract_change인 이유: 직렬화 형식은 계약이다(§2.5 산술 계약의 output 절, D115) — 렌즈 1자리·백분위 4자리·HALF_EVEN과 '두 머신 바이트 동일'(§2.9 reproducibility/)이 그 위에 선다. 형식이 움직였으니 계약이 움직인 것이고, 값이 안 움직였다는 사실은 이 note가 진다(P11의 원인 분류를 흐리지 않기 위해).",
+    "fixtures": [
+      "percentile/ties",
+      "percentile/single-file",
+      "percentile/below-min-population",
+      "percentile/lens-percentile-zero-included",
+      "percentile/p90-type7",
+      "percentile/iqr-zero-low-confidence"
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "history.blame_detection",
+    "note": "blame 탐지의 증거 정의가 바뀌었다. 이전 판은 소스 전체를 소문자로 훑어 부분 문자열 `blame`·`--porcelain`을 찾았고, 그래서 (1) 계약을 인용하는 주석이 걸리고 (2) `git status --porcelain`이 걸리고 (3) `@DisplayName(\"어기면 잡는다 — git.blame()\")`이 걸렸다 — 이 리포의 코드 스타일이 계약 인용 주석이라 G1에 '계약을 설명하는 주석 금지'가 되었을 것이다. 새 정의: 주석은 제거하고 문자열 리터럴은 보존하며, 코드 토큰(BlameCommand·.blame()과 **명령 조각 모양** 리터럴(토큰이 전부 CLI 형태이고 하나가 정확히 blame)만 증거로 센다. `--porcelain`은 blame과 연접할 때만. 검사 제외 범위도 좁혔다(테스트 소스 전체 -> 반례 패키지만) — 실제 스캔 대상이 0에서 2로 늘었다. must_not_be_caught 절을 신설해 오탐 다섯을 고정한다.",
+    "fixtures": ["history/blame-forbidden-on-scan-change"]
+  }
+}

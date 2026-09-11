@@ -163,7 +163,8 @@
   },
   "non_terminating": {},
   "_fixture": {
-    "arithmetic": "exact rational (fractions.Fraction)",
+    "generated_by": "contract/percentile/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
     "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
   }
 }

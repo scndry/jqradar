@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -314,10 +315,105 @@ def build_expected(inp: dict, workdir: Path) -> dict:
 # `new ProcessBuilder("git", "blame", "-p")`가 빠져나간다 — bite_check가 그것을 잡았다.
 # scan/change 경로에서는 blame이라는 말 자체가 신호다. "여기서는 blame을 부르지
 # 않는다" 같은 주석도 걸리는데, 그 주석은 여기 말고 계약 문서에 쓰는 것이 맞다.
-SCAN_CHANGE_MARKERS = ("blamecommand", ".blame(", "blame", "--porcelain")
+# 검사에서 빼는 자리. **좁게** 둔다 — 넓게 빼면 검사가 공집합을 훑고 그 "통과"는
+# "검사하지 않았다"와 구별되지 않는다.
+#   ledger/     §5.6의 유일한 예외 — 캠페인 생성 시 1회, 원장 finding 영역 한정(D57)
+#   violations/ 자체 ArchUnit 규칙의 반례. 일부러 어기는 것이 존재 이유다
+# 테스트 소스 전체를 빼지 않는다: 스캐너가 주석과 리터럴을 가르므로 계약을 인용하는
+# 테스트 코드는 어차피 걸리지 않고, scan/change를 부르는 테스트는 걸려야 한다.
+BLAME_SANCTIONED = ("io/jqradar/ledger/", "io/jqradar/arch/violations/")
 
-# §5.6의 유일한 예외 — 캠페인 생성 시 1회, 원장 finding 영역 한정.
-BLAME_SANCTIONED = ("io/jqradar/ledger/", "contract/", "docs/", "/test/")
+
+def split_java(source: str) -> tuple[str, list[str]]:
+    """Java 소스를 (주석 뺀 코드, 문자열 리터럴 목록)으로 가른다.
+
+    **이 함수가 이 케이스의 핵심이다.** 주석과 문자열 리터럴을 같이 다루면 규칙이
+    둘 중 하나로 망가진다:
+
+    - 둘 다 보면 "매 스캔 blame 금지(D18)" 같은 **계약을 인용하는 주석**이 걸린다.
+      이 리포의 코드 스타일이 정확히 그것이라(JqradarArchRules.java도 compute.py도
+      계약 인용 주석으로 가득하다) 규칙이 G1에 "계약을 설명하는 주석 금지"가 된다.
+    - 둘 다 안 보면 `new ProcessBuilder("git", "blame", "-p")`를 놓친다 — 타입
+      의존이 없어 자체 ArchUnit 규칙 2도 못 잡는 경로다.
+
+    그래서 **주석은 버리고 문자열 리터럴은 남긴다.** `contract/judgment-vocabulary.json`이
+    `not_judgment` 절과 단어 경계로 오탐을 다루는 것과 같은 규율이다.
+
+    코드 쪽에서는 리터럴을 `""`로 지워 토큰만 남긴다 — 그래야 `.blame(`이 주석이나
+    문자열이 아니라 **호출**일 때만 걸린다.
+    """
+    out, literals = [], []
+    i, n = 0, len(source)
+    while i < n:
+        two = source[i:i + 2]
+        if two == "//":
+            while i < n and source[i] != "\n":
+                i += 1
+            continue
+        if two == "/*":
+            end = source.find("*/", i + 2)
+            i = n if end < 0 else end + 2
+            continue
+        if source[i:i + 3] == '"""':                      # 텍스트 블록(Java 15+)
+            end = source.find('"""', i + 3)
+            literals.append(source[i + 3:end] if end >= 0 else source[i + 3:])
+            out.append('""')
+            i = n if end < 0 else end + 3
+            continue
+        if source[i] in '"\'':
+            quote, j, buf = source[i], i + 1, []
+            while j < n and source[j] != quote:
+                if source[j] == "\\":
+                    buf.append(source[j:j + 2])
+                    j += 2
+                    continue
+                buf.append(source[j])
+                j += 1
+            literals.append("".join(buf))
+            out.append('""')
+            i = j + 1
+            continue
+        out.append(source[i])
+        i += 1
+    return "".join(out), literals
+
+
+# 코드 토큰 마커 — **주석을 뺀 코드**에서만 찾는다.
+CODE_MARKERS = ("BlameCommand", ".blame(")
+
+# 문자열 리터럴 마커 — ProcessBuilder로 부르는 네이티브 blame 경로.
+#
+# 리터럴이면 다 증거는 아니다. `@DisplayName("어기면 잡는다 — git.blame()")` 같은
+# **산문**이 실제로 걸렸다(이 리포에 있는 문장이다). 그래서 리터럴이 **명령 조각**
+# 모양일 때만 증거로 센다: 공백으로 쪼갠 토큰이 전부 CLI 모양이고, 그중 하나가
+# 정확히 `blame`일 때. ProcessBuilder 인자는 정확한 토큰이고 산문은 아니다.
+CLI_TOKEN = re.compile(r"^[A-Za-z0-9._/=-]+$")
+
+
+def is_command_fragment_with_blame(literal: str) -> bool:
+    tokens = literal.split()
+    if not tokens or not all(CLI_TOKEN.match(t) for t in tokens):
+        return False
+    return any(t.lower() == "blame" for t in tokens)
+
+# 단독으로는 **증거가 아니다.** `git status --porcelain`·`git push --porcelain`이
+# 흔하다. blame 리터럴과 **연접**할 때만 증거로 센다.
+LITERAL_CORROBORATING = "--porcelain"
+
+
+def scan_source(source: str) -> list[dict]:
+    """한 소스에서 찾은 증거 목록. 비면 통과다."""
+    code, literals = split_java(source)
+    found = []
+    for marker in CODE_MARKERS:
+        if marker in code:
+            found.append({"kind": "code_token", "marker": marker})
+    blame_literals = [lit for lit in literals if is_command_fragment_with_blame(lit)]
+    for lit in blame_literals:
+        found.append({"kind": "string_literal", "marker": lit})
+    if blame_literals and any(LITERAL_CORROBORATING in lit for lit in literals):
+        found.append({"kind": "corroborating_literal", "marker": LITERAL_CORROBORATING})
+    return found
 
 
 def check_no_blame(inp: dict) -> dict:
@@ -337,21 +433,27 @@ def check_no_blame(inp: dict) -> dict:
             skipped.append(rel)
             continue
         scanned.append(rel)
-        text = path.read_text(encoding="utf-8").lower()
-        for marker in SCAN_CHANGE_MARKERS:
-            if marker in text:
-                hits.append({"path": rel, "marker": marker})
+        for evidence in scan_source(path.read_text(encoding="utf-8")):
+            hits.append({"path": rel, **evidence})
 
     # **검사가 무는지 확인한다.** G0에는 scan/change 코드가 없어 위 루프가 공집합을
     # 훑는다 — 그 상태의 "통과"는 "검사하지 않았다"와 구별되지 않는다(D124와 같은 논리).
     # 아래 조각들은 각각 반드시 걸려야 한다.
     bite = []
     for sample in inp["must_be_caught"]:
-        lowered = sample["source"].lower()
-        caught = [m for m in SCAN_CHANGE_MARKERS if m in lowered]
+        evidence = scan_source(sample["source"])
         bite.append({"name": sample["name"], "why": sample["why"],
-                     "matched_markers": caught, "caught": bool(caught)})
+                     "evidence": evidence, "caught": bool(evidence)})
     missed = [b["name"] for b in bite if not b["caught"]]
+
+    # **오탐 검사.** schema/에는 긍정과 변조가 둘 다 있는데 여기엔 변조만 있었다.
+    # 이 셋이 걸리면 규칙이 G1에 "계약을 설명하는 주석 금지"가 된다.
+    false_positives = []
+    for sample in inp["must_not_be_caught"]:
+        evidence = scan_source(sample["source"])
+        false_positives.append({"name": sample["name"], "why": sample["why"],
+                                "evidence": evidence, "passed": not evidence})
+    wrongly_caught = [f["name"] for f in false_positives if not f["passed"]]
 
     return {
         "case": inp["case"],
@@ -359,14 +461,22 @@ def check_no_blame(inp: dict) -> dict:
         "what_this_pins": inp["what_this_pins"],
         "check": "no_blame_on_scan_change_path",
         "sanctioned_prefixes": list(BLAME_SANCTIONED),
-        "markers": list(SCAN_CHANGE_MARKERS),
+        "markers": {
+            "code_tokens": list(CODE_MARKERS),
+            "string_literal": "명령 조각 모양의 리터럴에서 토큰이 정확히 `blame`일 때만 "
+                              "(산문은 증거가 아니다)",
+            "corroborating_literal": LITERAL_CORROBORATING
+                                     + " — blame 리터럴과 연접할 때만",
+        },
+        "comment_handling": "주석은 스캔 전에 제거한다. 문자열 리터럴은 남긴다.",
         "files_seen": len(seen),
         "files_scanned": len(scanned),
         "files_skipped_as_sanctioned": skipped,
         "scanned_paths": scanned,
         "violations": hits,
         "bite_check": bite,
-        "verdict": "reject" if (hits or missed) else "accept",
+        "false_positive_check": false_positives,
+        "verdict": "reject" if (hits or missed or wrongly_caught) else "accept",
         "note": ("G0에는 scan/change 코드가 없어 실제 스캔 대상이 0일 수 있다. "
                  "그래서 bite_check가 함께 있다 — 검사가 무는지는 공집합이 아니라 "
                  "반례가 증명한다."),
