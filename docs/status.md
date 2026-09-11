@@ -1,8 +1,8 @@
 # 상태 — 다음 세션이 이어받을 것
 
-**지금**: S0 / G0 진행 중(§9 W1–3). CLAUDE.md §3의 **1–7번 전부 완료**. Gradle 멀티모듈 골격(모듈 여섯, 빈 소스셋 + 의존, 래퍼 9.7.1), 자체 ArchUnit 규칙 넷 + 반례 넷(테스트 10개), `docs/preregistration/p1a.md`, `docs/battery.md`(실측). `contract/` 13개 디렉터리 — `percentile/` 6케이스, `schema/` **45케이스**(스키마 7종 × 긍정 + 하드룰 변조, D124), `reproducibility/` 1케이스(합성 리포, 결정적 이력). `schemas/` 7종. 공유 자원 둘: `judgment-vocabulary.json`(D127), `fixture-changes/`(D129). core 측정 코드는 아직 없다.
+**지금**: S0 / G0 막바지. CLAUDE.md §3의 1–7번 완료 + G0 픽스처 전부. `contract/` 케이스 **75종** — percentile 6 · schema 45 · reproducibility 1 · **cpd 5 · history 10 · graph 8**(P8 합성 리포 포함). 자체 ArchUnit 규칙 넷 + 반례(테스트 11개), Gradle 골격, P1a 사전 등록, 배터리 확정. **CI가 켜져 있다**(`.github/workflows/contract.yml`) — 재계산 대조 6종 + 빌드 + `fixture_change` 가드. `contract/` 13개 디렉터리 — `percentile/` 6케이스, `schema/` **45케이스**(스키마 7종 × 긍정 + 하드룰 변조, D124), `reproducibility/` 1케이스(합성 리포, 결정적 이력). `schemas/` 7종. 공유 자원 둘: `judgment-vocabulary.json`(D127), `fixture-changes/`(D129). core 측정 코드는 아직 없다.
 
-**다음**: G0 체크리스트(§9) 7항목의 잔여 — #1(리뷰어 2명 교차 검토), #2·#3·#7의 픽스처, #6(`fixture_change`를 요구하는 CI 규칙). 픽스처로는 `percentile/`의 남은 둘(언어 분리·0 팽창), `reproducibility/`의 남은 넷(파라미터 변경·reproduce만으로 id 재계산·두 머신 바이트 동일·해시 `pattern` 강제 D128), `cpd/`·`history/`·`graph/`의 G0 케이스 — G0 #2·#3·#7이 전부 요구한다.
+**다음**: G0 체크리스트(§9)에서 남은 것은 **#1(리뷰어 2명 교차 검토)뿐**이다 — 사람이 해야 하는 항목이다. 그 뒤는 G1(W4–7): core 측정·백분위·렌즈·JSON, CLI `scan`, `contract/lens`·`gate`, 자기 적용 S1. 픽스처로는 `percentile/`의 남은 둘(언어 분리·0 팽창), `reproducibility/`의 남은 넷(파라미터 변경·reproduce만으로 id 재계산·두 머신 바이트 동일·해시 `pattern` 강제 D128), `cpd/`·`history/`·`graph/`의 G0 케이스 — G0 #2·#3·#7이 전부 요구한다.
 
 **막힌 것**: 없음. D114–D129가 첫 구현 PR의 충돌 5건, 후속 검토 7건, PR #1 감사 4건, 레코드 자리 1건을 전부 닫았다. 남은 계약 공백 하나는 `analysis_input_id`의 **정규 인코딩**(§2.8이 입력 목록만 정하고 바이트로 펴는 방법을 정하지 않는다) — `contract/reproducibility/README.md`에 표시했고 케이스는 로컬 선언으로 유효하다.
 
