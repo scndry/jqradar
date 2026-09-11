@@ -20,7 +20,7 @@
 | [`external-edges/`](external-edges/) | §2.2가 **이름까지 지정한** 필수 케이스. 외부 간선을 기록하되 지표에서 뺀다 |
 | [`auto-longest-common-prefix/`](auto-longest-common-prefix/) | `auto` 1/4 — 최장 공통 접두어 아래 첫 레벨 |
 | [`auto-single-child-descends/`](auto-single-child-descends/) | `auto` 2/4 — 자식이 하나면 한 칸 내려간다 |
-| [`auto-oversized-child-splits/`](auto-oversized-child-splits/) | `auto` 3/4 — 60% 초과 자식은 추가 분할 |
+| [`auto-oversized-child-splits/`](auto-oversized-child-splits/) | `auto` 3/4 — **전체 클래스 수**의 60%를 넘는 자식은 추가 분할(D130) |
 | [`auto-multiple-roots/`](auto-multiple-roots/) | `auto` 4/4 — 루트가 여럿이면 루트별로 |
 | [`component-cycle/`](component-cycle/) | Tarjan SCC. 새 SCC는 게이트에서 1개라도 FAIL이다(§5.3) |
 | [`nccd-cross-check/`](nccd-cross-check/) | §2.3 본문의 검산 — N=41, CCD=512 → 185.48 / 12.49 / 0.305 / **2.76** |
@@ -28,9 +28,13 @@
 
 `deep-enterprise-packages/`가 `docs/battery.md`가 예고한 P8 합성 리포다. 패키지가 6–7단계일 때 `auto`가 기술 계층(domain·adapter)이 아니라 업무 영역(orders·payments·shipping·shared)으로 접는지를 본다. P8은 이것을 아키텍트 2명의 블라인드 주석과 대조하고(inter-rater κ), 이 픽스처는 그 대조의 **입력**을 결정적으로 고정한다.
 
-## 미해결 — 계약이 답하지 않는 것
+## 분할 기준은 클래스 수다 (D130)
 
-**§2.2의 "60% 초과 자식"이 *무엇의* 60%인지 정하지 않는다.** 패키지 수로 세는 것과 클래스 수로 세는 것이 갈린다 — 패키지가 셋이고 클래스가 6:1:1이면 패키지 기준 33%, 클래스 기준 75%다. 이 계산기는 **클래스 수**로 읽는다: 규칙의 목적이 "한 자식이 코드 대부분을 쥐어 컴포넌트가 사실상 하나가 되는 것"을 막는 데 있고, 그 '대부분'은 패키지 개수가 아니라 코드의 양이기 때문이다. 계약이 정하면 따라간다 — `expected.json`이 바뀌면 `fixture_change {reason: contract_change}`가 필요하다.
+§2.2가 `auto`의 추가 분할을 **"그 루트의 전체 클래스 수의 60%를 넘는 자식"**으로 정한다. 패키지 수가 아니다 — 패키지 수는 컴포넌트 크기의 대리가 되지 못한다: 자식 패키지가 셋인데 클래스가 300·2·1개면 패키지 기준으로는 셋이 33%씩 고르게 보이지만 실제로는 한 자식이 전부다.
+
+계산기는 클래스 수로 세고 `component_strategy.split_share_basis: class_count`를 낸다(`reproduce.component`의 같은 필드에 대응한다).
+
+[`auto-oversized-child-splits/`](auto-oversized-child-splits/)가 이 기준을 고정한다: `com.acme.core`가 **클래스 6/8**(75%)이라 갈리고, 같은 리포를 패키지 기준으로 세면 3/5(60%)라 갈리지 않는다. 두 셈이 실제로 다른 답을 내는 모양이라 기준이 바뀌면 이 케이스가 먼저 깨진다.
 
 ## 실행
 
