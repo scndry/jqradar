@@ -26,11 +26,10 @@ from fractions import Fraction
 from pathlib import Path
 
 CASE_DIR = Path(__file__).resolve().parent
-GENERATED_BY = "contract/percentile/compute.py"
+sys.path.insert(0, str(CASE_DIR.parent / "tools"))
+import exact  # noqa: E402
 
-# 끝나는 십진수가 아닌 값을 인쇄할 자릿수. 이 경로를 타는 값은 expected.json의
-# `non_terminating`에 정확 유리수로 함께 기록되므로 반올림이 계약을 흐리지 않는다.
-NON_TERMINATING_PLACES = 12
+GENERATED_BY = "contract/percentile/compute.py"
 
 # §3.7 confidence 임계
 CONF_LOW_N = 50
@@ -182,93 +181,6 @@ def interpretation(pct: Fraction | None) -> str | None:
 
 
 # --------------------------------------------------------------------------
-# 직렬화 — 정확 유리수를 십진 텍스트로. float를 거치지 않는다.
-# --------------------------------------------------------------------------
-
-class Num:
-    """JSON 수치 리터럴 하나. `text`가 파일에 그대로 들어간다."""
-
-    __slots__ = ("text", "exact", "terminating")
-
-    def __init__(self, fr: Fraction):
-        self.exact = fr
-        self.text, self.terminating = _decimal_text(fr)
-
-
-def _decimal_text(fr: Fraction) -> tuple[str, bool]:
-    if fr.denominator == 1:
-        return str(fr.numerator), True
-    d, twos, fives = fr.denominator, 0, 0
-    while d % 2 == 0:
-        d //= 2
-        twos += 1
-    while d % 5 == 0:
-        d //= 5
-        fives += 1
-    with localcontext() as ctx:
-        ctx.prec = 80
-        dec = Decimal(fr.numerator) / Decimal(fr.denominator)
-        if d == 1:
-            places = max(twos, fives)
-            return format(dec.quantize(Decimal(1).scaleb(-places)), "f"), True
-        q = dec.quantize(Decimal(1).scaleb(-NON_TERMINATING_PLACES),
-                         rounding=ROUND_HALF_EVEN)
-        return format(q, "f"), False
-
-
-def wrap(value):
-    """Fraction -> Num, 컨테이너는 재귀. None/str/bool/int는 그대로."""
-    if isinstance(value, Fraction):
-        return Num(value)
-    if isinstance(value, dict):
-        return {k: wrap(v) for k, v in value.items()}
-    if isinstance(value, list):
-        return [wrap(v) for v in value]
-    return value
-
-
-def collect_non_terminating(node, path: str, out: dict[str, str]) -> None:
-    if isinstance(node, Num):
-        if not node.terminating:
-            out[path] = f"{node.exact.numerator}/{node.exact.denominator}"
-    elif isinstance(node, dict):
-        for k, v in node.items():
-            collect_non_terminating(v, f"{path}/{k}", out)
-    elif isinstance(node, list):
-        for i, v in enumerate(node):
-            collect_non_terminating(v, f"{path}/{i}", out)
-
-
-def render(node, indent: int = 0) -> str:
-    """결정적 JSON 직렬화. 키 순서는 삽입 순서(구성이 결정적이므로 재현된다)."""
-    pad, pad_in = "  " * indent, "  " * (indent + 1)
-    if isinstance(node, Num):
-        return node.text
-    if node is None:
-        return "null"
-    if node is True:
-        return "true"
-    if node is False:
-        return "false"
-    if isinstance(node, int):
-        return str(node)
-    if isinstance(node, str):
-        return json.dumps(node, ensure_ascii=False)
-    if isinstance(node, dict):
-        if not node:
-            return "{}"
-        items = [f"{pad_in}{json.dumps(k, ensure_ascii=False)}: {render(v, indent + 1)}"
-                 for k, v in node.items()]
-        return "{\n" + ",\n".join(items) + "\n" + pad + "}"
-    if isinstance(node, list):
-        if not node:
-            return "[]"
-        items = [f"{pad_in}{render(v, indent + 1)}" for v in node]
-        return "[\n" + ",\n".join(items) + "\n" + pad + "]"
-    raise TypeError(f"직렬화할 수 없는 타입: {type(node)!r}")
-
-
-# --------------------------------------------------------------------------
 # 케이스 실행
 # --------------------------------------------------------------------------
 
@@ -406,22 +318,7 @@ def build_expected(inp: dict) -> dict:
 def render_case(case_dir: Path) -> str:
     with (case_dir / "input.json").open(encoding="utf-8") as fh:
         inp = json.load(fh, parse_float=Fraction, parse_int=Fraction)
-    expected = wrap(build_expected(inp))
-
-    non_terminating: dict[str, str] = {}
-    collect_non_terminating(expected, "", non_terminating)
-    expected["non_terminating"] = non_terminating
-    expected["_fixture"] = {
-        "arithmetic": "exact rational (fractions.Fraction)",
-        "serialization": (
-            "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 "
-            f"소수점 {NON_TERMINATING_PLACES}자리 ROUND_HALF_EVEN으로 인쇄하고 "
-            "정확 유리수를 non_terminating에 함께 적는다. "
-            "non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
-        ),
-    }
-    return render(expected) + "\n"
-
+    return exact.finish(build_expected(inp), GENERATED_BY)
 
 def discover(cases: list[str] | None) -> list[Path]:
     found = sorted(p.parent for p in CASE_DIR.glob("*/input.json"))
