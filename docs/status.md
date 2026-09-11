@@ -4,13 +4,13 @@
 
 **#1의 범위는 §2.1–2.9다**(D136). §6.3–6.6 교차 검토는 값 층 픽스처(`contract/validation`·`security`)가 서는 **G3 입장 조건**으로 옮겼다 — 문장만 읽은 검토를 통과로 세지 않기 위해서다.
 
-**있는 것**: `prd.md` v3.8.1(D1–D136). `contract/` 케이스 **79종** — percentile 6 · schema 45 · cpd 5 · **history 14** · graph 8 · reproducibility 1. `schemas/` 7종. Gradle 골격과 자체 ArchUnit 규칙 넷 + 반례(11 tests). CI 3잡. `docs/preregistration/p1a.md`, `docs/battery.md`(실측).
+**있는 것**: `prd.md` v3.8.2(D1–D137). `contract/` 케이스 **81종** — percentile 6 · schema 45 · cpd 5 · **history 15** · graph 8 · **reproducibility 2**. `schemas/` 7종. Gradle 골격과 자체 ArchUnit 규칙 넷 + 반례(11 tests). CI 3잡. `docs/preregistration/p1a.md`, `docs/battery.md`(실측).
 
 **§2.9의 배정 공백은 닫혔다**: §2.4 파일 쌍(D134)과 §2.1 저자 사실(D135)이 `contract/history/`로 배정되고 케이스 넷이 섰다. 정체 부재 검사는 **출처로 가른다** — 저자 해시와 `repository_state_id`는 둘 다 64 hex라 모양으로 못 가르므로, 알고 있는 저자 식별자의 해시 72개가 산출물에 없음을 본다.
 
 **다음 — 사람이 먼저**: G0 #1. 리뷰어 둘 중 **최소 한 명은 프로젝트 밖**에서 와야 한다(D84, Trusting Trust) — 계약을 구현한 것도, 픽스처를 쓴 것도, 검토 패킷을 쓴 것도 같은 도구다. 통과하면 계약 동결, 그 뒤 G1(§9 W4–7): core 측정·백분위·렌즈·JSON, CLI `scan`, `contract/lens`·`gate`, 자기 적용 S1(`docs/self/`에 첫 지도 보존).
 
-**열린 공백**: O 항목 아홉과 PRD 공백을 패킷 §5에 모았다. 가장 위험한 하나는 `analysis_input_id`의 **정규 인코딩**(§2.8이 입력 목록만 정하고 바이트로 펴는 방법을 정하지 않는다). 이번에 하나 더 표시했다 — `distinct_authors_90d`(90일)와 `max_commits`(비용 상한)의 상호작용이 정의되지 않았다(`contract/history/README.md`).
+**열린 공백**: O 항목 아홉과 PRD 공백을 패킷 §5에 모았다. 가장 위험한 하나는 `analysis_input_id`의 **정규 인코딩**(§2.8이 입력 목록만 정하고 바이트로 펴는 방법을 정하지 않는다). `distinct_authors_90d`와 `max_commits`의 상호작용은 D137이 닫았다 — 90일 지표는 창 안으로 자르고 절단 사실을 `window_applied`에 한 번 적는다.
 
 ---
 

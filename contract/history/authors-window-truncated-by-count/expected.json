@@ -1,0 +1,803 @@
+{
+  "case": "authors-window-truncated-by-count",
+  "contract_refs": [
+    "§2.1",
+    "§2.7",
+    "§2.8",
+    "D87",
+    "D137"
+  ],
+  "what_this_pins": "90일 지표는 `[HEAD_TIME − 90d, HEAD_TIME] ∩ W`에서 계산한다(D137). **창 밖 커밋이 값을 움직이면 같은 `analysis_input_id`가 다른 값을 낸다** — id의 입력은 창 안 커밋 SHA 목록이므로 D87(\"포함되지 않은 입력은 결과에 영향을 주어서는 안 된다\")이 막는 자리다. 창을 넓히는 것이 답이 아니다: 넓히면 그 커밋들이 id에 들어가야 한다.\n\n같은 리포를 두 창으로 본다. 30커밋이 10일에 걸쳐 있고 앞 25개는 저자 하나, 뒤 5개는 다른 저자다. `tight`(max_commits 5)는 뒤 5개만 보므로 `distinct_authors_90d = 1`이고, `generous`(2,000)는 전부 보므로 `2`다. **같은 90일 구간인데 값이 다르다** — 그래서 절단 사실을 표기해야 한다.\n\n**절단은 '창이 90일보다 짧다'가 아니라 '상한이 90일 구간을 잘랐다'다.** 10일 된 리포는 90일을 못 봤지만 볼 것이 없었으므로 `authors_window_truncated: false`다 — 그것을 true로 적으면 '데이터를 잃었다'로 읽힌다. 판정은 존재로 한다: 최근 90일 안의 비머지 커밋 중 창이 제외한 것이 있는가(`commits_excluded_within_90d`). 따라서 **시간 상한(12개월)은 90일 구간을 자를 수 없다** — 90일 ⊂ 12개월이므로 자를 수 있는 것은 개수 상한뿐이다. `window-bound-time` 케이스가 그것을 반대쪽에서 보인다(`bound_hit: time`인데 `truncated: false`).\n\n표기는 **창의 속성**이라 `window_applied`에 한 번만 적는다(D137). 파일마다 적으면 '이 파일이 잘린 구간에 커밋을 가졌나'를 아는 것처럼 읽히는데, 그 커밋들이 창에서 사라져 판정하는 것이므로 알 수 없다 — `closed_unclaimed`·`id_drift`가 지키는 선과 같다.",
+  "variants": {
+    "tight": {
+      "window_anchor": {
+        "type": "head_committer_time",
+        "timestamp": "2026-06-11T08:00:00+00:00"
+      },
+      "head": "d78e1ac1f",
+      "window_applied": {
+        "months": 12,
+        "max_commits": 5,
+        "bound_hit": "count",
+        "commits_in_window": 5,
+        "merge_commits_excluded": 0,
+        "authors_window_truncated": true,
+        "authors_window_days": 1.333333333333,
+        "commits_excluded_within_90d": 25
+      },
+      "commits": [
+        {
+          "sha": "d78e1ac1f",
+          "at": "2026-06-11T08:00:00+00:00",
+          "subject": "recent work #5",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "1b5d2cc5e",
+          "at": "2026-06-11T00:00:00+00:00",
+          "subject": "recent work #4",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "bdccba1d1",
+          "at": "2026-06-10T16:00:00+00:00",
+          "subject": "recent work #3",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "ae4764dad",
+          "at": "2026-06-10T08:00:00+00:00",
+          "subject": "recent work #2",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "aa08e88db",
+          "at": "2026-06-10T00:00:00+00:00",
+          "subject": "recent work #1",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "fd05d6ccd",
+          "at": "2026-06-09T00:00:00+00:00",
+          "subject": "old work #25",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "f4cdf35cf",
+          "at": "2026-06-08T16:00:00+00:00",
+          "subject": "old work #24",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "cfbcee83f",
+          "at": "2026-06-08T08:00:00+00:00",
+          "subject": "old work #23",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "74fbf66cb",
+          "at": "2026-06-08T00:00:00+00:00",
+          "subject": "old work #22",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "61fc8d892",
+          "at": "2026-06-07T16:00:00+00:00",
+          "subject": "old work #21",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "d78dd81ad",
+          "at": "2026-06-07T08:00:00+00:00",
+          "subject": "old work #20",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "d9c1e3417",
+          "at": "2026-06-07T00:00:00+00:00",
+          "subject": "old work #19",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "3d2cfa323",
+          "at": "2026-06-06T16:00:00+00:00",
+          "subject": "old work #18",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "c8d98fd6b",
+          "at": "2026-06-06T08:00:00+00:00",
+          "subject": "old work #17",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "9633f538b",
+          "at": "2026-06-06T00:00:00+00:00",
+          "subject": "old work #16",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "20497a584",
+          "at": "2026-06-05T16:00:00+00:00",
+          "subject": "old work #15",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "a03533f7d",
+          "at": "2026-06-05T08:00:00+00:00",
+          "subject": "old work #14",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "5e338f37a",
+          "at": "2026-06-05T00:00:00+00:00",
+          "subject": "old work #13",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "89ddd6cd4",
+          "at": "2026-06-04T16:00:00+00:00",
+          "subject": "old work #12",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "eb6a401ae",
+          "at": "2026-06-04T08:00:00+00:00",
+          "subject": "old work #11",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "48ddb596a",
+          "at": "2026-06-04T00:00:00+00:00",
+          "subject": "old work #10",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "7d2d09357",
+          "at": "2026-06-03T16:00:00+00:00",
+          "subject": "old work #9",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "f35821e0b",
+          "at": "2026-06-03T08:00:00+00:00",
+          "subject": "old work #8",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "67b5615c0",
+          "at": "2026-06-03T00:00:00+00:00",
+          "subject": "old work #7",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "843888a6f",
+          "at": "2026-06-02T16:00:00+00:00",
+          "subject": "old work #6",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "31f04a640",
+          "at": "2026-06-02T08:00:00+00:00",
+          "subject": "old work #5",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "b18a904e2",
+          "at": "2026-06-02T00:00:00+00:00",
+          "subject": "old work #4",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "e191aa3ae",
+          "at": "2026-06-01T16:00:00+00:00",
+          "subject": "old work #3",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "0e49d6f8e",
+          "at": "2026-06-01T08:00:00+00:00",
+          "subject": "old work #2",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "45365ff1a",
+          "at": "2026-06-01T00:00:00+00:00",
+          "subject": "old work #1",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": false
+        }
+      ],
+      "median_files_per_commit": 1,
+      "commit_granularity": "fine",
+      "renames": [],
+      "files": {
+        "src/A.java": {
+          "chg_commits": 5,
+          "chg_days": 2,
+          "churn": 10,
+          "touched_by": [
+            "d78e1ac1f",
+            "1b5d2cc5e",
+            "bdccba1d1",
+            "ae4764dad",
+            "aa08e88db"
+          ],
+          "age_last_days": 0,
+          "distinct_authors_90d": 1,
+          "contributor_count": 1,
+          "ownership_max_share": 1,
+          "minor_contributor_share": 0,
+          "contribution_shares_sorted": [
+            1
+          ]
+        }
+      },
+      "pairs": [],
+      "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다."
+    },
+    "generous": {
+      "window_anchor": {
+        "type": "head_committer_time",
+        "timestamp": "2026-06-11T08:00:00+00:00"
+      },
+      "head": "d78e1ac1f",
+      "window_applied": {
+        "months": 12,
+        "max_commits": 2000,
+        "bound_hit": "none",
+        "commits_in_window": 30,
+        "merge_commits_excluded": 0,
+        "authors_window_truncated": false,
+        "authors_window_days": 10.333333333333,
+        "commits_excluded_within_90d": 0
+      },
+      "commits": [
+        {
+          "sha": "d78e1ac1f",
+          "at": "2026-06-11T08:00:00+00:00",
+          "subject": "recent work #5",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "1b5d2cc5e",
+          "at": "2026-06-11T00:00:00+00:00",
+          "subject": "recent work #4",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "bdccba1d1",
+          "at": "2026-06-10T16:00:00+00:00",
+          "subject": "recent work #3",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "ae4764dad",
+          "at": "2026-06-10T08:00:00+00:00",
+          "subject": "recent work #2",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "aa08e88db",
+          "at": "2026-06-10T00:00:00+00:00",
+          "subject": "recent work #1",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "fd05d6ccd",
+          "at": "2026-06-09T00:00:00+00:00",
+          "subject": "old work #25",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "f4cdf35cf",
+          "at": "2026-06-08T16:00:00+00:00",
+          "subject": "old work #24",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "cfbcee83f",
+          "at": "2026-06-08T08:00:00+00:00",
+          "subject": "old work #23",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "74fbf66cb",
+          "at": "2026-06-08T00:00:00+00:00",
+          "subject": "old work #22",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "61fc8d892",
+          "at": "2026-06-07T16:00:00+00:00",
+          "subject": "old work #21",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "d78dd81ad",
+          "at": "2026-06-07T08:00:00+00:00",
+          "subject": "old work #20",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "d9c1e3417",
+          "at": "2026-06-07T00:00:00+00:00",
+          "subject": "old work #19",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "3d2cfa323",
+          "at": "2026-06-06T16:00:00+00:00",
+          "subject": "old work #18",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "c8d98fd6b",
+          "at": "2026-06-06T08:00:00+00:00",
+          "subject": "old work #17",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "9633f538b",
+          "at": "2026-06-06T00:00:00+00:00",
+          "subject": "old work #16",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "20497a584",
+          "at": "2026-06-05T16:00:00+00:00",
+          "subject": "old work #15",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "a03533f7d",
+          "at": "2026-06-05T08:00:00+00:00",
+          "subject": "old work #14",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "5e338f37a",
+          "at": "2026-06-05T00:00:00+00:00",
+          "subject": "old work #13",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "89ddd6cd4",
+          "at": "2026-06-04T16:00:00+00:00",
+          "subject": "old work #12",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "eb6a401ae",
+          "at": "2026-06-04T08:00:00+00:00",
+          "subject": "old work #11",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "48ddb596a",
+          "at": "2026-06-04T00:00:00+00:00",
+          "subject": "old work #10",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "7d2d09357",
+          "at": "2026-06-03T16:00:00+00:00",
+          "subject": "old work #9",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "f35821e0b",
+          "at": "2026-06-03T08:00:00+00:00",
+          "subject": "old work #8",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "67b5615c0",
+          "at": "2026-06-03T00:00:00+00:00",
+          "subject": "old work #7",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "843888a6f",
+          "at": "2026-06-02T16:00:00+00:00",
+          "subject": "old work #6",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "31f04a640",
+          "at": "2026-06-02T08:00:00+00:00",
+          "subject": "old work #5",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "b18a904e2",
+          "at": "2026-06-02T00:00:00+00:00",
+          "subject": "old work #4",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "e191aa3ae",
+          "at": "2026-06-01T16:00:00+00:00",
+          "subject": "old work #3",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "0e49d6f8e",
+          "at": "2026-06-01T08:00:00+00:00",
+          "subject": "old work #2",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "45365ff1a",
+          "at": "2026-06-01T00:00:00+00:00",
+          "subject": "old work #1",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        }
+      ],
+      "median_files_per_commit": 1,
+      "commit_granularity": "fine",
+      "renames": [],
+      "files": {
+        "src/A.java": {
+          "chg_commits": 30,
+          "chg_days": 11,
+          "churn": 59,
+          "touched_by": [
+            "d78e1ac1f",
+            "1b5d2cc5e",
+            "bdccba1d1",
+            "ae4764dad",
+            "aa08e88db",
+            "fd05d6ccd",
+            "f4cdf35cf",
+            "cfbcee83f",
+            "74fbf66cb",
+            "61fc8d892",
+            "d78dd81ad",
+            "d9c1e3417",
+            "3d2cfa323",
+            "c8d98fd6b",
+            "9633f538b",
+            "20497a584",
+            "a03533f7d",
+            "5e338f37a",
+            "89ddd6cd4",
+            "eb6a401ae",
+            "48ddb596a",
+            "7d2d09357",
+            "f35821e0b",
+            "67b5615c0",
+            "843888a6f",
+            "31f04a640",
+            "b18a904e2",
+            "e191aa3ae",
+            "0e49d6f8e",
+            "45365ff1a"
+          ],
+          "age_last_days": 0,
+          "distinct_authors_90d": 2,
+          "contributor_count": 2,
+          "ownership_max_share": 0.833333333333,
+          "minor_contributor_share": 0,
+          "contribution_shares_sorted": [
+            0.833333333333,
+            0.166666666667
+          ]
+        }
+      },
+      "pairs": [],
+      "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다."
+    }
+  },
+  "non_terminating": {
+    "/variants/tight/window_applied/authors_window_days": "4/3",
+    "/variants/generous/window_applied/authors_window_days": "31/3",
+    "/variants/generous/files/src/A.java/ownership_max_share": "5/6",
+    "/variants/generous/files/src/A.java/contribution_shares_sorted/0": "5/6",
+    "/variants/generous/files/src/A.java/contribution_shares_sorted/1": "1/6"
+  },
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "history.authors_window",
+    "note": "값 불변 아님 — distinct_authors_90d의 계산 구간이 바뀌었다. D137이 90일 지표를 `[HEAD_TIME − 90d, HEAD_TIME] ∩ W`로 자르므로 계산기가 전체 커밋(`commits`)이 아니라 창(`selected`)을 돈다. 기존 케이스 열넷에서는 창이 전부를 덮어 값이 그대로지만, 계산의 정의가 바뀐 것이므로 값 불변이라 적지 않는다. 함께 붙는 새 열: `window_applied.authors_window_truncated`·`authors_window_days`·`commits_excluded_within_90d`, 그리고 `contract/reproducibility/`의 `history.unreachable_commit_count`. 후자 둘은 키 추가뿐이고 기존 값은 움직이지 않았다.",
+    "fixtures": [
+      "history/anchor-fixed",
+      "history/merge-commits-excluded",
+      "history/window-bound-time",
+      "history/window-bound-count",
+      "history/coarse-granularity",
+      "history/rename-tiebreak",
+      "history/rename-ambiguous",
+      "history/shallow-clone-age-unknown",
+      "history/negative-age-invalid-metadata",
+      "history/pair-report-threshold",
+      "history/tc-squash-vs-merge",
+      "history/author-facts-minor-threshold",
+      "reproducibility/same-tree-different-pmd"
+    ]
+  }
+}

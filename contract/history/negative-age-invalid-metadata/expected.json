@@ -15,7 +15,10 @@
     "max_commits": 2000,
     "bound_hit": "none",
     "commits_in_window": 2,
-    "merge_commits_excluded": 0
+    "merge_commits_excluded": 0,
+    "authors_window_truncated": false,
+    "authors_window_days": 0,
+    "commits_excluded_within_90d": 0
   },
   "commits": [
     {

@@ -98,9 +98,34 @@ def build_history(tree: Path, spec: dict, workdir: Path) -> dict:
     # 써서 두 머신에서 문자열이 갈리고, 이 값은 `analysis_input_id`에 **해시로
     # 들어간다** — 그러면 같은 트리·같은 툴체인인데 id가 달라진다. 이 계약이
     # 막아야 할 바로 그것을 이 계산기가 하고 있었다(CI가 잡았다).
+    # 도달 불가 커밋 — main에서 도달할 수 없는 브랜치. §2.7의 창은 HEAD에서 도달
+    # 가능한 비머지 커밋이므로 이것들은 창 밖이고, `analysis_input_id`의 입력도
+    # 아니다. 값이든 id든 여기에 영향을 받으면 D87이 깨진다.
+    unreachable = []
+    for k, commit in enumerate(spec.get("unreachable", []), start=1):
+        when = (base + timedelta(seconds=int(commit["at_seconds"]))).isoformat()
+        env["GIT_AUTHOR_DATE"] = when
+        env["GIT_COMMITTER_DATE"] = when
+        env["GIT_AUTHOR_NAME"] = commit.get("name", spec["committer"]["name"])
+        env["GIT_AUTHOR_EMAIL"] = commit.get("email", spec["committer"]["email"])
+        env["GIT_COMMITTER_NAME"] = env["GIT_AUTHOR_NAME"]
+        env["GIT_COMMITTER_EMAIL"] = env["GIT_AUTHOR_EMAIL"]
+        git("checkout", "-q", "-b", f"abandoned-{k}")
+        for path, content in commit["write"].items():
+            (workdir / path).parent.mkdir(parents=True, exist_ok=True)
+            (workdir / path).write_text(content, encoding="utf-8")
+            git("add", "--", path)
+        git("commit", "-q", "-m", commit["message"])
+        unreachable.append(git("rev-parse", "HEAD"))
+        git("checkout", "-q", "main")
+        # 작업트리를 main 상태로 되돌린다 — 도달 불가 커밋이 트리를 오염시키면
+        # `repository_state_id`가 달라져 케이스가 무의미해진다.
+        git("clean", "-qfd")
+
     head_time = datetime.fromtimestamp(
         int(git("show", "-s", "--format=%ct", "HEAD")), timezone.utc).isoformat()
-    return {"commit_shas": shas, "head": shas[-1], "head_committer_time": head_time}
+    return {"commit_shas": shas, "head": shas[-1], "head_committer_time": head_time,
+            "unreachable_commit_count": len(unreachable)}
 
 
 def analysis_input_id(shared: dict, environment: dict, files: list[tuple[str, str]],
@@ -125,8 +150,60 @@ def analysis_input_id(shared: dict, environment: dict, files: list[tuple[str, st
     return sha256(spec), spec
 
 
+def run_repo_variants(case_dir: Path, inp: dict) -> dict:
+    """창 밖(도달 불가) 커밋만 다른 두 리포 — **id와 값이 함께 같아야 한다**.
+
+    `max_commits`로 잘린 커밋으로는 이 쌍을 만들 수 없다: 커밋 SHA가 조상을 물고
+    가므로 창 밖이 달라지면 창 안 SHA도 달라지고, 그러면 `commit_list_sha256`이
+    달라져 `analysis_input_id`가 구조적으로 갈린다(실험으로 확인했다). 도달 불가
+    커밋은 HEAD의 조상이 아니므로 HEAD SHA가 동일하고, 그래서 **원칙의 양면(id의
+    동일성과 값의 독립성)이 한 케이스에서 닫힌다.**
+
+    잡는 실패: 구현이 `git log --all`이나 `--branches`로 이력을 읽는 것. 그러면
+    도달 불가 커밋이 창에 섞여 값이 갈리는데 id는 같다 — 재현성 주장이 조용히 샌다.
+    """
+    results = {}
+    for name, repo in inp["repo_variants"].items():
+        tree = case_dir / repo["tree"]
+        files = tree_files(tree)
+        with tempfile.TemporaryDirectory() as tmp:
+            history = build_history(tree, repo, Path(tmp) / "repo")
+        aid, _ = analysis_input_id(inp["shared_inputs"],
+                                   inp["runs"]["a"]["environment"], files, history)
+        results[name] = {
+            "unreachable_commit_count": history["unreachable_commit_count"],
+            "reachable_commit_count": len(history["commit_shas"]),
+            "head": history["head"],
+            "head_committer_time": history["head_committer_time"],
+            "repository_state_id": repository_state_id(files),
+            "analysis_input_id": aid,
+        }
+    names = list(results)
+    a, b = results[names[0]], results[names[1]]
+    return {
+        "case": inp["case"],
+        "generated_by": GENERATED_BY,
+        "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"],
+        "canonical_encoding": CANONICAL_ENCODING,
+        "variants": results,
+        "assertions": {
+            "head_sha_equal": a["head"] == b["head"],
+            "repository_state_id_equal":
+                a["repository_state_id"] == b["repository_state_id"],
+            "analysis_input_id_equal": a["analysis_input_id"] == b["analysis_input_id"],
+            "reachable_commit_count_equal":
+                a["reachable_commit_count"] == b["reachable_commit_count"],
+            "unreachable_counts_differ":
+                a["unreachable_commit_count"] != b["unreachable_commit_count"],
+        },
+    }
+
+
 def run_case(case_dir: Path) -> dict:
     inp = json.loads((case_dir / "input.json").read_text(encoding="utf-8"))
+    if "repo_variants" in inp:
+        return run_repo_variants(case_dir, inp)
     tree = case_dir / inp["repo"]["tree"]
     files = tree_files(tree)
     rsid = repository_state_id(files)
