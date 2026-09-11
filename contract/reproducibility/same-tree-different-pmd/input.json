@@ -1,0 +1,36 @@
+{
+  "case": "same-tree-different-pmd",
+  "contract_refs": ["§2.8 정체성 셋", "D86", "D87", "D111"],
+  "what_this_pins": "같은 트리를 다른 툴체인으로 분석하면 `repository_state_id`는 **같고** `analysis_input_id`는 **달라야** 한다. 툴체인 버전이 캐시 키에서 빠지면 PMD 7.16과 7.17이 같은 키를 만들어 잘못된 캐시 적중이 생긴다(§2.8) — 이 케이스가 그 회귀를 잡는다. 반대 방향도 함께 고정한다: `reproduce`에 없는 환경 변수를 바꿔도 두 id 모두 불변이어야 한다(원칙 검사, D87).",
+  "repo": {
+    "tree": "tree/",
+    "history": [
+      { "message": "seed: order domain", "paths": ["src/main/java/com/example/order/OrderPolicy.java"] },
+      { "message": "feat: order total", "paths": ["src/main/java/com/example/order/OrderService.java"] }
+    ],
+    "committer": { "name": "fixture", "email": "fixture@example.invalid" },
+    "base_time": "2026-01-02T03:04:05+00:00",
+    "step_seconds": 86400
+  },
+  "runs": {
+    "a": { "environment": { "pmd": "7.16.0", "archunit": "1.5.0", "jgit": "7.3.0" } },
+    "b": { "environment": { "pmd": "7.17.0", "archunit": "1.5.0", "jgit": "7.3.0" } }
+  },
+  "shared_inputs": {
+    "schema_version": "jqradar/3",
+    "contract_version": "2026-09-11",
+    "core_tool_version": "3.7.8",
+    "history_backend": { "name": "jgit", "git_version": null },
+    "component": { "strategy": "auto", "algorithm_version": "auto-1" },
+    "algorithm_versions": { "measures": "1", "percentile": "1", "succession": "1", "cpd_aggregation": "1" },
+    "parameters": {
+      "cpd.minimum_tokens": 100, "percentile.min_population": 20, "frozen.min_days": 180,
+      "rename.similarity": 60, "hotspot.change_unit": "chg_commits"
+    }
+  },
+  "irrelevant_environment_change": {
+    "$comment": "`reproduce`에 나타나지 않는 입력. 바꿔도 두 id가 모두 불변이어야 한다(§2.8 원칙, D87).",
+    "TZ": "Asia/Seoul",
+    "LANG": "ko_KR.UTF-8"
+  }
+}
