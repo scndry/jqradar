@@ -18,6 +18,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -41,14 +42,50 @@ SECONDS_PER_DAY = 86400
 # 합성 리포 — 결정적으로 만든다
 # --------------------------------------------------------------------------
 
+def expand_commits(commits: list[dict]) -> list[dict]:
+    """`repeat: n`을 n개 커밋으로 편다. 21커밋을 손으로 나열하지 않기 위한 압축 표기.
+
+    id는 `<id>-01..n`, 시각은 `at_seconds + (k-1) * step_seconds`, 내용에는 회차를
+    섞어 매번 실제 변경이 되게 한다(같은 내용이면 커밋이 비어 측정이 0이 된다).
+    """
+    out: list[dict] = []
+    for commit in commits:
+        n = int(commit.get("repeat", 1))
+        step = int(commit.get("step_seconds", 3600))
+        for k in range(1, n + 1):
+            copy = {key: value for key, value in commit.items()
+                    if key not in ("repeat", "step_seconds")}
+            # id는 repeat이 1이어도 편다 — 내용 치환이 id를 쓰므로 일관돼야 한다.
+            copy["id"] = commit["id"] if n == 1 else f"{commit['id']}-{k:02d}"
+            copy["at_seconds"] = int(commit["at_seconds"]) + step * (k - 1)
+            copy["message"] = commit["message"] if n == 1 else f"{commit['message']} #{k}"
+            # **치환은 repeat과 무관하게 항상 한다.** repeat: 1에서 건너뛰면 서로 다른
+            # 명세 항목이 같은 내용을 써서 빈 커밋이 되고, 그 커밋은 파일을 만지지 않은
+            # 것으로 세어진다 — chg_commits가 조용히 줄고 저자 하나가 사라진다.
+            copy["write"] = {
+                path: content.replace("{k}", str(k)).replace("{id}", copy["id"])
+                for path, content in commit.get("write", {}).items()}
+            out.append(copy)
+    return out
+
+
+def author_of(spec: dict, commit: dict) -> dict:
+    """커밋의 저자. 명세가 `authors` 표와 커밋별 `author` id를 준다.
+
+    **고정 가짜 값이다**(`a@example.invalid` 류). 이 값은 `expected.json`에 들어가지
+    않는다 — 익명 집계만 기록된다(D135). 픽스처 자신이 D48을 지켜야 한다: 합성
+    리포의 저자라도 정체를 산출물에 남기면 그 픽스처는 자기가 검사하는 규칙을 어긴다.
+    """
+    key = commit.get("author")
+    if key is None:
+        return spec["committer"]
+    return spec["authors"][key]
+
+
 def build_repo(spec: dict, workdir: Path) -> Path:
     workdir.mkdir(parents=True, exist_ok=True)
     env = {
         **os.environ,
-        "GIT_AUTHOR_NAME": spec["committer"]["name"],
-        "GIT_AUTHOR_EMAIL": spec["committer"]["email"],
-        "GIT_COMMITTER_NAME": spec["committer"]["name"],
-        "GIT_COMMITTER_EMAIL": spec["committer"]["email"],
         "GIT_CONFIG_GLOBAL": "/dev/null",
         "GIT_CONFIG_SYSTEM": "/dev/null",
         "TZ": "UTC",
@@ -62,10 +99,15 @@ def build_repo(spec: dict, workdir: Path) -> Path:
     base = datetime.fromisoformat(spec["base_time"])
     branches: dict[str, str] = {}
 
-    for commit in spec["commits"]:
+    for commit in expand_commits(spec["commits"]):
         when = (base + timedelta(seconds=int(commit["at_seconds"]))).isoformat()
+        who = author_of(spec, commit)
         env["GIT_AUTHOR_DATE"] = when
         env["GIT_COMMITTER_DATE"] = when
+        env["GIT_AUTHOR_NAME"] = who["name"]
+        env["GIT_AUTHOR_EMAIL"] = who["email"]
+        env["GIT_COMMITTER_NAME"] = who["name"]
+        env["GIT_COMMITTER_EMAIL"] = who["email"]
 
         if "merge_of" in commit:
             git("checkout", "-q", branches[commit["merge_of"][0]])
@@ -113,10 +155,10 @@ def read_history(workdir: Path) -> list[dict]:
     # `Z`로도 `+00:00`으로도 쓰고, 그러면 "두 머신 바이트 동일"(§2.9)이 깨진다 —
     # CI가 실제로 이것을 잡았다. 커밋 SHA는 플랫폼 사이에 같았고 문자열 포맷만
     # 갈렸다. 여기서 UTC로 정규화한다: §2.1의 `chg_days`도 UTC 날짜 기준이다.
-    raw = git("log", "--format=%H%x00%P%x00%ct%x00%s")
+    raw = git("log", "--format=%H%x00%P%x00%ct%x00%s%x00%ae")
     commits = []
     for line in raw.strip().splitlines():
-        sha, parents, epoch, subject = line.split("\x00")
+        sha, parents, epoch, subject, author_email = line.split("\x00")
         when = datetime.fromtimestamp(int(epoch), timezone.utc).isoformat()
         parent_list = parents.split() if parents else []
         # 머지 커밋은 어차피 창에서 빠지므로 numstat을 읽지 않는다.
@@ -131,6 +173,9 @@ def read_history(workdir: Path) -> list[dict]:
             added += 0 if a == "-" else int(a)
             deleted += 0 if d == "-" else int(d)
         commits.append({
+            # §2.7 — 저자는 **읽되 정체는 프로세스 밖으로 내지 않는다.** 여기서만
+            # 쓰이고 expected.json에 들어가지 않는다. 익명 집계의 입력일 뿐이다.
+            "_author_key": hashlib.sha256(author_email.encode()).hexdigest(),
             "sha": sha, "parents": parent_list, "committer_time": when,
             "subject": subject, "paths": sorted(set(paths)),
             "added": added, "deleted": deleted,
@@ -285,6 +330,77 @@ def build_expected(inp: dict, workdir: Path) -> dict:
             entry["age_reason"] = inp.get("age_unknown_reason", "age_unknown")
         files[path] = entry
 
+    # ------------------------------------------------------------------
+    # §2.4 파일 쌍 — shared·tc·보고 임계 (D134)
+    # ------------------------------------------------------------------
+    # 그래프는 이 계약의 입력이 아니다. `static_dependency`는 명세가 준다 —
+    # §2.4가 "정적 의존 없으면 숨은 결합"이라 말할 때 그 판정의 **입력**이고,
+    # 그것을 계산하는 것은 §2.2의 일이다.
+    static_dependency = {tuple(sorted(k.split("|"))): v
+                         for k, v in inp.get("static_dependency", {}).items()}
+    pairs = []
+    measured = list(files)
+    for i, a in enumerate(measured):
+        for b in measured[i + 1:]:
+            lo, hi = sorted((a, b))
+            commits_a = {c["sha"] for c in selected
+                         if any(canonical(p) == lo for p in c["paths"])}
+            commits_b = {c["sha"] for c in selected
+                         if any(canonical(p) == hi for p in c["paths"])}
+            shared = len(commits_a & commits_b)
+            if not shared:
+                continue
+            denominator = min(len(commits_a), len(commits_b))
+            tc = Fraction(shared, denominator) if denominator else None
+            # §2.4 보고 기준: shared >= 5 AND tc >= 0.5. 임계 비교는 반올림 전
+            # 정확값으로 한다(§2.5 산술 계약) — 직렬화된 tc로 비교하면 경계가 흔들린다.
+            reported = bool(shared >= 5 and tc is not None and tc >= Fraction(1, 2))
+            pairs.append({
+                "a": lo, "b": hi,
+                "shared": shared,
+                "chg_commits_a": len(commits_a), "chg_commits_b": len(commits_b),
+                "denominator": denominator,
+                "tc": tc,
+                "reported": reported,
+                "static_dependency": static_dependency.get((lo, hi)),
+                # §3.5 — 정적 의존이 없는 쌍이 숨은 결합이다. 판정이 아니라 목록이며
+                # 테스트-대상 쌍은 긍정 해석을 병기한다.
+                "hidden_coupling": reported and static_dependency.get((lo, hi)) is False,
+                "commit_granularity": granularity,
+            })
+
+    # ------------------------------------------------------------------
+    # §2.1 저자 사실 — 익명 집계만 (D48·D135)
+    # ------------------------------------------------------------------
+    ninety_days_ago = head_time - timedelta(days=90)
+    for path, entry in files.items():
+        touching = [c for c in selected
+                    if any(canonical(p) == path for p in c["paths"])]
+        # `distinct_authors_90d`는 §2.1이 "최근 90일"이라 적고 **W 안이라 말하지 않는다** —
+        # 나머지 둘은 "(W 안)"을 명시한다. 계약이 둘을 구별하므로 여기서도 구별한다.
+        recent = [c for c in commits
+                  if not c["is_merge"]
+                  and datetime.fromisoformat(c["committer_time"]) >= ninety_days_ago
+                  and any(canonical(p) == path for p in c["paths"])]
+        entry["distinct_authors_90d"] = len({c["_author_key"] for c in recent})
+
+        counts: dict[str, int] = {}
+        for c in touching:
+            counts[c["_author_key"]] = counts.get(c["_author_key"], 0) + 1
+        total = sum(counts.values())
+        if total:
+            entry["contributor_count"] = len(counts)
+            entry["ownership_max_share"] = Fraction(max(counts.values()), total)
+            # §2.1 — 비중이 **5% 미만**인 기여자들의 합. 5%는 미만이 아니다.
+            minor = sum(n for n in counts.values() if Fraction(n, total) < Fraction(1, 20))
+            entry["minor_contributor_share"] = Fraction(minor, total)
+            entry["contribution_shares_sorted"] = sorted(
+                (Fraction(n, total) for n in counts.values()), reverse=True)
+        else:
+            entry["contributor_count"] = 0
+            entry["ownership_max_share"] = None
+            entry["minor_contributor_share"] = None
+
     return {
         "case": inp["case"],
         "contract_refs": inp["contract_refs"],
@@ -308,6 +424,10 @@ def build_expected(inp: dict, workdir: Path) -> dict:
         "commit_granularity": granularity,
         "renames": renames,
         "files": files,
+        "pairs": pairs,
+        "authorship_note": ("저자 정체는 이 파일에 없다 — 익명 집계만 기록한다"
+                            "(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 "
+                            "계산기는 그것을 메모리에서만 쓴다."),
     }
 
 
@@ -483,6 +603,86 @@ def check_no_blame(inp: dict) -> dict:
     }
 
 
+def identity_hashes(identifiers: list[str]) -> dict[str, list[str]]:
+    """알고 있는 저자 식별자의 해시들. **모양이 아니라 출처로 가른다**(D135).
+
+    산출물에는 `sha256:`이 정당하게 가득하다 — `repository_state_id`·
+    `analysis_input_id`·`validated_tree_id`·`token_hash`·`policy_hash`. 저자 해시와
+    이것들을 **문자열 모양으로 가를 방법은 없다**: 둘 다 64 hex다.
+
+    합성 리포의 저자 식별자는 우리가 정했으므로 그 값들의 해시를 미리 계산할 수 있다.
+    그러면 무해한 해시를 무해하다고 증명할 필요 없이 **유해한 해시가 없음**을
+    증명하면 된다. 접두도 함께 본다 — 12자만 실어도 재식별에 충분하다.
+    """
+    out: dict[str, list[str]] = {}
+    for value in identifiers:
+        raw = value.encode()
+        digests = {
+            "sha256": hashlib.sha256(raw).hexdigest(),
+            "sha1": hashlib.sha1(raw).hexdigest(),
+            "md5": hashlib.md5(raw).hexdigest(),
+        }
+        forbidden = []
+        for algorithm, digest in digests.items():
+            forbidden.append(digest)
+            forbidden.extend(digest[:n] for n in (8, 12, 16))
+        out[value] = forbidden
+    return out
+
+
+def scan_for_identity(document: str, forbidden: dict[str, list[str]]) -> list[dict]:
+    """산출물 텍스트에서 금지된 문자열을 찾는다. 원문 그대로 본다 — `double`이나
+    파서를 거치지 않는다(정체는 값이 아니라 바이트로 샌다)."""
+    lowered = document.lower()
+    found = []
+    for identifier, hashes in forbidden.items():
+        for digest in hashes:
+            if digest.lower() in lowered:
+                found.append({"derived_from": "<저자 식별자 — 기록하지 않는다>",
+                              "matched_prefix_length": len(digest)})
+                break
+    return found
+
+
+def check_identity_absence(inp: dict) -> dict:
+    """§2.1·D48·D135 — `attribution=off`에서 정체가 산출물에 없다.
+
+    **부재 검사이므로 `must_be_caught`와 `must_not_be_caught`를 함께 둔다**(D131).
+    """
+    identifiers = [a["email"] for a in inp["authors"].values()]
+    identifiers += [a["name"] for a in inp["authors"].values()]
+    forbidden = identity_hashes(identifiers)
+
+    caught = []
+    for sample in inp["must_be_caught"]:
+        hits = scan_for_identity(json.dumps(sample["document"], ensure_ascii=False), forbidden)
+        caught.append({"name": sample["name"], "why": sample["why"],
+                       "hits": len(hits), "caught": bool(hits)})
+    passed = []
+    for sample in inp["must_not_be_caught"]:
+        hits = scan_for_identity(json.dumps(sample["document"], ensure_ascii=False), forbidden)
+        passed.append({"name": sample["name"], "why": sample["why"],
+                       "hits": len(hits), "passed": not hits})
+
+    missed = [c["name"] for c in caught if not c["caught"]]
+    wrong = [f["name"] for f in passed if not f["passed"]]
+    return {
+        "case": inp["case"],
+        "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"],
+        "check": "identity_absence",
+        "method": "provenance — 알고 있는 저자 식별자의 해시(sha256·sha1·md5 × 전체·접두 8·12·16자)가 "
+                  "산출물에 없음을 본다. 모양으로 가르지 않는다(둘 다 64 hex).",
+        "forbidden_string_count": sum(len(v) for v in forbidden.values()),
+        "identifiers_recorded": False,
+        "bite_check": caught,
+        "false_positive_check": passed,
+        "verdict": "reject" if (missed or wrong) else "accept",
+        "note": "금지 문자열 자체도 이 파일에 적지 않는다 — 적으면 그것이 정체의 사본이다. "
+                "개수와 판정만 기록한다(D48).",
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="§2.7 이력 계약")
     ap.add_argument("--check", action="store_true")
@@ -498,6 +698,24 @@ def main() -> int:
         inp = json.loads((case_dir / "input.json").read_text(encoding="utf-8"))
         if inp.get("check") == "no_blame_on_scan_change_path":
             expected = check_no_blame(inp)
+        elif inp.get("check") == "identity_absence":
+            expected = check_identity_absence(inp)
+        elif "variants" in inp:
+            # 같은 작업을 두 이력으로 만들어 값을 나란히 둔다(§2.4 스쿼시 대조, D134).
+            expected = {"case": inp["case"], "contract_refs": inp["contract_refs"],
+                        "what_this_pins": inp["what_this_pins"], "variants": {}}
+            for name, repo in inp["variants"].items():
+                one = dict(inp)
+                one.pop("variants")
+                one["repo"] = repo
+                tmp = tempfile.mkdtemp()
+                try:
+                    built = build_expected(one, Path(tmp) / "repo")
+                finally:
+                    shutil.rmtree(tmp, ignore_errors=True)
+                for key in ("case", "contract_refs", "what_this_pins", "shallow_depth"):
+                    built.pop(key, None)
+                expected["variants"][name] = built
         else:
             # git이 백그라운드 프로세스를 남길 수 있어 정리가 경쟁한다(CI에서
             # Errno 39로 터졌다). 정리 실패로 픽스처가 깨지면 안 되므로 직접 지운다.

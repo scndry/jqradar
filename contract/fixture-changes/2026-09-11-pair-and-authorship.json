@@ -1,0 +1,18 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "history.pairs_and_authorship",
+    "note": "값 불변, 열 추가만. §2.9가 §2.4(파일 쌍)와 §2.1(저자 사실)의 픽스처를 contract/history/로 배정했고(D134·D135) 계산기가 그 측정을 내기 시작했다 — 기존 케이스 열 개의 expected.json에 새 키가 붙는다: 최상위 `pairs`·`authorship_note`, 파일마다 `distinct_authors_90d`·`contributor_count`·`ownership_max_share`·`minor_contributor_share`·`contribution_shares_sorted`. **기존 열의 값은 하나도 움직이지 않았다** — 새 키를 제거한 구조가 열 개 모두 바이트 동일임을 확인했다(window_anchor·commits·files의 chg_commits·chg_days·churn·age_last_days·renames 전부 그대로). 계약이 넓어진 것이지 계산이 바뀐 것이 아니다.",
+    "fixtures": [
+      "history/anchor-fixed",
+      "history/merge-commits-excluded",
+      "history/window-bound-time",
+      "history/window-bound-count",
+      "history/coarse-granularity",
+      "history/rename-tiebreak",
+      "history/rename-ambiguous",
+      "history/shallow-clone-age-unknown",
+      "history/negative-age-invalid-metadata"
+    ]
+  }
+}
