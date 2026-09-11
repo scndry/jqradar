@@ -1,0 +1,8 @@
+{
+  "fixture_change": {
+    "reason": "bug_fix",
+    "measure": "percentile.what_this_pins",
+    "note": "값 불변, 설명 문구만. 케이스 설명이 이미 삭제된 절을 가리켰다 — \"README 미해결 2번\"은 D116·D122가 닫은 질문(백분위 분모의 이름)이고 그 절은 v3.7.7에서 지워졌다. 죽은 참조는 다음 읽는 사람을 없는 곳으로 보내므로 픽스처 자신의 결함이다(계약도 라이브러리도 바뀌지 않았으니 bug_fix). 지금 문구는 결정을 직접 가리킨다: n_ranked 필수, 모집단과 다를 때만 n_population 병기(D116·D122). pct·rank_avg·spread·confidence·interpretation 값은 하나도 바뀌지 않았다 — what_this_pins를 뺀 구조가 바이트 동일임을 확인했다.",
+    "fixtures": ["percentile/lens-percentile-zero-included"]
+  }
+}
