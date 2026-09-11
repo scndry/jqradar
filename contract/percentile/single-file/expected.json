@@ -1,0 +1,50 @@
+{
+  "case": "single-file",
+  "generated_by": "contract/percentile/compute.py",
+  "contract_refs": [
+    "§2.5 성분 백분위"
+  ],
+  "what_this_pins": "N = 1 -> pct는 0이 아니라 null. 공식 (rank_avg-1)/(N-1)의 분모가 0이기 때문이다. 유일한 파일이 '최악이자 최선'인 것은 순위가 아니라 정보 없음이다. 모집단 분포(median·IQR)는 그래도 인쇄된다 — §2.5 표시 규칙은 원값과 분포를 요구한다.",
+  "parameters": {
+    "percentile.min_population": 20
+  },
+  "populations": {
+    "active": {
+      "commit_granularity": "fine",
+      "measures": {
+        "cx": {
+          "lang": "java",
+          "n_ranked": 1,
+          "spread": {
+            "min": 42,
+            "q1": 42,
+            "median": 42,
+            "q3": 42,
+            "iqr": 0,
+            "max": 42,
+            "valid_n": 1
+          },
+          "confidence": "low",
+          "confidence_reasons": [
+            "n_below_50",
+            "iqr_zero",
+            "iqr_below_quarter_median"
+          ],
+          "percentiles": {
+            "f01": {
+              "value": 42,
+              "rank_avg": 1,
+              "pct": null,
+              "reason": "insufficient_population"
+            }
+          }
+        }
+      }
+    }
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "arithmetic": "exact rational (fractions.Fraction)",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

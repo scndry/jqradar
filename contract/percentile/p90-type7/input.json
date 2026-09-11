@@ -1,0 +1,24 @@
+{
+  "case": "p90-type7",
+  "contract_refs": ["§2.5 분위 계약", "§3.3 F"],
+  "what_this_pins": "type-7 선형 보간(Hyndman-Fan)으로 계산한 P90. §2.5가 적은 픽스처 예 그대로: [1,2,...,9,100], q=0.9 -> h = 1 + 0.9*(10-1) = 9.1 -> Q = 9 + 0.1*(100-9) = 18.1. 정확 유리수로 계산해야 18.1이 나온다 — IEEE-754 double은 18.09999999999996767을 낸다(README '산술'). 나이 미상 파일 하나를 섞어 P90(age_last_days)가 '유효 나이만'으로 계산되는 것(valid_n = 10, 선언 11)도 함께 못 박는다. 유효 N=10 < min_population(20)이라 pct는 전부 null인데 분위는 계산된다 — 백분위와 분위는 다른 규칙이다.",
+  "parameters": { "percentile.min_population": 20 },
+  "populations": {
+    "all": {
+      "commit_granularity": "fine",
+      "measures": {
+        "age_last_days": {
+          "lang": null,
+          "values": {
+            "f01": 1, "f02": 2, "f03": 3, "f04": 4, "f05": 5,
+            "f06": 6, "f07": 7, "f08": 8, "f09": 9, "f10": 100,
+            "f11": { "value": null, "reason": "age_unknown" }
+          }
+        }
+      }
+    }
+  },
+  "quantiles": [
+    { "id": "p90-age-last-days", "population": "all", "measure": "age_last_days", "q": 0.9 }
+  ]
+}

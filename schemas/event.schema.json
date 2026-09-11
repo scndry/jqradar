@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jqradar:schema:event:1",
+  "title": "jqradar 사건 파일 (.jqradar/events/<campaign>/<finding-id>/pr<n>.json)",
+  "description": "원장의 **사건 층**(§5.5) — 저장되는 유일한 finding 단위 기록. 코드에서 파생되지 않는 것만 담는다: *어떤 경로가 이 finding을 겨눴고, 무엇을 검증했고, 결과가 어땠나.* 파생되는 것(코드 상태·원장 상태)은 저장하지 않는다 — 저장은 틀리면 남고 계산은 틀려도 다음 실행에서 고쳐진다(B.4, D55). `additionalProperties: false`가 그 선을 지킨다.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "provenance", "campaign", "finding_id", "claim_id", "pr", "branch", "claimed_at", "actor_type"],
+  "properties": {
+    "schema": { "const": "jqradar-event/1", "description": "§7." },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "§7·D95 — 분석 산출물은 `reproduce`, 사건·캠페인은 `provenance`로 나눈다.",
+      "required": ["repository_sha", "created_by"],
+      "properties": {
+        "repository_sha": { "type": "string", "description": "사건을 쓸 때의 리포 SHA(§5.5)." },
+        "created_by": { "type": "string", "description": "예: `jqradar-mcp`, `jqradar-cli`(§5.5). 사람이 아니라 **경로**다." }
+      }
+    },
+    "campaign": { "type": "string", "description": "캠페인 이름(§5.5)." },
+    "finding_id": { "type": "string", "description": "finding 정체성(§5.5 표) — 종류별로 다르다: H/F는 rename 매핑 후 파일 경로 + 렌즈, 중복은 클러스터 ID + 발생 파일, 순환은 SCC 멤버 집합의 정렬 해시, Hidden Coupling은 정렬된 파일 쌍(D70)." },
+    "claim_id": { "type": "string", "description": "`hash(campaign, finding_id, pr)`(§5.5, D94) — 멱등 키." },
+    "pr": { "type": "integer", "description": "PR 번호(§5.5). **정체가 아니다** — 리포가 이미 노출하는 산출물 참조이며, 해시로 가리는 것은 뒤집히는 연극이고 `--live`의 PR 추적을 잃는다(D48·D108)." },
+    "branch": { "type": "string", "description": "`jqradar/<finding-id>`(§6.1)." },
+    "claim_base_sha": { "type": "string", "description": "claim을 시작한 base(§5.5)." },
+    "claimed_at": { "type": "string", "description": "claim 시각(§5.5)." },
+    "actor_type": {
+      "enum": ["mcp", "cli"],
+      "description": "§5.5 — **경로이지 사람이 아니다.** principal 필드는 없다. 행위 추적이지 개발자 지표가 아니다(A.6·B.3). `.jqradar/`는 커밋 대상이라 영구·공유이므로 이름·이메일·계정 핸들을 저장하지 않는다(D48·D108)."
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "§5.5 — **검증은 결과와 검증 입력 정체성의 쌍이다.**",
+      "required": ["result"],
+      "allOf": [
+        {
+          "if": { "properties": { "result": { "const": "passed" } }, "required": ["result"] },
+          "then": {
+            "required": ["validated_tree_id", "validated_analysis_input_id", "scope"],
+            "description": "D89 — `validated_tree_id`가 없는 `passed`는 `none`으로 취급한다(B.4 둘째 원칙: 검증된 코드는 검증된 입력과 동일하다는 증거가 없는 한 검증된 것으로 보지 않는다)."
+          }
+        }
+      ],
+      "properties": {
+        "result": {
+          "enum": ["passed", "failed", "none"],
+          "description": "§5.5 — **쓰는 사건은 `claimed`·`validation_passed`·`validation_failed`뿐이다.** `merged`·`superseded`·`merged_without_effect`는 저장하는 사건이 아니라 git first-parent 이력에서 파생한다(D72·D99)."
+        },
+        "scope": { "enum": ["pre_merge", "post_merge"], "description": "§5.5·D90." },
+        "validated_head_sha": { "type": "string", "description": "§6.3 5a." },
+        "validated_tree_id": { "type": "string", "description": "검증이 돈 트리(§2.8, D86). `merged_without_effect`의 원인 판정이 **여기서 출발한다** — 그래야 검증 계약의 실패와 머지 과정의 변화가 섞이지 않는다(D91)." },
+        "validated_analysis_input_id": { "type": "string", "description": "§2.8, D89." },
+        "validate_hash": { "type": "string", "description": "`validate.json`의 해시(§5.5) — 작은 포인터 + 외부 산출물 해시(DVC·Git LFS의 선례, §8)." },
+        "at": { "type": "string", "description": "검증 시각(§5.5)." }
+      }
+    }
+  },
+  "x-jqradar-forbidden": {
+    "description": "`additionalProperties: false`가 기계적으로 막는 것들 — 스키마가 계약의 하드룰을 담는 자리다.",
+    "code_state": "코드 상태 필드는 없다(§5.5). 상태는 앵커·HEAD 스캔에서 파생하고 저장하지 않는다(D55). 저장하면 RuboCop `.rubocop_todo`·Detekt baseline처럼 부패한다.",
+    "ledger_state": "`open`·`closed`·`regressed` 같은 원장 상태를 여기 쓰지 않는다. 상태는 전이 이력으로 계산되고 귀속은 전이가 일어난 커밋이 갖는다(D99·D100). `closed` 사건도 쓰지 않는다 — 머지가 종료 행위다(D61).",
+    "identity": "이름·이메일·계정 핸들을 저장하지 않는다(D48·D108). `actor_type`은 경로이고 principal은 없다.",
+    "merge_facts": "머지 여부·순서는 사건이 아니라 git 파생이다 — 사건 파일이 main first-parent 이력에 처음 나타난 커밋이 그 사건의 머지 커밋이다(§5.5)."
+  },
+  "x-jqradar-idempotency": {
+    "description": "§5.5·D94 — 파일은 `(campaign, finding, pr)`당 **하나**이고 경로는 `.jqradar/events/<campaign>/<finding-id>/pr<n>.json`이다. `open_pr` 재실행·CI·MCP 재시도는 브랜치 안의 같은 파일을 덮어쓴다. 파일명에 타임스탬프를 넣으면 재시도마다 파일이 늘어 이 계약이 깨진다.",
+    "mutability": "머지 전 = 가변 초안, 머지 후 = 불변 사건. 'append-only'는 main에 대한 말이다(§5.5)."
+  }
+}

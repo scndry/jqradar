@@ -1,0 +1,15 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "percentile.n",
+    "note": "D116·D122 — 백분위의 분모 이름을 성분·렌즈 공통 `n_ranked`로 통일하고, 모집단 크기와 다를 때만 `n_population`을 병기하도록 바꿨다. 이전 expected.json은 성분에 `n`·`n_declared`·`valid_n`·`unknown_n`을 모두 내고 렌즈에는 `n_population`을 항상 냈다. 계약이 바뀐 것이지 계산이 바뀐 것이 아니다 — 모든 `pct`·`spread`·`confidence` 값은 그대로다. 유효값 수는 성분 블록에서 빠지고 `spread.valid_n`/`spread.unknown_n`으로 옮겼다(§2.5의 `population.all.age_last_days.valid_n` 기록 위치와 맞춤).",
+    "fixtures": [
+      "percentile/ties",
+      "percentile/single-file",
+      "percentile/below-min-population",
+      "percentile/lens-percentile-zero-included",
+      "percentile/p90-type7",
+      "percentile/iqr-zero-low-confidence"
+    ]
+  }
+}

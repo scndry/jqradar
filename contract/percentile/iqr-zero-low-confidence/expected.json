@@ -1,0 +1,61 @@
+{
+  "case": "iqr-zero-low-confidence",
+  "generated_by": "contract/percentile/compute.py",
+  "contract_refs": [
+    "§3.7 confidence",
+    "§2.5 분위 계약"
+  ],
+  "what_this_pins": "confidence의 'IQR = 0' 절이 왜 따로 있어야 하는지. zero_inflated는 151개의 0 + 50개의 양수로 median = 0, IQR = 0, N = 201이다. median = 0이라 'IQR < 0.25*median'은 0 < 0 = 거짓이 되어 완전 무분산을 놓치고, N >= 200이므로 다른 절이 없으면 high가 된다. 'IQR = 0' 절만이 이것을 low로 잡는다(§3.7 괄호의 근거 그대로). control은 같은 N = 201에 분산이 있어 high를 받는다 — 규칙이 무분산만 가려낸다는 대조군이다. 두 모집단 다 201개라 per-file 백분위는 인쇄하지 않는다(emit_percentiles: false) — 이 케이스가 잡는 것은 순위가 아니라 집계다.",
+  "parameters": {
+    "percentile.min_population": 20
+  },
+  "populations": {
+    "zero_inflated": {
+      "commit_granularity": "fine",
+      "measures": {
+        "union_dup_tokens": {
+          "lang": null,
+          "n_ranked": 201,
+          "spread": {
+            "min": 0,
+            "q1": 0,
+            "median": 0,
+            "q3": 0,
+            "iqr": 0,
+            "max": 500,
+            "valid_n": 201
+          },
+          "confidence": "low",
+          "confidence_reasons": [
+            "iqr_zero"
+          ]
+        }
+      }
+    },
+    "control": {
+      "commit_granularity": "fine",
+      "measures": {
+        "union_dup_tokens": {
+          "lang": null,
+          "n_ranked": 201,
+          "spread": {
+            "min": 1,
+            "q1": 51,
+            "median": 101,
+            "q3": 151,
+            "iqr": 100,
+            "max": 201,
+            "valid_n": 201
+          },
+          "confidence": "high",
+          "confidence_reasons": []
+        }
+      }
+    }
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "arithmetic": "exact rational (fractions.Fraction)",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

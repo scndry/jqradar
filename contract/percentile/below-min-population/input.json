@@ -1,0 +1,22 @@
+{
+  "case": "below-min-population",
+  "contract_refs": ["§2.5 성분 백분위"],
+  "what_this_pins": "N = 19 < percentile.min_population(20) -> 전원 pct null, reason insufficient_population. 값이 전부 서로 달라 순위를 매길 수 있는데도 null이다 — 임계는 '순위를 낼 수 있는가'가 아니라 '리포 내부 백분위가 의미를 갖는가'를 묻는다. 경계 바로 아래를 잡는 케이스이므로 값 하나만 더해도 통과해서는 안 된다.",
+  "parameters": { "percentile.min_population": 20 },
+  "populations": {
+    "active": {
+      "commit_granularity": "fine",
+      "measures": {
+        "cx": {
+          "lang": "java",
+          "values": {
+            "f01": 1, "f02": 2, "f03": 3, "f04": 4, "f05": 5,
+            "f06": 6, "f07": 7, "f08": 8, "f09": 9, "f10": 10,
+            "f11": 11, "f12": 12, "f13": 13, "f14": 14, "f15": 15,
+            "f16": 16, "f17": 17, "f18": 18, "f19": 19
+          }
+        }
+      }
+    }
+  }
+}

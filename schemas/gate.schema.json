@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jqradar:schema:gate:1",
+  "title": "jqradar gate.json",
+  "description": "`jqradar check`의 산출물(§5.3, §7). `check`는 `change.json`만 읽는 **정책 소비자**이고 새 측정을 하지 않는다(D47). 조직이 적는 세 자리 중 하나이므로(B.6, D5) 정책 이름·해시·소유자를 반드시 인쇄한다. exit 0/1/2(§4.1).",
+  "type": "object",
+  "required": ["profile", "policy_hash", "policy_owner", "base", "head", "checks", "result"],
+  "properties": {
+    "profile": {
+      "type": "string",
+      "description": "정책 프로필 이름(§5.3). 기본은 `jqradar-default-gate`. 조직이 `jqradar.yml`로 바꿀 수 있고 그것이 조직이 적는 자리다(B.6)."
+    },
+    "policy_hash": {
+      "type": "string",
+      "description": "정책 정의의 해시(§5.3). 어떤 정책으로 판정했는지가 재현의 일부다(B.4)."
+    },
+    "policy_owner": {
+      "type": "string",
+      "description": "정책 소유자(§5.3, B.6) — 도구가 소유할 수 없는 임계를 누가 정했는지."
+    },
+    "base": {
+      "type": "string",
+      "description": "BASE 커밋 SHA(§5.3). 보호 기준선은 PR의 merge-base다(B.3). 게이트 자격(top-decile 멤버십)은 여기서 정해져 **얼고**, HEAD의 모집단 드리프트에 흔들리지 않는다(D19)."
+    },
+    "head": { "type": "string", "description": "HEAD 커밋 SHA(§5.3)." },
+    "eligible_hotspots_from_base": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "BASE에서 고정된 H top-decile 자격 집합(§5.3, D19). 백분위는 스캔의 것이고 **게이트는 원값**이다 — 자격만 백분위로 정하고 판정은 원값 델타로 한다."
+    },
+    "checks": {
+      "type": "array",
+      "description": "기본 프로필 `jqradar-default-gate`의 규칙들(§5.3): `new_duplication`(클러스터 토큰 ≥ 100 → FAIL), `new_component_cycle`(1개라도 → FAIL), `hotspot_cx_increase`(> 15% → WARN), `nccd_increase`(> 5% → WARN), `new_p1_smell`(→ WARN). **절대 점수 임계는 없다**(B.3, D13).",
+      "items": { "$ref": "#/$defs/check" }
+    },
+    "result": {
+      "enum": ["PASS", "WARN", "FAIL"],
+      "description": "종합 결과(§5.3). exit 0/1/2에 대응한다(§4.1). `jqradarCheck`는 빌드를 깰 수 있는 **유일한** 태스크다(§4.1)."
+    }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "required": ["rule", "result"],
+      "allOf": [
+        {
+          "if": { "properties": { "result": { "const": "context_changed" } }, "required": ["result"] },
+          "then": {
+            "properties": { "rule": { "const": "nccd_increase" } },
+            "description": "D98 — `context_changed`는 **NCCD 규칙 전용**이다. 컴포넌트 집합이 바뀌면 WARN 대신 이 값을 내서 N 변화와 의존 악화를 섞지 않는다. 다른 규칙이 이 결과를 쓰면 '판정을 피하는 탈출구'가 되므로 거부한다."
+          }
+        }
+      ],
+      "properties": {
+        "rule": {
+          "type": "string",
+          "description": "규칙 이름(§5.3). enum으로 닫지 않는다 — 조직이 자기 프로필을 적는 자리이기 때문이다(B.6, D5). 기본 프로필의 다섯은 `new_duplication`·`new_component_cycle`·`hotspot_cx_increase`·`nccd_increase`·`new_p1_smell`."
+        },
+        "result": {
+          "enum": ["PASS", "WARN", "FAIL", "context_changed"],
+          "description": "§5.3. `context_changed`는 NCCD 규칙 전용 — **컴포넌트 집합이 바뀌면 WARN 대신** 이 값을 낸다. N 변화와 의존 악화를 섞지 않기 위해서다(D98). WARN→FAIL 승격은 조직 결정으로 열려 있다(O3)."
+        },
+        "items": {
+          "type": "array",
+          "description": "규칙에 걸린 항목들. `new_duplication`은 `{path_head, path_base_mapped, cluster_id, tokens}`(§7 주석) — **발생 수준**이며 rename 매핑 후 경로를 쓴다(§5.2, D40).",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path_head": { "type": "string", "description": "HEAD 쪽 경로(§5.2)." },
+              "path_base_mapped": { "type": ["string", "null"], "description": "rename 매핑을 적용한 BASE 쪽 경로(§5.2). 단순 rename은 이 매핑이 흡수한다. **진짜 새 발생이면 null** — BASE에 대응 발생이 없다는 것이 `new_duplication`의 정의다(D40)." },
+              "cluster_id": { "type": "string", "description": "`dup:<해시>:<토큰 수>`(§2.6)." },
+              "tokens": { "type": "integer" },
+              "file": { "type": "string" },
+              "cx_base": { "type": "number", "description": "**원값**(§5.3, D19)." },
+              "cx_head": { "type": "number" },
+              "delta": { "type": "number", "description": "원값 델타의 비율. 기본 임계 0.15(§5.3)." }
+            }
+          }
+        },
+        "components": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "`nccd_increase` 전용 `[base, head]` 컴포넌트 수(§5.3). Δcomponents·ΔCCD·ΔNCCD를 함께 보여 N 변화를 감춘 악화 판정을 막는다(D98)."
+        },
+        "ccd": {
+          "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2,
+          "description": "`[base, head]` CCD(§2.3, §5.3)."
+        },
+        "nccd": {
+          "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2,
+          "description": "`[base, head]` NCCD(§2.3, §5.3)."
+        }
+      }
+    }
+  }
+}

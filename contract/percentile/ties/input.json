@@ -1,0 +1,24 @@
+{
+  "case": "ties",
+  "contract_refs": ["§2.5 성분 백분위", "§3.7 confidence"],
+  "what_this_pins": "동점 평균 순위. 같은 값을 가진 파일은 그 값이 차지한 1-based 위치들의 평균을 받는다. 결과로 최소값이 pct 0을 받지 않고(3중 동점이면 rank_avg 2 -> pct 0.05), 동점 다음 값의 순위는 건너뛴다. N=21이라 min_population(20)은 넘고 confidence 임계 50에는 못 미친다.",
+  "parameters": { "percentile.min_population": 20 },
+  "populations": {
+    "active": {
+      "commit_granularity": "fine",
+      "measures": {
+        "cx": {
+          "lang": "java",
+          "values": {
+            "f01": 10, "f02": 10, "f03": 10,
+            "f04": 20, "f05": 20,
+            "f06": 30, "f07": 40, "f08": 50, "f09": 60, "f10": 70,
+            "f11": 80, "f12": 90, "f13": 100, "f14": 110, "f15": 120,
+            "f16": 130, "f17": 140, "f18": 150, "f19": 160, "f20": 170,
+            "f21": 180
+          }
+        }
+      }
+    }
+  }
+}

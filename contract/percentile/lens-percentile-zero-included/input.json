@@ -1,0 +1,27 @@
+{
+  "case": "lens-percentile-zero-included",
+  "contract_refs": ["§2.5 렌즈 백분위", "§3.7 interpretation", "§3.3 F"],
+  "what_this_pins": "렌즈 백분위는 렌즈 값 자체를 그 렌즈의 모집단에서 다시 랭킹한 것이고, null인 렌즈 값은 제외하되 0은 포함한다. F는 나이 미상이면 null(0이 아니다, D37)이므로 모집단 크기(26)와 랭킹 집합 크기(21)가 다르다 — 인쇄된 n 하나로는 pct를 재계산할 수 없어 n_population과 n_ranked를 나눈다(README 미해결 2번). 14개의 0은 동점 평균 순위 7.5를 공유해 pct 0.325를 받고 interpretation은 context다 — '대부분 0인 F에서 investigate_first는 사실상 F>0 중 상위'라는 §2.5의 의도된 동작.",
+  "parameters": { "percentile.min_population": 20 },
+  "lenses": {
+    "F": {
+      "population": "all",
+      "values": {
+        "f01": 0, "f02": 0, "f03": 0, "f04": 0, "f05": 0, "f06": 0, "f07": 0,
+        "f08": 0, "f09": 0, "f10": 0, "f11": 0, "f12": 0, "f13": 0, "f14": 0,
+        "f15": 40.0,
+        "f16": 55.0,
+        "f17": 60.0,
+        "f18": 72.5,
+        "f19": 80.0,
+        "f20": 90.0,
+        "f21": 96.5,
+        "f22": { "value": null, "reason": "age_unknown" },
+        "f23": { "value": null, "reason": "age_unknown" },
+        "f24": { "value": null, "reason": "age_unknown" },
+        "f25": { "value": null, "reason": "age_unknown" },
+        "f26": { "value": null, "reason": "age_unknown" }
+      }
+    }
+  }
+}

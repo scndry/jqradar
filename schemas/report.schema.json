@@ -1,0 +1,476 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jqradar:schema:report:3",
+  "title": "jqradar report.json",
+  "description": "`jqradar scan`의 산출물 — 지도(§3). §7의 통합 JSON 스키마 스케치를 기계 검증 가능하게 옮긴 것이다. 이 문서의 예시는 `contract/lens/sample-service/expected.json` 픽스처이며 CI가 measures로부터 재계산해 대조한다(§7 머리말, D26).",
+  "type": "object",
+  "required": ["schema", "project", "reproduce", "population", "system", "components", "files", "findings"],
+  "properties": {
+    "schema": {
+      "const": "jqradar/3",
+      "description": "스키마 버전(§7). `analysis_input_id`의 입력이기도 하다(§2.8)."
+    },
+    "project": {
+      "type": "string",
+      "description": "프로젝트 이름(§7). 설명이며 재계산 대상이 아니다."
+    },
+    "reproduce": { "$ref": "#/$defs/reproduce" },
+    "population": { "$ref": "#/$defs/population" },
+    "system": { "$ref": "#/$defs/system" },
+    "components": {
+      "type": "array",
+      "description": "컴포넌트 단위 Martin 지표(§2.2). 계산은 ArchUnit `ArchitectureMetrics.componentDependencyMetrics`(D3).",
+      "items": { "$ref": "#/$defs/component" }
+    },
+    "files": {
+      "type": "array",
+      "description": "파일 단위 측정·백분위·렌즈(§2.1, §2.5, §3).",
+      "items": { "$ref": "#/$defs/file" }
+    },
+    "duplicate_clusters": {
+      "type": "array",
+      "description": "중복 클러스터(§2.6, D39) — 같은 정규화 토큰 열의 모든 발생. 쌍이 아니라 클러스터가 단위다.",
+      "items": { "$ref": "#/$defs/duplicateCluster" }
+    },
+    "duplication_pairs": {
+      "type": "array",
+      "description": "쌍별 중복 토큰 투영(§2.6). `pair_dup_tokens`는 A쪽 구간 합집합이며 A = 경로 사전순 앞.",
+      "items": { "$ref": "#/$defs/duplicationPair" }
+    },
+    "hidden_couplings": {
+      "type": "array",
+      "description": "숨은 결합 목록(§2.4, §3.5) — 점수가 아니라 목록이다. `shared ≥ 5 ∧ tc ≥ 0.5`.",
+      "items": { "$ref": "#/$defs/hiddenCoupling" }
+    },
+    "findings": {
+      "type": "array",
+      "description": "발견(§3.7, D22) — `priority · interpretation · confidence · evidence`. 점수·순위·심각도가 아니다(B.2).",
+      "items": { "$ref": "#/$defs/finding" }
+    }
+  },
+  "$defs": {
+    "nullableNumber": { "type": ["number", "null"] },
+    "percentileValue": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1,
+      "description": "백분위 `pct(x) = (rank_avg(x) − 1)/(N − 1)`(§2.5). N = 1 또는 N < `percentile.min_population`이면 null. **계산은 정확 유리수, 직렬화는 소수 4자리 HALF_EVEN**(§2.5 산술 계약, D115) — 임계 비교(`pct ≥ 0.90`)는 반올림 전 값으로 한다."
+    },
+    "populationName": {
+      "enum": ["active", "dx", "all"],
+      "description": "모집단 셋(§2.5, D24) — `active`(W 안 chg_commits ≥ 1, H) / `dx`(active ∩ twins ≥ 1, Dx) / `all`(모든 적격 main 소스, F)."
+    },
+    "confidence": {
+      "enum": ["low", "medium", "high"],
+      "description": "§3.7. `low ⇔ N < 50 ∨ IQR = 0 ∨ (median > 0 ∧ IQR < 0.25·median) ∨ (coarse ∧ 성분 = chg_commits)`; `high ⇔ N ≥ 200 ∧ low 조건 없음`; 그 외 `medium`. 렌즈 confidence = 기여 성분의 최소(D28)."
+    },
+    "interpretation": {
+      "type": ["string", "null"],
+      "enum": ["investigate_first", "investigate", "context", null],
+      "description": "§3.7. 렌즈 백분위 `≥ 0.90` → `investigate_first`, `≥ 0.75` → `investigate`, 그 외 `context`. 렌즈 값이 null이면 null. 렌즈 백분위만 쓰며 절대 임계가 아니다(D34)."
+    },
+
+    "reproduce": {
+      "type": "object",
+      "description": "재현 블록(§2.8, D10). 원칙 둘: 여기 포함되지 않은 입력은 결과에 영향을 주어서는 안 되고, `analysis_input_id`에 포함된 모든 입력은 여기에 값 또는 해시로 나타나야 한다(D111).",
+      "required": ["tool_version", "schema_version", "contract_version", "window_anchor", "head", "repository_state_id", "analysis_input_id", "environment", "history_backend", "window_applied", "component", "parameters", "percentile_method"],
+      "properties": {
+        "tool_version": { "type": "string", "description": "jQRadar 버전(§2.8 `core_tool_version`). major.minor.patch." },
+        "schema_version": { "type": "string", "description": "산출물 스키마 버전(§2.8) — `analysis_input_id` 입력." },
+        "contract_version": { "type": "string", "description": "측정 계약(§2) 버전(§2.8) — `analysis_input_id` 입력. 계약이 바뀌면 캐시가 적중해서는 안 된다." },
+        "scanned_at": { "type": "string", "description": "실행 시각(§2.7). **감사 메타데이터일 뿐 계산에 들어가지 않는다** — 시간 기준은 `window_anchor`다(D25)." },
+        "algorithm_versions": {
+          "type": "object",
+          "description": "측정·컴포넌트 전략 알고리즘 버전(§2.8) — `analysis_input_id` 입력. 공식이 바뀌면 트리가 같아도 결과가 다르다.",
+          "additionalProperties": { "type": "string" }
+        },
+        "window_anchor": {
+          "type": "object",
+          "description": "시간 앵커(§2.7, D25) = HEAD 커밋의 커미터 시각. 모든 '최근'·'경과'가 이 시각 기준이라 같은 HEAD를 언제 재도 같은 값이 나온다.",
+          "required": ["type", "timestamp"],
+          "properties": {
+            "type": { "const": "head_committer_time" },
+            "timestamp": { "type": "string" }
+          }
+        },
+        "head": { "type": "string", "description": "HEAD 커밋 SHA(§2.7)." },
+        "repository_state_id": { "type": "string", "description": "정렬된 `(path, content_id)` 전체의 sha256(§2.8). 트리의 정체성이며 캠페인 앵커의 봉인(D88·D112). 형식은 `sha256:<hex>`." },
+        "analysis_input_id": { "type": "string", "description": "툴체인·계약·입력 전부의 sha256(§2.8, D87). **캐시 키**. 형식은 `sha256:<hex>`." },
+        "classes_id": { "type": "string", "description": "`bytecode_scope` 안 `.class` 파일의 정렬된 `(상대 경로, bytes)` sha256(§2.8). 지표 재현에는 이 값만으로 충분하다." },
+        "environment": {
+          "type": "object",
+          "description": "분석 도구 버전(§2.8). major.minor.patch. `analysis_input_id` 입력 — 빠지면 PMD 7.16과 7.17이 같은 캐시 키를 만든다.",
+          "required": ["pmd", "archunit", "jgit"],
+          "properties": {
+            "pmd": { "type": "string" },
+            "archunit": { "type": "string" },
+            "jgit": { "type": "string" },
+            "git": { "type": ["string", "null"], "description": "네이티브 백엔드를 쓸 때만(§4.5, D17). JGit 단독이면 null." }
+          }
+        },
+        "classes_reproduction_inputs": {
+          "type": "object",
+          "description": "'원인'이 아니라 '클래스를 다시 만들려면 필요한 것'(§2.8). major.minor.patch.",
+          "properties": {
+            "jdk": { "type": "string" },
+            "gradle": { "type": "string" },
+            "kotlin": { "type": "string" },
+            "compiler_args": { "type": "array", "items": { "type": "string" } },
+            "annotation_processors": { "type": "array", "items": { "type": "string" } },
+            "dependency_lock": { "type": "string" }
+          }
+        },
+        "history_backend": {
+          "type": "object",
+          "description": "이력 백엔드(§4.5, D17). 기본 JGit 단독. 네이티브는 옵트인이고 백엔드가 다른 두 실행 사이의 델타·원장 전이는 거부한다.",
+          "required": ["name"],
+          "properties": {
+            "name": { "enum": ["jgit", "native"] },
+            "git_version": { "type": ["string", "null"] }
+          }
+        },
+        "window_applied": {
+          "type": "object",
+          "description": "창 W의 적용 결과(§2.7). 12개월 ∧ 2,000커밋 중 먼저 닥치는 상한.",
+          "required": ["months", "max_commits", "bound_hit", "commits_in_window"],
+          "properties": {
+            "months": { "type": "integer" },
+            "max_commits": { "type": "integer" },
+            "bound_hit": { "enum": ["time", "count", "none"], "description": "어느 상한이 먼저 걸렸나(§2.7)." },
+            "commits_in_window": { "type": "integer" },
+            "merge_commits_excluded": { "type": "integer", "description": "머지 커밋(부모 ≥ 2)은 세지 않는다(§2.7)." },
+            "commit_list_sha256": { "type": "string", "description": "창 안 커밋 SHA 목록(순서 포함)의 해시(§2.8, D111). 목록 자체는 head + 창 규칙에서 재생성한다 — 그래서 목록 대신 해시만 인쇄한다." }
+          }
+        },
+        "bytecode_scope": {
+          "type": "object",
+          "description": "그래프 전처리 범위(§2.2). 테스트·`@Generated`·서드파티·JDK 제외. 외부 타입 간선은 `external` 의사 노드로 접어 기록하되 지표에서는 제외한다.",
+          "properties": {
+            "class_roots": { "type": "array", "items": { "type": "string" } },
+            "test_classes_included": { "const": false, "description": "테스트 클래스는 그래프에 넣지 않는다(§2.2). O10에서 논의 중." },
+            "generated_excluded": { "type": "boolean" },
+            "external_edges": { "type": "integer", "description": "접힌 외부 간선 수 — 기록은 하되 Ca/Ce/I/A/D·CCD에서는 제외." },
+            "external_included_in_metrics": { "const": false }
+          }
+        },
+        "component": {
+          "type": "object",
+          "description": "컴포넌트 전략의 결정 결과(§2.2, D15). 인쇄해서 재현 가능하게 한다.",
+          "required": ["strategy", "count"],
+          "properties": {
+            "strategy": { "type": "string", "description": "`module` / `auto` / `depth:<n>`(§2.2)." },
+            "resolved_root": { "type": "string", "description": "`auto`가 고른 최장 공통 접두어(§2.2)." },
+            "count": { "type": "integer" }
+          }
+        },
+        "parameters": {
+          "type": "object",
+          "description": "모든 분석 파라미터(§2.8, §4.3). `scan`은 무설정이라 이 값들은 코드 기본값이고 전부 인쇄된다 — 설정 파일이 아니라 인쇄가 재현성의 근거다.",
+          "additionalProperties": true
+        },
+        "percentile_method": {
+          "type": "object",
+          "description": "백분위·분위 방법(§2.5). 단일 방법 선언이다.",
+          "required": ["rank", "formula", "quantile"],
+          "properties": {
+            "rank": { "const": "average", "description": "동점 평균 순위(§2.5)." },
+            "formula": { "const": "(rank_avg-1)/(N-1)" },
+            "quantile": { "const": "type7-linear", "description": "type-7 선형 보간(Hyndman–Fan)(§2.5). 픽스처 예: `[1..9,100]`, q=0.9 → 18.1." }
+          }
+        }
+      }
+    },
+
+    "spreadEntry": {
+      "type": "object",
+      "description": "모집단 분포(§2.5 표시 규칙) — 원값은 언제나 중앙값·IQR·최대와 함께 보인다.",
+      "required": ["median", "iqr", "max"],
+      "properties": {
+        "median": { "type": "number" },
+        "iqr": { "type": "number", "description": "`IQR < 중앙값의 25%`면 `population_note`(§2.5). `IQR = 0`은 confidence를 low로 내린다(§3.7, D36)." },
+        "max": { "type": "number" },
+        "min": { "type": "number" },
+        "p90": { "type": "number", "description": "F의 문턱(§3.3). type-7 분위, 유효값만(§2.5)." },
+        "valid_n": { "type": "integer", "description": "값이 null이 아닌 항목 수(§2.5). `P90(age_last_days)`는 이 집합에서만 계산한다." },
+        "unknown_n": { "type": "integer", "description": "값이 null인 항목 수. '오래되지 않았다'와 '나이를 모른다'는 다른 상태다(D37)." }
+      }
+    },
+    "populationStats": {
+      "type": "object",
+      "description": "한 모집단의 크기와 분포(§2.5).",
+      "required": ["n"],
+      "properties": {
+        "n": { "type": "integer" },
+        "java": { "type": "integer", "description": "언어별 모집단 크기 — `cx` 백분위는 언어별로 계산한다(§2.5, D12)." },
+        "kotlin": { "type": "integer" },
+        "spread": {
+          "type": "object",
+          "description": "성분별 분포. 키는 성분 이름이거나 `<성분>.<언어>`(예: `cx.java`).",
+          "additionalProperties": { "$ref": "#/$defs/spreadEntry" }
+        }
+      }
+    },
+    "population": {
+      "type": "object",
+      "description": "모집단 셋과 커밋 거칠기(§2.5, §2.7).",
+      "required": ["all", "active", "dx", "commit_granularity"],
+      "properties": {
+        "all": { "$ref": "#/$defs/populationStats" },
+        "active": { "$ref": "#/$defs/populationStats" },
+        "dx": { "$ref": "#/$defs/populationStats" },
+        "median_files_per_commit": { "type": "number", "description": "§2.7. > 20이면 `coarse`." },
+        "commit_granularity": { "enum": ["fine", "coarse"], "description": "§2.7. `coarse`면 `chg_commits` 성분의 confidence가 low로 내려간다(§3.7)." },
+        "population_note": { "type": ["string", "null"], "description": "`IQR < 중앙값의 25%`일 때의 주석(§2.5)." }
+      }
+    },
+
+    "system": {
+      "type": "object",
+      "description": "시스템 단위 Lakos 지표(§2.3, D3) — 시스템 숫자 하나, 추세용. 이력 저장소 전까지는 두 점만 있다(D68).",
+      "required": ["components", "CCD", "NCCD"],
+      "properties": {
+        "components": { "type": "integer", "description": "N." },
+        "CCD": { "type": "number", "description": "Σ(전이적 도달 컴포넌트 수, 자기 포함)(§2.3)." },
+        "ACD": { "type": "number", "description": "CCD/N." },
+        "RACD": { "type": "number", "description": "ACD/N." },
+        "CCD_balanced": { "type": "number", "description": "`(N+1)·log₂(N+1) − N`." },
+        "NCCD": { "type": "number", "description": "CCD / CCD_balanced. 게이트에서 컴포넌트 집합이 바뀌면 WARN 대신 `context_changed`(§5.3, D98)." },
+        "cycles": {
+          "type": "array",
+          "description": "Tarjan SCC(§2.2). 아키텍처는 제안까지이므로 끊기 후보는 후보다(D6).",
+          "items": {
+            "type": "object",
+            "required": ["id", "members"],
+            "properties": {
+              "id": { "type": "string" },
+              "size": { "type": "integer" },
+              "members": { "type": "array", "items": { "type": "string" } },
+              "break_candidates": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["from", "to"],
+                  "properties": { "from": { "type": "string" }, "to": { "type": "string" } }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "component": {
+      "type": "object",
+      "description": "컴포넌트 하나(§2.2). `zone` 표기는 위치 설명이며 정당한 예외를 항상 병기한다(§3.4).",
+      "required": ["id", "Ca", "Ce", "I", "A", "D"],
+      "properties": {
+        "id": { "type": "string" },
+        "Ca": { "type": "integer", "description": "구심 결합(§2.2)." },
+        "Ce": { "type": "integer", "description": "원심 결합(§2.2)." },
+        "I": { "type": "number", "minimum": 0, "maximum": 1, "description": "불안정성 Ce/(Ca+Ce)(§2.2)." },
+        "A": { "type": "number", "minimum": 0, "maximum": 1, "description": "추상도(§2.2)." },
+        "D": { "type": "number", "description": "Main Sequence로부터의 거리(§2.2)." },
+        "zone": { "type": "string", "description": "Martin zone 표기(§2.2) — **설명이지 판정이 아니다**. 정당한 예외(유틸리티·도메인 코어)를 `zone_note`에 병기한다(§3.4)." },
+        "zone_note": { "type": "string", "description": "정당한 예외 문구(§3.4). 판정 어휘를 쓰지 않는다(D67)." },
+        "cycle_id": { "type": ["string", "null"] },
+        "class_edge_count": { "type": "integer", "description": "컴포넌트로 접기 전 클래스 간선 수(§2.2). 접을 때 자기 간선·중복은 제거하되 이 수는 따로 센다." }
+      }
+    },
+
+    "measures": {
+      "type": "object",
+      "description": "파일 단위 원값(§2.1). 세 엔진이 낸 사실이며 가중되지 않는다(B.1, D4).",
+      "properties": {
+        "cx": { "type": ["number", "null"], "description": "파일 내 메서드 CYCLO 합(§2.1, PMD). Kotlin은 들여쓰기 복잡도." },
+        "cx_method": { "enum": ["cyclo", "indent"], "description": "§2.1. Kotlin은 `indent`이고 백분위는 언어별 모집단(D12)." },
+        "loc": { "type": "number", "description": "NCSS(§2.1, PMD)." },
+        "file_tokens": { "type": "number", "description": "CPD 토크나이저 전체 토큰 수(§2.1)." },
+        "smells": {
+          "type": ["object", "null"],
+          "description": "quickstart 참조 룰셋 발견(§2.1). **점수 밖, 가중 없음**(D4). Kotlin은 null(0이 아니다, §4.4).",
+          "properties": {
+            "p1": { "type": "integer" }, "p2": { "type": "integer" },
+            "p3": { "type": "integer" }, "total": { "type": "integer" }
+          }
+        },
+        "chg_commits": { "type": ["integer", "null"], "description": "W 안 파일을 만진 **비머지** 커밋 수(§2.1, JGit). H·tc의 변경 단위로 **잠금**(D27)." },
+        "chg_days": { "type": ["integer", "null"], "description": "W 안 변경된 서로 다른 UTC 날짜 수(§2.1). 기록·비교 실험용(P2)이며 렌즈에 쓰지 않는다." },
+        "churn": { "type": ["integer", "null"], "description": "W 안 추가+삭제 라인(§2.1)." },
+        "union_dup_tokens": { "type": ["integer", "null"], "description": "CPD 발생 구간 **합집합** 토큰 수(§2.1, §2.6). Dx의 질량 성분 — 비율이 아니라 질량을 우선한다(§3.2)." },
+        "dup_extent": { "type": ["number", "null"], "description": "`union_dup_tokens / file_tokens`(§2.1). **사실로만** 쓰고 렌즈에 넣지 않는다(§3.2)." },
+        "self_dup_tokens": { "type": ["integer", "null"], "description": "같은 파일 안 반복 일치 토큰(§2.1). twin이 아니다(§2.6)." },
+        "twins": { "type": ["integer", "null"], "description": "≥1 일치를 공유하는 다른 파일 수(§2.1)." },
+        "active_twins": { "type": ["integer", "null"], "description": "`chg_commits ≥ 1`인 쌍둥이 수(§2.1)." },
+        "active_twin_ratio": { "type": ["number", "null"], "description": "`active_twins / twins`. **`twins = 0`이면 null**이고 그 파일은 dx 모집단 밖이다(§2.1, D29)." },
+        "fan_in": { "type": ["integer", "null"], "description": "정적 클래스 그래프에서 직접 의존하는 프로젝트 내부 클래스 수(§2.1, ArchUnit). 테스트·리플렉션·DI 이름 기반 연결·외부 시스템 호출은 세지 않으며 이 한계를 F의 설명에 병기한다." },
+        "age_last_days": { "type": ["number", "null"], "description": "`HEAD_TIME − 마지막 비머지 커밋 커미터 시각`(§2.1, §2.7). 결정 불가·음수면 null — **0이 아니다**(D37). null이면 F도 null(§3.3)." },
+        "distinct_authors_90d": { "type": ["integer", "null"], "description": "최근 90일 이 파일을 만진 서로 다른 저자 수(§2.1). **익명 집계** — 저자는 메모리에서 해시로 세고 정체도 해시도 저장하지 않는다(§2.7, D48). `people.attribution=off`에서도 계산한다." },
+        "ownership_max_share": { "type": ["number", "null"], "description": "최다 기여자의 커밋 비중(§2.1). 익명 집계. 낮으면 소유권 분산(Bird 외 2011)." },
+        "minor_contributor_share": { "type": ["number", "null"], "description": "커밋 비중 < 5%인 기여자들의 합 비중(§2.1). 익명 집계." },
+        "team_count": { "type": ["integer", "null"], "description": "이 파일을 만진 팀 수(§2.1). `people.attribution ∈ {team, individual}`일 때만(D11)." }
+      }
+    },
+
+    "file": {
+      "type": "object",
+      "description": "파일 하나(§2.1, §2.5, §3).",
+      "required": ["id", "path", "lang", "measures"],
+      "properties": {
+        "id": { "type": "string" },
+        "path": { "type": "string" },
+        "component": { "type": "string" },
+        "lang": { "enum": ["java", "kotlin"], "description": "§4.4. Kotlin은 CPD·ArchUnit·JGit 렌즈 포함, `smells`는 null." },
+        "measures": { "$ref": "#/$defs/measures" },
+        "percentiles": {
+          "type": "object",
+          "description": "성분 백분위(§2.5). 결합 전에 백분위로 만든다(D2).",
+          "additionalProperties": { "$ref": "#/$defs/percentileValue" }
+        },
+        "percentile_population": {
+          "type": "object",
+          "description": "성분마다 어느 모집단에서 몇 개를 상대로 잰 값인가(§2.5). **'값이 null'과 '모집단에서 제외'를 구분한다**(D38).",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["population", "n_ranked"],
+            "properties": {
+              "population": { "$ref": "#/$defs/populationName" },
+              "lang": { "type": "string", "description": "`cx`처럼 언어별로 재는 성분(§2.5, D12)." },
+              "n_ranked": { "type": "integer", "description": "공식 `(rank_avg−1)/(N−1)`의 **분모** — 그 성분 값이 non-null인 파일 수(§2.5, D116·D122). 인쇄된 분모로 pct를 재계산할 수 없으면 그 pct는 의견이다(B.4)." },
+              "n_population": { "type": "integer", "description": "모집단 크기. **`n_ranked`와 다를 때만** 적는다(D122) — 예: `age_last_days`는 `all` 340 중 유효 338." },
+              "reason": {
+                "enum": ["not_in_active", "no_twins", "age_unknown", "insufficient_population"],
+                "description": "pct가 null인 이유(§2.5, D38). 값이 없는 것과 모집단에 없는 것은 다르다."
+              }
+            }
+          }
+        },
+        "lenses": {
+          "type": "object",
+          "description": "렌즈 값(§3). 곱하지 않고 각각 낸다 — 헤드라인은 H(D1).",
+          "properties": {
+            "H": { "$ref": "#/$defs/nullableNumber", "description": "Hotspot(§3.1) `100·√(pct_active,lang(cx) × pct_active(chg_commits))`. Tornhill 파생형." },
+            "Dx": { "$ref": "#/$defs/nullableNumber", "description": "Duplication Exposure(§3.2) `100·√(pct_dx(union_dup_tokens) × pct_dx(active_twin_ratio))`. twins=0이면 null(D29)." },
+            "F": { "$ref": "#/$defs/nullableNumber", "description": "Frozen Core(§3.3) `100·√(pct_all,lang(cx) × pct_all(fan_in)) × 𝟙[age > P90_all(age) ∧ age ≥ 180]`. **변경 위험 후보이지 부채 판정이 아니다**. 나이 미상이면 null(D37)." },
+            "composite": { "$ref": "#/$defs/nullableNumber", "description": "선택적 가중합(§3.6). **세 렌즈가 모두 non-null일 때만** 계산하고 아니면 null(D29). 헤드라인이 아니다." },
+            "composite_note": { "type": ["string", "null"], "description": "composite가 null인 이유(§3.6)." }
+          }
+        },
+        "lens_percentiles": {
+          "type": "object",
+          "description": "렌즈 값 자체의 백분위(§2.5) — `interpretation`의 **유일한** 근거(D34). null인 렌즈 값은 제외하고 **0은 포함**한다.",
+          "additionalProperties": {
+            "type": ["object", "null"],
+            "required": ["pct", "population", "n_ranked"],
+            "properties": {
+              "pct": { "$ref": "#/$defs/percentileValue" },
+              "population": { "$ref": "#/$defs/populationName" },
+              "n_ranked": { "type": "integer", "description": "공식의 **분모** — 그 렌즈 값이 non-null인 파일 수(D116·D122). 나이 미상이면 F = null이라 랭킹에서 빠지므로 모집단 크기와 갈린다." },
+              "n_population": { "type": "integer", "description": "모집단 크기. **`n_ranked`와 다를 때만** 적는다(D122)." }
+            }
+          }
+        },
+        "arch_context": {
+          "type": "object",
+          "description": "소속 컴포넌트의 맥락을 **붙인 것**(§3.4). 파일 점수에 곱하거나 더하지 않는다.",
+          "properties": {
+            "I": { "type": "number" }, "A": { "type": "number" }, "D": { "type": "number" },
+            "zone": { "type": "string" },
+            "cycle_id": { "type": ["string", "null"] }
+          }
+        }
+      }
+    },
+
+    "duplicateCluster": {
+      "type": "object",
+      "description": "중복 클러스터(§2.6, D39) = 같은 정규화 토큰 열의 **모든** 발생. A↔B와 C↔D가 같은 열이면 CPD가 이미 한 객체로 낸다.",
+      "required": ["id", "tokens", "occurrences"],
+      "properties": {
+        "id": { "type": "string", "description": "`dup:<정규화 토큰 해시>:<토큰 수>`(§2.6)." },
+        "tokens": { "type": "integer", "description": "`cpd.minimum_tokens`(기본 100) 이상(§2.6)." },
+        "occurrences": {
+          "type": "array",
+          "minItems": 1,
+          "description": "발생 집합. 발생이 한 파일에만 있으면 자기 중복이며 twin이 아니다(§2.6).",
+          "items": {
+            "type": "object",
+            "required": ["path", "start_token", "end_token"],
+            "properties": {
+              "path": { "type": "string" },
+              "start_token": { "type": "integer" },
+              "end_token": { "type": "integer" },
+              "start_line": { "type": "integer" },
+              "end_line": { "type": "integer" }
+            }
+          }
+        },
+        "identical_under": { "type": "array", "items": { "type": "string" }, "description": "어떤 정규화 아래에서 같은가(§2.6 — identifier·literal 무시)." },
+        "mechanical_fix_candidate": { "type": "boolean", "description": "기계적 수정(§6.5 `ReplaceRegionWithCall`) 후보인가. **후보 표시일 뿐 `structural` 전제조건 충족을 뜻하지 않는다**(§6.5)." }
+      }
+    },
+    "duplicationPair": {
+      "type": "object",
+      "required": ["a", "b", "pair_dup_tokens"],
+      "properties": {
+        "a": { "type": "string", "description": "경로 사전순 **앞**(§2.6) — 무순서 쌍이 한 값을 갖게 하는 규칙." },
+        "b": { "type": "string" },
+        "pair_dup_tokens": { "type": "integer", "description": "A·B를 모두 포함하는 클러스터들의 A쪽 구간 합집합 토큰 수(§2.6). 겹치면 병합한다: `[100,200)∪[150,250)` = 150. 중복 합격 함수의 판정 대상(§6.3, D41)." }
+      }
+    },
+    "hiddenCoupling": {
+      "type": "object",
+      "description": "숨은 결합(§2.4, §3.5). **판정하지 않는다** — 테스트-대상 쌍은 긍정 해석을 병기한다.",
+      "required": ["a", "b", "shared", "tc"],
+      "properties": {
+        "a": { "type": "string" },
+        "b": { "type": "string" },
+        "shared": { "type": "integer", "description": "두 파일을 함께 만진 비머지 커밋 수(§2.4). 보고 기준 `shared ≥ 5`." },
+        "tc": { "type": "number", "description": "`shared / min(chg_commits_a, chg_commits_b)`(§2.4). 보고 기준 `tc ≥ 0.5`." },
+        "static_dependency": { "type": "boolean", "description": "정적 의존이 없는 쌍을 우선 보인다(§3.5)." }
+      }
+    },
+
+    "finding": {
+      "type": "object",
+      "description": "발견 하나(§3.7, D22). 산출물은 점수가 아니라 `priority · interpretation · confidence · evidence`다(B.2).",
+      "required": ["id", "kind", "confidence"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": {
+          "enum": ["hotspot", "duplication_exposure", "frozen_core", "component_cycle", "hidden_coupling"],
+          "description": "§3, §5.5 정체성 표. 규칙 ID 기반 '아키텍처 위반'은 없다 — 규칙은 ArchRules의 층이고 우리에겐 순환만 있다(D70)."
+        },
+        "lens": { "enum": ["H", "Dx", "F"], "description": "§3." },
+        "file": { "type": "string" },
+        "component": { "type": "string" },
+        "cycle": { "type": "string" },
+        "priority": { "$ref": "#/$defs/nullableNumber", "description": "**렌즈 값 그 자체**(§3.7). 새로 만든 점수가 아니다. 정렬 tie-break는 `priority desc, path asc, id asc`(D28)." },
+        "lens_pct": { "$ref": "#/$defs/percentileValue", "description": "이 렌즈 값의 백분위(§2.5) — `interpretation`이 쓰는 값." },
+        "interpretation": { "$ref": "#/$defs/interpretation" },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "evidence": {
+          "type": "array",
+          "description": "성분마다 `{measure, value, pct, population, n}`, 또는 다른 산출물 참조 `{ref}`(§3.7). 점수를 내리는 것이 아니라 증거를 없애는 것이 과제가 되도록(§6.4).",
+          "items": {
+            "type": "object",
+            "anyOf": [
+              { "required": ["ref"] },
+              { "required": ["measure", "value"] }
+            ],
+            "properties": {
+              "ref": { "type": "string", "description": "`duplicate_clusters[].id` 같은 다른 산출물 참조." },
+              "measure": { "type": "string" },
+              "value": { "type": ["number", "null"] },
+              "pct": { "$ref": "#/$defs/percentileValue" },
+              "population": { "$ref": "#/$defs/populationName" },
+              "n_ranked": { "type": "integer", "description": "그 성분 백분위의 분모(D122)." },
+              "n_population": { "type": "integer", "description": "모집단과 다를 때만(D122)." },
+              "p90_all": { "type": "number", "description": "F의 나이 문턱(§3.3) — 지시변수의 근거라 성분이 아니다(§3.7)." },
+              "min_days": { "type": "integer", "description": "F의 180일 하한(§3.3, D14)." }
+            }
+          }
+        }
+      }
+    }
+  }
+}
