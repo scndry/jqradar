@@ -1,0 +1,19 @@
+{
+  "case": "change-inferred-ai-assistance",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "change.schema.json",
+  "base": "file:base/change.json",
+  "mechanism": "enum(어휘가 계약)",
+  "contract_ref": "D48",
+  "what": "declared_ai_assistance는 선언된 것만 — 'probably'는 추론이다",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "declared_ai_assistance"
+      ],
+      "value": "probably"
+    }
+  ]
+}

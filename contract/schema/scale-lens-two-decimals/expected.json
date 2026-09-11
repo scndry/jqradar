@@ -1,0 +1,18 @@
+{
+  "case": "scale-lens-two-decimals",
+  "generated_by": "contract/schema/compute.py",
+  "check": "scale_lint",
+  "kind": "hard_rule",
+  "contract_ref": "D115·D125",
+  "what": "렌즈 값은 소수 1자리다 — multipleOf로는 못 잡는다(95.6 % 0.1이 이진 부동소수점에서 거짓)",
+  "mechanism": "원문 린트(스키마 아님)",
+  "verdict": "reject",
+  "violations": [
+    {
+      "path": "/files/0/lenses/H",
+      "literal": "95.63",
+      "allowed_scale": 1,
+      "actual_scale": 2
+    }
+  ]
+}

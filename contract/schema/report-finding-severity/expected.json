@@ -1,0 +1,14 @@
+{
+  "case": "report-finding-severity",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "B.2·D126",
+  "what": "finding에 심각도를 만들 수 없다 — 현장은 판결이 아니다",
+  "mechanism": "additionalProperties:false",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/findings/0"
+  ]
+}

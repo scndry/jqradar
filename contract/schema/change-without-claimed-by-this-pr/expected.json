@@ -1,0 +1,14 @@
+{
+  "case": "change-without-claimed-by-this-pr",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D117",
+  "what": "claimed_by_this_pr은 필수 — 선택이면 전이 귀속과 어긋난다",
+  "mechanism": "required",
+  "schema": "change.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/touched_legacy_findings/0"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "schema": "jqradar-change/1",
+  "project": "sample-service",
+  "base": {
+    "ref": "origin/main",
+    "sha": "base-sha"
+  },
+  "head": {
+    "sha": "head-sha"
+  },
+  "items": {
+    "complexity_delta": {
+      "value_base": 18420,
+      "value_head": 18512,
+      "delta": 92,
+      "evidence": [
+        {
+          "file": "f:order-service",
+          "measure": "cx",
+          "value_base": 80,
+          "value_head": 87,
+          "delta": 7
+        }
+      ]
+    },
+    "new_duplication": {
+      "value_base": 0,
+      "value_head": 1,
+      "delta": 1,
+      "evidence": [
+        {
+          "path_head": "…/NewCopy.java",
+          "path_base_mapped": null,
+          "cluster_id": "dup:<token_hash>:120",
+          "tokens": 120
+        }
+      ]
+    }
+  },
+  "declared_ai_assistance": "unknown",
+  "touched_legacy_findings": [
+    {
+      "id": "fnd:dx:dup:3f9a…:120@…/OrderService.java",
+      "anchor_class": "high",
+      "status_before": "open",
+      "delta": {
+        "union_dup_tokens": -120
+      },
+      "status_after_if_merged": "improving",
+      "claimed_by_this_pr": false
+    }
+  ]
+}

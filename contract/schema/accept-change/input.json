@@ -1,0 +1,9 @@
+{
+  "case": "accept-change",
+  "check": "schema",
+  "kind": "positive",
+  "schema": "change.schema.json",
+  "base": "file:base/change.json",
+  "contract_ref": "§5.1",
+  "what": "§5.1에서 만든 최소 change.json이 스키마를 통과한다(§7에 예시가 없다)"
+}

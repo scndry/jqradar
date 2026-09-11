@@ -1,0 +1,20 @@
+{
+  "case": "fixture-change-unknown-reason",
+  "check": "schema",
+  "kind": "structural",
+  "schema": "fixture_change.schema.json",
+  "base": "prd:§7:fixture_change",
+  "mechanism": "enum(전사)",
+  "contract_ref": "§2.9",
+  "what": "reason은 세 분류뿐",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "fixture_change",
+        "reason"
+      ],
+      "value": "updated_expectation"
+    }
+  ]
+}

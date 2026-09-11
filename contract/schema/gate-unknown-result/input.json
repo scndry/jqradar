@@ -1,0 +1,21 @@
+{
+  "case": "gate-unknown-result",
+  "check": "schema",
+  "kind": "structural",
+  "schema": "gate.schema.json",
+  "base": "prd:§7:gate",
+  "mechanism": "enum(전사)",
+  "contract_ref": "§5.3",
+  "what": "게이트 결과 어휘는 PASS·WARN·FAIL·context_changed뿐",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "checks",
+        0,
+        "result"
+      ],
+      "value": "BAD"
+    }
+  ]
+}

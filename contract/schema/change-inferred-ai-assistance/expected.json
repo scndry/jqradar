@@ -1,0 +1,14 @@
+{
+  "case": "change-inferred-ai-assistance",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D48",
+  "what": "declared_ai_assistance는 선언된 것만 — 'probably'는 추론이다",
+  "mechanism": "enum(어휘가 계약)",
+  "schema": "change.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/declared_ai_assistance"
+  ]
+}

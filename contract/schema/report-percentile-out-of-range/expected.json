@@ -1,0 +1,14 @@
+{
+  "case": "report-percentile-out-of-range",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "structural",
+  "contract_ref": "§2.5",
+  "what": "백분위는 0..1이다",
+  "mechanism": "range",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/files/0/percentiles/cx"
+  ]
+}

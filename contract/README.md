@@ -16,7 +16,7 @@
 | `expected.json` | 계약의 **결론** — 손으로 쓰지 않는다. 계산 스크립트가 만든다 |
 | 계산 스크립트 (`compute.py` 등) | `input` → `expected`의 재계산 경로. 함께 커밋한다 |
 
-**케이스 모양은 계약에 따라 다르다**(§2.9). `percentile/`·`cpd/`·`graph/`·`schema/`는 순수 수치·구조 계약이라 `input.json` 하나로 전제가 완결된다. `history/`·`ledger/`·`gate/`는 이력 자체가 입력이라 합성 리포(트리 + 스크립트 생성 이력)가 있어야 한다. `reproducibility/`도 합성 리포 쪽이다 — `analysis_input_id`의 입력에 창 안 커밋 SHA 목록과 `window_anchor`가 들어가므로(§2.8) 트리만으로는 전제가 닫히지 않는다.
+**케이스 모양은 계약에 따라 다르다**(§2.9). `percentile/`·`cpd/`·`graph/`·`schema/`는 순수 수치·구조 계약이라 `input.json` 하나로 전제가 완결된다. `history/`·`ledger/`·`gate/`·`reproducibility/`는 이력 자체가 입력이라 합성 리포(트리 + **스크립트가 결정적으로 만드는** 이력)가 있어야 한다 — `reproducibility/`가 그런 이유는 `analysis_input_id`의 입력에 창 안 커밋 SHA 목록과 `window_anchor`가 들어가기 때문이다(§2.8).
 
 ## 하드룰
 
@@ -30,8 +30,8 @@
 | 디렉터리 | 무엇을 고정하나 | 게이트 | 현재 |
 |---|---|---|---|
 | [`percentile/`](percentile/) | §2.5 성분·렌즈 백분위, type-7 분위, §3.7 confidence | **G0** | 6/9 케이스 |
-| `schema/` | §7 스키마 7종 × 긍정 1 + 하드룰 변조 ≥ 1(D124) | **G0** | 아직 `schemas/validate_examples.py` 안 |
-| [`reproducibility/`](reproducibility/) | §2.8 정체성 셋의 분리와 `reproduce` 완전성(D111) | **G0** | 스켈레톤 |
+| [`schema/`](schema/) | §7 스키마 7종 × 긍정 1 + 하드룰 변조 ≥ 1(D124) | **G0** | **45 케이스** |
+| [`reproducibility/`](reproducibility/) | §2.8 정체성 셋의 분리와 `reproduce` 완전성(D111) | **G0** | 1/5 케이스 |
 | [`cpd/`](cpd/) | §2.6 클러스터·합집합·쌍 투영 | **G0** | 스켈레톤 |
 | [`history/`](history/) | §2.7 앵커·창·rename, 그리고 blame 금지의 강제(D113) | **G0** | 스켈레톤 |
 | [`graph/`](graph/) | §2.2–2.3 컴포넌트 그래프·Lakos 검산 | **G0** | 스켈레톤 |
@@ -44,11 +44,19 @@
 
 "스켈레톤"은 **README만 있고 케이스가 없다**는 뜻이다 — 게이트가 오기 전에 케이스를 박는 것이 이 디렉터리의 일이다.
 
+## 공유 자원
+
+- [`judgment-vocabulary.json`](judgment-vocabulary.json) — 판정 어휘 사전. **한 곳에만 있고** `schema/`(G0, JSON 층)와 `renderer/`(G2, HTML 층)가 같은 것을 읽는다(D127).
+- [`fixture-changes/`](fixture-changes/) — `expected.json`을 바꾼 이유(D129).
+
 ## 실행
 
 ```sh
-python3 contract/percentile/compute.py            # expected.json 재생성
-python3 contract/percentile/compute.py --check    # 재생성 결과가 커밋된 것과 같은지 (CI)
+python3 contract/percentile/compute.py       --check
+python3 contract/schema/compute.py           --check
+python3 contract/reproducibility/compute.py  --check
 ```
+
+`--check` 없이 부르면 `expected.json`을 재생성한다. 재생성이 값을 바꾸면 `fixture-changes/`에 레코드를 같은 커밋에 넣어야 한다(§2.9, D129).
 
 G0 이후 이 스위트는 `jqradar-core`의 파라미터화 테스트가 돈다(CLAUDE.md §4). 지금은 스크립트가 그 자리를 대신한다.

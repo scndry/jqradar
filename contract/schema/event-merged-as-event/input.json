@@ -1,0 +1,20 @@
+{
+  "case": "event-merged-as-event",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "event.schema.json",
+  "base": "prd:§7:event",
+  "mechanism": "enum(어휘가 계약)",
+  "contract_ref": "D72·D99",
+  "what": "머지는 쓰는 사건이 아니라 git 파생이다",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "validation",
+        "result"
+      ],
+      "value": "merged"
+    }
+  ]
+}

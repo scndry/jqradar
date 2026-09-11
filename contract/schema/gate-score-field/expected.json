@@ -1,0 +1,14 @@
+{
+  "case": "gate-score-field",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "B.2·D126",
+  "what": "게이트 결과에 점수를 실을 수 없다 — 정책 판정은 PASS/WARN/FAIL이다",
+  "mechanism": "additionalProperties:false",
+  "schema": "gate.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/"
+  ]
+}

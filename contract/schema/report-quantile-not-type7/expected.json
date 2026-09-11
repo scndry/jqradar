@@ -1,0 +1,14 @@
+{
+  "case": "report-quantile-not-type7",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D114",
+  "what": "분위 방법은 모든 분위에 대한 단일 선언이다",
+  "mechanism": "const",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/reproduce/percentile_method/quantile"
+  ]
+}

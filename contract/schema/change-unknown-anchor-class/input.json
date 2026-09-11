@@ -1,0 +1,21 @@
+{
+  "case": "change-unknown-anchor-class",
+  "check": "schema",
+  "kind": "structural",
+  "schema": "change.schema.json",
+  "base": "file:base/change.json",
+  "mechanism": "enum(전사)",
+  "contract_ref": "§5.5",
+  "what": "anchor_class는 high·medium·low뿐",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "touched_legacy_findings",
+        0,
+        "anchor_class"
+      ],
+      "value": "critical"
+    }
+  ]
+}

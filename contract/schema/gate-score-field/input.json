@@ -1,0 +1,19 @@
+{
+  "case": "gate-score-field",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "gate.schema.json",
+  "base": "prd:§7:gate",
+  "mechanism": "additionalProperties:false",
+  "contract_ref": "B.2·D126",
+  "what": "게이트 결과에 점수를 실을 수 없다 — 정책 판정은 PASS/WARN/FAIL이다",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "score"
+      ],
+      "value": 72
+    }
+  ]
+}

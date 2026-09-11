@@ -1,0 +1,14 @@
+{
+  "case": "gate-context-changed-on-other-rule",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D98",
+  "what": "context_changed는 nccd_increase 전용 — 다른 규칙의 판정 탈출구가 될 수 없다",
+  "mechanism": "if/then",
+  "schema": "gate.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/checks/0/rule"
+  ]
+}

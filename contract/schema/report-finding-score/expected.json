@@ -1,0 +1,14 @@
+{
+  "case": "report-finding-score",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "B.2·D126",
+  "what": "finding에 점수를 만들 수 없다 — priority는 렌즈 값 그 자체이지 새 점수가 아니다",
+  "mechanism": "additionalProperties:false",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/findings/0"
+  ]
+}

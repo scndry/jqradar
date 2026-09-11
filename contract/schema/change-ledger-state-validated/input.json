@@ -1,0 +1,21 @@
+{
+  "case": "change-ledger-state-validated",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "change.schema.json",
+  "base": "file:base/change.json",
+  "mechanism": "enum(어휘가 계약)",
+  "contract_ref": "D110",
+  "what": "validated는 PR 검증 결과이지 원장 상태가 아니다",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "touched_legacy_findings",
+        0,
+        "status_before"
+      ],
+      "value": "validated"
+    }
+  ]
+}

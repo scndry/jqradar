@@ -1,0 +1,18 @@
+{
+  "case": "scale-pct-five-decimals",
+  "generated_by": "contract/schema/compute.py",
+  "check": "scale_lint",
+  "kind": "hard_rule",
+  "contract_ref": "D115·D125",
+  "what": "백분위는 소수 4자리다",
+  "mechanism": "원문 린트(스키마 아님)",
+  "verdict": "reject",
+  "violations": [
+    {
+      "path": "/findings/0/lens_pct",
+      "literal": "0.92891",
+      "allowed_scale": 4,
+      "actual_scale": 5
+    }
+  ]
+}

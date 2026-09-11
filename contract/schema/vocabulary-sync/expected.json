@@ -1,0 +1,10 @@
+{
+  "case": "vocabulary-sync",
+  "generated_by": "contract/schema/compute.py",
+  "check": "vocabulary_sync",
+  "kind": "positive",
+  "contract_ref": "D127",
+  "what": "스키마에 심긴 판정 어휘 패턴이 contract/judgment-vocabulary.json과 같다 — 사전은 한 곳뿐이다",
+  "verdict": "accept",
+  "drifted_schemas": []
+}

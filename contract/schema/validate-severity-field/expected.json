@@ -1,0 +1,14 @@
+{
+  "case": "validate-severity-field",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "B.2·D126",
+  "what": "검증 결과에 심각도를 실을 수 없다 — verdict는 validated/not_validated 둘뿐이다",
+  "mechanism": "additionalProperties:false",
+  "schema": "validate.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/"
+  ]
+}

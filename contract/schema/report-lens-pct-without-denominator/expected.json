@@ -1,0 +1,14 @@
+{
+  "case": "report-lens-pct-without-denominator",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D116·D122",
+  "what": "분모(n_ranked)를 인쇄하지 않으면 pct를 재계산할 수 없다",
+  "mechanism": "required",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/files/0/lens_percentiles/H"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "case": "change-unknown-item-key",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D120",
+  "what": "items의 키는 여섯으로 닫힌다 — 이름 없는 항목은 계약이 아니다",
+  "mechanism": "additionalProperties:false",
+  "schema": "change.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/items"
+  ]
+}

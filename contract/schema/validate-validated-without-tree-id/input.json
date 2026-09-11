@@ -1,0 +1,18 @@
+{
+  "case": "validate-validated-without-tree-id",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "validate.schema.json",
+  "base": "prd:§7:validate",
+  "mechanism": "if/then",
+  "contract_ref": "§6.3 5a·D89",
+  "what": "validated는 검증 입력 정체성 넷을 요구한다",
+  "patch": [
+    {
+      "op": "remove",
+      "path": [
+        "validated_tree_id"
+      ]
+    }
+  ]
+}

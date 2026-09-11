@@ -1,0 +1,19 @@
+{
+  "case": "event-identity-field",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "event.schema.json",
+  "base": "prd:§7:event",
+  "mechanism": "additionalProperties:false",
+  "contract_ref": "D48·D108",
+  "what": "사건 파일에 이름·이메일·핸들을 저장할 수 없다",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "author_email"
+      ],
+      "value": "someone@example.com"
+    }
+  ]
+}
