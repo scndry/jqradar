@@ -1,0 +1,12 @@
+{
+  "case": "unordered-pair",
+  "contract_refs": ["§2.6"],
+  "what_this_pins": "쌍은 무순서이고 값은 **하나**다. A쪽 구간(A = 경로 사전순 앞)으로 투영하므로 pair_dup_tokens(A,B)와 pair_dup_tokens(B,A)가 갈리지 않는다. 여기서 두 파일의 구간 길이를 일부러 다르게 두었다(A쪽 120, B쪽은 같은 클러스터의 다른 위치) — 투영 방향이 정해져 있지 않으면 값이 둘이 된다.",
+  "parameters": { "cpd.minimum_tokens": 100 },
+  "file_tokens": { "Zebra.java": 2000, "Alpha.java": 2000 },
+  "clusters": [
+    { "token_hash": "h-shared", "tokens": 120,
+      "occurrences": [ { "path": "Zebra.java", "start_token": 800, "end_token": 920 },
+                       { "path": "Alpha.java", "start_token": 30, "end_token": 150 } ] }
+  ]
+}

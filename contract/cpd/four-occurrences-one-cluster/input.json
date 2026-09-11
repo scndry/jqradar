@@ -1,0 +1,14 @@
+{
+  "case": "four-occurrences-one-cluster",
+  "contract_refs": ["§2.6", "D39"],
+  "what_this_pins": "같은 정규화 토큰 열이 네 파일에 있으면 **클러스터 하나**다 — 쌍 여섯이 아니다. CPD `Match`의 원래 의미가 그것이고(D39), 쌍으로 세면 같은 중복이 여섯 번 계산되어 Dx가 부푼다. 쌍별 투영(duplication_pairs)은 여기서 여섯이 나오지만 그것은 클러스터 하나에서 **파생된 뷰**이고, 클러스터 수는 1이다.",
+  "parameters": { "cpd.minimum_tokens": 100 },
+  "file_tokens": { "A.java": 1000, "B.java": 1000, "C.java": 1000, "D.java": 1000 },
+  "clusters": [
+    { "token_hash": "h-quad", "tokens": 120,
+      "occurrences": [ { "path": "A.java", "start_token": 10, "end_token": 130 },
+                       { "path": "B.java", "start_token": 20, "end_token": 140 },
+                       { "path": "C.java", "start_token": 30, "end_token": 150 },
+                       { "path": "D.java", "start_token": 40, "end_token": 160 } ] }
+  ]
+}
