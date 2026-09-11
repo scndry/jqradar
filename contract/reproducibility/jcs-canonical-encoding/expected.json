@@ -1,0 +1,76 @@
+{
+  "case": "jcs-canonical-encoding",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.8",
+    "D138"
+  ],
+  "what_this_pins": "`analysis_input_id`의 정규 인코딩이 RFC 8785 JCS라는 것. 해시는 바이트에 대한 것이므로 입력을 바이트로 펴는 방법이 계약이어야 한다 — 두 구현이 같은 입력에서 다른 바이트를 만들면 '두 머신 바이트 동일'이 그 자리에서 깨진다. RFC의 테스트 벡터를 같은 바이트로 내는지 보고, 순진한 sorted-key JSON이 그 벡터에서 **갈리는지**도 같이 본다 — 일치만 보이는 검사는 아무것도 증명하지 않는다(D131). id 입력에 부동소수점을 두지 않는 것은 구조로 막는다.",
+  "canonical_encoding": "RFC8785-JCS",
+  "rfc_vectors": [
+    {
+      "name": "property-sorting",
+      "source": "RFC 8785 §3.2.3 (Sorting of Object Properties)",
+      "jcs": "{\"\\r\":\"Carriage Return\",\"1\":\"One\",\"\":\"Control\",\"ö\":\"Latin Small Letter O With Diaeresis\",\"€\":\"Euro Sign\",\"😀\":\"Emoji: Grinning Face\",\"דּ\":\"Hebrew Letter Dalet With Dagesh\"}",
+      "naive_sorted_key": "{\"\\r\":\"Carriage Return\",\"1\":\"One\",\"\":\"Control\",\"ö\":\"Latin Small Letter O With Diaeresis\",\"€\":\"Euro Sign\",\"דּ\":\"Hebrew Letter Dalet With Dagesh\",\"😀\":\"Emoji: Grinning Face\"}",
+      "naive_diverges": true,
+      "property_order": [
+        "Carriage Return",
+        "One",
+        "Control",
+        "Latin Small Letter O With Diaeresis",
+        "Euro Sign",
+        "Emoji: Grinning Face",
+        "Hebrew Letter Dalet With Dagesh"
+      ],
+      "reproduces_rfc": true,
+      "naive_property_order": [
+        "Carriage Return",
+        "One",
+        "Control",
+        "Latin Small Letter O With Diaeresis",
+        "Euro Sign",
+        "Hebrew Letter Dalet With Dagesh",
+        "Emoji: Grinning Face"
+      ],
+      "naive_reproduces_rfc": false
+    },
+    {
+      "name": "string-escaping",
+      "source": "RFC 8785 §3의 예시 중 string 항목",
+      "jcs": "{\"string\":\"€$\\u000f\\nA'B\\\"\\\\\\\\\\\"/\"}",
+      "naive_sorted_key": "{\"string\":\"€$\\u000f\\nA'B\\\"\\\\\\\\\\\"/\"}",
+      "naive_diverges": false,
+      "reproduces_rfc": true
+    }
+  ],
+  "id_input_domain": {
+    "jcs_sha256": "sha256:756bc0fb1444f9c98711a9ae0d76f38a824a6dbed3db5c89f9fc448f851bbb28",
+    "naive_sha256": "sha256:756bc0fb1444f9c98711a9ae0d76f38a824a6dbed3db5c89f9fc448f851bbb28",
+    "bytes_identical": true,
+    "byte_length": 484
+  },
+  "rejected_inputs": [
+    {
+      "name": "float-in-id-input",
+      "why": "D138 — 분수 파라미터는 십진 문자열로 넣는다. §2.5가 측정 경로에서 double을 금지하는 것과 같은 이유다.",
+      "rejected": true,
+      "detail": "id 입력에 이진 부동소수점 0.8. D138 — 분수는 십진 문자열로 넣는다."
+    },
+    {
+      "name": "rfc-numbers-vector",
+      "why": "RFC 8785 §3 예시의 numbers 항목. JCS 자체는 ES6 직렬화로 받지만 **우리는 id 입력에서 거부한다** — D138이 좁힌 자리이고, 나중에 누가 float 지원을 '고쳐 넣는' 것을 이 케이스가 막는다.",
+      "rejected": true,
+      "detail": "id 입력에 이진 부동소수점 333333333.3333333. D138 — 분수는 십진 문자열로 넣는다."
+    }
+  ],
+  "assertions": {
+    "rfc_property_sorting_reproduced": true,
+    "rfc_string_escaping_reproduced": true,
+    "naive_sorted_key_diverges_on_rfc_vector": true,
+    "naive_sorted_key_fails_rfc_vector": true,
+    "id_input_domain_bytes_identical": true,
+    "rejects_float_in_id_input": true,
+    "rejects_rfc_numbers_vector": true
+  }
+}

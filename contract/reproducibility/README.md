@@ -35,9 +35,23 @@
 | 파라미터 하나 변경 | `cpd.minimum_tokens` 100→120에 `analysis_input_id` 변경 | 미작성 |
 | `reproduce`만으로 id 재계산 | 인쇄된 값·해시만으로 `analysis_input_id`를 다시 만들어 대조(D111) | 미작성 |
 | 두 머신 바이트 동일 | 같은 입력 → 바이트 동일 산출물 | 미작성(한 머신 안에서의 반복 실행은 통과) |
+| 도달 불가 커밋이 새지 않는다 | 버려진 브랜치를 더해도 `head`·`repository_state_id`·`analysis_input_id` **셋 다 같고** 도달 불가 개수만 다르다. 구현이 `git log --all`로 이력을 읽으면 값은 갈리는데 id는 같아서 재현성 주장이 조용히 샌다 | [`unreachable-commits-do-not-leak/`](unreachable-commits-do-not-leak/) ✅ |
+| 정규 인코딩 = RFC 8785 JCS | RFC 벡터를 **같은 바이트로** 내는가. 순진한 sorted-key JSON이 그 벡터에서 **갈리는가**(검사가 무는가). id 입력 영역에서는 둘이 바이트 동일한가. float를 **거부**하는가 | [`jcs-canonical-encoding/`](jcs-canonical-encoding/) ✅ |
+
+창 밖 커밋과 id의 관계는 **두 계약이 절반씩** 진다. 여기(`unreachable-commits-do-not-leak`)는 **id가 같아야 하는 쪽** — 도달 불가 커밋은 창의 입력이 아니므로 세 id가 전부 불변이다. `history/authors-window-truncated-by-count`는 **값이 달라지는 쪽** — 창 상한이 90일 구간을 자르면 `distinct_authors_90d`가 달라진다. 창 밖만 다른 두 리포로는 전자를 만들 수 없다: 커밋 SHA가 조상을 물고 가서 `commit_list_sha256`이 갈리고 `analysis_input_id`가 구조적으로 달라진다(실험으로 확인). 버려진 브랜치는 HEAD의 조상이 아니라서 그 자리가 성립한다.
 
 D128에 따라 **해시 형식(`pattern`)의 강제도 이 디렉터리가 진다** — §7 예시가 자리표시자를 쓰므로 스키마에 형식을 걸 수 없고, G1에 예시가 픽스처에서 생성되기 전까지는 여기가 그 자리다. 아직 미작성.
 
-## 미해결 — 계약이 답하지 않는 것
+## 결정 — 정규 인코딩은 RFC 8785 JCS (D138)
 
-**`analysis_input_id`의 정규 인코딩이 §2.8에 없다.** 입력 **목록**은 정해져 있지만 그것을 바이트로 펴는 방법(키 순서·구분자·인코딩)이 없다. 해시는 인코딩에 의존하므로 두 구현이 같은 입력에서 같은 id를 내려면 이것도 계약이어야 한다. 이 케이스는 `sorted-key compact UTF-8 JSON, separators=(',',':')`를 선언하고 쓰며, 검사하는 성질(같은 트리 → 같은 `repository_state_id`, 다른 툴체인 → 다른 `analysis_input_id`)은 인코딩 선택과 무관하므로 케이스 자체는 유효하다. 계약이 정해지면 따라간다.
+해시는 **바이트**에 대한 것이므로 입력을 바이트로 펴는 방법이 계약이어야 한다. 이전 판은 §2.8이 입력 **목록**만 정했고, 이 계산기가 `sorted-key compact UTF-8 JSON, separators=(',',':')`를 자기 주석에 **선언하고** 썼다 — 계약이 아니라 구현의 사정이었다. v3.8.3이 §2.8에 `RFC8785-JCS`를 넣어 닫았다(D138).
+
+`contract/tools/jcs.py`가 그 구현이고 `jcs-canonical-encoding/`이 계약이다. 세 가지를 같이 본다 — 일치만 보이는 검사는 아무것도 증명하지 않는다(D131):
+
+1. **RFC 벡터를 재현하는가.** §3.2.3의 속성 정렬 예와 §3의 문자열 이스케이프 예를 바이트 그대로 낸다.
+2. **순진한 인코딩이 그 벡터에서 갈리는가.** 파이썬 `json.dumps(sort_keys=True)`는 **코드포인트**로 정렬하고 JCS는 **UTF-16 코드 유닛**으로 정렬한다. 😀(U+1F600)은 UTF-16에서 대리쌍 `D83D DE00`이라 דּ(U+FB33)보다 **앞선다** — 코드포인트 순서와 반대다. 그래서 `naive_sorted_key_fails_rfc_vector`가 참이다. 이 단언이 없으면 "JCS를 쓴다"는 주장이 검사되지 않는다.
+3. **id 입력 영역에서는 둘이 바이트 동일한가.** 지금 `analysis_input_id`가 먹는 것은 ASCII 키·정수·문자열뿐이라 두 인코딩이 같은 바이트를 낸다. 그래서 이 전환에서 `same-tree-different-pmd`와 `unreachable-commits-do-not-leak`의 **해시가 하나도 움직이지 않았다** — 재계산 diff가 `canonical_encoding` 줄 둘뿐이다. `fixture_change`가 그 사실을 진다.
+
+**부동소수점은 거부한다.** D138이 id 입력에 두지 않기로 했고(분수 파라미터는 십진 문자열 `"0.8"`), 금지를 산문이 아니라 구조로 막는다(D126) — `jcs.dumps`가 `FloatInCanonicalInput`을 던진다. RFC 8785 §3의 `numbers` 벡터를 **거부하는** 케이스를 같이 두었다: JCS 자체는 ES6 직렬화로 받지만 우리는 좁힌 것이고, 나중에 누가 float 지원을 "고쳐 넣는" 것을 그 케이스가 막는다.
+
+남는 미작성은 위 표의 셋(파라미터 하나 변경 · `reproduce`만으로 재계산 · 두 머신 바이트 동일)과 D128의 해시 `pattern` 강제다.
