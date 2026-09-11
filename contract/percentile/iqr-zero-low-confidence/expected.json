@@ -15,17 +15,15 @@
       "measures": {
         "union_dup_tokens": {
           "lang": null,
-          "n": 201,
-          "n_declared": 201,
-          "valid_n": 201,
-          "unknown_n": 0,
+          "n_ranked": 201,
           "spread": {
             "min": 0,
             "q1": 0,
             "median": 0,
             "q3": 0,
             "iqr": 0,
-            "max": 500
+            "max": 500,
+            "valid_n": 201
           },
           "confidence": "low",
           "confidence_reasons": [
@@ -39,17 +37,15 @@
       "measures": {
         "union_dup_tokens": {
           "lang": null,
-          "n": 201,
-          "n_declared": 201,
-          "valid_n": 201,
-          "unknown_n": 0,
+          "n_ranked": 201,
           "spread": {
             "min": 1,
             "q1": 51,
             "median": 101,
             "q3": 151,
             "iqr": 100,
-            "max": 201
+            "max": 201,
+            "valid_n": 201
           },
           "confidence": "high",
           "confidence_reasons": []

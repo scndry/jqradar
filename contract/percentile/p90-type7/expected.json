@@ -15,22 +15,22 @@
       "measures": {
         "age_last_days": {
           "lang": null,
-          "n": 10,
-          "n_declared": 11,
-          "valid_n": 10,
-          "unknown_n": 1,
+          "n_ranked": 10,
           "spread": {
             "min": 1,
             "q1": 3.25,
             "median": 5.5,
             "q3": 7.75,
             "iqr": 4.5,
-            "max": 100
+            "max": 100,
+            "valid_n": 10,
+            "unknown_n": 1
           },
           "confidence": "low",
           "confidence_reasons": [
             "n_below_50"
           ],
+          "n_population": 11,
           "percentiles": {
             "f01": {
               "value": 1,

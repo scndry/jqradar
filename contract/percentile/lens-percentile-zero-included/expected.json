@@ -13,8 +13,8 @@
   "lens_percentiles": {
     "F": {
       "population": "all",
-      "n_population": 26,
       "n_ranked": 21,
+      "n_population": 26,
       "files": {
         "f01": {
           "value": 0,

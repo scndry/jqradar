@@ -66,7 +66,7 @@ def quantile_type7(sorted_values: list[Fraction], q: Fraction) -> dict:
     return {"n": n, "h": h, "floor_h": floor_h, "frac": frac, "value": value}
 
 
-def spread(sorted_values: list[Fraction]) -> dict:
+def spread(sorted_values: list[Fraction], n_declared: int | None = None) -> dict:
     """§2.5 표시 규칙이 요구하는 모집단 분포 — 중앙값·IQR·최대.
 
     §2.5는 type-7을 'F의 P90'에 대해서만 명시하지만 median·IQR도 분위이고
@@ -76,18 +76,24 @@ def spread(sorted_values: list[Fraction]) -> dict:
     """
     if not sorted_values:
         return {"min": None, "q1": None, "median": None, "q3": None,
-                "iqr": None, "max": None}
+                "iqr": None, "max": None, "valid_n": 0,
+                "unknown_n": (n_declared or 0)}
     q1 = quantile_type7(sorted_values, Fraction(1, 4))["value"]
     med = quantile_type7(sorted_values, Fraction(1, 2))["value"]
     q3 = quantile_type7(sorted_values, Fraction(3, 4))["value"]
-    return {
+    out = {
         "min": sorted_values[0],
         "q1": q1,
         "median": med,
         "q3": q3,
         "iqr": q3 - q1,
         "max": sorted_values[-1],
+        # §2.5 — 분위는 유효값만으로 계산한다(`P90(age_last_days)`는 유효 나이만).
+        "valid_n": len(sorted_values),
     }
+    if n_declared is not None and n_declared != len(sorted_values):
+        out["unknown_n"] = n_declared - len(sorted_values)
+    return out
 
 
 # --------------------------------------------------------------------------
@@ -332,18 +338,20 @@ def build_expected(inp: dict) -> dict:
             values, reasons = normalise_values(values_of(block))
             pcts, n_ranked, n_declared = percentiles(values, reasons, min_population)
             sorted_valid = sorted(v for v in values.values() if v is not None)
-            sp = spread(sorted_valid)
+            sp = spread(sorted_valid, n_declared)
             conf, conf_reasons = confidence(n_ranked, sp, measure, granularity)
+            # D122 — 분모 이름은 성분·렌즈 공통 `n_ranked`.
+            # 모집단 크기와 다를 때만 `n_population`을 병기한다(인쇄된 분모로
+            # pct를 재계산할 수 있어야 한다 — B.4).
             entry = {
                 "lang": block.get("lang"),
-                "n": n_ranked,
-                "n_declared": n_declared,
-                "valid_n": n_ranked,
-                "unknown_n": n_declared - n_ranked,
+                "n_ranked": n_ranked,
                 "spread": sp,
                 "confidence": conf,
                 "confidence_reasons": conf_reasons,
             }
+            if n_declared != n_ranked:
+                entry["n_population"] = n_declared
             if block.get("emit_percentiles", True):
                 entry["percentiles"] = pcts
             measures[measure] = entry
@@ -358,15 +366,13 @@ def build_expected(inp: dict) -> dict:
         pcts, n_ranked, n_declared = percentiles(values, reasons, min_population)
         for file_id, row in pcts.items():
             row["interpretation"] = interpretation(row["pct"])
-        lenses[lens_name] = {
-            "population": block["population"],
-            # §7 예시는 n 하나만 인쇄하는데 모집단 크기와 랭킹 집합 크기가
-            # 다를 수 있다(나이 미상 -> F null). 인쇄된 값으로 pct를 재계산할 수
-            # 있어야 하므로 둘을 나눈다 — README '미해결' 2번.
-            "n_population": n_declared,
-            "n_ranked": n_ranked,
-            "files": pcts,
-        }
+        # D116·D122 — `n_ranked`가 공식 `(rank_avg−1)/(N−1)`의 분모이며 필수.
+        # 모집단 크기와 다를 때만 `n_population`을 병기한다.
+        entry = {"population": block["population"], "n_ranked": n_ranked}
+        if n_declared != n_ranked:
+            entry["n_population"] = n_declared
+        entry["files"] = pcts
+        lenses[lens_name] = entry
     if lenses:
         out["lens_percentiles"] = lenses
 

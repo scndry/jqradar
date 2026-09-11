@@ -14,17 +14,15 @@
       "measures": {
         "cx": {
           "lang": "java",
-          "n": 1,
-          "n_declared": 1,
-          "valid_n": 1,
-          "unknown_n": 0,
+          "n_ranked": 1,
           "spread": {
             "min": 42,
             "q1": 42,
             "median": 42,
             "q3": 42,
             "iqr": 0,
-            "max": 42
+            "max": 42,
+            "valid_n": 1
           },
           "confidence": "low",
           "confidence_reasons": [
