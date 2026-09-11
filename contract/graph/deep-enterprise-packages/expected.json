@@ -1,0 +1,99 @@
+{
+  "case": "deep-enterprise-packages",
+  "contract_refs": [
+    "§2.2",
+    "§9 P8",
+    "D15"
+  ],
+  "what_this_pins": "P8의 합성 리포 — **깊은 기업형 패키지**에서 `auto`가 의미 있는 컴포넌트를 내는가(§9). 패키지가 `com.megacorp.retail.platform.orders.domain.model`처럼 6–7단계면 최장 공통 접두어가 길어지고, 그 아래 첫 레벨이 업무 영역(orders·payments·shipping·shared)과 맞아떨어져야 한다. 맞지 않으면 컴포넌트가 기술 계층(domain·adapter)으로 갈려 Ca/Ce가 '도메인이 어댑터를 의존한다' 같은 무의미한 값을 낸다. P8은 이것을 아키텍트 2명의 블라인드 주석과 대조하며(inter-rater κ), 이 픽스처는 그 대조의 **입력**을 결정적으로 고정한다.",
+  "component_strategy": {
+    "notes": [],
+    "strategy": "auto",
+    "split_share": 0.6,
+    "split_share_basis": "class_count"
+  },
+  "package_to_component": {
+    "com.megacorp.retail.platform.orders.adapter.persistence": "com.megacorp.retail.platform.orders",
+    "com.megacorp.retail.platform.orders.adapter.rest": "com.megacorp.retail.platform.orders",
+    "com.megacorp.retail.platform.orders.domain.model": "com.megacorp.retail.platform.orders",
+    "com.megacorp.retail.platform.orders.domain.service": "com.megacorp.retail.platform.orders",
+    "com.megacorp.retail.platform.payments.adapter.gateway": "com.megacorp.retail.platform.payments",
+    "com.megacorp.retail.platform.payments.domain.model": "com.megacorp.retail.platform.payments",
+    "com.megacorp.retail.platform.payments.domain.service": "com.megacorp.retail.platform.payments",
+    "com.megacorp.retail.platform.shared.config": "com.megacorp.retail.platform.shared",
+    "com.megacorp.retail.platform.shared.util": "com.megacorp.retail.platform.shared",
+    "com.megacorp.retail.platform.shipping.adapter.carrier": "com.megacorp.retail.platform.shipping",
+    "com.megacorp.retail.platform.shipping.domain.model": "com.megacorp.retail.platform.shipping"
+  },
+  "class_edge_count": 5,
+  "external_edges": [
+    {
+      "from": "com.megacorp.retail.platform.shipping.adapter.carrier.C17",
+      "to": "java.net.http.HttpClient"
+    }
+  ],
+  "external_included_in_metrics": false,
+  "components": [
+    {
+      "id": "com.megacorp.retail.platform.orders",
+      "Ca": 0,
+      "Ce": 2,
+      "I": 1,
+      "A": 0.125,
+      "D": 0.125,
+      "class_count": 8
+    },
+    {
+      "id": "com.megacorp.retail.platform.payments",
+      "Ca": 1,
+      "Ce": 2,
+      "I": 0.666666666667,
+      "A": 0.166666666667,
+      "D": 0.166666666667,
+      "class_count": 6
+    },
+    {
+      "id": "com.megacorp.retail.platform.shared",
+      "Ca": 3,
+      "Ce": 0,
+      "I": 0,
+      "A": 0,
+      "D": 1,
+      "class_count": 4
+    },
+    {
+      "id": "com.megacorp.retail.platform.shipping",
+      "Ca": 1,
+      "Ce": 1,
+      "I": 0.5,
+      "A": 0.25,
+      "D": 0.25,
+      "class_count": 4
+    }
+  ],
+  "cycles": [],
+  "system": {
+    "components": 4,
+    "CCD": 10,
+    "ACD": 2.5,
+    "RACD": 0.625,
+    "CCD_balanced": 7.61,
+    "NCCD": 1.31,
+    "display": {
+      "ACD": 2.50,
+      "RACD": 0.625,
+      "CCD_balanced": 7.61,
+      "NCCD": 1.31
+    }
+  },
+  "non_terminating": {
+    "/components/1/I": "2/3",
+    "/components/1/A": "1/6",
+    "/components/1/D": "1/6"
+  },
+  "_fixture": {
+    "generated_by": "contract/graph/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

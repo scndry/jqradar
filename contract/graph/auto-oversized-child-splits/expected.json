@@ -1,0 +1,94 @@
+{
+  "case": "auto-oversized-child-splits",
+  "contract_refs": [
+    "§2.2",
+    "D15"
+  ],
+  "what_this_pins": "`auto` 전략 3/4 — 한 자식이 전체의 **60%를 넘으면** 그 아래를 한 번 더 쪼갠다. 쪼개지 않으면 컴포넌트가 사실상 하나가 되어 Ca/Ce가 의미를 잃는다. 여기서 `core`가 6/8(75%)이라 `core.order`·`core.payment`·`core.shipping`으로 갈리고, 4/8이었다면 갈리지 않는다.",
+  "component_strategy": {
+    "notes": [
+      "`com.acme.core` 가 클래스 6/8 (> 3/5) — 추가 분할"
+    ],
+    "strategy": "auto",
+    "split_share": 0.6,
+    "split_share_basis": "class_count"
+  },
+  "package_to_component": {
+    "com.acme.cli": "com.acme.cli",
+    "com.acme.core.order": "com.acme.core.order",
+    "com.acme.core.payment": "com.acme.core.payment",
+    "com.acme.core.shipping": "com.acme.core.shipping",
+    "com.acme.web": "com.acme.web"
+  },
+  "class_edge_count": 2,
+  "external_edges": [],
+  "external_included_in_metrics": false,
+  "components": [
+    {
+      "id": "com.acme.cli",
+      "Ca": 0,
+      "Ce": 0,
+      "I": null,
+      "A": 0,
+      "D": null,
+      "class_count": 1
+    },
+    {
+      "id": "com.acme.core.order",
+      "Ca": 2,
+      "Ce": 0,
+      "I": 0,
+      "A": 0,
+      "D": 1,
+      "class_count": 2
+    },
+    {
+      "id": "com.acme.core.payment",
+      "Ca": 0,
+      "Ce": 1,
+      "I": 1,
+      "A": 0,
+      "D": 0,
+      "class_count": 2
+    },
+    {
+      "id": "com.acme.core.shipping",
+      "Ca": 0,
+      "Ce": 0,
+      "I": null,
+      "A": 0,
+      "D": null,
+      "class_count": 2
+    },
+    {
+      "id": "com.acme.web",
+      "Ca": 0,
+      "Ce": 1,
+      "I": 1,
+      "A": 0,
+      "D": 0,
+      "class_count": 1
+    }
+  ],
+  "cycles": [],
+  "system": {
+    "components": 5,
+    "CCD": 7,
+    "ACD": 1.4,
+    "RACD": 0.28,
+    "CCD_balanced": 10.51,
+    "NCCD": 0.67,
+    "display": {
+      "ACD": 1.40,
+      "RACD": 0.280,
+      "CCD_balanced": 10.51,
+      "NCCD": 0.67
+    }
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/graph/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

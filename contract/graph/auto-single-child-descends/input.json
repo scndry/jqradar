@@ -1,0 +1,12 @@
+{
+  "case": "auto-single-child-descends",
+  "contract_refs": ["§2.2", "D15"],
+  "what_this_pins": "`auto` 전략 2/4 — 첫 레벨의 자식이 **하나뿐이면 한 칸 내려간다**. 공통 접두어 아래에 `internal` 하나만 있으면 그것으로 접어 봐야 컴포넌트가 하나다. 내려가서 `internal.order`·`internal.payment`를 얻는다.",
+  "component": { "strategy": "auto" },
+  "classes": [
+    { "name": "com.acme.internal.order.A", "package": "com.acme.internal.order", "depends_on": ["com.acme.internal.payment.B"] },
+    { "name": "com.acme.internal.order.A2", "package": "com.acme.internal.order" },
+    { "name": "com.acme.internal.payment.B", "package": "com.acme.internal.payment" },
+    { "name": "com.acme.internal.payment.B2", "package": "com.acme.internal.payment", "abstract": true }
+  ]
+}

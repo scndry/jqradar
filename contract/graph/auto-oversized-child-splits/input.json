@@ -1,0 +1,16 @@
+{
+  "case": "auto-oversized-child-splits",
+  "contract_refs": ["§2.2", "D15"],
+  "what_this_pins": "`auto` 전략 3/4 — 한 자식이 전체의 **60%를 넘으면** 그 아래를 한 번 더 쪼갠다. 쪼개지 않으면 컴포넌트가 사실상 하나가 되어 Ca/Ce가 의미를 잃는다. 여기서 `core`가 6/8(75%)이라 `core.order`·`core.payment`·`core.shipping`으로 갈리고, 4/8이었다면 갈리지 않는다.",
+  "component": { "strategy": "auto", "split_share": "0.6" },
+  "classes": [
+    { "name": "com.acme.core.order.A", "package": "com.acme.core.order" },
+    { "name": "com.acme.core.order.A2", "package": "com.acme.core.order" },
+    { "name": "com.acme.core.payment.B", "package": "com.acme.core.payment", "depends_on": ["com.acme.core.order.A"] },
+    { "name": "com.acme.core.payment.B2", "package": "com.acme.core.payment" },
+    { "name": "com.acme.core.shipping.C", "package": "com.acme.core.shipping" },
+    { "name": "com.acme.core.shipping.C2", "package": "com.acme.core.shipping" },
+    { "name": "com.acme.web.D", "package": "com.acme.web", "depends_on": ["com.acme.core.order.A"] },
+    { "name": "com.acme.cli.E", "package": "com.acme.cli" }
+  ]
+}

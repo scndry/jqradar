@@ -1,0 +1,13 @@
+{
+  "case": "component-cycle",
+  "contract_refs": ["§2.2", "§5.3"],
+  "what_this_pins": "순환은 Tarjan SCC로 찾는다. 크기 2 이상의 SCC만 순환이고 자기 간선은 순환이 아니다. 세 컴포넌트의 순환 하나와, 그 밖의 비순환 컴포넌트가 섞여 있다 — 새 SCC는 게이트에서 1개라도 FAIL이므로(§5.3) 무엇이 SCC인지가 판정을 가른다.",
+  "component": { "strategy": "depth:3" },
+  "classes": [
+    { "name": "com.acme.a.A", "package": "com.acme.a", "depends_on": ["com.acme.b.B"] },
+    { "name": "com.acme.b.B", "package": "com.acme.b", "depends_on": ["com.acme.c.C"] },
+    { "name": "com.acme.c.C", "package": "com.acme.c", "depends_on": ["com.acme.a.A"] },
+    { "name": "com.acme.d.D", "package": "com.acme.d", "depends_on": ["com.acme.a.A"] },
+    { "name": "com.acme.e.E", "package": "com.acme.e" }
+  ]
+}
