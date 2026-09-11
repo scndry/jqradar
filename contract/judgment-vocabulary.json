@@ -1,0 +1,21 @@
+{
+  "$comment": "판정 어휘 사전 — 한 곳에만 있다(D127). contract/schema/(G0, JSON 층)와 contract/renderer/(G2, HTML 층)가 **같은 이 파일**을 참조한다. D67은 UI만의 규칙이 아니다: 렌더러는 JSON의 순수 함수이므로 JSON에 들어간 판정 단어는 그대로 화면에 뜬다.",
+  "contract_refs": ["§2.9 renderer 행", "§7.1 원칙 3", "D67", "D127"],
+  "seeded_from": "§2.9는 `bad/poor/나쁨/위험/불량 …`으로 목록을 열어 두었다. 아래는 그 넷에서 시작해 같은 종류의 말을 넓힌 것이며, 계약이 목록을 닫지 않았으므로 추가는 계약 개정이 아니라 이 파일의 수정이다.",
+  "not_judgment": {
+    "$comment": "판정처럼 보이지만 **금지 대상이 아닌** 말들. 지우면 옳은 출력이 거부된다.",
+    "Zone of Pain": "Martin의 기술 용어(§2.2 zone 표기). §7의 zone_note가 이 말을 쓴다 — 위치 설명이지 판정이 아니다.",
+    "PASS / WARN / FAIL": "gate.json의 정책 결과. §7.1 원칙 3의 명시적 예외 — 조직의 판정이지 도구의 판정이 아니다.",
+    "failed / passed": "build·tests·validation의 사실 보고(§6.3). 코드에 대한 판정이 아니다.",
+    "high / medium / low": "anchor_class(§5.5)와 confidence(§3.7)의 어휘. 착수 순서와 통계적 신뢰도이지 품질 판정이 아니다."
+  },
+  "terms": {
+    "latin": ["bad", "poor", "terrible", "awful", "horrible", "ugly", "nasty", "worst", "severe", "severity", "dangerous", "risky", "unhealthy", "smelly", "rotten", "garbage", "crappy"],
+    "hangul": ["나쁨", "나쁜", "나쁘", "최악", "위험", "불량", "심각", "형편없", "엉망", "지저분", "더러운", "썩은"]
+  },
+  "matching": {
+    "latin": "대소문자 무시, 단어 경계(`\\b`). `badge`·`poorly-named-variable`의 오탐을 막는다.",
+    "hangul": "부분 문자열. 한국어는 어미가 붙으므로 경계를 쓸 수 없다 — `나쁘`가 `나쁘다`·`나쁘고`를 함께 잡는다.",
+    "where": "자유 텍스트 필드에만 — `population_note`·`zone_note`·`composite_note`. 경로·식별자·해시에는 걸지 않는다(파일 이름에 `bad`가 들어갈 수 있다)."
+  }
+}

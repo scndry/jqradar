@@ -4,28 +4,70 @@
   "title": "jqradar campaign.json",
   "description": "`.jqradar/campaigns/<name>.json`(§5.4, §7) — **조직이 소유하는 정의**다. 조직이 적는 세 자리 중 하나이므로(B.6, D54) 이름·소유자·해시·모드가 반드시 인쇄된다. 도구는 목표를 정하지 않고 담고 추적한다(D58).",
   "type": "object",
-  "required": ["name", "owner", "created_at", "anchor", "campaign_mode", "definition_hash"],
+  "required": [
+    "name",
+    "owner",
+    "created_at",
+    "anchor",
+    "campaign_mode",
+    "definition_hash"
+  ],
   "allOf": [
     {
-      "if": { "properties": { "campaign_mode": { "const": "target_driven" } }, "required": ["campaign_mode"] },
+      "if": {
+        "properties": {
+          "campaign_mode": {
+            "const": "target_driven"
+          }
+        },
+        "required": [
+          "campaign_mode"
+        ]
+      },
       "then": {
-        "required": ["targets"],
-        "properties": { "targets": { "minItems": 1 } },
+        "required": [
+          "targets"
+        ],
+        "properties": {
+          "targets": {
+            "minItems": 1
+          }
+        },
         "description": "§5.4 — 목표가 있으면 `target_driven`, 없으면 `tracking_only`(D78). 목표 없는 원장은 **부채 추적기이지 개선 관리가 아니다**."
       }
     }
   ],
   "properties": {
-    "name": { "type": "string", "description": "캠페인 이름(§5.4). 여러 캠페인이 공존할 수 있다." },
-    "owner": { "type": "string", "description": "정의를 적은 조직 주체(§5.4, B.6). 도구가 소유할 수 없는 임계·목표를 누가 정했는지." },
-    "created_at": { "type": "string", "description": "생성 시각(§5.4)." },
+    "name": {
+      "type": "string",
+      "description": "캠페인 이름(§5.4). 여러 캠페인이 공존할 수 있다."
+    },
+    "owner": {
+      "type": "string",
+      "description": "정의를 적은 조직 주체(§5.4, B.6). 도구가 소유할 수 없는 임계·목표를 누가 정했는지."
+    },
+    "created_at": {
+      "type": "string",
+      "description": "생성 시각(§5.4)."
+    },
     "anchor": {
       "type": "object",
       "description": "고정 기준선(§5.4). 보호 기준선(merge-base)은 PR마다 움직여 '캠페인 시작 이후 총 중복이 30% 줄었다'를 잴 고정점이 없다 — 그래서 조직이 앵커를 등록한다(B.3의 둘째 기준선).",
-      "required": ["tag", "sha", "repository_state_id", "window_anchor"],
+      "required": [
+        "tag",
+        "sha",
+        "repository_state_id",
+        "window_anchor"
+      ],
       "properties": {
-        "tag": { "type": "string", "description": "불변 태그(§5.4, D112)." },
-        "sha": { "type": "string", "description": "앵커 커밋 SHA(§5.4, D112)." },
+        "tag": {
+          "type": "string",
+          "description": "불변 태그(§5.4, D112)."
+        },
+        "sha": {
+          "type": "string",
+          "description": "앵커 커밋 SHA(§5.4, D112)."
+        },
         "repository_state_id": {
           "type": "string",
           "description": "**앵커의 봉인은 이것이다**(§2.8, §5.4, D88·D112). 앵커는 리포트가 아니라 **트리**라서, 툴체인이 바뀌면 앵커 트리를 현재 툴체인으로 재스캔해 HEAD와 같은 도구로 비교할 수 있다."
@@ -34,53 +76,98 @@
           "type": "string",
           "description": "생성 시점에 쓴 분석 입력 정체성(§5.4, D112) — **재현용 기록이지 봉인이 아니다**. 툴체인이 바뀌면 이 값은 더 이상 현재 스캔과 같지 않다."
         },
-        "window_anchor": { "type": "string", "description": "생성 시점의 `HEAD_TIME`(§2.7)." }
-      }
+        "window_anchor": {
+          "type": "string",
+          "description": "생성 시점의 `HEAD_TIME`(§2.7)."
+        }
+      },
+      "additionalProperties": false
     },
     "campaign_mode": {
-      "enum": ["target_driven", "tracking_only"],
+      "enum": [
+        "target_driven",
+        "tracking_only"
+      ],
       "description": "§5.4·D78. CLI·UI가 **항상 표기한다** — 목표 없는 원장이 개선 관리로 읽히지 않게. `tracking_only`의 `goal_status`는 `not_defined`만 낸다."
     },
     "supersedes": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "§5.4·D92 — `reanchor`는 앵커를 바꾸는 명령이 **아니라** 기존 캠페인을 종료하고 계보를 가진 새 캠페인을 만드는 명령이다(`debt-2026Q4` → `debt-2026Q4.r2`). 옛 캠페인 파일·태그는 불변이고 과거 성과는 소급 변경되지 않는다. scope 변경도 `reanchor`다(D75)."
     },
     "scope": {
       "type": "object",
       "description": "§5.4 — 선택이지만 권장. **전부 고치지 않는다**(A.8): 초기 스캔의 수백 finding을 다 겨누면 팀은 무시하고 AI는 지표만 낮춘다. scope 없는 생성에는 경고를 낸다. scope는 *finding을 고르는 것*이고 *회계 경계가 아니다*(D75).",
       "properties": {
-        "components": { "type": "array", "items": { "type": "string" } },
-        "paths": { "type": "array", "items": { "type": "string" } }
-      }
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "targets": {
       "type": "array",
       "description": "§5.4·D58 — 조직이 적는 목표. **scope 안**을 잰다(예: `scope.union_dup_tokens_total <= 6000`, `ledger.high.open <= 20`). 도구는 목표를 정하지 않고 담고 추적한다.",
-      "items": { "$ref": "#/$defs/objective" }
+      "items": {
+        "$ref": "#/$defs/objective"
+      }
     },
     "guardrails": {
       "type": "array",
       "description": "§5.4·D75 — **리포 전체**를 잰다(기본 `repo.union_dup_tokens_total <= anchor`, `repo.cx_total <= anchor`). scope 밖으로 부채를 밀어내지 않았는지 본다. 질량 목표를 리포 전체로만 두면 재배치는 막지만 *주의 분산*(scope 밖의 쉬운 중복 10개로 전역 총량 달성)이 생겨서, 목표와 가드레일을 나눈다.",
-      "items": { "$ref": "#/$defs/objective" }
+      "items": {
+        "$ref": "#/$defs/objective"
+      }
     },
-    "definition_hash": { "type": "string", "description": "정의 전체의 해시(§5.4, B.6)." }
+    "definition_hash": {
+      "type": "string",
+      "description": "정의 전체의 해시(§5.4, B.6)."
+    }
   },
   "$defs": {
     "objective": {
       "type": "object",
       "description": "목표 또는 가드레일 한 줄(§5.4).",
-      "required": ["metric", "op", "value"],
+      "required": [
+        "metric",
+        "op",
+        "value"
+      ],
       "properties": {
         "metric": {
           "type": "string",
           "description": "회계 경계를 접두어로 구분한다(D75): `scope.*`는 캠페인 범위 안, `repo.*`는 리포 전체, `ledger.<anchor_class>.<state>`는 원장 카운트."
         },
-        "op": { "enum": ["<=", ">=", "<", ">", "=="] },
+        "op": {
+          "enum": [
+            "<=",
+            ">=",
+            "<",
+            ">",
+            "=="
+          ]
+        },
         "value": {
-          "type": ["number", "string"],
+          "type": [
+            "number",
+            "string"
+          ],
           "description": "숫자, 또는 리터럴 `\"anchor\"`(가드레일 기본값 — 앵커 시점 값보다 나빠지지 않기, §5.4)."
         }
-      }
+      },
+      "additionalProperties": false
     }
-  }
+  },
+  "additionalProperties": false
 }

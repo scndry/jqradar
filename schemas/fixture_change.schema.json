@@ -4,33 +4,60 @@
   "title": "jqradar fixture_change 레코드",
   "description": "`expected.json`의 기대값을 바꾸는 커밋에 동반되는 기록(§2.9 끝, §7). **원인 분류 없이는 머지 불가** — 회귀 테스트가 \"새 정답을 손으로 승인하는 테스트\"로 변질되는 것을 막는 장치다(P11). G0 체크리스트 #6의 CI 규칙이 검사하는 대상이므로 스키마가 있다(D119).",
   "type": "object",
-  "required": ["fixture_change"],
+  "required": [
+    "fixture_change"
+  ],
   "additionalProperties": false,
   "properties": {
     "fixture_change": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["reason", "measure", "note"],
+      "required": [
+        "reason",
+        "measure",
+        "note"
+      ],
       "properties": {
         "reason": {
-          "enum": ["library_behavior_change", "contract_change", "bug_fix"],
+          "enum": [
+            "library_behavior_change",
+            "contract_change",
+            "bug_fix"
+          ],
           "description": "§2.9 — 세 분류뿐이다. **이 필드가 장치의 전부다**: 기대값이 왜 바뀌었는지를 라이브러리가 바뀐 것/계약이 바뀐 것/우리가 틀렸던 것으로 가르지 않으면, 픽스처는 회귀를 잡는 대신 새 출력을 승인하는 도장이 된다(P11)."
         },
-        "library": { "type": "string", "description": "§2.9 — `library_behavior_change`일 때 어느 엔진인가(pmd·archunit·jgit)." },
-        "old": { "type": "string", "description": "§2.9 — 이전 버전. major.minor.patch(§2.8 `environment`)." },
-        "new": { "type": "string", "description": "§2.9 — 이후 버전." },
-        "measure": { "type": "string", "description": "§2.9 — 값이 바뀐 측정(예: `cpd.union_dup_tokens`). 어느 계약이 움직였는지 가리킨다." },
-        "note": { "type": "string", "description": "§2.9 — 사람이 읽는 사유. 왜 이 값이 새 정답인가." },
+        "library": {
+          "type": "string",
+          "description": "§2.9 — `library_behavior_change`일 때 어느 엔진인가(pmd·archunit·jgit)."
+        },
+        "old": {
+          "type": "string",
+          "description": "§2.9 — 이전 버전. major.minor.patch(§2.8 `environment`)."
+        },
+        "new": {
+          "type": "string",
+          "description": "§2.9 — 이후 버전."
+        },
+        "measure": {
+          "type": "string",
+          "description": "§2.9 — 값이 바뀐 측정(예: `cpd.union_dup_tokens`). 어느 계약이 움직였는지 가리킨다."
+        },
+        "note": {
+          "type": "string",
+          "description": "§2.9 — 사람이 읽는 사유. 왜 이 값이 새 정답인가."
+        },
         "fixtures": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "§7 예시 — 영향받은 케이스 경로(`contract/` 상대, 예: `cpd/overlap-merge`). §2.9의 필드 목록에는 없고 §7 예시에만 있어 선택으로 뒀다."
         }
       }
     }
   },
   "x-jqradar-unresolved": {
-    "record_location": "§2.9는 '커밋이 이 레코드를 동반한다'고만 하고 **어디에 두는지는 정하지 않는다**. 커밋 메시지인지, 파일인지, PR 본문인지에 따라 G0 #6의 CI 규칙이 달라진다. 이 리포는 파일(`contract/fixture-changes/<날짜>-<슬러그>.json`)로 뒀다 — 스키마로 검증 가능하고 기계가 찾을 수 있는 유일한 형태여서다. 계약이 정해지면 따라간다.",
     "conditional_required": "`library`·`old`·`new`가 `?`(선택)인 이유는 `reason`에 따라 관련성이 달라지기 때문으로 읽히지만, §2.9는 `reason = library_behavior_change`일 때 셋을 요구한다고 적지 않았다. 그래서 `if/then`을 걸지 않았다 — 추측으로 계약을 채우지 않는다(CLAUDE.md §7)."
-  }
+  },
+  "x-jqradar-record-location": "§2.9·D129 — `contract/fixture-changes/<날짜>-<슬러그>.json` 파일 하나로 두고 `expected.json`을 바꾸는 **같은 커밋**에 넣는다. 커밋 메시지·PR 본문은 스키마로 검증할 수 없어 G0 체크리스트 #6의 CI 규칙이 설 자리가 없다."
 }

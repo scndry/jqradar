@@ -1,2 +1,2 @@
-# schemas/validate_examples.py 실행 의존. 버전은 major.minor.patch로 고정한다(§2.8 environment).
+# contract/schema/compute.py 실행 의존. 버전은 major.minor.patch로 고정한다(§2.8 environment).
 jsonschema==4.25.1
