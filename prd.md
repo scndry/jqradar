@@ -1,4 +1,4 @@
-# 📡 jQRadar (Java Quality Radar) — PRD v3.7.8
+# 📡 jQRadar (Java Quality Radar) — PRD v3.7.9
 
 작성 2026-09-07 · **브라운필드 판.** "기준선을 잠그면 기존 부채는 어떻게 되나"라는 소유자의 질문에 답하면서 "지키는 것" 셋(B.2·B.3·B.6)을 고쳤다 — 철학은 헌법이 아니라 결정이다. 셋째 표면 **부채 원장**(파생 층 ⊕ 사건 층, 저장은 리포 안 `.jqradar/`), 조직이 등록하는 **캠페인 앵커**, **앵커에 얼린 분류**, **한정 blame**을 넣었고 일정을 17주로 늘렸다. **v3.6.1**(2026-09-08)은 기능 추가 없이 원장의 판정 의미를 닫았다 — finding 정체성·후속 판정, 사건 × 파생 상태표, scope 회계, 필드 개명(§0-8). **v3.7**(2026-09-08)은 **자기 적용(self-application) 계약** — jQRadar는 jQRadar로 만든다. 도구가 자기 리포의 첫 대상이고, 자기 PR의 게이트이며, 첫 캠페인이고, 첫 파일럿이다(§9 자기 적용, B.7). **v3.7.1**(2026-09-09)은 기능 추가 없이 **증거 사슬 identity → validation → merge → ledger**를 닫는다 — 재현성 정체성 셋, 검증의 트리 결속, `validated_not_resolved` 4분기, reanchor 계보, 멱등성, P1a 코호트(§0-10). 다음 단계는 본문이 아니라 픽스처다. **v3.7.2**(2026-09-09)는 철학 수정 — **저작 무관의 사회적 논거를 철회**한다. 저작 여부는 도구가 소유할 수 없는 조직의 정책이고(B.6), 금지는 효과도 없었다(`git blame`은 어디에나 있다). 금지 → 기본 꺼짐 + 조직 정책, 하드룰은 셋만 남긴다(§0-11). **v3.7.3**(2026-09-10)은 원장 상태를 스냅샷 × 최종 사건이 아니라 **전이 이력**으로 계산해 오귀속을 없앴고(§0-12), **v3.7.4**(2026-09-10)는 경계 조건 — 내용 주소 캐시, 순환 finding 전이의 바이트코드 한계, 실행 라인 0 커버리지, 계보 분모·시그니처 보조, S4 정직한 완주 — 를 닫았다(§0-13). **v3.7.5**(2026-09-10)는 Claude Code 첫 읽기 세션이 찾은 절 간 불일치 5건·관찰 4건을 정합시켰고, **v3.7.6**(2026-09-10)은 첫 구현 세션이 찾은 계약의 빈칸 다섯 — 분위 적용 범위, 산술 방법, 백분위 분모, `change.json` 항목 이름, 픽스처 입력 모양 — 을 채웠고, **v3.7.7**(2026-09-11)은 그 결정들을 본문에 내려보내면서 composite 산술과 §7 예시의 재계산 가능성을 닫았다(§0-16). **v3.7.8**(2026-09-11)은 PR #1 감사에서 스키마가 지킬 수 있는 것과 없는 것을 갈랐다(§0-17).
 
@@ -178,6 +178,9 @@ Claude Code 첫 세션(P0 프롬프트)이 `prd.md`를 읽고 **본문 안에서
 | 관찰 | 순수 수치 계약에 합성 리포는 과하다 | 입력 모양을 계약별로 — §2.9 |
 | 관찰 | `fixture_change`·원장 뷰에 스키마가 없다 | `fixture_change.schema.json`은 G0(체크리스트 #6이 검사할 대상), 원장 뷰는 G2b — §2.9 |
 첫 구현 세션이 보고한 것 하나 더: §7 예시 다섯이 스키마를 첫 실행에 전부 통과했고, 변조 테스트를 덧붙이자 스키마 버그(`path_base_mapped`가 null 불가)가 나왔다. 그래서 §2.9에 "긍정 케이스만으로 통과시키지 않는다"를 넣었다.
+
+### 0-18. v3.7.8 → v3.7.9 (`fixture_change` 레코드의 자리, 2026-09-11)
+남아 있던 공백 하나를 닫는다. §2.9는 기대값을 바꾸는 커밋이 `fixture_change`를 "동반한다"고만 하고 **어디에 두는지** 정하지 않았다. 커밋 메시지인지 파일인지 PR 본문인지에 따라 G0 체크리스트 #6의 CI 규칙이 달라지므로 계약이어야 한다. 구현 세션이 파일로 두고 공백으로 표시해 두었던 것을 그대로 받는다 — 스키마로 검증 가능하고 기계가 찾을 수 있는 형태가 그것뿐이다(D129).
 
 ### 0-17. v3.7.7 → v3.7.8 (PR #1 감사 — 스키마 커버리지, 2026-09-11)
 공개된 리포를 clone해 픽스처와 스키마를 직접 돌리고 **내가 만든 변조**로 다시 찔렀다. 6/6·25/25는 사실이고 집계 기구(kind·기구·근거 D번호를 붙여 세는 것)는 손으로 세는 것보다 낫다. 그 집계가 못 본 셋:
@@ -380,7 +383,7 @@ Claude Code 첫 세션(P0 프롬프트)이 `prd.md`를 읽고 **본문 안에서
 | `ledger/` | 앵커 등록·`anchor_class` 얼림; **후속 판정 6종**(same/moved/split/merged/removed/unknown — A→B 이동+분할+C 예제 포함, 후속 집합에 합격 함수); **전이 모델 전 조합**(전이 종류 × 전이 커밋의 사건); **오귀속 5종 실패 사례**: ① 효과 없는 claim 머지 뒤 무관 PR이 해소 → `closed_unclaimed` + claim은 `merged_without_effect`, ② 먼저 해소한 무관 PR 뒤 오래된 claim 머지 → `superseded`, ③ 검증 실패 claim 머지 뒤 무관 PR이 해소 → `closed_unclaimed`(`closed_unverified` 아님), ④ claim 없이 해소 뒤 회귀 → `regressed`, ⑤ `target_pairs` 부분 선언 해소 → `partially_resolved`(`validator_mismatch` 아님); **인터페이스 추출로 재작성된 분할 → 시그니처 계보로 `split`**; **순환 finding의 과거 커밋 전이 → `transition_basis: source_imports` 표기**; "validated 뒤 머지 전 다른 PR 먼저 머지", "validated 머지 후 재악화 → regressed", "validated 머지 후 여전히 open → merged_without_effect + 사유"; **scope 탈출 → `relocated_out_of_scope`**, **split 혼합(≥50% 밖 / 미만)**, scope 목표와 전역 가드레일; **reanchor → `supersedes` 계보, 옛 캠페인 불변**; 같은 finding 중복 claim; **(campaign, finding, pr) 멱등 재시도 → 파일 1개**; **툴체인 변경 시 앵커 재스캔 + 저장된 `anchor_class` 불변**; `--live`의 `stale_claim`; **재구성 결정성**(같은 커밋 → 바이트 동일 뷰, 아카이브 후 `--at` = 아카이브 전); `first_observed_estimate` 3방법; **매 스캔·매 change 경로에서 `.jqradar/` 쓰기 시 실패**(blame 호출 검사는 `history/`로) | G2b |
 | `renderer/` | HTML에서 추출한 모든 숫자가 JSON에 존재(순수 함수), 판정 어휘 사전 검사(bad/poor/나쁨/위험/불량 …) 통과, aspect 토글 상태가 URL 해시에서 복원, 네트워크 요청 0건(자립형), 파일 5,000개 픽스처 렌더 시간 | G2 |
 
-**`expected.json` 변경 규칙**: 기대값을 바꾸는 커밋은 `fixture_change {reason ∈ {library_behavior_change, contract_change, bug_fix}, library?, old?, new?, measure, note}`를 반드시 동반한다. 원인 분류 없이는 머지 불가 — 회귀 테스트가 "새 정답을 손으로 승인하는 테스트"로 변질되는 것을 막는 장치(P11). 이 레코드는 G0 체크리스트 #6의 CI 규칙이 검사하는 대상이므로 **스키마가 있어야 한다**(`fixture_change.schema.json`, G0). 원장 뷰 한 행의 스키마는 G2b.
+**`expected.json` 변경 규칙**: 기대값을 바꾸는 커밋은 `fixture_change {reason ∈ {library_behavior_change, contract_change, bug_fix}, library?, old?, new?, measure, note}`를 반드시 동반한다. 원인 분류 없이는 머지 불가 — 회귀 테스트가 "새 정답을 손으로 승인하는 테스트"로 변질되는 것을 막는 장치(P11). 이 레코드는 **`contract/fixture-changes/<날짜>-<슬러그>.json` 파일 하나**로 두고 `expected.json`을 바꾸는 **같은 커밋**에 넣는다(D129) — 커밋 메시지나 PR 본문이 아니라 파일이어야 G0 체크리스트 #6의 CI 규칙이 스키마로 검증하며 찾을 수 있다. 스키마는 `fixture_change.schema.json`(G0). 원장 뷰 한 행의 스키마는 G2b.
 ---
 
 ## 3. 렌즈 — 지도(`scan`)
@@ -1216,6 +1219,9 @@ CodeScene 조사(2026-09)에서 가져온 것과 이유를 항목마다 적는�
 - D126 하드룰 방어는 **모든 산출물 스키마**에 건다. 형태가 알려진 객체는 닫고(`additionalProperties: false`), 특히 `report`의 파일·finding에 `author`(D48)·`severity`·`score`(B.2)가 들어갈 수 없어야 한다 — 한 스키마만 닫으면 다른 표면으로 새어 든다.
 - D127 자유 텍스트(`*_note`)의 판정 어휘는 렌더러 사전과 **같은 사전**으로 JSON 층에서도 막는다(D67은 UI만의 규칙이 아니다 — 렌더러는 JSON의 순수 함수이므로 JSON에 들어간 판정 단어는 그대로 표시된다).
 - D128 §7 예시는 G1에 `contract/lens/sample-service/`에서 **생성**한다. 그때까지 정체성 형식(해시 `pattern`)의 강제는 `contract/reproducibility/`가 진다.
+
+**v3.7.9 결정 — 레코드의 자리**
+- D129 `fixture_change` 레코드는 `contract/fixture-changes/<날짜>-<슬러그>.json` 파일이며 `expected.json`을 바꾸는 같은 커밋에 들어간다. 커밋 메시지·PR 본문은 스키마로 검증할 수 없어 G0 #6의 CI 규칙이 설 자리가 없다.
 
 **열어둔 것**
 - O3 WARN→FAIL 승격 — 조직 결정.
