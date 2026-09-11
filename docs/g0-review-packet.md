@@ -2,7 +2,7 @@
 
 **G0 체크리스트(§9)에서 남은 항목은 #1 하나다.**
 
-> 1. §2.1–2.9와 §6.3–6.6 계약이 리뷰어 2명의 **교차 검토**(계약 간 충돌 점검 포함)를 통과.
+> 1. **§2.1–2.9** 계약이 리뷰어 2명의 **교차 검토**(계약 간 충돌 점검 포함)를 통과. … **§6.3–6.6은 여기서 빠진다** — 그 계약들의 값 층 픽스처가 G3에 오므로 지금 검토하면 문장만 읽게 되고, "검토했다"가 "문장만 읽었다"를 감춘다. G3 입장 조건으로 옮긴다(D136).
 
 나머지 여섯(#2–#7)은 기계가 지킨다 — CI가 매 PR에서 돌고 실패하면 머지가 막힌다. #1은 기계가 대신할 수 없는 자리이고, 이 문서는 그 검토를 **30분 안에 시작할 수 있게** 만드는 것이 목적이다.
 
@@ -29,17 +29,19 @@
 | §2.1 파일 단위 — `chg_commits`·`chg_days`·`churn`·`age_last_days` | `contract/history/` | 10 | ✅ |
 | §2.1 — `union_dup_tokens`·`dup_extent`·`self_dup_tokens`·`twins` | `contract/cpd/` | 5 | ✅ |
 | §2.1 — **`cx`·`loc`·`smells`·`file_tokens`·`fan_in`** | **없음** | 0 | ⚠️ **엔진 출력이라 G1** |
-| §2.1 — **`distinct_authors_90d`·`ownership_max_share`·`minor_contributor_share`·`team_count`** | **없음** | 0 | ⚠️ **§2.9 표에 배정 자체가 없다** |
+| §2.1 — `distinct_authors_90d`·`ownership_max_share`·`minor_contributor_share` | `contract/history/` | 2 | ✅ **D135로 배정**(`team_count`는 팀 매핑이 있을 때) |
 | §2.2 컴포넌트 그래프 — `bytecode_scope`·전략·SCC | `contract/graph/` | 8 | ✅ |
 | §2.3 Lakos — CCD·ACD·RACD·NCCD | `contract/graph/nccd-cross-check` | 1 | ✅ 본문 수치 재현 |
-| §2.4 **파일 쌍 — `shared`·`tc`, 보고 임계** | **없음** | 0 | ⚠️ **§2.9 표에 배정 자체가 없다** |
+| §2.4 파일 쌍 — `shared`·`tc`, 보고 임계, 정적 의존 부착 | `contract/history/` | 2 | ✅ **D134로 배정** |
 | §2.5 백분위·분위·산술 | `contract/percentile/` | 6 | ✅ (2종 미작성 — 아래) |
 | §2.6 CPD 집계 | `contract/cpd/` | 5 | ✅ |
 | §2.7 이력 — 앵커·창·rename·blame 금지 | `contract/history/` | 10 | ✅ |
 | §2.8 정체성 셋 | `contract/reproducibility/` | 1 | ⚠️ **5종 중 1종** |
 | §2.9 적합성 스위트 자체 | CI + `ci/check-fixture-change.sh` | — | ✅ |
 
-### 1.2 #1의 검토 범위 — §6.3–6.6
+### 1.2 참고 — §6.3–6.6 (#1의 범위가 **아니다**, D136)
+
+**G3 입장 조건으로 옮겼다.** 값 층 픽스처(`contract/validation`·`security`)가 G3에 서므로 그때 문장과 실행을 함께 본다 — 리뷰어 구성은 G0 #1과 같다. 아래 표는 지금의 상태를 참고로 남긴 것이고 **#1의 통과 판정에 들어가지 않는다**.
 
 | 계약 | 강제 장치 | 상태 |
 |---|---|---|
@@ -62,10 +64,12 @@
 
 게이트 일정 때문에 비어 있는 것(G1·G2b·G3)과, **§2.9 표가 배정 자체를 하지 않은 것**은 다르다. 후자가 위험하다 — 일정이 와도 아무도 만들지 않는다.
 
-**§2.9 표에 배정이 없는 것 둘** (이것이 이 패킷의 첫 발견이다):
+**§2.9 표에 배정이 없던 것 둘 — 닫혔다** (이 패킷의 첫 발견이었다):
 
-1. **§2.4 파일 쌍** — `shared`, `tc = shared / min(chg_commits_a, chg_commits_b)`, 보고 임계 `shared ≥ 5 ∧ tc ≥ 0.5`. §2.9의 어느 디렉터리도 이것을 맡지 않는다. §3.5 Hidden Coupling이 이 값 위에 서고 §7.1 A5가 그것을 그린다.
-2. **§2.1의 저자 사실** — `distinct_authors_90d`·`ownership_max_share`·`minor_contributor_share`·`team_count`. D48의 하드룰 셋(리포 저장 금지·추론 금지·순위 표면 금지)이 걸린 자리인데 값 층 픽스처가 없다. 스키마는 `report.schema.json`이 필드를 정의하고 `additionalProperties: false`로 `files[].author` 같은 정체 필드를 막지만(D126), **익명 집계가 실제로 익명인지**는 값 층에서만 확인된다.
+1. **§2.4 파일 쌍** → `contract/history/`(**D134**). 커밋 이력이 입력이고 그 디렉터리가 이미 합성 리포를 만든다. [`pair-report-threshold/`](../contract/history/pair-report-threshold/)가 보고 기준 `shared ≥ 5 ∧ tc ≥ 0.5`을 양쪽에서 밟고, [`tc-squash-vs-merge/`](../contract/history/tc-squash-vs-merge/)가 같은 작업의 `tc`를 두 이력에서 **0.5와 1**로 고정한다(판정은 없고 두 수다).
+2. **§2.1 저자 사실** → `contract/history/`(**D135**). [`author-facts-minor-threshold/`](../contract/history/author-facts-minor-threshold/)가 마이너 기여자 `< 5%` 경계를 밟고(20커밋에서 0.05는 미만이 아니고 21커밋에서 1/21은 미만이다), [`identity-absent-when-attribution-off/`](../contract/history/identity-absent-when-attribution-off/)가 정체 부재를 **출처로** 본다 — 저자 해시와 `repository_state_id`는 둘 다 64 hex라 모양으로 가를 수 없으므로, 알고 있는 저자 식별자의 해시 72개가 산출물에 없음을 본다. 부재 검사이므로 `must_be_caught`(2) + `must_not_be_caught`(3)다(D131).
+
+합성 리포의 저자는 **고정 가짜 값**이고 그 값은 `expected.json`에 들어가지 않는다 — 익명 집계만 기록된다. **픽스처 자신이 D48을 지킨다**: 자기가 검사하는 규칙을 어기는 픽스처는 증거가 아니다.
 
 **게이트 때문에 비어 있는 것** (일정상 정상, 단 #1의 범위인 §6.3–6.6이 여기 들어간다는 점에 주의):
 `contract/lens`(G1) · `gate`(G1) · `renderer`(G2) · `ledger`(G2b) · `validation`(G3) · `security`(G3).
@@ -73,7 +77,7 @@
 **미작성이라고 스스로 적어 둔 것**:
 `percentile/` 언어 분리·0 팽창 2종 · `reproducibility/` 4종(파라미터 변경 / `reproduce`만으로 id 재계산 / 두 머신 바이트 동일 / 해시 `pattern` 강제 D128).
 
-> **§9 G0 #1의 범위와 현실의 어긋남**: #1은 §6.3–6.6의 교차 검토를 요구하는데 그 계약들의 값 층 픽스처는 G3에 온다. 검토자는 §6.3–6.6을 **문장으로만** 검토하게 된다. 이것이 의도된 것인지(계약 문장의 정합성만 보면 되는지) 아니면 #1이 G3로 미뤄져야 하는지는 **소유자의 판단**이다 — 패킷은 사실만 적는다.
+> **#1의 범위는 §2.1–2.9다 — 닫혔다(D136).** §6.3–6.6 교차 검토는 값 층 픽스처가 서는 **G3 입장 조건**으로 옮겼다(§9 일정 W12–15). 문장만 읽은 검토를 통과로 세지 않기 위해서다. 따라서 위 §1.2는 참고이고, **#1의 통과 판정은 §2.1–2.9만 본다.**
 
 ---
 
@@ -256,15 +260,15 @@ python3 -c "import json;print(json.load(open('contract/graph/nccd-cross-check/ex
 | **`fixture_change`의 조건부 필수** — `reason = library_behavior_change`일 때 `library`·`old`·`new`가 필수인지 §2.9가 말하지 않는다 | `schemas/fixture_change.schema.json` | `if/then`을 걸지 않음 | 낮음 |
 | **측정 경로에서 금지되는 `double` 반환 JDK 호출의 목록** — D115가 "√는 표시값에만"이라 정하지만 `Math.sqrt`류의 목록이 없다 | `jqradar-core/.../JqradarArchRules.java` javadoc, `docs/modules.md` | 클래스 단위로 막지 않음(`Math`에 정수 연산이 섞여 있다) | 중간 |
 
-### 5.3 이 패킷이 새로 찾은 것
+### 5.3 이 패킷이 찾은 것 — 셋 다 닫혔다 (v3.8.1)
 
-| 무엇 | 어디 |
-|---|---|
-| **§2.4(파일 쌍 `shared`·`tc`)에 §2.9가 픽스처를 배정하지 않았다** | §1.4 |
-| **§2.1의 저자 사실 넷에 §2.9가 픽스처를 배정하지 않았다** | §1.4 |
-| **#1의 범위(§6.3–6.6)와 그 값 층 픽스처 일정(G3)이 어긋난다** | §1.4 끝 |
+| 무엇 | 결정 | 어디가 맡나 |
+|---|---|---|
+| §2.4(파일 쌍)에 §2.9가 픽스처를 배정하지 않았다 | **D134** — `contract/history/`로 | `pair-report-threshold` · `tc-squash-vs-merge` |
+| §2.1 저자 사실 넷에 배정이 없었다 | **D135** — `contract/history/`로. 정체 부재는 **출처**로 가른다 | `author-facts-minor-threshold` · `identity-absent-when-attribution-off` |
+| #1의 범위(§6.3–6.6)와 값 층 픽스처 일정(G3)이 어긋났다 | **D136** — #1을 §2.1–2.9로 한정, §6.3–6.6은 G3 입장 조건 | §9 일정 W12–15 |
 
-셋 다 **검토자의 판단을 기다린다** — 패킷은 고치지 않았다.
+셋 다 패킷이 "검토자의 판단을 기다린다"로 표시했고, **표시가 있었기에 결정이 쌓이지 않고 닫혔다.**
 
 ### 5.4 낡은 표시 — 닫혔다
 
