@@ -1,0 +1,60 @@
+{
+  "case": "merge-commits-excluded",
+  "contract_refs": [
+    "§2.7",
+    "§2.1"
+  ],
+  "what_this_pins": "부모가 둘 이상인 커밋은 창에 들어가지 않는다(§2.7). `chg_commits`는 H·tc의 변경 단위로 **잠긴** 값이므로(D27) 머지를 세면 머지 전략에 따라 핫스팟 순위가 갈린다 — 같은 작업이 스쿼시 리포에서는 1, 머지 리포에서는 2가 된다. 창은 first-parent 한정이 **아니다**: 브랜치에서 만든 커밋도 도달 가능하면 세고 머지 커밋 자체만 뺀다. 여기서 `feature: edit A`는 세고 `merge feature`는 빼서 `src/A.java`의 `chg_commits`가 2다.",
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-02-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "c1",
+        "at_seconds": 0,
+        "message": "seed",
+        "write": {
+          "src/A.java": "class A {}\n"
+        }
+      },
+      {
+        "id": "f1",
+        "at_seconds": 3600,
+        "message": "feature: edit A",
+        "write": {
+          "src/A.java": "class A { int y; }\n"
+        },
+        "on": "c1"
+      },
+      {
+        "id": "c2",
+        "at_seconds": 7200,
+        "message": "main: add B",
+        "write": {
+          "src/B.java": "class B {}\n"
+        },
+        "on": "c1"
+      },
+      {
+        "id": "m1",
+        "at_seconds": 10800,
+        "message": "merge feature",
+        "merge_of": [
+          "c2",
+          "f1"
+        ]
+      }
+    ]
+  },
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "measure_files": [
+    "src/A.java",
+    "src/B.java"
+  ]
+}

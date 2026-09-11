@@ -1,0 +1,15 @@
+{
+  "case": "threshold-boundary",
+  "contract_refs": ["§2.6"],
+  "what_this_pins": "`minimumTokens = 100`의 경계. 99토큰은 클러스터가 **아니고** 100토큰은 맞다. 경계를 '초과'로 읽으면 100이 빠지고 '이상'으로 읽으면 들어온다 — 계약은 이상이다. 거부된 것도 기록한다: '왜 이것이 중복이 아닌가'가 계약의 일부이고, 임계를 옮기면 어느 클러스터가 움직이는지 이 파일이 보인다.",
+  "parameters": { "cpd.minimum_tokens": 100 },
+  "file_tokens": { "A.java": 3000, "B.java": 3000 },
+  "clusters": [
+    { "token_hash": "h-99", "tokens": 99,
+      "occurrences": [ { "path": "A.java", "start_token": 0, "end_token": 99 },
+                       { "path": "B.java", "start_token": 0, "end_token": 99 } ] },
+    { "token_hash": "h-100", "tokens": 100,
+      "occurrences": [ { "path": "A.java", "start_token": 1000, "end_token": 1100 },
+                       { "path": "B.java", "start_token": 1000, "end_token": 1100 } ] }
+  ]
+}

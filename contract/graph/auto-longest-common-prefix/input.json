@@ -1,0 +1,14 @@
+{
+  "case": "auto-longest-common-prefix",
+  "contract_refs": ["§2.2", "D15"],
+  "what_this_pins": "`auto` 전략 1/4 — 최장 공통 접두어 아래 **첫 레벨**로 접는다. 공통 접두어가 `com.acme.app`이면 컴포넌트는 `com.acme.app.order`·`com.acme.app.payment`·`com.acme.app.shipping`이다. 접두어 자체로 접으면 컴포넌트가 하나가 되어 아무것도 나누지 못한다.",
+  "component": { "strategy": "auto" },
+  "classes": [
+    { "name": "com.acme.app.order.A", "package": "com.acme.app.order", "depends_on": ["com.acme.app.payment.B"] },
+    { "name": "com.acme.app.order.A2", "package": "com.acme.app.order" },
+    { "name": "com.acme.app.payment.B", "package": "com.acme.app.payment", "depends_on": ["com.acme.app.shipping.C"] },
+    { "name": "com.acme.app.payment.B2", "package": "com.acme.app.payment", "abstract": true },
+    { "name": "com.acme.app.shipping.C", "package": "com.acme.app.shipping" },
+    { "name": "com.acme.app.shipping.C2", "package": "com.acme.app.shipping" }
+  ]
+}

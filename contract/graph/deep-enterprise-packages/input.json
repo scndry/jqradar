@@ -1,0 +1,117 @@
+{
+  "case": "deep-enterprise-packages",
+  "contract_refs": [
+    "§2.2",
+    "§9 P8",
+    "D15"
+  ],
+  "what_this_pins": "P8의 합성 리포 — **깊은 기업형 패키지**에서 `auto`가 의미 있는 컴포넌트를 내는가(§9). 패키지가 `com.megacorp.retail.platform.orders.domain.model`처럼 6–7단계면 최장 공통 접두어가 길어지고, 그 아래 첫 레벨이 업무 영역(orders·payments·shipping·shared)과 맞아떨어져야 한다. 맞지 않으면 컴포넌트가 기술 계층(domain·adapter)으로 갈려 Ca/Ce가 '도메인이 어댑터를 의존한다' 같은 무의미한 값을 낸다. P8은 이것을 아키텍트 2명의 블라인드 주석과 대조하며(inter-rater κ), 이 픽스처는 그 대조의 **입력**을 결정적으로 고정한다.",
+  "component": {
+    "strategy": "auto"
+  },
+  "classes": [
+    {
+      "name": "com.megacorp.retail.platform.orders.domain.model.C01",
+      "package": "com.megacorp.retail.platform.orders.domain.model",
+      "abstract": true,
+      "depends_on": [
+        "com.megacorp.retail.platform.payments.domain.service.C11",
+        "com.megacorp.retail.platform.shared.util.C19"
+      ]
+    },
+    {
+      "name": "com.megacorp.retail.platform.orders.domain.model.C02",
+      "package": "com.megacorp.retail.platform.orders.domain.model"
+    },
+    {
+      "name": "com.megacorp.retail.platform.orders.domain.service.C03",
+      "package": "com.megacorp.retail.platform.orders.domain.service"
+    },
+    {
+      "name": "com.megacorp.retail.platform.orders.domain.service.C04",
+      "package": "com.megacorp.retail.platform.orders.domain.service"
+    },
+    {
+      "name": "com.megacorp.retail.platform.orders.adapter.rest.C05",
+      "package": "com.megacorp.retail.platform.orders.adapter.rest"
+    },
+    {
+      "name": "com.megacorp.retail.platform.orders.adapter.rest.C06",
+      "package": "com.megacorp.retail.platform.orders.adapter.rest"
+    },
+    {
+      "name": "com.megacorp.retail.platform.orders.adapter.persistence.C07",
+      "package": "com.megacorp.retail.platform.orders.adapter.persistence"
+    },
+    {
+      "name": "com.megacorp.retail.platform.orders.adapter.persistence.C08",
+      "package": "com.megacorp.retail.platform.orders.adapter.persistence"
+    },
+    {
+      "name": "com.megacorp.retail.platform.payments.domain.model.C09",
+      "package": "com.megacorp.retail.platform.payments.domain.model",
+      "abstract": true
+    },
+    {
+      "name": "com.megacorp.retail.platform.payments.domain.model.C10",
+      "package": "com.megacorp.retail.platform.payments.domain.model"
+    },
+    {
+      "name": "com.megacorp.retail.platform.payments.domain.service.C11",
+      "package": "com.megacorp.retail.platform.payments.domain.service",
+      "depends_on": [
+        "com.megacorp.retail.platform.shipping.domain.model.C15",
+        "com.megacorp.retail.platform.shared.config.C21"
+      ]
+    },
+    {
+      "name": "com.megacorp.retail.platform.payments.domain.service.C12",
+      "package": "com.megacorp.retail.platform.payments.domain.service"
+    },
+    {
+      "name": "com.megacorp.retail.platform.payments.adapter.gateway.C13",
+      "package": "com.megacorp.retail.platform.payments.adapter.gateway"
+    },
+    {
+      "name": "com.megacorp.retail.platform.payments.adapter.gateway.C14",
+      "package": "com.megacorp.retail.platform.payments.adapter.gateway"
+    },
+    {
+      "name": "com.megacorp.retail.platform.shipping.domain.model.C15",
+      "package": "com.megacorp.retail.platform.shipping.domain.model",
+      "abstract": true
+    },
+    {
+      "name": "com.megacorp.retail.platform.shipping.domain.model.C16",
+      "package": "com.megacorp.retail.platform.shipping.domain.model"
+    },
+    {
+      "name": "com.megacorp.retail.platform.shipping.adapter.carrier.C17",
+      "package": "com.megacorp.retail.platform.shipping.adapter.carrier",
+      "depends_on": [
+        "com.megacorp.retail.platform.shared.util.C19",
+        "java.net.http.HttpClient"
+      ]
+    },
+    {
+      "name": "com.megacorp.retail.platform.shipping.adapter.carrier.C18",
+      "package": "com.megacorp.retail.platform.shipping.adapter.carrier"
+    },
+    {
+      "name": "com.megacorp.retail.platform.shared.util.C19",
+      "package": "com.megacorp.retail.platform.shared.util"
+    },
+    {
+      "name": "com.megacorp.retail.platform.shared.util.C20",
+      "package": "com.megacorp.retail.platform.shared.util"
+    },
+    {
+      "name": "com.megacorp.retail.platform.shared.config.C21",
+      "package": "com.megacorp.retail.platform.shared.config"
+    },
+    {
+      "name": "com.megacorp.retail.platform.shared.config.C22",
+      "package": "com.megacorp.retail.platform.shared.config"
+    }
+  ]
+}

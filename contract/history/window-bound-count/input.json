@@ -1,0 +1,63 @@
+{
+  "case": "window-bound-count",
+  "contract_refs": [
+    "§2.7"
+  ],
+  "what_this_pins": "상한 두 종류 중 **개수**가 먼저 닥치는 경우. 전부 12개월 안이지만 `max_commits`가 3이라 최신 셋만 남는다 — `bound_hit: count`. 어느 상한이 걸렸는지를 `reproduce.window_applied`에 인쇄하지 않으면 '왜 이 파일의 `chg_commits`가 3인가'를 재현할 수 없다(B.4).",
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-03-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "c1",
+        "at_seconds": 0,
+        "message": "1",
+        "write": {
+          "src/A.java": "class A { int v1; }\n"
+        }
+      },
+      {
+        "id": "c2",
+        "at_seconds": 86400,
+        "message": "2",
+        "write": {
+          "src/A.java": "class A { int v2; }\n"
+        }
+      },
+      {
+        "id": "c3",
+        "at_seconds": 172800,
+        "message": "3",
+        "write": {
+          "src/A.java": "class A { int v3; }\n"
+        }
+      },
+      {
+        "id": "c4",
+        "at_seconds": 259200,
+        "message": "4",
+        "write": {
+          "src/A.java": "class A { int v4; }\n"
+        }
+      },
+      {
+        "id": "c5",
+        "at_seconds": 345600,
+        "message": "5",
+        "write": {
+          "src/A.java": "class A { int v5; }\n"
+        }
+      }
+    ]
+  },
+  "window": {
+    "months": 12,
+    "max_commits": 3
+  },
+  "measure_files": [
+    "src/A.java"
+  ]
+}

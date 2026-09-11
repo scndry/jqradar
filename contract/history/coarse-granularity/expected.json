@@ -1,0 +1,150 @@
+{
+  "case": "coarse-granularity",
+  "contract_refs": [
+    "§2.7",
+    "§3.7"
+  ],
+  "what_this_pins": "커밋당 변경 파일 수의 중앙값이 20을 **초과**하면 `commit_granularity: coarse`다(§2.7). coarse이면 `chg_commits` 성분의 confidence가 low로 내려간다(§3.7) — 25개 파일을 한 커밋에 넣는 리포에서 '이 파일이 자주 바뀐다'는 신호는 그 파일이 아니라 커밋 습관을 말한다. 여기서 중앙값이 25라 coarse이고, 경계를 '이상'이 아니라 '초과'로 읽는 것도 함께 고정한다.",
+  "shallow_depth": null,
+  "window_anchor": {
+    "type": "head_committer_time",
+    "timestamp": "2026-04-03T00:00:00+00:00"
+  },
+  "head": "17234d0e3",
+  "window_applied": {
+    "months": 12,
+    "max_commits": 2000,
+    "bound_hit": "none",
+    "commits_in_window": 3,
+    "merge_commits_excluded": 0
+  },
+  "commits": [
+    {
+      "sha": "17234d0e3",
+      "at": "2026-04-03T00:00:00+00:00",
+      "subject": "bulk 3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/pkg/F01.java",
+        "src/pkg/F02.java",
+        "src/pkg/F03.java",
+        "src/pkg/F04.java",
+        "src/pkg/F05.java",
+        "src/pkg/F06.java",
+        "src/pkg/F07.java",
+        "src/pkg/F08.java",
+        "src/pkg/F09.java",
+        "src/pkg/F10.java",
+        "src/pkg/F11.java",
+        "src/pkg/F12.java",
+        "src/pkg/F13.java",
+        "src/pkg/F14.java",
+        "src/pkg/F15.java",
+        "src/pkg/F16.java",
+        "src/pkg/F17.java",
+        "src/pkg/F18.java",
+        "src/pkg/F19.java",
+        "src/pkg/F20.java",
+        "src/pkg/F21.java",
+        "src/pkg/F22.java",
+        "src/pkg/F23.java",
+        "src/pkg/F24.java",
+        "src/pkg/F25.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "ef5ee8612",
+      "at": "2026-04-02T00:00:00+00:00",
+      "subject": "bulk 2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/pkg/F01.java",
+        "src/pkg/F02.java",
+        "src/pkg/F03.java",
+        "src/pkg/F04.java",
+        "src/pkg/F05.java",
+        "src/pkg/F06.java",
+        "src/pkg/F07.java",
+        "src/pkg/F08.java",
+        "src/pkg/F09.java",
+        "src/pkg/F10.java",
+        "src/pkg/F11.java",
+        "src/pkg/F12.java",
+        "src/pkg/F13.java",
+        "src/pkg/F14.java",
+        "src/pkg/F15.java",
+        "src/pkg/F16.java",
+        "src/pkg/F17.java",
+        "src/pkg/F18.java",
+        "src/pkg/F19.java",
+        "src/pkg/F20.java",
+        "src/pkg/F21.java",
+        "src/pkg/F22.java",
+        "src/pkg/F23.java",
+        "src/pkg/F24.java",
+        "src/pkg/F25.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "e0c167f06",
+      "at": "2026-04-01T00:00:00+00:00",
+      "subject": "bulk 1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/pkg/F01.java",
+        "src/pkg/F02.java",
+        "src/pkg/F03.java",
+        "src/pkg/F04.java",
+        "src/pkg/F05.java",
+        "src/pkg/F06.java",
+        "src/pkg/F07.java",
+        "src/pkg/F08.java",
+        "src/pkg/F09.java",
+        "src/pkg/F10.java",
+        "src/pkg/F11.java",
+        "src/pkg/F12.java",
+        "src/pkg/F13.java",
+        "src/pkg/F14.java",
+        "src/pkg/F15.java",
+        "src/pkg/F16.java",
+        "src/pkg/F17.java",
+        "src/pkg/F18.java",
+        "src/pkg/F19.java",
+        "src/pkg/F20.java",
+        "src/pkg/F21.java",
+        "src/pkg/F22.java",
+        "src/pkg/F23.java",
+        "src/pkg/F24.java",
+        "src/pkg/F25.java"
+      ],
+      "in_window": true
+    }
+  ],
+  "median_files_per_commit": 25,
+  "commit_granularity": "coarse",
+  "renames": [],
+  "files": {
+    "src/pkg/F01.java": {
+      "chg_commits": 3,
+      "chg_days": 3,
+      "churn": 125,
+      "touched_by": [
+        "17234d0e3",
+        "ef5ee8612",
+        "e0c167f06"
+      ],
+      "age_last_days": 0
+    }
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

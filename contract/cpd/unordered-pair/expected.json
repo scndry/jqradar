@@ -1,0 +1,76 @@
+{
+  "case": "unordered-pair",
+  "contract_refs": [
+    "§2.6"
+  ],
+  "what_this_pins": "쌍은 무순서이고 값은 **하나**다. A쪽 구간(A = 경로 사전순 앞)으로 투영하므로 pair_dup_tokens(A,B)와 pair_dup_tokens(B,A)가 갈리지 않는다. 여기서 두 파일의 구간 길이를 일부러 다르게 두었다(A쪽 120, B쪽은 같은 클러스터의 다른 위치) — 투영 방향이 정해져 있지 않으면 값이 둘이 된다.",
+  "parameters": {
+    "cpd.minimum_tokens": 100
+  },
+  "clusters": [
+    {
+      "id": "dup:h-shared:120",
+      "tokens": 120,
+      "occurrences": [
+        {
+          "path": "Zebra.java",
+          "start_token": 800,
+          "end_token": 920
+        },
+        {
+          "path": "Alpha.java",
+          "start_token": 30,
+          "end_token": 150
+        }
+      ],
+      "occurrence_count": 2,
+      "files": [
+        "Alpha.java",
+        "Zebra.java"
+      ],
+      "self_duplication": false
+    }
+  ],
+  "rejected_clusters": [],
+  "files": {
+    "Alpha.java": {
+      "file_tokens": 2000,
+      "duplicated_ranges": [
+        [
+          30,
+          150
+        ]
+      ],
+      "union_dup_tokens": 120,
+      "dup_extent": 0.06,
+      "self_dup_tokens": 0,
+      "twins": 1
+    },
+    "Zebra.java": {
+      "file_tokens": 2000,
+      "duplicated_ranges": [
+        [
+          800,
+          920
+        ]
+      ],
+      "union_dup_tokens": 120,
+      "dup_extent": 0.06,
+      "self_dup_tokens": 0,
+      "twins": 1
+    }
+  },
+  "duplication_pairs": [
+    {
+      "a": "Alpha.java",
+      "b": "Zebra.java",
+      "pair_dup_tokens": 120
+    }
+  ],
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/cpd/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

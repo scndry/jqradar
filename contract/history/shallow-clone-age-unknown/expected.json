@@ -1,0 +1,80 @@
+{
+  "case": "shallow-clone-age-unknown",
+  "contract_refs": [
+    "§2.1",
+    "§2.7",
+    "D37",
+    "§3.3"
+  ],
+  "what_this_pins": "shallow clone에서는 조상이 잘려 어떤 파일의 마지막 변경 커밋을 알 수 없다. `.git/shallow`가 가리키는 **graft 경계** 커밋은 부모가 없어 `git show`가 트리 전체를 추가로 보여준다 — 거기서 읽은 '마지막 변경'은 사실이 아니다. 그때 `age_last_days`는 0이 아니라 **null**이고 `reason`은 `age_unknown`이다(§2.1). '오래되지 않았다'와 '나이를 모른다'는 다른 상태이고(D37), 0을 주면 그 파일이 방금 바뀐 것처럼 보여 F에서 빠진다. null이면 F도 null이다(§3.3).\n\n`depth: 2`라 HEAD(`c3`)와 그 부모(`c2`)만 있고 경계는 `c2`다. `New.java`는 경계가 아닌 `c3`가 마지막으로 만졌으니 나이를 **안다**. `Old.java`는 `c1`에서만 바뀌었는데 `c1`이 없어 경계 `c2`가 만진 것처럼 보이니 나이를 **모른다**. 이 대비가 케이스의 전부다.",
+  "shallow_depth": 2,
+  "window_anchor": {
+    "type": "head_committer_time",
+    "timestamp": "2026-08-30T00:00:00+00:00"
+  },
+  "head": "9942c3432",
+  "window_applied": {
+    "months": 12,
+    "max_commits": 2000,
+    "bound_hit": "none",
+    "commits_in_window": 2,
+    "merge_commits_excluded": 0
+  },
+  "commits": [
+    {
+      "sha": "9942c3432",
+      "at": "2026-08-30T00:00:00+00:00",
+      "subject": "touch New again",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/New.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "6c310081f",
+      "at": "2026-07-31T00:00:00+00:00",
+      "subject": "touch New",
+      "is_merge": false,
+      "shallow_boundary": true,
+      "paths": [
+        "src/New.java",
+        "src/Old.java"
+      ],
+      "in_window": true
+    }
+  ],
+  "median_files_per_commit": 1.5,
+  "commit_granularity": "fine",
+  "renames": [],
+  "files": {
+    "src/Old.java": {
+      "chg_commits": 1,
+      "chg_days": 1,
+      "churn": 2,
+      "touched_by": [
+        "6c310081f"
+      ],
+      "age_last_days": null,
+      "age_reason": "age_unknown",
+      "age_basis": "shallow_boundary_commit"
+    },
+    "src/New.java": {
+      "chg_commits": 2,
+      "chg_days": 2,
+      "churn": 4,
+      "touched_by": [
+        "9942c3432",
+        "6c310081f"
+      ],
+      "age_last_days": 0
+    }
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "case": "self-duplication",
+  "contract_refs": ["§2.6", "§2.1", "§3.2"],
+  "what_this_pins": "발생이 한 파일에만 있는 클러스터는 **자기 중복**이고 twin이 아니다(§2.6). union_dup_tokens에는 들어가지만 twins는 늘리지 않는다 — twins가 0이면 active_twin_ratio가 null이 되고 그 파일은 dx 모집단 밖이다(§2.1·D29). 자기 중복을 twin으로 세면 혼자 복붙한 파일이 Dx 순위에 올라온다.",
+  "parameters": { "cpd.minimum_tokens": 100 },
+  "file_tokens": { "Lonely.java": 4000, "Other.java": 1500 },
+  "clusters": [
+    { "token_hash": "h-self", "tokens": 150,
+      "occurrences": [ { "path": "Lonely.java", "start_token": 100, "end_token": 250 },
+                       { "path": "Lonely.java", "start_token": 900, "end_token": 1050 } ] }
+  ]
+}

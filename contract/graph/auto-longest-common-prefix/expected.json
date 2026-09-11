@@ -1,0 +1,74 @@
+{
+  "case": "auto-longest-common-prefix",
+  "contract_refs": [
+    "§2.2",
+    "D15"
+  ],
+  "what_this_pins": "`auto` 전략 1/4 — 최장 공통 접두어 아래 **첫 레벨**로 접는다. 공통 접두어가 `com.acme.app`이면 컴포넌트는 `com.acme.app.order`·`com.acme.app.payment`·`com.acme.app.shipping`이다. 접두어 자체로 접으면 컴포넌트가 하나가 되어 아무것도 나누지 못한다.",
+  "component_strategy": {
+    "notes": [],
+    "strategy": "auto",
+    "split_share": 0.6,
+    "split_share_basis": "class_count"
+  },
+  "package_to_component": {
+    "com.acme.app.order": "com.acme.app.order",
+    "com.acme.app.payment": "com.acme.app.payment",
+    "com.acme.app.shipping": "com.acme.app.shipping"
+  },
+  "class_edge_count": 2,
+  "external_edges": [],
+  "external_included_in_metrics": false,
+  "components": [
+    {
+      "id": "com.acme.app.order",
+      "Ca": 0,
+      "Ce": 1,
+      "I": 1,
+      "A": 0,
+      "D": 0,
+      "class_count": 2
+    },
+    {
+      "id": "com.acme.app.payment",
+      "Ca": 1,
+      "Ce": 1,
+      "I": 0.5,
+      "A": 0.5,
+      "D": 0,
+      "class_count": 2
+    },
+    {
+      "id": "com.acme.app.shipping",
+      "Ca": 1,
+      "Ce": 0,
+      "I": 0,
+      "A": 0,
+      "D": 1,
+      "class_count": 2
+    }
+  ],
+  "cycles": [],
+  "system": {
+    "components": 3,
+    "CCD": 6,
+    "ACD": 2,
+    "RACD": 0.666666666667,
+    "CCD_balanced": 5.00,
+    "NCCD": 1.20,
+    "display": {
+      "ACD": 2.00,
+      "RACD": 0.667,
+      "CCD_balanced": 5.00,
+      "NCCD": 1.20
+    }
+  },
+  "non_terminating": {
+    "/system/RACD": "2/3"
+  },
+  "_fixture": {
+    "generated_by": "contract/graph/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

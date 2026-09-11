@@ -32,9 +32,9 @@
 | [`percentile/`](percentile/) | §2.5 성분·렌즈 백분위, type-7 분위, §3.7 confidence | **G0** | 6/9 케이스 |
 | [`schema/`](schema/) | §7 스키마 7종 × 긍정 1 + 하드룰 변조 ≥ 1(D124) | **G0** | **45 케이스** |
 | [`reproducibility/`](reproducibility/) | §2.8 정체성 셋의 분리와 `reproduce` 완전성(D111) | **G0** | 1/5 케이스 |
-| [`cpd/`](cpd/) | §2.6 클러스터·합집합·쌍 투영 | **G0** | 스켈레톤 |
-| [`history/`](history/) | §2.7 앵커·창·rename, 그리고 blame 금지의 강제(D113) | **G0** | 스켈레톤 |
-| [`graph/`](graph/) | §2.2–2.3 컴포넌트 그래프·Lakos 검산 | **G0** | 스켈레톤 |
+| [`cpd/`](cpd/) | §2.6 클러스터·합집합·쌍 투영 | **G0** | **5 케이스** |
+| [`history/`](history/) | §2.7 앵커·창·rename, 그리고 blame 금지의 강제(D113) | **G0** | **10 케이스** |
+| [`graph/`](graph/) | §2.2–2.3 컴포넌트 그래프·Lakos 검산, P8 합성 리포 | **G0** | **8 케이스** |
 | [`lens/`](lens/) | §3 렌즈 조립과 null 전파 | G1 | 스켈레톤 |
 | [`gate/`](gate/) | §5.2–5.3 BASE 자격 고정·발생 수준 새 중복 | G1 | 스켈레톤 |
 | [`renderer/`](renderer/) | §7.1 렌더러가 JSON의 순수 함수임(D28·D67) | G2 | 스켈레톤 |
@@ -48,6 +48,13 @@
 
 - [`judgment-vocabulary.json`](judgment-vocabulary.json) — 판정 어휘 사전. **한 곳에만 있고** `schema/`(G0, JSON 층)와 `renderer/`(G2, HTML 층)가 같은 것을 읽는다(D127).
 - [`fixture-changes/`](fixture-changes/) — `expected.json`을 바꾼 이유(D129).
+- [`tools/exact.py`](tools/exact.py) — **계약이 아니다.** 계산기들이 공유하는 정확 산술과 결정적 직렬화(§2.5·D115·D121). 직렬화가 갈리면 같은 값이 다른 바이트가 되고 "두 머신 바이트 동일"이 계산기마다 다른 뜻이 된다. `cpd`·`graph`·`history`가 쓴다 — `percentile`은 아직 자기 사본을 갖는다(아래).
+
+### `percentile`이 공용 모듈을 안 쓰는 이유
+
+통합하면 `expected.json`의 **값은 그대로인데 바이트가 바뀐다**(`generated_by`의 위치와 `_fixture` 키 구성이 다르다). §2.9는 기대값을 바꾸는 커밋에 `fixture_change`를 요구하는데, 그 `reason` 셋(`library_behavior_change` · `contract_change` · `bug_fix`) 어디에도 "직렬화 메타데이터 정리"가 없다. 값이 안 바뀌었으니 `bug_fix`도 `contract_change`도 아니다.
+
+그래서 되돌렸다. 통합은 `reason`에 맞는 분류가 생기거나 다른 이유로 `percentile`의 기대값이 움직일 때 함께 한다 — **§2.9의 작은 공백으로 표시한다.**
 
 ## 실행
 

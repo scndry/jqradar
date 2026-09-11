@@ -1,0 +1,47 @@
+{
+  "case": "window-bound-time",
+  "contract_refs": [
+    "§2.7"
+  ],
+  "what_this_pins": "상한 두 종류 중 **시간**이 먼저 닥치는 경우. 창은 `[HEAD_TIME − 12개월, HEAD_TIME]`이고 그보다 오래된 비머지 커밋은 빠진다 — `bound_hit: time`. 창 밖 커밋이 `chg_commits`에 세어지면 오래된 리포에서 모든 파일이 활성으로 보이고 `active` 모집단이 무의미해진다(§2.5).",
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2024-01-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "old1",
+        "at_seconds": 0,
+        "message": "ancient",
+        "write": {
+          "src/A.java": "class A {}\n"
+        }
+      },
+      {
+        "id": "old2",
+        "at_seconds": 2592000,
+        "message": "ancient 2",
+        "write": {
+          "src/A.java": "class A { int a; }\n"
+        }
+      },
+      {
+        "id": "new1",
+        "at_seconds": 63072000,
+        "message": "recent",
+        "write": {
+          "src/A.java": "class A { int b; }\n"
+        }
+      }
+    ]
+  },
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "measure_files": [
+    "src/A.java"
+  ]
+}

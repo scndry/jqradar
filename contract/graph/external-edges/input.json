@@ -1,0 +1,14 @@
+{
+  "case": "external-edges",
+  "contract_refs": ["§2.2"],
+  "what_this_pins": "§2.2가 이름까지 지정한 필수 케이스. 외부 타입 간선은 `external` 의사 노드로 **접어 기록하되** Ca/Ce/I/A/D·CCD에서 **제외**한다. 기록하지 않으면 '무엇을 뺐는지'를 재현할 수 없고(B.4), 빼지 않으면 우리 것이 아닌 결합이 지표에 섞인다 — JDK·서드파티에 많이 의존한다고 우리 컴포넌트가 불안정해지는 것이 아니다.",
+  "component": { "strategy": "depth:4" },
+  "classes": [
+    { "name": "com.acme.app.order.OrderService", "package": "com.acme.app.order",
+      "depends_on": ["com.acme.app.payment.Payment", "java.util.List", "org.slf4j.Logger"] },
+    { "name": "com.acme.app.order.OrderPolicy", "package": "com.acme.app.order",
+      "abstract": true, "depends_on": ["java.math.BigDecimal"] },
+    { "name": "com.acme.app.payment.Payment", "package": "com.acme.app.payment",
+      "depends_on": ["java.time.Instant"] }
+  ]
+}

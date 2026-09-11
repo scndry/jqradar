@@ -1,0 +1,102 @@
+{
+  "case": "threshold-boundary",
+  "contract_refs": [
+    "§2.6"
+  ],
+  "what_this_pins": "`minimumTokens = 100`의 경계. 99토큰은 클러스터가 **아니고** 100토큰은 맞다. 경계를 '초과'로 읽으면 100이 빠지고 '이상'으로 읽으면 들어온다 — 계약은 이상이다. 거부된 것도 기록한다: '왜 이것이 중복이 아닌가'가 계약의 일부이고, 임계를 옮기면 어느 클러스터가 움직이는지 이 파일이 보인다.",
+  "parameters": {
+    "cpd.minimum_tokens": 100
+  },
+  "clusters": [
+    {
+      "id": "dup:h-100:100",
+      "tokens": 100,
+      "occurrences": [
+        {
+          "path": "A.java",
+          "start_token": 1000,
+          "end_token": 1100
+        },
+        {
+          "path": "B.java",
+          "start_token": 1000,
+          "end_token": 1100
+        }
+      ],
+      "occurrence_count": 2,
+      "files": [
+        "A.java",
+        "B.java"
+      ],
+      "self_duplication": false
+    }
+  ],
+  "rejected_clusters": [
+    {
+      "id": "dup:h-99:99",
+      "tokens": 99,
+      "occurrences": [
+        {
+          "path": "A.java",
+          "start_token": 0,
+          "end_token": 99
+        },
+        {
+          "path": "B.java",
+          "start_token": 0,
+          "end_token": 99
+        }
+      ],
+      "occurrence_count": 2,
+      "files": [
+        "A.java",
+        "B.java"
+      ],
+      "rejected_reason": "below_minimum_tokens"
+    }
+  ],
+  "files": {
+    "A.java": {
+      "file_tokens": 3000,
+      "duplicated_ranges": [
+        [
+          1000,
+          1100
+        ]
+      ],
+      "union_dup_tokens": 100,
+      "dup_extent": 0.033333333333,
+      "self_dup_tokens": 0,
+      "twins": 1
+    },
+    "B.java": {
+      "file_tokens": 3000,
+      "duplicated_ranges": [
+        [
+          1000,
+          1100
+        ]
+      ],
+      "union_dup_tokens": 100,
+      "dup_extent": 0.033333333333,
+      "self_dup_tokens": 0,
+      "twins": 1
+    }
+  },
+  "duplication_pairs": [
+    {
+      "a": "A.java",
+      "b": "B.java",
+      "pair_dup_tokens": 100
+    }
+  ],
+  "non_terminating": {
+    "/files/A.java/dup_extent": "1/30",
+    "/files/B.java/dup_extent": "1/30"
+  },
+  "_fixture": {
+    "generated_by": "contract/cpd/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

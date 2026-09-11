@@ -1,0 +1,33 @@
+{
+  "case": "blame-forbidden-on-scan-change",
+  "contract_refs": [
+    "§2.7",
+    "D18",
+    "D113",
+    "§5.6"
+  ],
+  "what_this_pins": "D113 — `scan`·`change` 경로에서 blame이 호출되면 **실패한다**. 값을 대조하는 것이 아니라 **부재**를 본다. §2.9가 이 검사를 `ledger/`(G2b)에서 `history/`(G0)로 옮긴 이유가 여기 있다: 강제 장치가 대상 코드보다 앞서야 한다. blame의 유일한 예외는 캠페인 생성 시 1회, 원장 finding 영역 한정이다(§5.6·D57) — 그래서 `io/jqradar/ledger/`는 검사에서 뺀다. '한 번만'이 '가끔'이 되고 '매 스캔'이 되는 압력은 §12가 명시한 위험이고, 이 검사가 그 선이다.\n\n자체 ArchUnit 규칙 2가 같은 선을 바이트코드에서 지키지만 타입 의존만 본다 — 이 검사는 소스라서 주석·문자열·셸 호출(`git blame --porcelain`)까지 잡는다. 둘이 겹치는 것이 아니라 서로 다른 구멍을 막는다.",
+  "check": "no_blame_on_scan_change_path",
+  "must_be_caught": [
+    {
+      "name": "JGit BlameCommand 타입",
+      "why": "가장 직접적인 경로. 자체 ArchUnit 규칙 2도 이것을 잡는다",
+      "source": "import org.eclipse.jgit.api.BlameCommand;\nclass ScanPath { BlameCommand b; }"
+    },
+    {
+      "name": "Git.blame() 호출",
+      "why": "타입을 import하지 않고 부르는 경로",
+      "source": "class ScanPath { void go(org.eclipse.jgit.api.Git g) { g.blame().call(); } }"
+    },
+    {
+      "name": "ProcessBuilder로 부른 네이티브 blame",
+      "why": "**ArchUnit이 못 잡는 구멍.** 타입 의존이 없어 바이트코드에는 흔적이 없다 — 소스 검사가 있어야 하는 이유가 이것이다",
+      "source": "class ScanPath { void go() { new ProcessBuilder(\"git\", \"blame\", \"-p\").start(); } }"
+    },
+    {
+      "name": "blame --porcelain 파싱",
+      "why": "§4.5의 네이티브 백엔드 경로. 옵트인이어도 scan 경로에는 올 수 없다",
+      "source": "class ScanPath { String fmt = \"--porcelain\"; }"
+    }
+  ]
+}

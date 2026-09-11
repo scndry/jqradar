@@ -1,0 +1,12 @@
+{
+  "case": "auto-multiple-roots",
+  "contract_refs": ["§2.2", "D15"],
+  "what_this_pins": "`auto` 전략 4/4 — 최상위 루트가 여럿이면 **루트별로 따로** 접는다. `com.`과 `io.`를 함께 두면 최장 공통 접두어가 빈 문자열이 되어 전략이 무너진다.",
+  "component": { "strategy": "auto" },
+  "classes": [
+    { "name": "com.acme.order.A", "package": "com.acme.order", "depends_on": ["io.vendor.sdk.S"] },
+    { "name": "com.acme.payment.B", "package": "com.acme.payment" },
+    { "name": "io.vendor.sdk.S", "package": "io.vendor.sdk" },
+    { "name": "io.vendor.util.U", "package": "io.vendor.util", "depends_on": ["io.vendor.sdk.S"] }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "case": "external-edges",
+  "contract_refs": [
+    "§2.2"
+  ],
+  "what_this_pins": "§2.2가 이름까지 지정한 필수 케이스. 외부 타입 간선은 `external` 의사 노드로 **접어 기록하되** Ca/Ce/I/A/D·CCD에서 **제외**한다. 기록하지 않으면 '무엇을 뺐는지'를 재현할 수 없고(B.4), 빼지 않으면 우리 것이 아닌 결합이 지표에 섞인다 — JDK·서드파티에 많이 의존한다고 우리 컴포넌트가 불안정해지는 것이 아니다.",
+  "component_strategy": {
+    "strategy": "depth:4",
+    "split_share_basis": "class_count"
+  },
+  "package_to_component": {
+    "com.acme.app.order": "com.acme.app.order",
+    "com.acme.app.payment": "com.acme.app.payment"
+  },
+  "class_edge_count": 1,
+  "external_edges": [
+    {
+      "from": "com.acme.app.order.OrderPolicy",
+      "to": "java.math.BigDecimal"
+    },
+    {
+      "from": "com.acme.app.order.OrderService",
+      "to": "java.util.List"
+    },
+    {
+      "from": "com.acme.app.order.OrderService",
+      "to": "org.slf4j.Logger"
+    },
+    {
+      "from": "com.acme.app.payment.Payment",
+      "to": "java.time.Instant"
+    }
+  ],
+  "external_included_in_metrics": false,
+  "components": [
+    {
+      "id": "com.acme.app.order",
+      "Ca": 0,
+      "Ce": 1,
+      "I": 1,
+      "A": 0.5,
+      "D": 0.5,
+      "class_count": 2
+    },
+    {
+      "id": "com.acme.app.payment",
+      "Ca": 1,
+      "Ce": 0,
+      "I": 0,
+      "A": 0,
+      "D": 1,
+      "class_count": 1
+    }
+  ],
+  "cycles": [],
+  "system": {
+    "components": 2,
+    "CCD": 3,
+    "ACD": 1.5,
+    "RACD": 0.75,
+    "CCD_balanced": 2.75,
+    "NCCD": 1.09,
+    "display": {
+      "ACD": 1.50,
+      "RACD": 0.750,
+      "CCD_balanced": 2.75,
+      "NCCD": 1.09
+    }
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/graph/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}
