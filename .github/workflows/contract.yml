@@ -66,6 +66,17 @@ jobs:
       - name: prd.md의 결정 착지
         run: sh ci/check-decision-landing.sh prd.md
 
+  review-entry:
+    name: G0 #1 교차 검토 입구 (docs/review/)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # 자기 반례만 돈다. 검토 자체는 사람이 자기 기계에서 돌린다 —
+      # 이 잡이 지키는 것은 "리뷰어가 첫 발을 헛디디지 않는가"다:
+      # 절 발췌기가 옳은가, 쌍이 가리키는 절·D 번호·§0 항목이 실재하는가.
+      - name: 자기 반례
+        run: python3 docs/review/g0-review.py --selftest
+
   build:
     name: 빌드와 자체 ArchUnit 규칙 (CLAUDE.md §3.5)
     runs-on: ubuntu-latest
