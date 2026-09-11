@@ -38,6 +38,7 @@
 | [`tc-squash-vs-merge/`](tc-squash-vs-merge/) | 같은 작업을 두 이력으로 — `tc`가 **0.5와 1**. 판정은 없고 두 수다 |
 | [`author-facts-minor-threshold/`](author-facts-minor-threshold/) | 마이너 기여자 `< 5%` 경계. 20커밋에서 0.05는 미만이 아니고, 21커밋에서 1/21은 미만이다 |
 | [`identity-absent-when-attribution-off/`](identity-absent-when-attribution-off/) | **D48·D135** — 정체가 산출물에 없다. 모양이 아니라 **출처**로 가른다 |
+| [`authors-window-truncated-by-count/`](authors-window-truncated-by-count/) | **D137** — 90일 지표를 창 안으로 자른다. 같은 이력을 두 창으로 봐 `distinct_authors_90d`가 1과 2로 갈린다 |
 
 ## blame 검사는 값이 아니라 부재를 본다
 
@@ -65,11 +66,27 @@
 
 부재 검사이므로 `must_be_caught`(2) + `must_not_be_caught`(3)를 함께 둔다(D131). 후자가 특히 중요하다: 모양으로 가르려 하면 정상 산출물의 `repository_state_id`가 오탐으로 걸린다.
 
-## 미해결 — 계약이 답하지 않는 것
+## 90일 지표는 창 안으로 자른다 (D137)
 
-**`distinct_authors_90d`와 `max_commits`의 상호작용.** §2.1은 이 값을 "최근 90일"로 정하고 나머지 둘은 "(W 안)"을 명시한다 — 계약이 둘을 구별하므로 계산기도 90일 창을 W의 `max_commits` 상한과 **무관하게** 돈다. 그런데 커밋이 매우 많은 리포에서 `max_commits`(2,000)가 90일보다 짧은 구간을 남기면, `chg_commits`는 잘린 창을 보고 `distinct_authors_90d`는 안 잘린 90일을 봐서 두 값의 기준이 갈린다. 그것이 의도인지(90일은 비용 상한과 무관한 의미 창인지) 계약이 말하지 않는다.
+§2.1의 `distinct_authors_90d`는 90일 고정이고 창은 12개월 ∧ 2,000커밋 중 먼저 닥치는 것이다. 커밋이 많은 리포에서 개수 상한이 90일보다 짧은 구간을 남기면 두 지표가 서로 다른 구간을 본다.
 
-## 실행
+**답은 창을 넓히는 것이 아니라 90일을 자르는 것이다.** `[HEAD_TIME − 90d, HEAD_TIME] ∩ W`. 근거는 §2.8이다: `analysis_input_id`의 입력이 창 안 커밋 SHA 목록이므로, 창 밖 커밋이 값에 영향을 주면 **같은 id가 다른 값을 낸다** — D87이 막는 자리다. 넓히면 그 커밋들이 id에 들어가야 한다.
+
+절단 사실은 **창의 속성**이라 `reproduce.window_applied`에 한 번만 적는다(`authors_window_truncated`·`authors_window_days`). 파일마다 적으면 "이 파일이 잘린 구간에 커밋을 가졌나"를 아는 것처럼 읽히는데, 그 커밋들이 창에서 사라져 판정하는 것이므로 **알 수 없다** — `closed_unclaimed`·`id_drift`가 지키는 선과 같다.
+
+### 절단은 "창이 짧다"가 아니라 "상한이 잘랐다"다
+
+10일 된 리포는 90일을 못 봤지만 **볼 것이 없었다.** 그것을 `truncated: true`로 적으면 "데이터를 잃었다"로 읽힌다. 판정은 존재로 한다 — 최근 90일 안의 비머지 커밋 중 **창이 제외한 것이 있는가**(`commits_excluded_within_90d`).
+
+따라서 **시간 상한(12개월)은 90일 구간을 자를 수 없다**: 90일 ⊂ 12개월이므로 자를 수 있는 것은 개수 상한뿐이다. [`window-bound-time/`](window-bound-time/)이 그것을 반대쪽에서 보인다 — `bound_hit: time`인데 `truncated: false`다.
+
+`authors_window_days`는 0에서 자른다. 커미터 시각이 뒤죽박죽이면 HEAD가 자기 조상보다 이를 수 있고(§2.1 `invalid_metadata`) 그때 음수 일수는 아무 뜻이 없다.
+
+### 원칙의 다른 절반은 `reproducibility/`가 진다
+
+이 계약은 **값의 독립성**(창 밖 커밋이 값을 움직이지 않는다)을 본다. 짝인 **id의 동일성**은 `max_commits`로 잘린 커밋으로 시험할 수 없다 — 커밋 SHA가 조상을 물고 가므로 창 밖이 달라지면 창 안 SHA도 달라지고 `commit_list_sha256`이 갈린다. 그래서 [`contract/reproducibility/unreachable-commits-do-not-leak/`](../reproducibility/unreachable-commits-do-not-leak/)이 **도달 불가 커밋**으로 양면을 한 번에 닫는다(HEAD SHA가 동일하므로 id도 값도 같아야 한다).
+
+## 실행## 실행
 
 ```sh
 python3 contract/history/compute.py --check

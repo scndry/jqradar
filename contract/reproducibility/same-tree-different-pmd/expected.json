@@ -28,7 +28,8 @@
       "04c5de269bd939509087a13312869a28d540f773"
     ],
     "head": "04c5de269bd939509087a13312869a28d540f773",
-    "head_committer_time": "2026-01-03T03:04:05+00:00"
+    "head_committer_time": "2026-01-03T03:04:05+00:00",
+    "unreachable_commit_count": 0
   },
   "runs": {
     "a": {

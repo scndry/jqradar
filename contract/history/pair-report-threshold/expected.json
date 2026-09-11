@@ -17,7 +17,10 @@
     "max_commits": 2000,
     "bound_hit": "none",
     "commits_in_window": 46,
-    "merge_commits_excluded": 0
+    "merge_commits_excluded": 0,
+    "authors_window_truncated": false,
+    "authors_window_days": 9.509259259259,
+    "commits_excluded_within_90d": 0
   },
   "commits": [
     {
@@ -739,6 +742,7 @@
   ],
   "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
   "non_terminating": {
+    "/window_applied/authors_window_days": "1027/108",
     "/files/src/A.java/age_last_days": "221/27",
     "/files/src/B.java/age_last_days": "253/36",
     "/files/src/C.java/age_last_days": "1027/216",

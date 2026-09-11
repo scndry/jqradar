@@ -373,14 +373,42 @@ def build_expected(inp: dict, workdir: Path) -> dict:
     # §2.1 저자 사실 — 익명 집계만 (D48·D135)
     # ------------------------------------------------------------------
     ninety_days_ago = head_time - timedelta(days=90)
+    # 창이 실제로 덮는 일수. `min(90, HEAD_TIME − 창의 가장 오래된 커밋 시각)`.
+    # 음수로 내려가지 않게 0에서 자른다 — 커미터 시각이 뒤죽박죽이면(§2.1
+    # `invalid_metadata`) HEAD가 자기 조상보다 이를 수 있고, 그때 '음수 일수'는
+    # 아무 뜻이 없다. 창이 비면 0 — 아무것도 덮지 못했다.
+    if selected:
+        oldest = datetime.fromisoformat(selected[-1]["committer_time"])
+        span = Fraction(int((head_time - oldest).total_seconds()), SECONDS_PER_DAY)
+        authors_window_days = min(Fraction(90), max(Fraction(0), span))
+    else:
+        authors_window_days = Fraction(0)
+
+    # **절단은 "창이 90일보다 짧다"가 아니라 "상한이 90일 구간을 잘랐다"다.**
+    # 10일 된 리포의 `distinct_authors_90d`는 90일을 못 봤지만 **볼 것이 없었다** —
+    # 그것을 truncated로 표기하면 "데이터를 잃었다"로 읽힌다. 판정은 존재로 한다:
+    # 최근 90일 안에 있는 비머지 커밋 중 **창이 제외한 것이 있는가.**
+    #
+    # 따라서 시간 상한(12개월)은 90일 구간을 자를 수 없다 — 90일 ⊂ 12개월이다.
+    # 자를 수 있는 것은 개수 상한뿐이다.
+    selected_shas = {c["sha"] for c in selected}
+    excluded_within_90d = [
+        c for c in commits
+        if not c["is_merge"] and c["sha"] not in selected_shas
+        and datetime.fromisoformat(c["committer_time"]) >= ninety_days_ago]
+    authors_window_truncated = bool(excluded_within_90d)
     for path, entry in files.items():
         touching = [c for c in selected
                     if any(canonical(p) == path for p in c["paths"])]
         # `distinct_authors_90d`는 §2.1이 "최근 90일"이라 적고 **W 안이라 말하지 않는다** —
         # 나머지 둘은 "(W 안)"을 명시한다. 계약이 둘을 구별하므로 여기서도 구별한다.
-        recent = [c for c in commits
-                  if not c["is_merge"]
-                  and datetime.fromisoformat(c["committer_time"]) >= ninety_days_ago
+        # D137 — 90일 지표는 `[HEAD_TIME − 90d, HEAD_TIME] ∩ W`에서 계산한다.
+        # `commits`(전체)를 돌면 창 밖 커밋이 값을 움직여 **같은 analysis_input_id가
+        # 다른 값을 낸다** — `analysis_input_id`의 입력은 창 안 커밋 SHA 목록이므로
+        # D87("포함되지 않은 입력은 결과에 영향을 주어서는 안 된다")이 막는 자리다.
+        # 창을 넓히지 않는다: 넓히면 그 커밋들이 id에 들어가야 한다.
+        recent = [c for c in selected
+                  if datetime.fromisoformat(c["committer_time"]) >= ninety_days_ago
                   and any(canonical(p) == path for p in c["paths"])]
         entry["distinct_authors_90d"] = len({c["_author_key"] for c in recent})
 
@@ -412,6 +440,13 @@ def build_expected(inp: dict, workdir: Path) -> dict:
             "months": months, "max_commits": max_commits, "bound_hit": bound_hit,
             "commits_in_window": len(selected),
             "merge_commits_excluded": sum(1 for c in commits if c["is_merge"]),
+            # D137 — 90일 지표가 실제로 본 일수. 이름이 `90d`인데 1.6일을 본 경우를
+            # 아는 자리다. **창의 속성이므로 여기 한 번만 적고 파일마다 적지 않는다**:
+            # 파일별 표기는 "이 파일이 잘린 구간에 커밋을 가졌나"를 아는 것처럼
+            # 읽히는데, 그 커밋들이 창에서 사라져 판정하는 것이므로 알 수 없다.
+            "authors_window_truncated": authors_window_truncated,
+            "authors_window_days": authors_window_days,
+            "commits_excluded_within_90d": len(excluded_within_90d),
         },
         "commits": [
             {"sha": c["sha"][:9], "at": c["committer_time"], "subject": c["subject"],
@@ -708,6 +743,10 @@ def main() -> int:
                 one = dict(inp)
                 one.pop("variants")
                 one["repo"] = repo
+                # 변이마다 창을 달리 줄 수 있다 — 같은 이력을 두 창으로 보는 케이스가
+                # 필요하기 때문이다(D137의 절단은 창이 만든다).
+                if "window_per_variant" in inp:
+                    one["window"] = inp["window_per_variant"][name]
                 tmp = tempfile.mkdtemp()
                 try:
                     built = build_expected(one, Path(tmp) / "repo")
