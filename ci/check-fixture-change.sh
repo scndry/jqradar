@@ -16,11 +16,16 @@ head=${2:?head ref}
 
 fail=0
 for sha in $(git rev-list --reverse --no-merges "$base..$head"); do
-  changed=$(git show --pretty=format: --name-only "$sha" | grep -v '^$' || true)
-  touches_expected=$(printf '%s\n' "$changed" | grep -E '^contract/.*/expected\.json$' || true)
+  # **수정(M)만** 본다. 새 픽스처를 처음 추가하는 커밋(A)에는 바뀐 기대값이 없다 —
+  # §2.9의 규칙은 "기대값을 **바꾸는** 커밋"에 대한 것이다. 삭제(D)도 아니다:
+  # 케이스를 지우는 것은 기대값을 손으로 승인하는 일이 아니다.
+  changed=$(git show --pretty=format: --name-status "$sha" | grep -v '^$' || true)
+  touches_expected=$(printf '%s\n' "$changed" \
+    | awk '$1 == "M" && $2 ~ /^contract\/.*\/expected\.json$/ { print $2 }' || true)
   [ -z "$touches_expected" ] && continue
 
-  record=$(printf '%s\n' "$changed" | grep -E '^contract/fixture-changes/.*\.json$' || true)
+  record=$(printf '%s\n' "$changed" \
+    | awk '$2 ~ /^contract\/fixture-changes\/.*\.json$/ { print $2 }' || true)
   subject=$(git log -1 --format=%s "$sha")
   if [ -z "$record" ]; then
     fail=1

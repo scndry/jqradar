@@ -384,8 +384,14 @@ def main() -> int:
         if inp.get("check") == "no_blame_on_scan_change_path":
             expected = check_no_blame(inp)
         else:
-            with tempfile.TemporaryDirectory() as tmp:
+            # git이 백그라운드 프로세스를 남길 수 있어 정리가 경쟁한다(CI에서
+            # Errno 39로 터졌다). 정리 실패로 픽스처가 깨지면 안 되므로 직접 지운다.
+            # `ignore_cleanup_errors`는 Python 3.10+라 쓰지 않는다.
+            tmp = tempfile.mkdtemp()
+            try:
                 expected = build_expected(inp, Path(tmp) / "repo")
+            finally:
+                shutil.rmtree(tmp, ignore_errors=True)
         text = exact.finish(expected, GENERATED_BY)
         target = case_dir / "expected.json"
         if args.check:
@@ -396,6 +402,16 @@ def main() -> int:
                 failures += 1
                 print(f"FAIL  {case_dir.name}: expected.json "
                       f"{'없음' if current is None else '다름'} — §2.7 이력 계약")
+                if current is not None:
+                    # 무엇이 다른지 말하지 않는 실패는 CI에서 쓸모가 없다.
+                    import difflib
+                    diff = list(difflib.unified_diff(
+                        current.splitlines(), text.splitlines(),
+                        fromfile="committed", tofile="recomputed", lineterm="", n=1))
+                    for line in diff[:40]:
+                        print(f"      {line}")
+                    if len(diff) > 40:
+                        print(f"      … 그리고 {len(diff) - 40}줄 더")
         else:
             target.write_text(text, encoding="utf-8")
             print(f"wrote {case_dir.name}/expected.json")
