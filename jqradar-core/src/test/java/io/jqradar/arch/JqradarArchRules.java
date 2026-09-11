@@ -1,11 +1,20 @@
 package io.jqradar.arch;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.codeUnits;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields;
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
+import com.tngtech.archunit.core.domain.JavaClass;
+import com.tngtech.archunit.core.domain.JavaCodeUnit;
+import com.tngtech.archunit.core.domain.JavaField;
+import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.CompositeArchRule;
+import com.tngtech.archunit.lang.ConditionEvents;
+import com.tngtech.archunit.lang.SimpleConditionEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 자체 ArchUnit 규칙 — <b>우리 코드에만</b> 적용된다 (CLAUDE.md §3.5).
@@ -117,6 +126,26 @@ public final class JqradarArchRules {
      * {@code BigDecimal.sqrt(MathContext(34, HALF_EVEN))}으로 계산한다. composite는
      * {@code √}를 산술 입력으로 쓰므로 34자리 값으로 가중합한 뒤 <b>한 번만</b> 반올림한다(D121).
      *
+     * <p><b>무엇을 보는가</b>: 필드 타입, <b>모든 code unit의 파라미터와 반환 타입</b>
+     * (메서드 <i>와 생성자</i>), 그리고 본문의 박싱 타입 의존. 배열은 성분 타입으로 판정한다.
+     *
+     * <p>파라미터를 보는 것이 핵심이다. 첫 판은 필드·반환 타입·박싱 셋만 봐서
+     * {@code BigDecimal hotspot(double, double)}을 통과시켰다 — <b>경계로 들어오는
+     * double이 측정 경로에서 가장 흔한 경로</b>이고, 값이 이미 double이면 안에서
+     * {@code BigDecimal}로 감싸도 정밀도는 돌아오지 않는다. 생성자도 {@code methods()}에
+     * 잡히지 않아 {@code codeUnits()}로 바꿨다.
+     *
+     * <p><b>잔여 한계</b> — 이 규칙이 보지 <i>못하는</i> 것:
+     * <ul>
+     *   <li>지역 변수와 중간 식. 바이트코드의 {@code LocalVariableTable}은 선택적이라
+     *       신뢰할 수 없다. 규칙은 <b>API 표면</b>을 지키고, 값 수준의 회귀는
+     *       {@code contract/reproducibility/}의 "두 머신 바이트 동일"이 잡는다.</li>
+     *   <li>{@code Math.sqrt} 같은 {@code double} 반환 JDK 호출. D115가
+     *       "√는 표시값에만 {@code BigDecimal.sqrt}"라고 정한 자리라 규칙으로 좁힐
+     *       여지가 있으나, {@code Math}는 정수 연산도 담고 있어 통째로 막으면 과하다.
+     *       계약이 목록을 정하기 전까지 열어 둔다.</li>
+     * </ul>
+     *
      * <p><b>지금은 잡을 코드가 없다.</b> G0의 모듈은 소스셋이 비어 있어 이 규칙은 공집합에
      * 대해 통과한다. 아래 위반 예제가 규칙이 살아 있음을 보이고, G1에 core가 생기는 순간부터
      * 실제로 돈다.
@@ -127,28 +156,79 @@ public final class JqradarArchRules {
 
         ArchRule noFields = fields()
                 .that().areDeclaredInClassesThat().resideInAnyPackage(scope)
-                .should().notHaveRawType(double.class)
-                .andShould().notHaveRawType(float.class)
-                .andShould().notHaveRawType(Double.class)
-                .andShould().notHaveRawType(Float.class)
+                .should(notBeBinaryFloatingPoint())
                 .because(why)
                 .allowEmptyShould(true);
 
-        ArchRule noReturns = methods()
+        // 메서드 **와 생성자** 둘 다. `methods()`만 보면 생성자가 빠지고,
+        // 반환 타입만 보면 **경계로 들어오는** double이 빠진다 — 측정 경로에서
+        // 가장 흔한 경로가 그것이다. `BigDecimal hotspot(double, double)`은
+        // 안에서 감싸도 이미 늦었다: 정밀도는 돌아오지 않는다.
+        ArchRule noSignatures = codeUnits()
                 .that().areDeclaredInClassesThat().resideInAnyPackage(scope)
-                .should().notHaveRawReturnType(double.class)
-                .andShould().notHaveRawReturnType(float.class)
-                .andShould().notHaveRawReturnType(Double.class)
-                .andShould().notHaveRawReturnType(Float.class)
+                .should(notHaveBinaryFloatingPointInSignature())
                 .because(why)
                 .allowEmptyShould(true);
 
+        // 본문에서의 박싱 사용(`Double.parseDouble` 등)을 잡는다. 시그니처 검사와
+        // 겹치지만 서로 다른 경로를 덮는다.
         ArchRule noBoxedDependency = noClasses()
                 .that().resideInAnyPackage(scope)
                 .should().dependOnClassesThat().belongToAnyOf(Double.class, Float.class)
                 .because(why)
                 .allowEmptyShould(true);
 
-        return CompositeArchRule.of(noFields).and(noReturns).and(noBoxedDependency);
+        return CompositeArchRule.of(noFields).and(noSignatures).and(noBoxedDependency);
     }
+
+    /** {@code double}·{@code float}과 그 박싱 타입. 배열도 성분 타입으로 판정한다. */
+    private static final Set<String> BINARY_FLOATING_POINT =
+            Set.of("double", "float", "java.lang.Double", "java.lang.Float");
+
+    private static boolean isBinaryFloatingPoint(JavaClass type) {
+        JavaClass base = type;
+        while (base.isArray()) {
+            base = base.getComponentType();
+        }
+        return BINARY_FLOATING_POINT.contains(base.getName());
+    }
+
+    private static ArchCondition<JavaField> notBeBinaryFloatingPoint() {
+        return new ArchCondition<>("not be of type double/float (or boxed, or array thereof)") {
+            @Override
+            public void check(JavaField field, ConditionEvents events) {
+                if (isBinaryFloatingPoint(field.getRawType())) {
+                    events.add(SimpleConditionEvent.violated(field,
+                            field.getFullName() + " 의 타입이 "
+                                    + field.getRawType().getName() + " 이다"));
+                }
+            }
+        };
+    }
+
+    private static ArchCondition<JavaCodeUnit> notHaveBinaryFloatingPointInSignature() {
+        return new ArchCondition<>(
+                "not have double/float in any parameter or return type (methods and constructors)") {
+            @Override
+            public void check(JavaCodeUnit unit, ConditionEvents events) {
+                List<String> found = new ArrayList<>();
+                List<JavaClass> parameters = unit.getRawParameterTypes();
+                for (int i = 0; i < parameters.size(); i++) {
+                    JavaClass parameter = parameters.get(i);
+                    if (isBinaryFloatingPoint(parameter)) {
+                        found.add("파라미터 " + i + " 가 " + parameter.getName());
+                    }
+                }
+                JavaClass returnType = unit.getRawReturnType();
+                if (isBinaryFloatingPoint(returnType)) {
+                    found.add("반환 타입이 " + returnType.getName());
+                }
+                if (!found.isEmpty()) {
+                    events.add(SimpleConditionEvent.violated(unit,
+                            unit.getFullName() + " — " + String.join(", ", found)));
+                }
+            }
+        };
+    }
+
 }

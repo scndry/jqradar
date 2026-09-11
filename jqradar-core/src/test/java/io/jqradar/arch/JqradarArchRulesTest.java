@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
+import io.jqradar.arch.violations.TakesDoubleAtTheBoundary;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -173,6 +174,33 @@ class JqradarArchRulesTest {
                     .check(VIOLATION_EXAMPLES))
                     .isInstanceOf(AssertionError.class)
                     .hasMessageContaining("RanksWithBinaryFloatingPoint");
+        }
+
+        /**
+         * 회귀 잠금. 규칙의 첫 판은 필드 raw type·메서드 raw 반환 타입·박싱 의존 셋만 봐서
+         * <b>경계로 들어오는 원시 {@code double}을 놓쳤다</b> — {@code BigDecimal
+         * hotspot(double, double)}이 통과했고 생성자는 {@code methods()}에 잡히지도
+         * 않았다. 측정 경로에서 가장 흔한 경로가 바로 그것이다: 값이 이미 double로
+         * 들어오면 안에서 감싸도 정밀도는 돌아오지 않는다.
+         *
+         * <p>이 클래스 하나만 떼어 거는 이유 — 다른 반례가 함께 있으면 그것들 때문에
+         * 실패해서 "경계 double을 잡았는지"를 구별할 수 없다.
+         */
+        @Test
+        @DisplayName("경계로 들어오는 double도 잡는다 — 파라미터와 생성자 (회귀 잠금)")
+        void catchesBinaryFloatingPointAtTheBoundary() {
+            JavaClasses onlyBoundaryCase = new ClassFileImporter()
+                    .importClasses(TakesDoubleAtTheBoundary.class);
+
+            assertThatThrownBy(() -> JqradarArchRules
+                    .noBinaryFloatingPointOnMeasureOrRankPath(VIOLATIONS)
+                    .check(onlyBoundaryCase))
+                    .isInstanceOf(AssertionError.class)
+                    // 생성자 — methods()로는 안 잡힌다
+                    .hasMessageContaining("<init>(double)")
+                    // 반환은 BigDecimal인데 파라미터가 double
+                    .hasMessageContaining("hotspot(double, double)")
+                    .hasMessageContaining("quantile(float)");
         }
     }
 
