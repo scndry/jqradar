@@ -55,6 +55,17 @@ jobs:
           sh ci/check-fixture-change.sh \
             "origin/${{ github.base_ref }}" "${{ github.event.pull_request.head.sha }}"
 
+  decision-landing:
+    name: 결정이 본문에 착지했는가 (§10·D139)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # 검사부터 검사한다 — 반례가 깨진 검사는 통과만 시킨다(D131·§0-22).
+      - name: 자기 반례 (무는가 / 물지 말아야 할 것을 물지 않는가)
+        run: sh ci/check-decision-landing.sh --selftest
+      - name: prd.md의 결정 착지
+        run: sh ci/check-decision-landing.sh prd.md
+
   build:
     name: 빌드와 자체 ArchUnit 규칙 (CLAUDE.md §3.5)
     runs-on: ubuntu-latest
