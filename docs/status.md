@@ -1,10 +1,10 @@
 # 상태 — 다음 세션이 이어받을 것
 
-**지금**: S0 / G0 진행 중(§9 W1–3). CLAUDE.md §3의 1·2·3번까지. `contract/` 12개 디렉터리와 계약별 README, `contract/percentile/` 케이스 6종(전부 `compute.py`가 생성), `schemas/` 7종 + `validate_examples.py`(§7 예시 검증 + 하드룰 변조 거부). core 측정 코드는 아직 없다.
+**지금**: S0 / G0 진행 중(§9 W1–3). CLAUDE.md §3의 1·2·3번 완료. `contract/` 13개 디렉터리 — `percentile/` 6케이스, `schema/` **45케이스**(스키마 7종 × 긍정 + 하드룰 변조, D124), `reproducibility/` 1케이스(합성 리포, 결정적 이력). `schemas/` 7종. 공유 자원 둘: `judgment-vocabulary.json`(D127), `fixture-changes/`(D129). core 측정 코드는 아직 없다.
 
-**다음**: `g0/v377-alignment`로 묶인 셋 — `contract/schema/` 신설(§2.9, D124: 스키마 7종 × 긍정 1 + 하드룰 변조 ≥ 1, `validate_examples.py`의 케이스를 그리로 이관), `reproducibility/`를 합성 리포 계약으로 재분류(D124), 성분 `n_ranked` 정합 잔여. 그 뒤 CLAUDE.md §3의 4–7번(Gradle 골격, 자체 ArchUnit 규칙 — `double`·`float` 금지 포함, `docs/preregistration/p1a.md`, `docs/battery.md`). `contract/percentile/`의 남은 두 케이스(언어 분리·0 팽창)와 `cpd/`·`history/`·`graph/`·`reproducibility/`의 G0 케이스는 G0 #2·#3·#7이 전부 요구한다.
+**다음**: CLAUDE.md §3의 4–7번 — Gradle 멀티모듈 골격 + `gradle/libs.versions.toml`, 자체 ArchUnit 규칙(**측정·순위 경로에서 `double`·`float` 금지** D115 포함), `docs/preregistration/p1a.md`, `docs/battery.md`. 픽스처로는 `percentile/`의 남은 둘(언어 분리·0 팽창), `reproducibility/`의 남은 넷(파라미터 변경·reproduce만으로 id 재계산·두 머신 바이트 동일·해시 `pattern` 강제 D128), `cpd/`·`history/`·`graph/`의 G0 케이스 — G0 #2·#3·#7이 전부 요구한다.
 
-**막힌 것**: 없음. v3.7.6·v3.7.7이 첫 구현 PR의 PRD 충돌 5건과 후속 검토 7건을 전부 닫았다(D114–D124).
+**막힌 것**: 없음. D114–D129가 첫 구현 PR의 충돌 5건, 후속 검토 7건, PR #1 감사 4건, 레코드 자리 1건을 전부 닫았다. 남은 계약 공백 하나는 `analysis_input_id`의 **정규 인코딩**(§2.8이 입력 목록만 정하고 바이트로 펴는 방법을 정하지 않는다) — `contract/reproducibility/README.md`에 표시했고 케이스는 로컬 선언으로 유효하다.
 
 ---
 
