@@ -1,0 +1,68 @@
+# G0 게이트의 CI. 계약과 픽스처가 먼저이므로(CLAUDE.md §3) 여기서 도는 것은
+# 대부분 `contract/`의 재계산 대조다.
+name: contract
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  fixtures:
+    name: 적합성 스위트 (§2.9)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # contract/history/가 이력을 만들고, 아래 가드가 커밋을 훑는다
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: 의존 설치
+        run: python -m pip install -r schemas/requirements.txt
+
+      # `--check`는 재생성 결과가 커밋된 것과 **바이트 동일**한지 본다.
+      # 손으로 고친 기대값은 여기서 걸린다(B.4·D26).
+      - name: §2.5 백분위
+        run: python3 contract/percentile/compute.py --check
+      - name: §2.6 CPD 집계
+        run: python3 contract/cpd/compute.py --check
+      - name: §2.7 이력
+        run: |
+          git config --global user.email fixture@example.invalid
+          git config --global user.name fixture
+          python3 contract/history/compute.py --check
+      - name: §2.2–2.3 그래프
+        run: python3 contract/graph/compute.py --check
+      - name: §2.8 재현성 정체성
+        run: python3 contract/reproducibility/compute.py --check
+      - name: §7 스키마 (긍정 + 하드룰 변조)
+        run: python3 contract/schema/compute.py --check
+
+  fixture-change:
+    name: G0 #6 — expected.json 변경에 fixture_change (§2.9·D129)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: 커밋마다 레코드가 있는가
+        run: |
+          sh ci/check-fixture-change.sh \
+            "origin/${{ github.base_ref }}" "${{ github.event.pull_request.head.sha }}"
+
+  build:
+    name: 빌드와 자체 ArchUnit 규칙 (CLAUDE.md §3.5)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'       # §2.8 classes_reproduction_inputs.jdk
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew build --no-daemon
