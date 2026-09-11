@@ -6,6 +6,10 @@
 *.iml
 *.ipr
 *.iws
+.project
+.classpath
+.settings/
+bin/
 
 # Gradle / build (§4.1 — jqradar-core 이하 모듈이 생기면 쓰인다)
 .gradle/
