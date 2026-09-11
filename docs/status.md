@@ -1,10 +1,14 @@
 # 상태 — 다음 세션이 이어받을 것
 
-**지금**: S0 / G0 막바지. CLAUDE.md §3의 1–7번 완료 + G0 픽스처 전부. `contract/` 케이스 **75종** — percentile 6 · schema 45 · reproducibility 1 · **cpd 5 · history 10 · graph 8**(P8 합성 리포 포함). 자체 ArchUnit 규칙 넷 + 반례(테스트 11개), Gradle 골격, P1a 사전 등록, 배터리 확정. **CI가 켜져 있다**(`.github/workflows/contract.yml`) — 재계산 대조 6종 + 빌드 + `fixture_change` 가드. `contract/` 13개 디렉터리 — `percentile/` 6케이스, `schema/` **45케이스**(스키마 7종 × 긍정 + 하드룰 변조, D124), `reproducibility/` 1케이스(합성 리포, 결정적 이력). `schemas/` 7종. 공유 자원 둘: `judgment-vocabulary.json`(D127), `fixture-changes/`(D129). core 측정 코드는 아직 없다.
+**지금**: S0 / G0. **G0 체크리스트(§9) 7항목 중 남은 것은 #1(리뷰어 2명 교차 검토) 하나이고, 그것은 사람의 자리다** — 기계가 대신할 수 없다. #2–#7은 CI가 매 PR에서 지킨다. 검토 자료는 [`g0-review-packet.md`](g0-review-packet.md)에 있다.
 
-**다음**: G0 체크리스트(§9)에서 남은 것은 **#1(리뷰어 2명 교차 검토)뿐**이다 — 사람이 해야 하는 항목이다. 그 뒤는 G1(W4–7): core 측정·백분위·렌즈·JSON, CLI `scan`, `contract/lens`·`gate`, 자기 적용 S1. 픽스처로는 `percentile/`의 남은 둘(언어 분리·0 팽창), `reproducibility/`의 남은 넷(파라미터 변경·reproduce만으로 id 재계산·두 머신 바이트 동일·해시 `pattern` 강제 D128), `cpd/`·`history/`·`graph/`의 G0 케이스 — G0 #2·#3·#7이 전부 요구한다.
+**있는 것**: `prd.md` v3.8.0(D1–D133). `contract/` 케이스 **75종** — percentile 6 · schema 45 · cpd 5 · history 10 · graph 8 · reproducibility 1. `schemas/` 7종. Gradle 골격(모듈 여섯, 빈 소스셋)과 자체 ArchUnit 규칙 넷 + 반례(11 tests). CI 3잡(재계산 대조 · `fixture_change` 가드 · 빌드). `docs/preregistration/p1a.md`, `docs/battery.md`(실측).
 
-**막힌 것**: 없음. D114–D129가 첫 구현 PR의 충돌 5건, 후속 검토 7건, PR #1 감사 4건, 레코드 자리 1건을 전부 닫았다. 남은 계약 공백 하나는 `analysis_input_id`의 **정규 인코딩**(§2.8이 입력 목록만 정하고 바이트로 펴는 방법을 정하지 않는다) — `contract/reproducibility/README.md`에 표시했고 케이스는 로컬 선언으로 유효하다.
+**다음 — 사람이 먼저**: G0 #1. 리뷰어 둘 중 **최소 한 명은 프로젝트 밖**에서 와야 한다(D84, Trusting Trust) — 계약을 구현한 것도, 픽스처를 쓴 것도, 검토 패킷을 쓴 것도 같은 도구다. 통과하면 계약 동결, 그 뒤 G1(§9 W4–7): core 측정·백분위·렌즈·JSON, CLI `scan`, `contract/lens`·`gate`, 자기 적용 S1(`docs/self/`에 첫 지도 보존).
+
+**검토자가 먼저 볼 것** — 강제 장치가 없는 계약 셋(패킷 §1.4): §2.4 파일 쌍(`shared`·`tc`)과 §2.1 저자 사실 넷은 **§2.9 표에 배정 자체가 없고**, #1의 범위인 §6.3–6.6은 값 층 픽스처가 G3에 온다.
+
+**열린 공백**: O 항목 아홉과 PRD 공백 다섯을 패킷 §5에 모았다 — "몰라서 빈 것"과 "열어둔 것"을 가르기 위해서다. 가장 위험한 하나는 `analysis_input_id`의 **정규 인코딩**(§2.8이 입력 목록만 정하고 바이트로 펴는 방법을 정하지 않는다).
 
 ---
 
