@@ -278,7 +278,7 @@ PR #11·#10·#12가 계약 → 구현 → 기록 순서로 머지되고 main pus
 
 **포기한 것.** (A) "창 안 SHA 목록이 조상을 전이적으로 봉인한다"에 기대는 면제 — 논거는 git의 사실이지만 **완전한 클론에서만** 참이라 클론 완전성이 전제로 따라오고, 그 사실을 하중 받는 자리에 두면 D137의 근거("창 밖은 id 밖")와 정면으로 어긋나 §0-21을 다시 열게 된다. (D) 나이 이진화 — `age ≥ 180`은 창 밖이면 자동 참이 되지만 `age > P90_all(age)`는 창 밖 파일들 사이의 순서를 요구하므로 이진화하면 F가 선별력을 잃는다. **B는 D137의 근거 문제를 닫지 않는다** — 전이적 봉인이 사실인 이상 D137의 "창 밖은 id 밖"이라는 근거는 이 판 뒤에도 그대로 남아 있으며, 그것은 별건의 열린 발견이다.
 
-**함께 한 것(계약 아님).** §10의 결정 그룹이 v3.8.1 → v3.8.4 → v3.8.3 → v3.8.2 순으로 어긋나 있었다(최근 셋을 잘못된 자리에 끼워 넣은 편집 결과). v3.8.2 → v3.8.3 → v3.8.4로 복원했다. 내용은 바뀌지 않았고, `tail -1`이 마지막 D 번호를 내도록 한 것뿐이다.
+**함께 한 것(계약 아님).** §10의 결정 그룹이 v3.8.1 → v3.8.4 → v3.8.3 → v3.8.2 순으로 어긋나 있었다(최근 셋을 잘못된 자리에 끼워 넣은 편집 결과). v3.8.2 → v3.8.3 → v3.8.4로 복원했다. 내용은 바뀌지 않았고, `tail -1`이 마지막 D 번호를 내도록 한 것뿐이다. §7 주석의 "스키마는 G1에서 따라간다"는 스키마가 같은 PR에서 따라오면서 거짓이 되어 지웠다 — 계약 안의 거짓 문장은 한 커밋도 두지 않는다.
 
 **이 판이 하지 않은 것.** 나머지 열여덟 건. G0 #1은 통과가 아니다 — D140의 조건은 열린 발견 0이고, 정지 규칙은 O14로 열려 있다.
 
@@ -845,7 +845,7 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
     "window_applied": { "months": 12, "max_commits": 2000, "bound_hit": "time", "commits_in_window": 1340, "merge_commits_excluded": 210,
                         "authors_window_truncated": false, "authors_window_days": 90,   // 90일 지표가 실제로 본 일수(§2.7)
                         "commit_list_sha256": "…",         // 창 안 커밋 SHA 목록(순서 포함)의 해시 — analysis_input_id 입력. 목록 자체는 head + 창 규칙에서 재생성
-                        "last_commit_map_sha256": "…",     // 파일별 마지막 비머지 커밋 맵의 해시 — analysis_input_id 입력(D146). 스키마는 G1에서 따라간다
+                        "last_commit_map_sha256": "…",     // 파일별 마지막 비머지 커밋 맵의 해시 — analysis_input_id 입력(D146)
                         "history_complete": true, "graft_boundary_shas": [] },   // 진단 필드(D148) — id 입력 아님
     "bytecode_scope": { "class_roots": ["build/classes/java/main","build/classes/kotlin/main"], "test_classes_included": false,
                         "generated_excluded": true, "external_edges": 812, "external_included_in_metrics": false },
