@@ -311,6 +311,19 @@
               "type": "string",
               "description": "창 안 커밋 SHA 목록(순서 포함)의 해시(§2.8, D111). 목록 자체는 head + 창 규칙에서 재생성한다 — 그래서 목록 대신 해시만 인쇄한다."
             },
+            "last_commit_map_sha256": {
+              "type": "string",
+              "description": "파일별 마지막 비머지 커밋 맵(경로 → SHA, 미커밋은 null)의 해시(§2.8, D146). `age_last_days`가 읽는 커밋은 창 밖일 수 있으므로(F의 후보가 그런 파일이다) 그 의존을 id 입력에 명시적으로 넣는다 — 커미터 시각은 커밋 객체의 일부이고 SHA는 그 객체 전체의 해시이므로, 나이를 바꿀 수 있는 모든 변화가 이 맵을 바꾼다. **창 안 SHA 목록의 전이적 봉인에 기대지 않는다** — 봉인은 완전한 클론에서만 참이다."
+            },
+            "history_complete": {
+              "type": "boolean",
+              "description": "이력이 완전한가 — `.git/shallow`가 없는가(§2.1, D148). **진단 필드이고 `analysis_input_id` 입력이 아니다**: shallow는 `last_commit_map_sha256`으로 이미 갈리므로 id에 또 넣으면 같은 사실을 두 번 세운다. false면 F 후보의 `age_last_days`는 `age_unknown`이다 — 감지하지 않으면 graft 경계가 파일의 탄생으로 읽혀 null이 아니라 그럴듯한 틀린 수가 나온다."
+            },
+            "graft_boundary_shas": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "graft 경계 커밋의 SHA 목록(§2.1, D148). 진단 필드이고 id 입력이 아니다. 완전한 클론에서는 빈 배열."
+            },
             "authors_window_truncated": {
               "type": "boolean",
               "description": "90일 지표(`distinct_authors_90d`·`change_exposure_90d`)가 창 상한에 잘렸는가(§2.7·D137). **창의 속성이므로 여기 한 번만 적고 파일마다 적지 않는다** — 파일별 표기는 '이 파일이 잘린 구간에 커밋을 가졌나'를 아는 것처럼 읽히는데, 그 커밋들이 창에서 사라져 판정하는 것이므로 알 수 없다. '창이 90일보다 짧다'가 아니라 '상한이 90일 구간을 잘랐다'다 — 90일보다 어린 리포는 `false`다(볼 것이 없었다). 90일 ⊂ 12개월이므로 자를 수 있는 것은 개수 상한뿐이다."
