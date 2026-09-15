@@ -1,0 +1,14 @@
+{
+  "case": "report-reproduce-without-commit-list-sha256",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D111",
+  "what": "창 안 커밋 SHA 목록의 해시는 `analysis_input_id` 입력이므로 `reproduce`에 반드시 나타난다. 빠지면 인쇄된 값만으로 id를 재계산할 수 없고, 그 id는 재계산할 수 없는 숫자 = 의견이다(B.4).",
+  "mechanism": "required(id 입력)",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/reproduce/window_applied"
+  ]
+}

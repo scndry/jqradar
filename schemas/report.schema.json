@@ -136,7 +136,9 @@
         "window_applied",
         "component",
         "parameters",
-        "percentile_method"
+        "percentile_method",
+        "algorithm_versions",
+        "classes_id"
       ],
       "properties": {
         "tool_version": {
@@ -283,7 +285,13 @@
             "months",
             "max_commits",
             "bound_hit",
-            "commits_in_window"
+            "commits_in_window",
+            "commit_list_sha256",
+            "last_commit_map_sha256",
+            "authors_window_truncated",
+            "authors_window_days",
+            "history_complete",
+            "graft_boundary_shas"
           ],
           "properties": {
             "months": {

@@ -1,0 +1,14 @@
+{
+  "case": "report-reproduce-without-classes-id",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D111",
+  "what": "클래스 파일 `(path, sha256(bytes))`는 `analysis_input_id` 입력이다(§2.8). `classes_id`가 그 해시이고, 빠지면 바이트코드 층의 입력이 `reproduce`에서 사라진다.",
+  "mechanism": "required(id 입력)",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/reproduce"
+  ]
+}
