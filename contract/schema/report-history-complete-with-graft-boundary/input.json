@@ -1,0 +1,23 @@
+{
+  "case": "report-history-complete-with-graft-boundary",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "if/then",
+  "contract_ref": "D148",
+  "what": "`history_complete: true`면 graft 경계가 없다 — 경계가 있다는 것이 이력이 잘렸다는 뜻이다(D148). 두 필드는 같은 사실의 두 면이라 따로 참일 수 없다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "reproduce",
+        "window_applied",
+        "graft_boundary_shas"
+      ],
+      "value": [
+        "abc1234"
+      ]
+    }
+  ]
+}
