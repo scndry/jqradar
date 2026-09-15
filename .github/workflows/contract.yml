@@ -26,21 +26,12 @@ jobs:
 
       # `--check`는 재생성 결과가 커밋된 것과 **바이트 동일**한지 본다.
       # 손으로 고친 기대값은 여기서 걸린다(B.4·D26).
-      - name: §2.5 백분위
-        run: python3 contract/percentile/compute.py --check
-      - name: §2.6 CPD 집계
-        run: python3 contract/cpd/compute.py --check
-      - name: §2.7 이력
+      # 무엇이 도는지는 ci/check-all.sh 한 곳에만 적는다 — 목록이 둘이면 하나는 낡는다.
+      - name: 여섯 계약
         run: |
           git config --global user.email fixture@example.invalid
           git config --global user.name fixture
-          python3 contract/history/compute.py --check
-      - name: §2.2–2.3 그래프
-        run: python3 contract/graph/compute.py --check
-      - name: §2.8 재현성 정체성
-        run: python3 contract/reproducibility/compute.py --check
-      - name: §7 스키마 (긍정 + 하드룰 변조)
-        run: python3 contract/schema/compute.py --check
+          sh ci/check-all.sh contracts
 
   fixture-change:
     name: G0 #6 — expected.json 변경에 fixture_change (§2.9·D129)
@@ -52,7 +43,7 @@ jobs:
           fetch-depth: 0
       - name: 커밋마다 레코드가 있는가
         run: |
-          sh ci/check-fixture-change.sh \
+          sh ci/check-all.sh fixture-change \
             "origin/${{ github.base_ref }}" "${{ github.event.pull_request.head.sha }}"
 
   decision-landing:
@@ -61,10 +52,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       # 검사부터 검사한다 — 반례가 깨진 검사는 통과만 시킨다(D131·§0-22).
-      - name: 자기 반례 (무는가 / 물지 말아야 할 것을 물지 않는가)
-        run: sh ci/check-decision-landing.sh --selftest
-      - name: prd.md의 결정 착지
-        run: sh ci/check-decision-landing.sh prd.md
+      - name: 자기 반례 먼저, 그다음 prd.md
+        run: sh ci/check-all.sh landing
 
   review-entry:
     name: G0 #1 교차 검토 입구 (docs/review/)
@@ -75,7 +64,7 @@ jobs:
       # 이 잡이 지키는 것은 "리뷰어가 첫 발을 헛디디지 않는가"다:
       # 절 발췌기가 옳은가, 쌍이 가리키는 절·D 번호·§0 항목이 실재하는가.
       - name: 자기 반례
-        run: python3 docs/review/g0-review.py --selftest
+        run: sh ci/check-all.sh review-entry
 
   build:
     name: 빌드와 자체 ArchUnit 규칙 (CLAUDE.md §3.5)

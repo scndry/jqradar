@@ -1,0 +1,19 @@
+{
+  "case": "report-reproduce-without-algorithm-versions",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "required(id 입력)",
+  "contract_ref": "D111",
+  "what": "측정·컴포넌트 전략 알고리즘 버전은 `analysis_input_id` 입력이다(§2.8). 공식이 바뀌면 트리가 같아도 결과가 다르므로, 빠지면 두 리포트가 왜 갈렸는지 `reproduce`로 알 수 없다.",
+  "patch": [
+    {
+      "op": "remove",
+      "path": [
+        "reproduce",
+        "algorithm_versions"
+      ]
+    }
+  ]
+}

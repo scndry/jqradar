@@ -1,0 +1,14 @@
+{
+  "case": "report-reproduce-without-last-commit-map-sha256",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D146",
+  "what": "파일별 마지막 비머지 커밋 맵의 해시는 `analysis_input_id` 입력이다(D146). 빠지면 `age_last_days`의 의존이 `reproduce`에서 사라져 같은 id가 다른 F를 내는 경로가 다시 열린다.",
+  "mechanism": "required(id 입력)",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/reproduce/window_applied"
+  ]
+}
