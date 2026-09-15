@@ -293,6 +293,28 @@
             "history_complete",
             "graft_boundary_shas"
           ],
+          "allOf": [
+            {
+              "if": {
+                "properties": { "history_complete": { "const": true } },
+                "required": ["history_complete"]
+              },
+              "then": {
+                "properties": { "graft_boundary_shas": { "maxItems": 0 } },
+                "description": "이력이 완전하면 graft 경계가 없다(§2.1, D148). 두 필드는 같은 사실의 두 면이라 따로 참일 수 없다 — 각각만 보면 `history_complete: true`인데 경계가 있다고 적은 산출물이 통과한다."
+              }
+            },
+            {
+              "if": {
+                "properties": { "history_complete": { "const": false } },
+                "required": ["history_complete"]
+              },
+              "then": {
+                "properties": { "graft_boundary_shas": { "minItems": 1 } },
+                "description": "이력이 불완전하면 graft 경계가 최소 하나 있다(§2.1, D148). 경계를 인쇄하지 않으면 어디서 이력이 끊겼는지 `reproduce`로 알 수 없고, 감지 실패는 `null`이 아니라 그럴듯한 틀린 수로 나타난다(§12)."
+              }
+            }
+          ],
           "properties": {
             "months": {
               "type": "integer"
