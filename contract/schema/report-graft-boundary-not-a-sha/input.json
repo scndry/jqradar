@@ -1,0 +1,32 @@
+{
+  "case": "report-graft-boundary-not-a-sha",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "pattern(해시 모양)",
+  "contract_ref": "D148",
+  "what": "graft 경계는 커밋 SHA다(40 hex). 모양이 아닌 값이 통과하면 `reproduce`만으로 그 커밋을 찾을 수 없다 — D128이 미룬 해시 `pattern` 중 **지금 걸 수 있는 유일한 자리**다: §7 예시가 빈 배열이라 예시를 거부하지 않는다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "reproduce",
+        "window_applied",
+        "history_complete"
+      ],
+      "value": false
+    },
+    {
+      "op": "set",
+      "path": [
+        "reproduce",
+        "window_applied",
+        "graft_boundary_shas"
+      ],
+      "value": [
+        "not-a-sha"
+      ]
+    }
+  ]
+}

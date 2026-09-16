@@ -1,0 +1,12 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "schema.graft_boundary_shas",
+    "old": "items: {type: string}",
+    "new": "items: {type: string, pattern: ^[0-9a-f]{40}$}, uniqueItems: true",
+    "note": "값 불변 — 판정(reject)은 그대로고 `rejected_at`에 걸린 자리 하나가 늘어난다. `report-history-complete-with-graft-boundary`의 변조값 `[\"abc1234\"]`는 이전에도 `if/then`(D148, `history_complete: true` → `maxItems: 0`)에 걸려 거부됐고, 이제 `items.pattern`에도 걸려 `/reproduce/window_applied/graft_boundary_shas/0`이 함께 인쇄된다. 거부 여부·이유의 계약은 바뀌지 않았고 **어디서 걸렸는지의 목록만 늘었다**. 그럼에도 contract_change인 이유: 스키마가 강제하는 것이 늘었다 — graft 경계가 40 hex이고 중복이 없다는 것이 이제 구조로 막힌다(D148). 새 케이스 둘(`report-graft-boundary-duplicate-sha`·`report-graft-boundary-not-a-sha`)은 추가라 이 레코드의 대상이 아니다.",
+    "fixtures": [
+      "schema/report-history-complete-with-graft-boundary"
+    ]
+  }
+}

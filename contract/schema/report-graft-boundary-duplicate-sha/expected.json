@@ -1,0 +1,14 @@
+{
+  "case": "report-graft-boundary-duplicate-sha",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D148",
+  "what": "graft 경계는 커밋의 집합이다 — 같은 SHA가 두 번 나오면 경계를 세는 수가 뜻을 잃는다. 중복이 통과하면 `history_complete: false`의 경계 개수로 잘린 자리를 되짚을 수 없다.",
+  "mechanism": "uniqueItems",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/reproduce/window_applied/graft_boundary_shas"
+  ]
+}

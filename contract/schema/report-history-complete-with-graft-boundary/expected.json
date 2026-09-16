@@ -9,6 +9,7 @@
   "schema": "report.schema.json",
   "verdict": "reject",
   "rejected_at": [
-    "/reproduce/window_applied/graft_boundary_shas"
+    "/reproduce/window_applied/graft_boundary_shas",
+    "/reproduce/window_applied/graft_boundary_shas/0"
   ]
 }
