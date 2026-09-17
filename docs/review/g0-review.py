@@ -324,6 +324,180 @@ def make_record(reviewer: str) -> Path:
 
 # --------------------------------------------------------------------------
 
+
+# ── `--count` — 기록에서 열린 발견을 센다 (D140·D151·D152) ────────────────────
+#
+# **사람 보고가 아니라 계산이다.** 그래서 무엇을 읽는지가 계약이어야 한다.
+#
+# 읽는 것: `docs/review/records/`의 **종합** 파일에 있는 표 둘.
+#
+#   병합 대응표   `| # | 종합 발견 | 병합한 개별 | 절 집합… | 범위 |`
+#   미부착 표     `| 개별 | 주장 | 절 집합 | 범위 |`
+#
+# 개별 기록이 **정본**이므로(D141) 절 집합은 개별의 `절:` 줄에서 온 것이어야 하고,
+# 종합은 자기가 병합한 개별을 가리켜야 한다(D152). 그래서 **대응표가 없는 종합은
+# 세지 않고 "대응 없음"으로 보고한다** — 1차 종합이 범위 안 발견 일곱을 떨어뜨린 것을
+# 종합만 읽었으면 놓쳤다(2026-09-16 대응표).
+#
+# 세는 단위는 `dedupe_key`(D151·D152) = (절 집합, 주장, 범위):
+#   · 한 종합 항목에 병합된 개별들 → key 하나
+#   · 어느 종합 항목에도 안 붙은 개별(미부착) → 각각 key 하나
+#   · **쪼갬**: 한 개별이 두 종합 항목에 붙으면 그 둘은 **한 key다**(접는다).
+#     접지 않으면 종합자가 개별 하나를 쪼개 "발견 수"를 늘릴 수 있다.
+#   · 출처 없는 종합 항목(병합한 개별이 0) → 세지 않고 보고한다.
+#
+# 범위(D152): **밖 = 절 집합에 §2.1–2.9가 하나도 없는 것.** 표의 선언과 절 집합에서
+# 계산한 값이 어긋나면 어긋남을 보고한다 — 표를 믿지 않는다.
+#
+# 닫힘: **기록에 `닫힘 — D<n>`이 적힌 것만.** `prd.md`를 읽어 추측하지 않는다.
+# 표시가 없으면 열린 것이다.
+
+KEY_TABLE_HEAD = "| # | 종합 발견 | 병합한 개별 |"
+UNATTACHED_HEAD = "| 개별 | 주장 | 절 집합 | 범위 |"
+CLOSED_RE = re.compile(r"닫힘\s*—\s*(D\d+)")
+SOURCE_RE = re.compile(r"R\d+-\d+")
+SECTION_RE = re.compile(r"§\d+(?:\.\d+)?")
+IN_SCOPE_RE = re.compile(r"§2\.[1-9]$")
+
+
+def _rows_after(lines: list[str], head: str) -> list[list[str]]:
+    """표 헤더 다음의 행들을 셀 목록으로. 구분선(---)은 건너뛰고 표가 끝나면 멈춘다."""
+    out = []
+    for i, l in enumerate(lines):
+        if not l.startswith(head):
+            continue
+        for l2 in lines[i + 1:]:
+            if not l2.startswith("|"):
+                break
+            cells = [c.strip() for c in l2.strip().strip("|").split("|")]
+            if all(set(c) <= set("-: ") for c in cells):
+                continue
+            out.append(cells)
+        break
+    return out
+
+
+def _scope_of(sections: list[str]) -> str:
+    return "안" if any(IN_SCOPE_RE.match(s) for s in sections) else "밖"
+
+
+def collect_keys(records_dir: Path) -> dict:
+    """종합 파일들에서 key를 모은다. 판정하지 않고 읽은 것과 어긋남을 함께 돌려준다."""
+    keys, problems = [], []
+    synth = sorted(p for p in records_dir.glob("*.md") if "종합" in p.name)
+    for path in synth:
+        lines = path.read_text(encoding="utf-8").split("\n")
+        merged = _rows_after(lines, KEY_TABLE_HEAD)
+        unatt = _rows_after(lines, UNATTACHED_HEAD)
+        if not merged:
+            problems.append(("대응 없음", path.name,
+                             "병합 대응표가 없다 — 이 종합은 세지 않는다(D152)"))
+            continue
+        groups = []   # (id, sources, sections, declared, closed)
+        for cells in merged:
+            ident = cells[0]
+            srcs = SOURCE_RE.findall(cells[2]) if len(cells) > 2 else []
+            secs = SECTION_RE.findall(cells[3]) if len(cells) > 3 else []
+            decl = "밖" if len(cells) > 4 and "밖" in cells[4] else "안"
+            closed = CLOSED_RE.search(" ".join(cells))
+            if not srcs:
+                problems.append(("출처 없음", path.name,
+                                 f"{ident} — 병합한 개별이 없다. 세지 않는다"))
+                continue
+            groups.append([ident, srcs, secs, decl, closed.group(1) if closed else None])
+        # 쪼갬: 같은 개별이 둘 이상의 종합 항목에 붙으면 접는다
+        folded, seen = [], {}
+        for g in groups:
+            hit = next((folded[seen[s]] for s in g[1] if s in seen), None)
+            if hit is not None:
+                problems.append(("쪼갬", path.name,
+                                 f"{g[0]} — {hit[0]}과 같은 개별({', '.join(sorted(set(g[1]) & set(hit[1])))})"
+                                 f". 한 key로 접는다"))
+                hit[0] += f"+{g[0]}"
+                hit[1] = sorted(set(hit[1]) | set(g[1]))
+                hit[2] = sorted(set(hit[2]) | set(g[2]))
+                hit[4] = hit[4] or g[4]
+                continue
+            folded.append(g)
+            for s in g[1]:
+                seen[s] = len(folded) - 1
+        for cells in unatt:
+            srcs = SOURCE_RE.findall(cells[0])
+            secs = SECTION_RE.findall(cells[2]) if len(cells) > 2 else []
+            decl = "밖" if len(cells) > 3 and "밖" in cells[3] else "안"
+            closed = CLOSED_RE.search(" ".join(cells))
+            if not srcs:
+                continue
+            folded.append([srcs[0] + "(미부착)", srcs, secs, decl,
+                           closed.group(1) if closed else None])
+        for ident, srcs, secs, decl, closed in folded:
+            computed = _scope_of(secs)
+            if computed != decl:
+                problems.append(("범위 어긋남", path.name,
+                                 f"{ident} — 표는 '{decl}', 절 집합 {' '.join(secs)}로는 '{computed}'"))
+            keys.append({"id": ident, "file": path.name, "sources": srcs,
+                         "sections": secs, "scope": computed, "closed": closed})
+    return {"keys": keys, "problems": problems, "synth": [p.name for p in synth]}
+
+
+def count_keys(records_dir: Path = RECORDS) -> int:
+    got = collect_keys(records_dir)
+    keys, problems = got["keys"], got["problems"]
+    inside = [k for k in keys if k["scope"] == "안"]
+    closed = [k for k in inside if k["closed"]]
+    openk = [k for k in inside if not k["closed"]]
+    print("G0 #1 열린 발견 — 기록에서 센 수 (D140·D151·D152)")
+    print(f"  읽은 종합: {', '.join(got['synth']) or '없음'}")
+    print()
+    print(f"  범위 안 `dedupe_key`  총 {len(inside)}")
+    print(f"    닫힘  {len(closed)}" + (f" — {', '.join(sorted({k['closed'] for k in closed}))}" if closed else ""))
+    print(f"    열림  {len(openk)}")
+    print(f"  범위 밖 (G3 목록으로) {len([k for k in keys if k['scope'] == '밖'])}")
+    print()
+    print("  **닫힘 표시는 기록에서만 읽는다** — `닫힘 — D<n>`이 적힌 key만 닫힌 것으로 센다.")
+    print("  `prd.md`를 읽어 추측하지 않는다. 표시가 없으면 열린 것이다.")
+    if problems:
+        print()
+        print("  보고 — 세지 않았거나 어긋난 것:")
+        for kind, where, what in problems:
+            print(f"    [{kind}] {where}: {what}")
+    if openk:
+        print()
+        print("  열린 key:")
+        for k in openk:
+            print(f"    {k['id']:<28} {' '.join(k['sections'])}")
+    return 0
+
+
+def count_selftest() -> list[tuple[str, bool, str]]:
+    """`--count`의 자기 반례. 합성 종합 하나마다 기대를 첫 줄 주석에 적어 둔다.
+
+    계산기가 통과만 시키면 "열린 발견 0"이 검사 없이 참이 된다 — 그래서 **세는 쪽과
+    세지 않는 쪽을 둘 다** 시험한다: 닫힘/열림을 뒤집지 않는가, 걸친 것을 밖이라
+    하지 않는가(D152), 출처 없는 것을 세지 않는가, 쪼개진 것을 둘로 세지 않는가.
+    """
+    import json as _json
+    out = []
+    cases = sorted((ROOT / "docs" / "review" / "count-cases").glob("*/"))
+    for case in cases:
+        md = case / "종합.md"
+        if not md.exists():
+            continue
+        head = md.read_text(encoding="utf-8").split("\n", 1)[0]
+        exp = _json.loads(re.search(r"<!-- expect: (.*) -->", head).group(1))
+        got = collect_keys(case)
+        inside = [k for k in got["keys"] if k["scope"] == "안"]
+        closed = [k for k in inside if k["closed"]]
+        kinds = sorted({p[0] for p in got["problems"]})
+        ok = (len(inside) == exp["inside"] and len(closed) == exp["closed"]
+              and len(inside) - len(closed) == exp["open"]
+              and kinds == sorted(exp["problems"]))
+        why = re.sub(r"^# 합성 종합 — ", "", md.read_text(encoding="utf-8").split("\n")[1])
+        detail = f"안{len(inside)} 닫{len(closed)} 열{len(inside)-len(closed)} {kinds or ''}"
+        out.append((f"{case.name:<30} {why}", ok, detail))
+    return out
+
+
 def selftest() -> int:
     """이 스크립트 자신의 반례 — 있는 절을 있다고, 없는 절을 없다고 하는가(D131·§0-22)."""
     checks = []
@@ -368,6 +542,9 @@ def selftest() -> int:
                  if d not in have_d]
     checks.append((f"쌍이 인용하는 D 번호·§0 항목이 prd.md에 있다"
                    + (f" — 없는 것 {dangling}" if dangling else ""), not dangling))
+    for name, ok, detail in count_selftest():
+        checks.append((f"--count 반례: {name}" + ("" if ok else f"  [{detail}]"), ok))
+
     bad = [name for name, ok in checks if not ok]
     for name, ok in checks:
         print(f"  {'ok ' if ok else 'BAD'}  {name}")
@@ -379,8 +556,12 @@ def main() -> int:
     ap.add_argument("--verify", action="store_true", help="기계 확인만")
     ap.add_argument("--pairs", action="store_true", help="읽을 쌍만 (본문 발췌 포함)")
     ap.add_argument("--record", metavar="이름", help="기록 파일만 만든다")
+    ap.add_argument("--count", action="store_true", help="기록에서 열린 발견을 센다")
     ap.add_argument("--selftest", action="store_true", help="이 스크립트 자신의 반례")
     args = ap.parse_args()
+
+    if args.count:
+        return count_keys()
 
     if args.selftest:
         print("자기 반례 — 절 발췌기가 있는 것을 있다고, 없는 것을 없다고 하는가:")
