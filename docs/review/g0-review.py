@@ -359,12 +359,15 @@ KEY_TABLE_HEAD = "| # | 종합 발견 | 병합한 개별 |"
 UNATTACHED_HEAD = "| 개별 | 주장 | 절 집합 | 범위 |"
 CLOSED_RE = re.compile(r"닫힘\s*—\s*(D\d+)")
 SPLIT_RE = re.compile(r"분리\s*—\s*(D\d+)")
-SOURCE_RE = re.compile(r"R\d+-\d+")
+SOURCE_RE = re.compile(r"(?:R\d+|[A-Z])-\d+")
 SECTION_RE = re.compile(r"§\d+(?:\.\d+)?")
 IN_SCOPE_RE = re.compile(r"§2\.[1-9]$")
 
 
+# 개별 기록의 파일명 → key 접두어. 1차는 `리뷰어-<n>.md` → `R<n>`,
+# 2차는 모델 이름 `…-<model>.md` → 대문자 머리글자(`haiku` → `H`).
 REVIEWER_FILE_RE = re.compile(r"리뷰어-(\d+)\.md$")
+MODEL_FILE_RE = re.compile(r"\d{4}-\d\d-\d\d-([a-z]+)\.md$")
 FINDING_HEAD_RE = re.compile(r"^### 발견 (\d+)\b")
 
 
@@ -378,14 +381,18 @@ def read_individuals(records_dir: Path) -> dict:
     out = {}
     for path in records_dir.glob("*.md"):
         m = REVIEWER_FILE_RE.search(path.name)
-        if not m:
-            continue
-        r = m.group(1)
+        if m:
+            r = m.group(1)
+        else:
+            m = MODEL_FILE_RE.search(path.name)
+            if not m or "종합" in path.name:
+                continue
+            r = m.group(1)[0].upper()
         cur = None
         for line in path.read_text(encoding="utf-8").split("\n"):
             head = FINDING_HEAD_RE.match(line)
             if head:
-                cur = f"R{r}-{head.group(1)}"
+                cur = f"{'R' if r.isdigit() else ''}{r}-{head.group(1)}"
                 out[cur] = {"sections": [], "file": path.name}
                 continue
             if cur and line.startswith("- 절:") and not out[cur]["sections"]:
