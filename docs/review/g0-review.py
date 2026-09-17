@@ -344,6 +344,9 @@ def make_record(reviewer: str) -> Path:
 #   · 어느 종합 항목에도 안 붙은 개별(미부착) → 각각 key 하나
 #   · **쪼갬**: 한 개별이 두 종합 항목에 붙으면 그 둘은 **한 key다**(접는다).
 #     접지 않으면 종합자가 개별 하나를 쪼개 "발견 수"를 늘릴 수 있다.
+#   · **결정에 의한 분리**(D153): `분리 — D<n>`이 붙은 행은 접지 않는다. D가 key의
+#     일부만 닫았으면 주장이 실은 둘이었다는 뜻이므로 **닫는 결정이** 쪼갠다.
+#     **D 번호가 그 둘을 가르는 유일한 표지다** — 없으면 종합자의 쪼갬으로 보아 접는다.
 #   · 출처 없는 종합 항목(병합한 개별이 0) → 세지 않고 보고한다.
 #
 # 범위(D152): **밖 = 절 집합에 §2.1–2.9가 하나도 없는 것.** 표의 선언과 절 집합에서
@@ -355,6 +358,7 @@ def make_record(reviewer: str) -> Path:
 KEY_TABLE_HEAD = "| # | 종합 발견 | 병합한 개별 |"
 UNATTACHED_HEAD = "| 개별 | 주장 | 절 집합 | 범위 |"
 CLOSED_RE = re.compile(r"닫힘\s*—\s*(D\d+)")
+SPLIT_RE = re.compile(r"분리\s*—\s*(D\d+)")
 SOURCE_RE = re.compile(r"R\d+-\d+")
 SECTION_RE = re.compile(r"§\d+(?:\.\d+)?")
 IN_SCOPE_RE = re.compile(r"§2\.[1-9]$")
@@ -449,10 +453,16 @@ def collect_keys(records_dir: Path) -> dict:
                                  + ". 세지 않는다"))
                 continue
             secs = _reconcile(ident, srcs, secs, individuals, problems, path.name)
-            groups.append([ident, srcs, secs, decl, closed.group(1) if closed else None])
+            split = SPLIT_RE.search(" ".join(cells))
+            groups.append([ident, srcs, secs, decl,
+                           closed.group(1) if closed else None,
+                           split.group(1) if split else None])
         # 쪼갬: 같은 개별이 둘 이상의 종합 항목에 붙으면 접는다
         folded, seen = [], {}
         for g in groups:
+            if g[5]:   # `분리 — D<n>` — 닫는 결정이 쪼갠 것이라 접지 않는다(D153)
+                folded.append(g)
+                continue
             hit = next((folded[seen[s]] for s in g[1] if s in seen), None)
             if hit is not None:
                 problems.append(("쪼갬", path.name,
@@ -462,6 +472,7 @@ def collect_keys(records_dir: Path) -> dict:
                 hit[1] = sorted(set(hit[1]) | set(g[1]))
                 hit[2] = sorted(set(hit[2]) | set(g[2]))
                 hit[4] = hit[4] or g[4]
+                hit[5] = hit[5] or g[5]
                 continue
             folded.append(g)
             for s in g[1]:
@@ -479,8 +490,8 @@ def collect_keys(records_dir: Path) -> dict:
                 continue
             secs = _reconcile(srcs[0] + "(미부착)", srcs, secs, individuals, problems, path.name)
             folded.append([srcs[0] + "(미부착)", srcs, secs, decl,
-                           closed.group(1) if closed else None])
-        for ident, srcs, secs, decl, closed in folded:
+                           closed.group(1) if closed else None, None])
+        for ident, srcs, secs, decl, closed, _split in folded:
             computed = _scope_of(secs)
             if computed != decl:
                 problems.append(("범위 어긋남", path.name,
