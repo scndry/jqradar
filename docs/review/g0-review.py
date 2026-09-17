@@ -357,9 +357,9 @@ def make_record(reviewer: str) -> Path:
 
 KEY_TABLE_HEAD = "| # | 종합 발견 | 병합한 개별 |"
 UNATTACHED_HEAD = "| 개별 | 주장 | 절 집합 | 범위 |"
-CLOSED_RE = re.compile(r"닫힘\s*—\s*(D\d+)")
+CLOSED_RE = re.compile(r"닫힘\s*—\s*((?:D\d+[·,]?\s*)+)")
 SPLIT_RE = re.compile(r"분리\s*—\s*(D\d+)")
-SOURCE_RE = re.compile(r"(?:R\d+|[A-Z])-\d+")
+SOURCE_RE = re.compile(r"(?:R\d+|[A-Z][A-Z0-9_]*)-\d+")
 SECTION_RE = re.compile(r"§\d+(?:\.\d+)?")
 IN_SCOPE_RE = re.compile(r"§2\.[1-9]$")
 
@@ -368,6 +368,8 @@ IN_SCOPE_RE = re.compile(r"§2\.[1-9]$")
 # 2차는 모델 이름 `…-<model>.md` → 대문자 머리글자(`haiku` → `H`).
 REVIEWER_FILE_RE = re.compile(r"리뷰어-(\d+)\.md$")
 MODEL_FILE_RE = re.compile(r"\d{4}-\d\d-\d\d-([a-z]+)\.md$")
+# 기록이 스스로 적는 접두어 — 파일명 추론보다 우선한다.
+PREFIX_DECL_RE = re.compile(r"^- key 접두어:\s*([A-Z][A-Z0-9_]*)\s*$", re.M)
 FINDING_HEAD_RE = re.compile(r"^### 발견 (\d+)\b")
 
 
@@ -380,16 +382,22 @@ def read_individuals(records_dir: Path) -> dict:
     """
     out = {}
     for path in records_dir.glob("*.md"):
-        m = REVIEWER_FILE_RE.search(path.name)
-        if m:
+        if "종합" in path.name:
+            continue
+        text = path.read_text(encoding="utf-8")
+        # 기록이 스스로 접두어를 선언하면 그것을 쓴다 — **개별 기록이면 저자가 누구든 읽는다.**
+        # 파일명에서 추론하면 패널 밖(소유자·외부 사람)의 기록이 조용히 빠진다.
+        decl = PREFIX_DECL_RE.search(text)
+        if decl:
+            r = decl.group(1)
+        elif (m := REVIEWER_FILE_RE.search(path.name)):
             r = m.group(1)
-        else:
-            m = MODEL_FILE_RE.search(path.name)
-            if not m or "종합" in path.name:
-                continue
+        elif (m := MODEL_FILE_RE.search(path.name)):
             r = m.group(1)[0].upper()
+        else:
+            continue
         cur = None
-        for line in path.read_text(encoding="utf-8").split("\n"):
+        for line in text.split("\n"):
             head = FINDING_HEAD_RE.match(line)
             if head:
                 cur = f"{'R' if r.isdigit() else ''}{r}-{head.group(1)}"
@@ -462,7 +470,7 @@ def collect_keys(records_dir: Path) -> dict:
             secs = _reconcile(ident, srcs, secs, individuals, problems, path.name)
             split = SPLIT_RE.search(" ".join(cells))
             groups.append([ident, srcs, secs, decl,
-                           closed.group(1) if closed else None,
+                           "·".join(re.findall(r"D\d+", closed.group(1))) if closed else None,
                            split.group(1) if split else None])
         # 쪼갬: 같은 개별이 둘 이상의 종합 항목에 붙으면 접는다
         folded, seen = [], {}
@@ -497,7 +505,7 @@ def collect_keys(records_dir: Path) -> dict:
                 continue
             secs = _reconcile(srcs[0] + "(미부착)", srcs, secs, individuals, problems, path.name)
             folded.append([srcs[0] + "(미부착)", srcs, secs, decl,
-                           closed.group(1) if closed else None, None])
+                           "·".join(re.findall(r"D\d+", closed.group(1))) if closed else None, None])
         for ident, srcs, secs, decl, closed, _split in folded:
             computed = _scope_of(secs)
             if computed != decl:
@@ -518,7 +526,7 @@ def count_keys(records_dir: Path = RECORDS) -> int:
     print(f"  읽은 종합: {', '.join(got['synth']) or '없음'}")
     print()
     print(f"  범위 안 `dedupe_key`  총 {len(inside)}")
-    print(f"    닫힘  {len(closed)}" + (f" — {', '.join(sorted({k['closed'] for k in closed}))}" if closed else ""))
+    print(f"    닫힘  {len(closed)}" + (f" — {', '.join(sorted({d for k in closed for d in k['closed'].split('·')}, key=lambda x: int(x[1:])))}" if closed else ""))
     print(f"    열림  {len(openk)}")
     print(f"  범위 밖 (G3 목록으로) {len([k for k in keys if k['scope'] == '밖'])}")
     print()
