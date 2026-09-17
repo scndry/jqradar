@@ -360,6 +360,35 @@ SECTION_RE = re.compile(r"§\d+(?:\.\d+)?")
 IN_SCOPE_RE = re.compile(r"§2\.[1-9]$")
 
 
+REVIEWER_FILE_RE = re.compile(r"리뷰어-(\d+)\.md$")
+FINDING_HEAD_RE = re.compile(r"^### 발견 (\d+)\b")
+
+
+def read_individuals(records_dir: Path) -> dict:
+    """개별 기록에서 `R<k>-<n>` → 절 집합을 읽는다. **개별이 정본이다**(D141·D152).
+
+    `--count`가 종합의 표만 읽으면 표가 정본을 배신해도 조용히 센다 — 표의 절 집합을
+    `§2.8 §7`에서 `§7`로 바꾸고 범위 선언도 `밖`으로 바꾸면 범위 안 key 하나가 소리
+    없이 사라진다(2026-09-17 변조로 확인). 표는 **사본**이므로 정본과 대조한다.
+    """
+    out = {}
+    for path in records_dir.glob("*.md"):
+        m = REVIEWER_FILE_RE.search(path.name)
+        if not m:
+            continue
+        r = m.group(1)
+        cur = None
+        for line in path.read_text(encoding="utf-8").split("\n"):
+            head = FINDING_HEAD_RE.match(line)
+            if head:
+                cur = f"R{r}-{head.group(1)}"
+                out[cur] = {"sections": [], "file": path.name}
+                continue
+            if cur and line.startswith("- 절:") and not out[cur]["sections"]:
+                out[cur]["sections"] = SECTION_RE.findall(line)
+    return out
+
+
 def _rows_after(lines: list[str], head: str) -> list[list[str]]:
     """표 헤더 다음의 행들을 셀 목록으로. 구분선(---)은 건너뛰고 표가 끝나면 멈춘다."""
     out = []
@@ -377,6 +406,17 @@ def _rows_after(lines: list[str], head: str) -> list[list[str]]:
     return out
 
 
+def _reconcile(ident, srcs, declared, individuals, problems, where) -> list:
+    """표의 절 집합을 **개별의 합집합**과 대조한다. 정본은 개별이므로 개별을 돌려준다."""
+    truth = sorted({s for k in srcs for s in individuals.get(k, {}).get("sections", [])},
+                   key=lambda x: [float(y) for y in x[1:].split(".")] + [0])
+    if sorted(set(declared)) != sorted(set(truth)):
+        problems.append(("절 집합 어긋남", where,
+                         f"{ident} — 표는 `{' '.join(declared) or '(없음)'}`, "
+                         f"개별({', '.join(srcs)})의 합집합은 `{' '.join(truth)}`. 개별이 정본이다"))
+    return truth
+
+
 def _scope_of(sections: list[str]) -> str:
     return "안" if any(IN_SCOPE_RE.match(s) for s in sections) else "밖"
 
@@ -384,6 +424,7 @@ def _scope_of(sections: list[str]) -> str:
 def collect_keys(records_dir: Path) -> dict:
     """종합 파일들에서 key를 모은다. 판정하지 않고 읽은 것과 어긋남을 함께 돌려준다."""
     keys, problems = [], []
+    individuals = read_individuals(records_dir)
     synth = sorted(p for p in records_dir.glob("*.md") if "종합" in p.name)
     for path in synth:
         lines = path.read_text(encoding="utf-8").split("\n")
@@ -400,10 +441,14 @@ def collect_keys(records_dir: Path) -> dict:
             secs = SECTION_RE.findall(cells[3]) if len(cells) > 3 else []
             decl = "밖" if len(cells) > 4 and "밖" in cells[4] else "안"
             closed = CLOSED_RE.search(" ".join(cells))
-            if not srcs:
+            missing = [s for s in srcs if s not in individuals]
+            if not srcs or missing:
                 problems.append(("출처 없음", path.name,
-                                 f"{ident} — 병합한 개별이 없다. 세지 않는다"))
+                                 f"{ident} — " + ("병합한 개별이 없다" if not srcs
+                                  else f"가리킨 개별이 실재하지 않는다: {', '.join(missing)}")
+                                 + ". 세지 않는다"))
                 continue
+            secs = _reconcile(ident, srcs, secs, individuals, problems, path.name)
             groups.append([ident, srcs, secs, decl, closed.group(1) if closed else None])
         # 쪼갬: 같은 개별이 둘 이상의 종합 항목에 붙으면 접는다
         folded, seen = [], {}
@@ -426,8 +471,13 @@ def collect_keys(records_dir: Path) -> dict:
             secs = SECTION_RE.findall(cells[2]) if len(cells) > 2 else []
             decl = "밖" if len(cells) > 3 and "밖" in cells[3] else "안"
             closed = CLOSED_RE.search(" ".join(cells))
-            if not srcs:
+            missing = [s for s in srcs if s not in individuals]
+            if not srcs or missing:
+                if srcs:
+                    problems.append(("출처 없음", path.name,
+                                     f"{srcs[0]}(미부착) — 가리킨 개별이 실재하지 않는다. 세지 않는다"))
                 continue
+            secs = _reconcile(srcs[0] + "(미부착)", srcs, secs, individuals, problems, path.name)
             folded.append([srcs[0] + "(미부착)", srcs, secs, decl,
                            closed.group(1) if closed else None])
         for ident, srcs, secs, decl, closed in folded:
