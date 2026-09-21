@@ -1,0 +1,14 @@
+{
+  "case": "report-fraction-parameter-as-json-number",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D156",
+  "what": "분수 파라미터는 id 입력에서 십진 문자열이고 `reproduce.parameters`는 그 문자열을 **그대로** 인쇄한다 — 인쇄 = 해시 입력(D156). JSON 숫자 `0.8`이 통과하면 인쇄와 해시 입력이 갈리고, 그 값은 §2.5가 '이진 부동소수점으로 파싱되어 신뢰할 수 없다'고 적은 값이다.",
+  "mechanism": "type(십진 문자열)",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/reproduce/parameters/verify.min_changed_line_coverage"
+  ]
+}
