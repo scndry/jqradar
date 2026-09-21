@@ -23,7 +23,7 @@
 | [`auto-oversized-child-splits/`](auto-oversized-child-splits/) | `auto` 3/4 — **전체 클래스 수**의 60%를 넘는 자식은 추가 분할(D130) |
 | [`auto-multiple-roots/`](auto-multiple-roots/) | `auto` 4/4 — 루트가 여럿이면 루트별로 |
 | [`component-cycle/`](component-cycle/) | Tarjan SCC. 새 SCC는 게이트에서 1개라도 FAIL이다(§5.3) |
-| [`nccd-cross-check/`](nccd-cross-check/) | §2.3 본문의 검산 — N=41, CCD=512 → 185.48 / 12.49 / 0.305 / **2.76** |
+| [`nccd-cross-check/`](nccd-cross-check/) | §2.3 본문의 검산 — N=41, CCD=512 → 185.48 / 12.49 / 0.3046 / **2.76** |
 | [`deep-enterprise-packages/`](deep-enterprise-packages/) | **P8의 합성 리포**(§9) — 깊은 기업형 패키지에서 `auto`가 업무 영역을 내는가 |
 
 `deep-enterprise-packages/`가 `docs/battery.md`가 예고한 P8 합성 리포다. 패키지가 6–7단계일 때 `auto`가 기술 계층(domain·adapter)이 아니라 업무 영역(orders·payments·shipping·shared)으로 접는지를 본다. P8은 이것을 아키텍트 2명의 블라인드 주석과 대조하고(inter-rater κ), 이 픽스처는 그 대조의 **입력**을 결정적으로 고정한다.

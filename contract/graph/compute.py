@@ -285,12 +285,13 @@ def build_expected(inp: dict) -> dict:
         # log₂는 유리수로 닫히지 않는다 — 34자리에서 파생하고 마지막에 한 번 반올림(D121).
         "CCD_balanced": exact.round_half_even(balanced, 2),
         "NCCD": nccd,
-        # §2.3 본문이 인용한 자릿수. 표시용이며 비교에 쓰지 않는다.
+        # 표시 스케일은 D155-1(§2.5): 비율(RACD) 4자리, Lakos 절대량(ACD·CCD_balanced·NCCD) 2자리.
+        # 표시용이며 비교에 쓰지 않는다 — 비교는 위의 정확값으로 한다.
         "display": {
             "ACD": exact.round_half_even(Decimal(acd.numerator) / Decimal(acd.denominator), 2)
                    if acd is not None else None,
             "RACD": exact.round_half_even(
-                Decimal(racd.numerator) / Decimal(racd.denominator), 3)
+                Decimal(racd.numerator) / Decimal(racd.denominator), 4)
                     if racd is not None else None,
             "CCD_balanced": exact.round_half_even(balanced, 2),
             "NCCD": nccd,

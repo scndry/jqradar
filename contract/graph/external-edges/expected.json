@@ -62,7 +62,7 @@
     "NCCD": 1.09,
     "display": {
       "ACD": 1.50,
-      "RACD": 0.750,
+      "RACD": 0.7500,
       "CCD_balanced": 2.75,
       "NCCD": 1.09
     }
