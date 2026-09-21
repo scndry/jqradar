@@ -1,0 +1,133 @@
+{
+  "case": "byte-identity-comparison-target",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.8",
+    "§2.9",
+    "D154",
+    "D157",
+    "D158"
+  ],
+  "what_this_pins": "**\"두 머신 바이트 동일\"의 비교 대상**(D154) = 산출물에서 `reproduce.scanned_at`(벽시계)과 `reproduce.classes_reproduction_inputs`(원인이 아니라 재현 안내)를 **뺀 전부**. 같은 트리·같은 툴체인·같은 파라미터로 두 머신이 스캔한다 — 다른 것은 스캔한 시각과 그 머신의 JDK 패치 버전(재현 안내)뿐이다.\n\n단언 넷이 한 규칙의 네 면이다. (1) 제외 규칙을 적용한 두 산출물은 **JCS 바이트가 같다**. (2) 규칙을 적용하지 않으면 **다르다** — 제외 필드가 실제로 다르지 않으면 (1)은 아무것도 증명하지 않는다(D131). (3) 제외 목록의 두 필드는 `analysis_input_id`의 입력에 **없다** — 제외 목록에 있는 것은 id 입력이 아니어야 한다(D154 둘째 문장). (4) **넷째 종류가 잡히는가**: `reproduce`에 id 입력도 그 함수도 아닌 필드(머신 이름)를 하나 심으면 (1)이 실패해야 한다 — 그것이 D158이 \"재현성의 구멍\"이라 부른 것이고, 규칙이 그것을 물지 않으면 규칙이 아니다.\n\n`scanned_at`은 비교에서 빠지지만 표기는 하나다(D157) — 두 값이 `YYYY-MM-DDTHH:MM:SSZ`인지도 본다. `history_complete`·`graft_boundary_shas`는 id 입력의 함수([fn])라 비교 대상에 **남는다**.",
+  "canonical_encoding": "RFC8785-JCS",
+  "excluded_fields": [
+    "reproduce.scanned_at",
+    "reproduce.classes_reproduction_inputs"
+  ],
+  "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+  "analysis_input_id": "sha256:0058ced757f17a70b621e49ed2a66ecece58dc3c4b2d7d1ba8158ad0705ebff7",
+  "comparison_target": {
+    "schema": "jqradar/3",
+    "reproduce": {
+      "tool_version": "3.9.0",
+      "schema_version": "jqradar/3",
+      "contract_version": "2026-09-21",
+      "algorithm_versions": {
+        "measures": "1",
+        "percentile": "1",
+        "succession": "1",
+        "cpd_aggregation": "1"
+      },
+      "window_anchor": {
+        "type": "head_committer_time",
+        "timestamp": "2026-01-03T03:04:05Z"
+      },
+      "head": "04c5de269bd939509087a13312869a28d540f773",
+      "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+      "analysis_input_id": "sha256:0058ced757f17a70b621e49ed2a66ecece58dc3c4b2d7d1ba8158ad0705ebff7",
+      "environment": {
+        "pmd": "7.16.0",
+        "archunit": "1.5.0",
+        "jgit": "7.3.0"
+      },
+      "history_backend": {
+        "name": "jgit",
+        "git_version": null
+      },
+      "window_applied": {
+        "commits_in_window": 2,
+        "commit_list_sha256": "7cc62f9fa4addab200d9ae3409b3333037486a34f1d08ac05df6783f76bac4ee",
+        "history_complete": true,
+        "graft_boundary_shas": []
+      },
+      "component": {
+        "strategy": "auto",
+        "algorithm_version": "auto-1"
+      },
+      "parameters": {
+        "cpd.minimum_tokens": 100,
+        "cpd.language": "java",
+        "percentile.min_population": 20,
+        "frozen.min_days": 180,
+        "rename.similarity": 60,
+        "hotspot.change_unit": "chg_commits",
+        "verify.min_changed_line_coverage": "0.8",
+        "profile": "jqradar-default",
+        "weights": {
+          "H": "0.5",
+          "Dx": "0.3",
+          "F": "0.2"
+        }
+      },
+      "canonical_encoding": "RFC8785-JCS"
+    },
+    "tree": {
+      "file_count": 2,
+      "files": [
+        {
+          "path": "src/main/java/com/example/order/OrderPolicy.java",
+          "content_id": "f702286af9f0b8ba882ba4d98bd392e4c126c0bf"
+        },
+        {
+          "path": "src/main/java/com/example/order/OrderService.java",
+          "content_id": "34a52383165a4ae6efe7831d196121af4d7c60a2"
+        }
+      ]
+    }
+  },
+  "machines": {
+    "a": {
+      "scanned_at": "2026-09-07T15:00:00Z",
+      "classes_reproduction_inputs": {
+        "jdk": "21.0.4",
+        "gradle": "9.1.0",
+        "kotlin": "2.2.0",
+        "compiler_args": [
+          "-parameters"
+        ],
+        "annotation_processors": [],
+        "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "output_sha256": "sha256:42bae41b7520bb7f3f5d8ebf7c57e02354d169413bb55e1edcb0dd95840e3a60",
+      "comparison_target_sha256": "sha256:d77b876812aca63552d10f446e763a5944052baa36459b2da556cecea678e965"
+    },
+    "b": {
+      "scanned_at": "2026-09-08T09:30:00Z",
+      "classes_reproduction_inputs": {
+        "jdk": "21.0.5",
+        "gradle": "9.1.0",
+        "kotlin": "2.2.0",
+        "compiler_args": [
+          "-parameters"
+        ],
+        "annotation_processors": [],
+        "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "output_sha256": "sha256:9df6dce27670f4ed1b887166a71e6342246f449143412bbdd3b6097bd2fa9900",
+      "comparison_target_sha256": "sha256:d77b876812aca63552d10f446e763a5944052baa36459b2da556cecea678e965"
+    }
+  },
+  "fourth_kind_mutation": {
+    "field": "machine_hostname",
+    "caught": true
+  },
+  "assertions": {
+    "comparison_targets_byte_identical": true,
+    "full_outputs_differ": true,
+    "scanned_at_differs": true,
+    "classes_reproduction_inputs_differ": true,
+    "excluded_fields_are_not_id_inputs": true,
+    "fourth_kind_field_is_caught": true,
+    "scanned_at_is_d157_notation": true
+  }
+}

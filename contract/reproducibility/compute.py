@@ -20,6 +20,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -68,6 +69,19 @@ def repository_state_id(files: list[tuple[str, str]]) -> str:
     return sha256([[p, c] for p, c in files])
 
 
+def canonical_time(unix_seconds: int) -> str:
+    """§2.7 시각의 정규 표기(D157) — UTC · RFC 3339 · 초 · `Z` · 소수 초 없음, unix 초에서.
+
+    `%cI`가 아니라 `%ct`(unix 초). git 버전에 따라 UTC를 `Z`로도 `+00:00`으로도
+    써서 두 머신에서 문자열이 갈리고, 이 값은 `analysis_input_id`에 **해시로
+    들어간다** — 그러면 같은 트리·같은 툴체인인데 id가 달라진다(PR #4에서 CI가
+    잡았다). `%ct`로 바꾼 뒤에도 파이썬 `isoformat()`이 `+00:00`을 냈다 — 표기가
+    계약이 아니어서 계산기가 제 사정대로 적은 것이다. v3.9.0이 표기를 정했다.
+    JCS는 문자열 안을 건드리지 않으므로 여기서 한 형식으로 만들어야 한다.
+    """
+    return datetime.fromtimestamp(unix_seconds, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 def build_history(tree: Path, spec: dict, workdir: Path) -> dict:
     """합성 git 이력을 결정적으로 만든다 — 같은 스크립트는 언제나 같은 SHA를 낸다."""
     shutil.copytree(tree, workdir, dirs_exist_ok=True)
@@ -96,10 +110,6 @@ def build_history(tree: Path, spec: dict, workdir: Path) -> dict:
             git("add", "--", rel)
         git("commit", "-q", "-m", commit["message"])
         shas.append(git("rev-parse", "HEAD"))
-    # `%cI`가 아니라 `%ct`(unix 초). git 버전에 따라 UTC를 `Z`로도 `+00:00`으로도
-    # 써서 두 머신에서 문자열이 갈리고, 이 값은 `analysis_input_id`에 **해시로
-    # 들어간다** — 그러면 같은 트리·같은 툴체인인데 id가 달라진다. 이 계약이
-    # 막아야 할 바로 그것을 이 계산기가 하고 있었다(CI가 잡았다).
     # 도달 불가 커밋 — main에서 도달할 수 없는 브랜치. §2.7의 창은 HEAD에서 도달
     # 가능한 비머지 커밋이므로 이것들은 창 밖이고, `analysis_input_id`의 입력도
     # 아니다. 값이든 id든 여기에 영향을 받으면 D87이 깨진다.
@@ -124,8 +134,7 @@ def build_history(tree: Path, spec: dict, workdir: Path) -> dict:
         # `repository_state_id`가 달라져 케이스가 무의미해진다.
         git("clean", "-qfd")
 
-    head_time = datetime.fromtimestamp(
-        int(git("show", "-s", "--format=%ct", "HEAD")), timezone.utc).isoformat()
+    head_time = canonical_time(int(git("show", "-s", "--format=%ct", "HEAD")))
     return {"commit_shas": shas, "head": shas[-1], "head_committer_time": head_time,
             "unreachable_commit_count": len(unreachable)}
 
@@ -278,12 +287,302 @@ def run_canonical_vectors(inp: dict) -> dict:
     }
 
 
+D157_PATTERN = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")
+
+
+def _keys_recursive(obj, prefix=""):
+    """중첩 객체의 모든 키 경로. 제외 필드가 id 입력에 없음을 보이는 데 쓴다(D154)."""
+    out = set()
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            path = f"{prefix}.{k}" if prefix else k
+            out.add(k)
+            out |= _keys_recursive(v, path)
+    elif isinstance(obj, list):
+        for v in obj:
+            out |= _keys_recursive(v, prefix)
+    return out
+
+
+def _delete_path(obj: dict, dotted: str) -> None:
+    node = obj
+    parts = dotted.split(".")
+    for part in parts[:-1]:
+        node = node[part]
+    del node[parts[-1]]
+
+
+def comparison_target(report: dict, excluded: list[str]) -> dict:
+    """D154 — "두 머신 바이트 동일"의 비교 대상 = 산출물에서 제외 목록을 뺀 전부."""
+    target = json.loads(json.dumps(report))
+    for field in excluded:
+        _delete_path(target, field)
+    return target
+
+
+def run_byte_identity(case_dir: Path, inp: dict) -> dict:
+    """§2.8·D154 — 비교 대상의 정의를 네 단언으로 못 박는다(케이스 `what_this_pins` 참조)."""
+    tree = case_dir / inp["repo"]["tree"]
+    files = tree_files(tree)
+    with tempfile.TemporaryDirectory() as tmp:
+        history = build_history(tree, inp["repo"], Path(tmp) / "repo")
+    shared, env = inp["shared_inputs"], inp["environment"]
+    aid, spec = analysis_input_id(shared, env, files, history)
+    rsid = repository_state_id(files)
+    excluded = inp["excluded_fields"]
+
+    def report_for(machine: dict) -> dict:
+        # G0에는 측정 코드가 없다 — 산출물은 reproduce 블록과 그 결정적 함수들로 이뤄진
+        # 최소 리포트다. 필드는 세 종류뿐(D158): [id] · [fn] · [x].
+        return {
+            "schema": shared["schema_version"],
+            "reproduce": {
+                "tool_version": shared["core_tool_version"],                      # [id]
+                "schema_version": shared["schema_version"],                       # [id]
+                "contract_version": shared["contract_version"],                   # [id]
+                "scanned_at": canonical_time(machine["scanned_at_unix"]),         # [x]
+                "algorithm_versions": shared["algorithm_versions"],               # [id]
+                "window_anchor": spec["window_anchor"],                           # [id]
+                "head": history["head"],                                          # [fn]
+                "repository_state_id": rsid,                                      # [fn]
+                "analysis_input_id": aid,                                         # [fn]
+                "environment": env,                                               # [id]
+                "classes_reproduction_inputs": machine["classes_reproduction_inputs"],  # [x]
+                "history_backend": shared["history_backend"],                     # [id]
+                "window_applied": {
+                    "commits_in_window": len(history["commit_shas"]),             # [fn]
+                    "commit_list_sha256": spec["commit_list_sha256"],             # [id]
+                    "history_complete": True, "graft_boundary_shas": [],          # [fn]
+                },
+                "component": shared["component"],                                 # [id]
+                "parameters": shared["parameters"],                               # [id]
+                "canonical_encoding": CANONICAL_ENCODING,                         # [id]
+            },
+            "tree": {"file_count": len(files),
+                     "files": [{"path": p, "content_id": c} for p, c in files]},  # [id]
+        }
+
+    reports = {name: report_for(m) for name, m in inp["machines"].items()}
+    names = list(reports)
+    ra, rb = reports[names[0]], reports[names[1]]
+    ta, tb = (comparison_target(r, excluded) for r in (ra, rb))
+    full_a, full_b = canonical(ra), canonical(rb)
+    tgt_a, tgt_b = canonical(ta), canonical(tb)
+
+    # 넷째 종류(D158): id 입력도 함수도 아닌데 비교 목록에서 빠지지 않은 필드. 규칙이 잡아야 한다.
+    mut = inp["fourth_kind_mutation"]
+    mutated = {}
+    for name, r in reports.items():
+        m = json.loads(json.dumps(r))
+        m["reproduce"][mut["field"]] = mut["values"][name]
+        mutated[name] = canonical(comparison_target(m, excluded))
+    mutation_caught = mutated[names[0]] != mutated[names[1]]
+
+    id_keys = _keys_recursive(spec)
+    excluded_leaves = [f.split(".")[-1] for f in excluded]
+
+    machines = {}
+    for name, r in reports.items():
+        machines[name] = {
+            "scanned_at": r["reproduce"]["scanned_at"],
+            "classes_reproduction_inputs": r["reproduce"]["classes_reproduction_inputs"],
+            "output_sha256": "sha256:" + hashlib.sha256(canonical(r)).hexdigest(),
+            "comparison_target_sha256":
+                "sha256:" + hashlib.sha256(canonical(comparison_target(r, excluded))).hexdigest(),
+        }
+
+    return {
+        "case": inp["case"],
+        "generated_by": GENERATED_BY,
+        "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"],
+        "canonical_encoding": CANONICAL_ENCODING,
+        "excluded_fields": excluded,
+        "repository_state_id": rsid,
+        "analysis_input_id": aid,
+        "comparison_target": ta,
+        "machines": machines,
+        "fourth_kind_mutation": {"field": mut["field"], "caught": mutation_caught},
+        "assertions": {
+            "comparison_targets_byte_identical": tgt_a == tgt_b,
+            "full_outputs_differ": full_a != full_b,
+            "scanned_at_differs":
+                ra["reproduce"]["scanned_at"] != rb["reproduce"]["scanned_at"],
+            "classes_reproduction_inputs_differ":
+                ra["reproduce"]["classes_reproduction_inputs"]
+                != rb["reproduce"]["classes_reproduction_inputs"],
+            "excluded_fields_are_not_id_inputs":
+                not any(leaf in id_keys for leaf in excluded_leaves),
+            "fourth_kind_field_is_caught": mutation_caught,
+            "scanned_at_is_d157_notation": all(
+                D157_PATTERN.match(r["reproduce"]["scanned_at"]) for r in reports.values()),
+        },
+    }
+
+
+def run_time_notations(inp: dict) -> dict:
+    """§2.7·D157 — 같은 unix 초의 네 표기가 정규 표기로 한 바이트·한 id가 된다."""
+    spec = inp["time_notations"]
+    unix = spec["unix_seconds"]
+    pattern = re.compile(spec["d157_pattern"])
+    skeleton = {k: v for k, v in spec["id_input_skeleton"].items() if not k.startswith("$")}
+
+    def id_with(ts: str) -> str:
+        s = json.loads(json.dumps(skeleton))
+        s["window_anchor"]["timestamp"] = ts
+        return sha256(s)
+
+    canon = canonical_time(unix)
+    notations = {}
+    for name, raw in spec["notations"].items():
+        # 파이썬 3.10 이하의 fromisoformat은 `Z`를 모른다 — 파싱 편의일 뿐, 표기 규칙은 D157이다.
+        parsed = int(datetime.fromisoformat(raw.replace("Z", "+00:00")).timestamp())
+        notations[name] = {
+            "raw": raw,
+            "unix_seconds": parsed,
+            "same_instant": parsed == unix,
+            "raw_id": id_with(raw),
+            "canonical": canonical_time(parsed),
+            "canonical_id": id_with(canonical_time(parsed)),
+        }
+    raw_ids = {n["raw_id"] for n in notations.values()}
+    raw_strings = {n["raw"] for n in notations.values()}
+    canon_ids = {n["canonical_id"] for n in notations.values()}
+    canon_strings = {n["canonical"] for n in notations.values()}
+
+    # 겪은 사고의 대역: 파이썬 isoformat()은 UTC를 `+00:00`으로 적는다 — D157 패턴에 실패해야 한다.
+    isoformat_out = datetime.fromtimestamp(unix, timezone.utc).isoformat()
+
+    return {
+        "case": inp["case"],
+        "generated_by": GENERATED_BY,
+        "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"],
+        "canonical_encoding": CANONICAL_ENCODING,
+        "unix_seconds": unix,
+        "canonical": canon,
+        "notations": notations,
+        "non_canonical_producers": {
+            "python_isoformat": {"output": isoformat_out,
+                                 "matches_d157": bool(pattern.match(isoformat_out))},
+        },
+        "assertions": {
+            "all_notations_same_instant": all(n["same_instant"] for n in notations.values()),
+            "raw_strings_differ": len(raw_strings) == len(notations) and len(notations) > 1,
+            "raw_ids_differ": len(raw_ids) == len(notations),
+            "canonical_strings_identical": canon_strings == {canon},
+            "canonical_ids_identical": len(canon_ids) == 1,
+            "canonical_matches_d157_pattern": bool(pattern.match(canon)),
+            "python_isoformat_fails_d157_pattern": not pattern.match(isoformat_out),
+        },
+    }
+
+
+def measure_cache_key(projection: dict, files: dict[str, str], env: dict,
+                      algorithm_versions: dict, parameters: dict) -> tuple[str, dict]:
+    """§4.5·D159 — 캐시 키 = 내용 + 닿는 엔진·알고리즘 버전 + 읽는 파라미터. 사영이다."""
+    key = {
+        "content": [files[p] for p in projection["content"]],
+        "environment": {e: env[e] for e in projection["environment"]},
+        "algorithm_versions": {a: algorithm_versions[a] for a in projection["algorithm_versions"]},
+        "parameters": {p: parameters[p] for p in projection["parameters"]},
+    }
+    return sha256(key), key
+
+
+def projection_within_2_8(projection: dict, env: dict, algorithm_versions: dict,
+                          parameters: dict) -> bool:
+    """어느 키에 있는 것은 §2.8 입력 목록에 있어야 한다(D159)."""
+    return (set(projection["environment"]) <= set(env)
+            and set(projection["algorithm_versions"]) <= set(algorithm_versions)
+            and set(projection["parameters"]) <= set(parameters))
+
+
+def run_parameter_projection(case_dir: Path, inp: dict) -> dict:
+    """§4.5·D159 — 파라미터 하나 변경 → 그것을 읽는 측정만 캐시 미스."""
+    tree = case_dir / inp["repo"]["tree"]
+    files = tree_files(tree)
+    fmap = dict(files)
+    with tempfile.TemporaryDirectory() as tmp:
+        history = build_history(tree, inp["repo"], Path(tmp) / "repo")
+    shared, env = inp["shared_inputs"], inp["environment"]
+    algo = shared["algorithm_versions"]
+    change = inp["parameter_change"]
+
+    p_before = dict(shared["parameters"])
+    assert p_before[change["name"]] == change["from"], "input.json의 from이 parameters와 다르다"
+    p_after = {**p_before, change["name"]: change["to"]}
+
+    def ids(params):
+        aid, _ = analysis_input_id({**shared, "parameters": params}, env, files, history)
+        return aid
+
+    projections = inp["measure_projections"]
+    keys = {"before": {}, "after": {}}
+    for m, proj in projections.items():
+        keys["before"][m], _ = measure_cache_key(proj, fmap, env, algo, p_before)
+        keys["after"][m], _ = measure_cache_key(proj, fmap, env, algo, p_after)
+    misses = sorted(m for m in projections if keys["before"][m] != keys["after"][m])
+    hits = sorted(m for m in projections if keys["before"][m] == keys["after"][m])
+    readers = sorted(m for m, proj in projections.items() if change["name"] in proj["parameters"])
+
+    # 변조 1: 키에서 파라미터를 빼면 거짓 적중이 난다(D159 문장 그대로).
+    m1 = inp["mutations"]["projection_missing_parameter"]
+    proj1 = json.loads(json.dumps(projections[m1["measure"]]))
+    proj1["parameters"] = [p for p in proj1["parameters"] if p != m1["drop_parameter"]]
+    k1b, _ = measure_cache_key(proj1, fmap, env, algo, p_before)
+    k1a, _ = measure_cache_key(proj1, fmap, env, algo, p_after)
+    false_hit = k1b == k1a
+
+    # 변조 2: §2.8 밖의 입력을 키에 넣으면 부분집합 검사가 거부한다.
+    m2 = inp["mutations"]["projection_with_foreign_input"]
+    proj2 = json.loads(json.dumps(projections[m2["measure"]]))
+    proj2["parameters"] = proj2["parameters"] + [m2["add_parameter"]]
+    foreign_rejected = not projection_within_2_8(proj2, env, algo, p_before)
+
+    return {
+        "case": inp["case"],
+        "generated_by": GENERATED_BY,
+        "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"],
+        "canonical_encoding": CANONICAL_ENCODING,
+        "parameter_change": change,
+        "repository_state_id": repository_state_id(files),
+        "analysis_input_id": {"before": ids(p_before), "after": ids(p_after)},
+        "measure_projections": projections,
+        "cache_keys": keys,
+        "cache": {"miss": misses, "hit": hits, "readers_of_changed_parameter": readers},
+        "mutations": {
+            "projection_missing_parameter": {"measure": m1["measure"], "dropped": m1["drop_parameter"],
+                                             "key_before": k1b, "key_after": k1a, "false_hit": false_hit},
+            "projection_with_foreign_input": {"measure": m2["measure"], "added": m2["add_parameter"],
+                                              "rejected": foreign_rejected},
+        },
+        "assertions": {
+            "analysis_input_id_changes": ids(p_before) != ids(p_after),
+            "repository_state_id_unchanged": True,   # 트리는 손대지 않았다 — 같은 files에서 계산
+            "only_readers_miss": misses == readers and len(misses) >= 1,
+            "non_readers_hit": hits == sorted(set(projections) - set(readers)) and len(hits) >= 1,
+            "projections_subset_of_2_8_inputs": all(
+                projection_within_2_8(p, env, algo, p_before) for p in projections.values()),
+            "dropping_parameter_from_key_yields_false_hit": false_hit,
+            "foreign_input_is_rejected": foreign_rejected,
+        },
+    }
+
+
 def run_case(case_dir: Path) -> dict:
     inp = json.loads((case_dir / "input.json").read_text(encoding="utf-8"))
     if "canonical_vectors" in inp:
         return run_canonical_vectors(inp)
     if "repo_variants" in inp:
         return run_repo_variants(case_dir, inp)
+    if "machines" in inp:
+        return run_byte_identity(case_dir, inp)
+    if "time_notations" in inp:
+        return run_time_notations(inp)
+    if "measure_projections" in inp:
+        return run_parameter_projection(case_dir, inp)
     tree = case_dir / inp["repo"]["tree"]
     files = tree_files(tree)
     rsid = repository_state_id(files)

@@ -1,0 +1,99 @@
+{
+  "case": "parameter-change-cache-projection",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.8",
+    "§4.5",
+    "§2.9",
+    "D159",
+    "D87"
+  ],
+  "what_this_pins": "**측정 캐시 키 = 그 측정이 읽는 §2.8 입력의 사영**(D159). 파라미터 하나(`cpd.minimum_tokens` 100→120)를 바꾸면 (1) `analysis_input_id`는 바뀌고 `repository_state_id`는 그대로다(§2.9 \"파라미터 하나 변경 → id 변경\"); (2) 그 파라미터를 **읽는** 측정(`pair_dup_tokens`)의 키만 바뀌어 캐시 미스이고, 읽지 않는 측정(`cx`)의 키는 그대로라 적중이다.\n\n사영은 `measure_projections`에 **선언**한다. `pair_dup_tokens`의 키는 §4.5가 글자 그대로 예로 든 것이다 — (`content_id` A, `content_id` B, pmd 버전, `algorithm_versions.cpd_aggregation`, `cpd.minimum_tokens`, `cpd.language`). `cx`의 사영은 §2.1의 정의에서 읽었다: PMD 메트릭(CYCLO)이므로 pmd 버전과 `algorithm_versions.measures`에 닿고, §7의 분석 파라미터 중 어느 것도 읽지 않는다. **PRD가 예로 든 사영은 `pair_dup_tokens` 하나**이고 `cx` 쪽은 이 픽스처의 선언이다 — 나중에 §4.5가 표를 갖게 되면 이 선언이 그 표를 따라야 한다.\n\n원칙의 양방향을 함께 단언한다: 어느 키에 있는 것은 §2.8에 있어야 한다(`projections_subset_of_2_8_inputs`) — 그리고 검사가 무는 것을 두 변조로 보인다. 키에서 `cpd.minimum_tokens`를 빼면 파라미터가 바뀌어도 **거짓 적중**이 난다(`dropping_parameter_from_key_yields_false_hit` — D159가 \"키에 없으면 거짓 적중\"이라 한 그 문장). 키에 §2.8 밖의 입력(`machine_hostname`)을 넣으면 부분집합 검사가 **거부**한다(`foreign_input_is_rejected`).\n\n주: §4.5는 `cpd.language`를 `pair_dup_tokens` 키의 원소로 들지만 §7 예시의 `parameters`에는 그 이름이 없다. 이 픽스처는 §4.5를 따라 `cpd.language`를 파라미터에 둔다 — §7이 §4.5를 따라와야 할 자리다(PR에 적었다).",
+  "canonical_encoding": "RFC8785-JCS",
+  "parameter_change": {
+    "name": "cpd.minimum_tokens",
+    "from": 100,
+    "to": 120
+  },
+  "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+  "analysis_input_id": {
+    "before": "sha256:0058ced757f17a70b621e49ed2a66ecece58dc3c4b2d7d1ba8158ad0705ebff7",
+    "after": "sha256:e6661c142164f0efcb7d2a79c740fa95eb1d7da66017264c72da2d4e0ba00261"
+  },
+  "measure_projections": {
+    "pair_dup_tokens": {
+      "source": "§4.5 예 (D159) — 글자 그대로",
+      "content": [
+        "src/main/java/com/example/order/OrderPolicy.java",
+        "src/main/java/com/example/order/OrderService.java"
+      ],
+      "environment": [
+        "pmd"
+      ],
+      "algorithm_versions": [
+        "cpd_aggregation"
+      ],
+      "parameters": [
+        "cpd.minimum_tokens",
+        "cpd.language"
+      ]
+    },
+    "cx": {
+      "source": "§2.1 `cx` 정의에서 읽음 — PMD 메트릭, 분석 파라미터를 읽지 않는다 (PRD가 예로 든 사영은 아니다)",
+      "content": [
+        "src/main/java/com/example/order/OrderService.java"
+      ],
+      "environment": [
+        "pmd"
+      ],
+      "algorithm_versions": [
+        "measures"
+      ],
+      "parameters": []
+    }
+  },
+  "cache_keys": {
+    "before": {
+      "pair_dup_tokens": "sha256:722e9ccab5bf21079697e652c30eb8ae7d58027d78110faf62138e2b5d26d36c",
+      "cx": "sha256:ea6dd3674ff51153b7bc6dddc3cc877afb3123a3f17161eae589ef87d84d74fe"
+    },
+    "after": {
+      "pair_dup_tokens": "sha256:98439c5561902a218d3935ac46503309b989f1254281d75dc1b41f823d127e51",
+      "cx": "sha256:ea6dd3674ff51153b7bc6dddc3cc877afb3123a3f17161eae589ef87d84d74fe"
+    }
+  },
+  "cache": {
+    "miss": [
+      "pair_dup_tokens"
+    ],
+    "hit": [
+      "cx"
+    ],
+    "readers_of_changed_parameter": [
+      "pair_dup_tokens"
+    ]
+  },
+  "mutations": {
+    "projection_missing_parameter": {
+      "measure": "pair_dup_tokens",
+      "dropped": "cpd.minimum_tokens",
+      "key_before": "sha256:7d4fb840c66da329264060e0a3187ee8d943e3c0f4cad80fff28455c59171d6c",
+      "key_after": "sha256:7d4fb840c66da329264060e0a3187ee8d943e3c0f4cad80fff28455c59171d6c",
+      "false_hit": true
+    },
+    "projection_with_foreign_input": {
+      "measure": "cx",
+      "added": "machine_hostname",
+      "rejected": true
+    }
+  },
+  "assertions": {
+    "analysis_input_id_changes": true,
+    "repository_state_id_unchanged": true,
+    "only_readers_miss": true,
+    "non_readers_hit": true,
+    "projections_subset_of_2_8_inputs": true,
+    "dropping_parameter_from_key_yields_false_hit": true,
+    "foreign_input_is_rejected": true
+  }
+}
