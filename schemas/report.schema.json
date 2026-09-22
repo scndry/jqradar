@@ -419,7 +419,23 @@
         },
         "parameters": {
           "type": "object",
-          "description": "모든 분석 파라미터(§2.8, §4.3). `scan`은 무설정이라 이 값들은 코드 기본값이고 전부 인쇄된다 — 설정 파일이 아니라 인쇄가 재현성의 근거다.",
+          "description": "모든 분석 파라미터(§2.8, §4.3). `scan`은 무설정이라 이 값들은 코드 기본값이고 전부 인쇄된다 — 설정 파일이 아니라 인쇄가 재현성의 근거다. 타입은 D156: 정수는 JSON 정수, 분수는 십진 문자열, 이름·열거 값은 문자열. 집합은 프로필이 늘릴 수 있어 닫지 않는다.",
+          "properties": {
+            "cpd.minimum_tokens": { "type": "integer", "minimum": 1 },
+            "percentile.min_population": { "type": "integer", "minimum": 1 },
+            "frozen.min_days": { "type": "integer", "minimum": 0 },
+            "rename.similarity": { "type": "integer", "minimum": 0, "maximum": 100 },
+            "hotspot.change_unit": { "type": "string" },
+            "profile": { "type": "string" },
+            "verify.min_changed_line_coverage": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$", "description": "분수 파라미터는 십진 문자열 — 인쇄 = 해시 입력(D156). JSON 숫자로 인쇄하면 이진 부동소수점을 거쳐 해시 입력과 갈린다." },
+            "weights": {
+              "type": "object",
+              "description": "렌즈 가중(§3.6). 셋뿐이다.",
+              "required": ["H", "Dx", "F"],
+              "properties": { "H": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$", "description": "분수 파라미터는 십진 문자열 — 인쇄 = 해시 입력(D156). JSON 숫자로 인쇄하면 이진 부동소수점을 거쳐 해시 입력과 갈린다." }, "Dx": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$", "description": "분수 파라미터는 십진 문자열 — 인쇄 = 해시 입력(D156). JSON 숫자로 인쇄하면 이진 부동소수점을 거쳐 해시 입력과 갈린다." }, "F": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$", "description": "분수 파라미터는 십진 문자열 — 인쇄 = 해시 입력(D156). JSON 숫자로 인쇄하면 이진 부동소수점을 거쳐 해시 입력과 갈린다." } },
+              "additionalProperties": false
+            }
+          },
           "additionalProperties": true
         },
         "percentile_method": {
@@ -428,7 +444,9 @@
           "required": [
             "rank",
             "formula",
-            "quantile"
+            "quantile",
+            "arithmetic",
+            "output"
           ],
           "properties": {
             "rank": {
@@ -441,6 +459,21 @@
             "quantile": {
               "const": "type7-linear",
               "description": "type-7 선형 보간(Hyndman–Fan)(§2.5). 픽스처 예: `[1..9,100]`, q=0.9 → 18.1."
+            },
+            "arithmetic": {
+              "const": "exact-rational",
+              "description": "백분위·분위·임계 비교는 정확 유리수(§2.5, D115). `double`을 경유하지 않는다."
+            },
+            "output": {
+              "type": "object",
+              "description": "출력 산술·스케일의 선언(§2.5, D155). 스케일 표의 버전이 여기 인쇄되어 표가 바뀌면 id가 바뀐다 — `contract_version`만으로는 너무 굵다.",
+              "required": ["sqrt", "rounding", "scales"],
+              "properties": {
+                "sqrt": { "type": "string", "description": "√는 표시값에만 — `BigDecimal MathContext(34, HALF_EVEN)`(D115·D121)." },
+                "rounding": { "const": "HALF_EVEN" },
+                "scales": { "type": "string", "pattern": "^D155-[0-9]+$", "description": "스케일 표의 버전(§2.5 표 `D155-1`). 표에 없는 유리수 필드는 스케일 린트가 거부한다." }
+              },
+              "additionalProperties": false
             }
           },
           "additionalProperties": false

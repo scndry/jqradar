@@ -1,0 +1,98 @@
+{
+  "case": "parameter-change-cache-projection",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.8",
+    "§4.5",
+    "§2.9",
+    "D159",
+    "D87"
+  ],
+  "what_this_pins": "**측정 캐시 키 = 그 측정이 읽는 §2.8 입력의 사영**(D159). 파라미터 하나(`cpd.minimum_tokens` 100→120)를 바꾸면 (1) `analysis_input_id`는 바뀌고 `repository_state_id`는 그대로다(§2.9 \"파라미터 하나 변경 → id 변경\"); (2) 그 파라미터를 **읽는** 측정(`pair_dup_tokens`)의 키만 바뀌어 캐시 미스이고, 읽지 않는 측정(`cx`)의 키는 그대로라 적중이다.\n\n사영은 `measure_projections`에 **선언**하고, 둘 다 §4.5가 글자 그대로 예로 든 것이다 — `pair_dup_tokens`의 키 = (`content_id` A, `content_id` B, pmd 버전, `algorithm_versions.cpd_aggregation`, `cpd.minimum_tokens`), `cx`의 키 = (`content_id`, pmd 버전, `algorithm_versions.measures`)이고 `cx`는 읽는 파라미터가 없다. CPD의 언어(java·kotlin)는 파라미터가 아니라 파일 확장자에서 결정되는 내용의 속성이라 `content_id`가 이미 담는다 — 이 픽스처의 첫 판이 §4.5의 옛 예를 따라 `cpd.language`를 파라미터로 사영에 넣었고, 그 파라미터는 문서 어디에도 없었다. 계약이 그 예를 지웠으니 픽스처가 따라왔다(§0-29 보정 2026-09-22).\n\n원칙의 양방향을 함께 단언한다: 어느 키에 있는 것은 §2.8에 있어야 한다(`projections_subset_of_2_8_inputs`) — 그리고 검사가 무는 것을 두 변조로 보인다. 키에서 `cpd.minimum_tokens`를 빼면 파라미터가 바뀌어도 **거짓 적중**이 난다(`dropping_parameter_from_key_yields_false_hit` — D159가 \"키에 없으면 거짓 적중\"이라 한 그 문장). 키에 §2.8 밖의 입력(`machine_hostname`)을 넣으면 부분집합 검사가 **거부**한다(`foreign_input_is_rejected`).",
+  "canonical_encoding": "RFC8785-JCS",
+  "parameter_change": {
+    "name": "cpd.minimum_tokens",
+    "from": 100,
+    "to": 120
+  },
+  "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+  "analysis_input_id": {
+    "before": "sha256:27accd255d7b822b723d82b4b6082cfdbdbbe42375b549b218fe82709b415d8f",
+    "after": "sha256:9d0567db98e57a0dd8658de2c1464deb7b48c8fbd74179cded443ce73bd25f59"
+  },
+  "measure_projections": {
+    "pair_dup_tokens": {
+      "source": "§4.5 첫째 예 (D159) — 글자 그대로",
+      "content": [
+        "src/main/java/com/example/order/OrderPolicy.java",
+        "src/main/java/com/example/order/OrderService.java"
+      ],
+      "environment": [
+        "pmd"
+      ],
+      "algorithm_versions": [
+        "cpd_aggregation"
+      ],
+      "parameters": [
+        "cpd.minimum_tokens"
+      ]
+    },
+    "cx": {
+      "source": "§4.5 둘째 예 (D159) — 글자 그대로: (`content_id`, pmd 버전, `algorithm_versions.measures`), 읽는 파라미터 없음",
+      "content": [
+        "src/main/java/com/example/order/OrderService.java"
+      ],
+      "environment": [
+        "pmd"
+      ],
+      "algorithm_versions": [
+        "measures"
+      ],
+      "parameters": []
+    }
+  },
+  "cache_keys": {
+    "before": {
+      "pair_dup_tokens": "sha256:05e38df2eedeb210e6e6498abd4cd9dfc3f734c8421b5b2bec48273367b6a556",
+      "cx": "sha256:ea6dd3674ff51153b7bc6dddc3cc877afb3123a3f17161eae589ef87d84d74fe"
+    },
+    "after": {
+      "pair_dup_tokens": "sha256:ea3de0c435cdc76f9f051ad1282802795e401a3954043519175c5a0e2e5852b2",
+      "cx": "sha256:ea6dd3674ff51153b7bc6dddc3cc877afb3123a3f17161eae589ef87d84d74fe"
+    }
+  },
+  "cache": {
+    "miss": [
+      "pair_dup_tokens"
+    ],
+    "hit": [
+      "cx"
+    ],
+    "readers_of_changed_parameter": [
+      "pair_dup_tokens"
+    ]
+  },
+  "mutations": {
+    "projection_missing_parameter": {
+      "measure": "pair_dup_tokens",
+      "dropped": "cpd.minimum_tokens",
+      "key_before": "sha256:9bd3b7121875f7866f9739c7d9c0920075d46187f111f0b0020a414958855af0",
+      "key_after": "sha256:9bd3b7121875f7866f9739c7d9c0920075d46187f111f0b0020a414958855af0",
+      "false_hit": true
+    },
+    "projection_with_foreign_input": {
+      "measure": "cx",
+      "added": "machine_hostname",
+      "rejected": true
+    }
+  },
+  "assertions": {
+    "analysis_input_id_changes": true,
+    "repository_state_id_unchanged": true,
+    "only_readers_miss": true,
+    "non_readers_hit": true,
+    "projections_subset_of_2_8_inputs": true,
+    "dropping_parameter_from_key_yields_false_hit": true,
+    "foreign_input_is_rejected": true
+  }
+}

@@ -1,6 +1,6 @@
-# 📡 jQRadar (Java Quality Radar) — PRD v3.8.9
+# 📡 jQRadar (Java Quality Radar) — PRD v3.9.0
 
-작성 2026-09-07 · **브라운필드 판.** "기준선을 잠그면 기존 부채는 어떻게 되나"라는 소유자의 질문에 답하면서 "지키는 것" 셋(B.2·B.3·B.6)을 고쳤다 — 철학은 헌법이 아니라 결정이다. 셋째 표면 **부채 원장**(파생 층 ⊕ 사건 층, 저장은 리포 안 `.jqradar/`), 조직이 등록하는 **캠페인 앵커**, **앵커에 얼린 분류**, **한정 blame**을 넣었고 일정을 17주로 늘렸다. **v3.6.1**(2026-09-08)은 기능 추가 없이 원장의 판정 의미를 닫았다 — finding 정체성·후속 판정, 사건 × 파생 상태표, scope 회계, 필드 개명(§0-8). **v3.7**(2026-09-08)은 **자기 적용(self-application) 계약** — jQRadar는 jQRadar로 만든다. 도구가 자기 리포의 첫 대상이고, 자기 PR의 게이트이며, 첫 캠페인이고, 첫 파일럿이다(§9 자기 적용, B.7). **v3.7.1**(2026-09-09)은 기능 추가 없이 **증거 사슬 identity → validation → merge → ledger**를 닫는다 — 재현성 정체성 셋, 검증의 트리 결속, `validated_not_resolved` 4분기, reanchor 계보, 멱등성, P1a 코호트(§0-10). 다음 단계는 본문이 아니라 픽스처다. **v3.7.2**(2026-09-09)는 철학 수정 — **저작 무관의 사회적 논거를 철회**한다. 저작 여부는 도구가 소유할 수 없는 조직의 정책이고(B.6), 금지는 효과도 없었다(`git blame`은 어디에나 있다). 금지 → 기본 꺼짐 + 조직 정책, 하드룰은 셋만 남긴다(§0-11). **v3.7.3**(2026-09-10)은 원장 상태를 스냅샷 × 최종 사건이 아니라 **전이 이력**으로 계산해 오귀속을 없앴고(§0-12), **v3.7.4**(2026-09-10)는 경계 조건 — 내용 주소 캐시, 순환 finding 전이의 바이트코드 한계, 실행 라인 0 커버리지, 계보 분모·시그니처 보조, S4 정직한 완주 — 를 닫았다(§0-13). **v3.7.5**(2026-09-10)는 Claude Code 첫 읽기 세션이 찾은 절 간 불일치 5건·관찰 4건을 정합시켰고, **v3.7.6**(2026-09-10)은 첫 구현 세션이 찾은 계약의 빈칸 다섯 — 분위 적용 범위, 산술 방법, 백분위 분모, `change.json` 항목 이름, 픽스처 입력 모양 — 을 채웠고, **v3.7.7**(2026-09-11)은 그 결정들을 본문에 내려보내면서 composite 산술과 §7 예시의 재계산 가능성을 닫았다(§0-16). **v3.7.8**(2026-09-11)은 PR #1 감사에서 스키마가 지킬 수 있는 것과 없는 것을 갈랐다(§0-17). **v3.7.9**(2026-09-11)는 `fixture_change` 레코드의 자리를 계약으로 못 박았고, **v3.8.0**(2026-09-11)은 구현이 부딪힌 결정 넷을 본문으로 내려보냈다 — 분할 기준의 단위, 부재 검사의 반례 절, 직렬화 변경의 분류, 배터리 이름의 정본(§0-19). **v3.8.1**(2026-09-11)은 교차 검토 패킷이 찾은 배정 공백 셋을 닫았다 — §2.4와 저자 사실의 픽스처 자리, 그리고 G0 #1의 범위(§0-20). **v3.8.2**(2026-09-11)는 90일 지표를 창 안으로 자르고 절단 사실의 자리를 창으로 정했다(§0-21). **v3.8.3**(2026-09-11)은 `analysis_input_id`의 정규 인코딩(RFC 8785)과 결정→본문 착지의 기계 검사를 계약으로 두었다(§0-22). **v3.8.4**(2026-09-14)는 G0 #1의 통과 조건을 "사람 리뷰어 2명"에서 "다중 모델 패널이 낸 열린 발견 0"으로 바꾸고 D84를 G3로 좁혔으며, P1b에 정적분석 도구 기준선과 사내 코호트의 자리를 열었다(§0-23). **v3.8.5**(2026-09-14)는 G0 교차 검토의 발견 1 — `age_last_days`가 창 밖 커밋에서만 나오는데 `analysis_input_id`는 창 안만 받는 삼중 모순 — 을 파일별 마지막 커밋 맵을 id에 넣고(B) 창 밖을 한정 걷는(C) 것으로 닫았다(§0-24). **v3.8.6**(2026-09-15)은 D137의 **근거**를 교체했다 — "자르지 않으면 D87이 깨진다"는 D146 뒤에 참이 아니고 자르기로 한 결정에 필요하지도 않았다; 결정은 그대로, 근거는 일관성과 비용으로(§0-25). **v3.8.7**(2026-09-15)은 O14를 닫았다 — "열린 발견 0"의 정지 규칙: `dedupe_key`(절 집합·주장·범위), 라운드(모델 ≥ 4 + 목록 밖 쌍), 입력을 바꾼 두 라운드 연속 새 발견 0(§0-26). **v3.8.8**(2026-09-16)은 D151의 `dedupe_key`를 보충했다 — 범위의 걸침(열린 동안 안)과 절 집합의 출처(쌍이 아니라 발견이 인용한 문장의 절)(§0-27). **v3.8.9**(2026-09-17)는 D151의 "닫힘"을 보충했다 — 한 key는 여러 D로 닫힐 수 있고, D가 일부만 닫으면 셋째 상태를 만들지 않고 **결정이** key를 쪼갠다; 분리 행에는 D 번호가 반드시 붙는다(§0-28).
+작성 2026-09-07 · **브라운필드 판.** "기준선을 잠그면 기존 부채는 어떻게 되나"라는 소유자의 질문에 답하면서 "지키는 것" 셋(B.2·B.3·B.6)을 고쳤다 — 철학은 헌법이 아니라 결정이다. 셋째 표면 **부채 원장**(파생 층 ⊕ 사건 층, 저장은 리포 안 `.jqradar/`), 조직이 등록하는 **캠페인 앵커**, **앵커에 얼린 분류**, **한정 blame**을 넣었고 일정을 17주로 늘렸다. **v3.6.1**(2026-09-08)은 기능 추가 없이 원장의 판정 의미를 닫았다 — finding 정체성·후속 판정, 사건 × 파생 상태표, scope 회계, 필드 개명(§0-8). **v3.7**(2026-09-08)은 **자기 적용(self-application) 계약** — jQRadar는 jQRadar로 만든다. 도구가 자기 리포의 첫 대상이고, 자기 PR의 게이트이며, 첫 캠페인이고, 첫 파일럿이다(§9 자기 적용, B.7). **v3.7.1**(2026-09-09)은 기능 추가 없이 **증거 사슬 identity → validation → merge → ledger**를 닫는다 — 재현성 정체성 셋, 검증의 트리 결속, `validated_not_resolved` 4분기, reanchor 계보, 멱등성, P1a 코호트(§0-10). 다음 단계는 본문이 아니라 픽스처다. **v3.7.2**(2026-09-09)는 철학 수정 — **저작 무관의 사회적 논거를 철회**한다. 저작 여부는 도구가 소유할 수 없는 조직의 정책이고(B.6), 금지는 효과도 없었다(`git blame`은 어디에나 있다). 금지 → 기본 꺼짐 + 조직 정책, 하드룰은 셋만 남긴다(§0-11). **v3.7.3**(2026-09-10)은 원장 상태를 스냅샷 × 최종 사건이 아니라 **전이 이력**으로 계산해 오귀속을 없앴고(§0-12), **v3.7.4**(2026-09-10)는 경계 조건 — 내용 주소 캐시, 순환 finding 전이의 바이트코드 한계, 실행 라인 0 커버리지, 계보 분모·시그니처 보조, S4 정직한 완주 — 를 닫았다(§0-13). **v3.7.5**(2026-09-10)는 Claude Code 첫 읽기 세션이 찾은 절 간 불일치 5건·관찰 4건을 정합시켰고, **v3.7.6**(2026-09-10)은 첫 구현 세션이 찾은 계약의 빈칸 다섯 — 분위 적용 범위, 산술 방법, 백분위 분모, `change.json` 항목 이름, 픽스처 입력 모양 — 을 채웠고, **v3.7.7**(2026-09-11)은 그 결정들을 본문에 내려보내면서 composite 산술과 §7 예시의 재계산 가능성을 닫았다(§0-16). **v3.7.8**(2026-09-11)은 PR #1 감사에서 스키마가 지킬 수 있는 것과 없는 것을 갈랐다(§0-17). **v3.7.9**(2026-09-11)는 `fixture_change` 레코드의 자리를 계약으로 못 박았고, **v3.8.0**(2026-09-11)은 구현이 부딪힌 결정 넷을 본문으로 내려보냈다 — 분할 기준의 단위, 부재 검사의 반례 절, 직렬화 변경의 분류, 배터리 이름의 정본(§0-19). **v3.8.1**(2026-09-11)은 교차 검토 패킷이 찾은 배정 공백 셋을 닫았다 — §2.4와 저자 사실의 픽스처 자리, 그리고 G0 #1의 범위(§0-20). **v3.8.2**(2026-09-11)는 90일 지표를 창 안으로 자르고 절단 사실의 자리를 창으로 정했다(§0-21). **v3.8.3**(2026-09-11)은 `analysis_input_id`의 정규 인코딩(RFC 8785)과 결정→본문 착지의 기계 검사를 계약으로 두었다(§0-22). **v3.8.4**(2026-09-14)는 G0 #1의 통과 조건을 "사람 리뷰어 2명"에서 "다중 모델 패널이 낸 열린 발견 0"으로 바꾸고 D84를 G3로 좁혔으며, P1b에 정적분석 도구 기준선과 사내 코호트의 자리를 열었다(§0-23). **v3.8.5**(2026-09-14)는 G0 교차 검토의 발견 1 — `age_last_days`가 창 밖 커밋에서만 나오는데 `analysis_input_id`는 창 안만 받는 삼중 모순 — 을 파일별 마지막 커밋 맵을 id에 넣고(B) 창 밖을 한정 걷는(C) 것으로 닫았다(§0-24). **v3.8.6**(2026-09-15)은 D137의 **근거**를 교체했다 — "자르지 않으면 D87이 깨진다"는 D146 뒤에 참이 아니고 자르기로 한 결정에 필요하지도 않았다; 결정은 그대로, 근거는 일관성과 비용으로(§0-25). **v3.8.7**(2026-09-15)은 O14를 닫았다 — "열린 발견 0"의 정지 규칙: `dedupe_key`(절 집합·주장·범위), 라운드(모델 ≥ 4 + 목록 밖 쌍), 입력을 바꾼 두 라운드 연속 새 발견 0(§0-26). **v3.8.8**(2026-09-16)은 D151의 `dedupe_key`를 보충했다 — 범위의 걸침(열린 동안 안)과 절 집합의 출처(쌍이 아니라 발견이 인용한 문장의 절)(§0-27). **v3.8.9**(2026-09-17)는 D151의 "닫힘"을 보충했다 — 한 key는 여러 D로 닫힐 수 있고, D가 일부만 닫으면 셋째 상태를 만들지 않고 **결정이** key를 쪼갠다; 분리 행에는 D 번호가 반드시 붙는다(§0-28). **v3.9.0**(2026-09-21)은 교차 검토 key 여섯(S5·S6·S13·N3·O-3·R4-2)을 한 결정 묶음으로 닫았다 — 산출물의 무엇이 id 입력이고, 무엇이 바이트 비교 대상이며, 각 필드가 어떤 바이트로 적히는가: 비교 제외 목록, 전 유리수 필드의 스케일 표, 파라미터 인쇄 = 해시 입력, 시각 정규 표기, §7 주석 정정, 캐시 키 = §2.8 입력의 사영(§0-29).
 
 ---
 
@@ -324,6 +324,33 @@ PR #11·#10·#12가 계약 → 구현 → 기록 순서로 머지되고 main pus
 
 **이 판이 하지 않은 것.** 어느 key가 어느 D로 닫혔는지는 적지 않는다 — 구현 세션이 후보를 내고 소유자가 검증하는 별도 판이다. 열린 발견의 수도 적지 않는다(21은 총이고 1차만이다 — 2차 종합에는 아직 병합 대응표가 없어 세지 않는다). G0 #1은 통과가 아니다.
 
+### 0-29. v3.8.9 → v3.9.0 (재현성·직렬화 군 — 교차 검토 key 여섯을 한 결정 묶음으로, 2026-09-21)
+**한 결정 묶음이 여러 key를 닫는 첫 판이다.** `g0-review.py --count`가 낸 열린 key를 25판으로 하나씩 닫으면 라운드 두 번(D151)을 돌 시간이 판 사이에 다 들어간다. 그래서 절 군으로 묶었고, 첫 군은 §2.5·§2.8·§2.9·§7에 걸린 재현성·직렬화다 — 그 절들은 이 문서에서 가장 많이 고쳐진 자리라(v3.7.1·v3.7.8·v3.8.3·v3.8.5) 한 번에 정합시켜야 다음 라운드가 같은 자리를 다시 파지 않는다.
+
+**여섯 key가 한 빈칸의 여섯 면이었다.** 빈칸은 *산출물의 무엇이 id 입력이고, 무엇이 바이트 비교 대상이며, 각 필드가 어떤 바이트로 적히는가*다. 기록(`docs/review/records/`, 개별이 정본)의 주장으로:
+| key | 절 | 주장 | 어느 면 |
+|---|---|---|---|
+| S5 | §2.7·§2.9·§7 | 벽시계 `scanned_at`이 산출물에 있어 두 실행의 바이트가 같을 수 없는데, 비교에서 무엇을 제외하는지 적은 문장이 없다 | 비교 대상 |
+| N3 | §2.8·§7 | §7 주석은 `scanned_at` 하나만 예외로 두고 나머지 전부를 id 입력이라 하는데 §2.8은 `classes_reproduction_inputs`를 명시 제외한다 — 두 문장이 정면으로 다르다 | 집합의 경계 |
+| S6 | §2.8·§4.5 | 두 곳이 "캐시 키"를 다른 입력 집합으로 쓴다 — §4.5의 키에 측정 알고리즘 버전과 `cpd.minimum_tokens`가 없는데 `pair_dup_tokens`는 그것에 의존한다 | 집합의 경계 |
+| O-3 | §2.5·§2.8 | 스케일이 선언되지 않은 유리수 필드가 많다(`dup_extent`·`ACD`·`RACD`·`I`·`D`·`tc`·`spread`) — 린트가 강제할 스케일이 없고 `expected.json`을 계약에서 생성할 수 없다 | 필드의 바이트 |
+| S13 | §2.8·§7 | id 입력은 문자열 `"0.8"`인데 `reproduce`는 숫자 `0.8`을 인쇄한다 — 어느 필드를 되돌려 해시하는지 규칙이 없다 | 필드의 바이트 |
+| R4-2 | §2.7·§2.8·§2.9 | JCS는 문자열 안의 날짜 표기를 건드리지 않아 같은 시각이 `Z`와 `+09:00`으로 적히면 id가 갈린다 | 필드의 바이트 |
+
+**정한 것(D154–D159).** (1) **비교 대상** — `scanned_at`·`classes_reproduction_inputs`를 뺀 전부, 셋째 종류 없음(D154). (2) **필드의 바이트** — 전 유리수 필드의 스케일 표 `D155-1`(D155); 분수 파라미터는 십진 문자열이고 `reproduce`가 **그대로 인쇄**해 인쇄 = 해시 입력(D156); 시각은 UTC·RFC 3339·초·`Z`, unix 초에서 생성(D157). (3) **집합의 경계** — `reproduce`의 필드는 세 종류뿐이고 §7 주석이 그것을 표시하며 §2.8이 정본(D158); 측정 캐시 키는 §2.8 입력의 사영(D159). §7 예시를 표에 맞췄다 — 예시는 계약의 설명이라 결정을 먼저 정하고 예시를 따르게 했다: `RACD` 0.305 → 0.3046, `dup_extent` 0.046 → 0.0462, `I`·`A`·`D` → 4자리, `tc` 0.75 → 0.7500, 요약 통계 → 2자리, 파라미터 분수 → 문자열, `percentile_method`에 `arithmetic`·`output` 추가(§2.5 문장과 예시가 어긋나 있었다). §2.3의 `≈ 185.5`도 표에 맞춰 `185.48`로.
+
+**포기한 것.** 스케일에 "최대 n자리, 후행 0 제거"(최소 표현)도 고려했다 — 예시가 덜 시끄럽다. 버린 이유: D115가 이미 스케일 **고정**(`"F": 0.0`)이고, 최소 표현은 린트가 "n자리 이하"만 볼 수 있어 `0.5`와 `0.5000`이 같은 값의 두 바이트가 된다 — 바이트 동일은 표현이 하나여야 성립한다. `environment`를 비교 제외에 넣는 것도 고려했다 — 필요 없다: 엔진 버전은 id 입력이라 id가 같으면 같다. **`reproduce.parameters`를 숫자로 두고 되돌리는 규칙을 쓰는 것**도 고려했다 — 되돌리기는 필드별 예외 목록을 만들고 그 목록이 S13의 두 번째 판본이 된다; 문자열을 그대로 인쇄하면 규칙이 없어진다.
+
+**이 판이 닫는 key(이름만 — 닫힘 표시는 후속 PR).** S5(D154), N3(D158), S6(D159), O-3(D155), S13(D156), R4-2(D157). 여섯 전부 — 부분만 닫은 것은 없다. 귀속은 주장으로 했고 절 겹침으로 하지 않았다(D153).
+
+**판 번호를 v3.9.0으로 올리는 이유.** 이 판은 산출물의 **바이트**를 정한다 — 스키마(`parameters`의 타입, 스케일 린트의 범위)와 픽스처(`contract/graph/`의 `RACD` 표시, `contract/percentile/`의 요약 통계 스케일, `reproducibility/`의 비교 대상·캐시 미스·시각 케이스)가 뒤따라야 하고, 기존 `expected.json`이 움직인다(`fixture_change {reason: contract_change}`). v3.8.x의 보충들은 문장을 고쳤고, 이 판은 바이트를 고친다.
+
+**이 판 뒤 스키마가 따라가야 할 자리**(다음 PR이 본다): `report.schema.json` — `reproduce.parameters`의 분수 값 타입 `number → string`(`verify.min_changed_line_coverage`, `weights.*`), `percentile_method`에 `arithmetic`·`output` 필수; `contract/schema/`의 스케일 린트 — 표 `D155-1` 전체(비율 4자리·Lakos 2자리·요약 통계·후행 0); `contract/graph/nccd-cross-check` — `display.RACD` 0.305 → 0.3046(`contract_change`); `contract/reproducibility/` — 비교 대상·제외 필드·파라미터 캐시 미스·시각 표기 케이스. 이 판이 커밋되면 §7 예시가 현재 스키마와 어긋나 적합성 스위트가 빨갛다 — 계약이 먼저 서고 스키마가 같은 PR에서 따라간다(PR #11·#17의 순서).
+
+**이 판이 하지 않은 것.** 닫힘 표시(`records/`), 스키마·픽스처, 나머지 key. G0 #1은 통과가 아니다 — 열린 key가 남았고 라운드 조건(D151)도 아직이다.
+
+**보정(2026-09-22, 같은 판 안).** 표 `D155-1`을 글자 그대로 구현한 스케일 린트가 §7 예시에서 넷을 잡았다 — `population.all.spread.age_last_days`의 `median`·`iqr`·`p90`·`max`(`unlisted_rational_field`). 요약 통계 행은 "대상이 정수 측정이면 2자리"인데 대상 `age_last_days`(§2.1, 일)가 정수 행 목록에 없어 종류를 정할 수 없었다. 구현 세션은 규칙대로 코드에서 채우지 않고 멈췄다 — "표에 없는 필드는 표에 먼저 들어온다"가 그 자리에서 일한 것이다. 정수 행에 `age_last_days`(와 같은 부류의 개수 `unknown_n`)를 넣었다. 함께 고친 것 하나: §4.5·D159가 `pair_dup_tokens` 키의 예로 든 `cpd.language`는 이 문서에 없는 파라미터였다 — CPD의 언어는 파일 확장자에서 결정되는 내용의 속성이라 `content_id`가 이미 담는다. 지웠고, 파라미터를 읽지 않는 `cx`의 키를 둘째 예로 넣었다(픽스처가 §2.1에서 읽어 선언했던 것을 계약이 직접 말하게). 판 번호는 올리지 않는다 — PR #17이 §7 주석의 거짓 절을 같은 판 안에서 지운 것과 같은 처리이고, 결정(D154–D159)은 하나도 바뀌지 않았다.
+
 **문서 규칙(v3.7.2)** — 본문(§1–§12)에는 계약·근거·결정만 쓴다. "언제 뭘 고쳤다"는 판 이력은 §0에만 남긴다 — 본문의 편집 메모는 읽는 사람이 아니라 쓰는 사람을 위한 것이었다. 문장 단위 "(vX.Y)" 태그는 본문(§1–§9, §11–§12)에서 제거했다 — 변경점은 §0와 git diff가 갖는다. §10 결정 기록의 판 표기는 기록의 일부(언제 결정·개정됐나)라 유지한다.
 
 **문서 규칙 2 — 본문은 언제나 자기 완결이어야 한다.** "이전 판과 같음"·"vX §n 그대로"·"나머지는 vY"라는 참조를 본문에 쓰지 않는다. 그것은 다음 재작성에서 내용이 사라지는 가장 확실한 경로였다 — §4·§8·§10 D1–D23·§6.5 전제조건·§9 P3–P6와 매트릭스·§7 예시가 그렇게 사라졌고, 참조가 가리키던 판은 이미 없었다. 줄이려면 본문을 줄이고, 옮기려면 옮긴 자리를 §n으로 가리킨다. 이전 판을 가리키는 문장이 본문에 있으면 리뷰에서 반려한다.
@@ -424,7 +451,7 @@ PR #11·#10·#12가 계약 → 구현 → 기록 순서로 머지되고 main pus
 **지표**: `ArchitectureMetrics.componentDependencyMetrics` — `Ca, Ce, I, A, D`. `zone` 표기는 설명, 예외 병기. 순환은 Tarjan SCC.
 
 ### 2.3 시스템 단위 (Lakos)
-`ArchitectureMetrics.lakosMetrics`. `CCD` = Σ(전이적 도달 컴포넌트 수, 자기 포함), `ACD = CCD/N`, `RACD = ACD/N`, `NCCD = CCD / ((N+1)·log₂(N+1) − N)`. 예: N=41, CCD=512 → `CCD_balanced ≈ 185.5`, `ACD ≈ 12.49`, `RACD ≈ 0.305`, `NCCD ≈ 2.76`. 시스템 숫자 하나, 추세용.
+`ArchitectureMetrics.lakosMetrics`. `CCD` = Σ(전이적 도달 컴포넌트 수, 자기 포함), `ACD = CCD/N`, `RACD = ACD/N`, `NCCD = CCD / ((N+1)·log₂(N+1) − N)`. 예: N=41, CCD=512 → `CCD_balanced = 185.48`, `ACD = 12.49`, `RACD = 0.3046`, `NCCD = 2.76`(직렬화 스케일은 §2.5 표, D155). 시스템 숫자 하나, 추세용.
 
 ### 2.4 파일 쌍 단위
 `shared` = 두 파일을 함께 만진 비머지 커밋 수. `tc = shared / min(chg_commits_a, chg_commits_b)`. 보고: `shared ≥ 5 ∧ tc ≥ 0.5`. 정적 의존 없으면 숨은 결합. `commit_granularity: coarse` 경고 병기.
@@ -445,14 +472,23 @@ PR #11·#10·#12가 계약 → 구현 → 기록 순서로 머지되고 main pus
 - **적용 범위는 F의 P90에 그치지 않는다**: `median = Q(0.5)`, `IQR = Q(0.75) − Q(0.25)`도 같은 방법이다 — 이 둘을 §2.5 표시 규칙(`IQR < 중앙값의 25%` → `population_note`)과 §3.7 confidence(`IQR = 0`, `IQR < 0.25·median`)가 쓰므로 방법이 갈리면 confidence가 갈린다. `reproduce.percentile_method.quantile`은 **단일 선언**이다.
 - 픽스처 예: `[1,2,3,4,5,6,7,8,9,100]`, q = 0.9 → h = 9.1 → `9 + 0.1×91 = 18.1`.
 - `P90(age_last_days)`는 **유효 나이만**(`≠ null`)으로. `population.all.age_last_days.valid_n` 기록.
-- `reproduce.percentile_method = {rank: "average", formula: "(rank_avg-1)/(N-1)", quantile: "type7-linear", arithmetic: "exact-rational", output: {sqrt: "BigDecimal MathContext(34, HALF_EVEN)", lens_scale: 1, pct_scale: 4, rounding: "HALF_EVEN"}}`.
+- `reproduce.percentile_method = {rank: "average", formula: "(rank_avg-1)/(N-1)", quantile: "type7-linear", arithmetic: "exact-rational", output: {sqrt: "BigDecimal MathContext(34, HALF_EVEN)", rounding: "HALF_EVEN", scales: "D155-1"}}` — `scales`는 아래 직렬화 표의 버전이다.
 - **게이트는 원값**(§5).
 
 **산술 계약 — 두 층.** 위 픽스처 예 `18.1`은 IEEE-754 `double`로 재현되지 않는다(`1 + 0.9·9 = 9.1`의 소수부가 `0.09999999999999964`가 되어 `18.099999999999966`이 나온다). "두 머신 바이트 동일"(§2.9 `reproducibility/`)과 "손으로 쓴 숫자 금지"를 함께 지키려면 산술이 계약이어야 한다.
 - **순위·분위·비교는 정확 유리수**(Java: `BigInteger` 분수 또는 유한 `BigDecimal`). 백분위·median·IQR·분위, 그리고 모든 임계 비교(`pct ≥ 0.90`, `IQR < 0.25·median`, 합격 함수의 `≥ 20% 감소`)는 **반올림 전 정확값**으로 판정한다 — 직렬화된 값으로 비교하면 경계에서 흔들린다.
 - **무리수는 크기 출력에만.** 렌즈 값의 `sqrt`(`H = 100·√(pct×pct)`)는 유리수로 닫히지 않는다. 렌즈 **순위**는 √가 단조이므로 `pct × pct`의 정확 비교로 내고, √는 **표시할 값에만** `BigDecimal.sqrt(MathContext(34, HALF_EVEN))`으로 계산한다.
 - **파생은 전정밀에서, 반올림은 마지막에 한 번.** composite(§3.6 = `0.5·H + 0.3·Dx + 0.2·F`)는 √를 산술 입력으로 쓰므로 위의 "√는 표시값에만"이 닿지 않는다 — **34자리 렌즈 값으로 가중합한 뒤 한 번만 반올림**한다. 표시값으로 더하면 갈린다: 예컨대 H = 95.4934…, Dx = 79.0443…이면 전정밀 경로는 71.4600 → **71.5**, 표시값(95.5·79.0) 경로는 71.45 → **71.4**. composite **순위**도 √의 가중합이라 `pct × pct` 정확 비교가 통하지 않으므로 34자리 값으로 비교한다 — 정확값은 아니지만 MathContext가 고정이라 재현된다. `contract/lens/`는 두 경로가 갈리는 경계 케이스를 반드시 포함한다.
-- **직렬화**: 렌즈 값·composite 소수 1자리, 백분위 4자리, 둘 다 HALF_EVEN. 쓰기는 `BigDecimal.toPlainString`(스케일 고정)이며 **`double`을 경유하지 않는다** — 읽기도 마찬가지다.
+- **직렬화 — 산출물의 모든 유리수 필드에 스케일을 배정한다**(D155). 렌즈·백분위 둘만 정하고 나머지를 비워 두면 "손으로 쓴 숫자 금지"(§2.9)와 "바이트 동일"이 그 필드들에서 성립하지 않는다 — `expected.json`을 계약에서 생성할 수 없기 때문이다. 스케일은 **고정**이다(`setScale(n, HALF_EVEN).toPlainString()`, 후행 0 유지 — `0.38`이 아니라 `0.3800`). 쓰기·읽기 모두 **`double`을 경유하지 않는다**. 표 `D155-1`:
+  | 종류 | 필드 | 스케일 |
+  |---|---|---|
+  | 정수 측정·개수 | `cx`·`loc`·`file_tokens`·`chg_commits`·`chg_days`·`churn`·`fan_in`·`twins`·`active_twins`·`shared`·`union_dup_tokens`·`self_dup_tokens`·`Ca`·`Ce`·`CCD`·`components`·`n_ranked`·`n_population`·`valid_n`·`unknown_n`·`age_last_days`·`debt_age_days`·`change_exposure_90d`·`authors_window_days`·`distinct_authors_90d`·`team_count` | 정수 |
+  | 비율(0–1) | `pct`·`lens_pct`·`dup_extent`·`active_twin_ratio`·`tc`·`ownership_max_share`·`minor_contributor_share`·`I`·`A`·`D`·`RACD`·상대 변화(`delta`의 비율 표기) | **4자리** |
+  | 렌즈·composite(0–100) | `H`·`Dx`·`F`·`composite`·`priority`·`anchor_values`/`current_values`의 렌즈 값 | **1자리** |
+  | Lakos 절대량 | `ACD`·`CCD_balanced`·`NCCD` | **2자리** |
+  | 요약 통계(`spread`의 `median`·`iqr`·`p90`·`max`) | 대상이 정수 측정이면 **2자리**(type-7 보간이 사분위에서 `.25`·`.75`를 만든다 — 2자리가 정확값을 담는다), 비율 측정이면 4자리, 렌즈면 1자리 | 대상에 따름 |
+  | 파라미터 | 정수는 정수, 분수는 **십진 문자열**(D156 — `"0.8"`), 이름은 문자열 | — |
+  표에 없는 유리수 필드가 산출물에 나오면 `contract/schema/`의 스케일 린트가 **실패**한다 — 새 필드는 이 표에 먼저 들어온다.
 - **"바이트 동일"은 파싱된 숫자가 아니라 직렬화된 텍스트에 대한 주장이다.** 그래서 스케일은 **JSON Schema로 강제되지 않는다** — JSON 숫자는 이진 부동소수점으로 파싱되어 `multipleOf`가 깨진다(`95.6 % 0.1`, `0.8056 % 0.0001`이 거짓이 된다). 스케일 검사는 스키마가 아니라 **원문 텍스트 린트**의 일이고 `contract/schema/`가 진다.
 - **측정·순위 경로에서 `double`·`float` 금지.** 자체 ArchUnit 규칙으로 강제하고 `contract/reproducibility/`가 회귀를 잡는다.
 
@@ -465,7 +501,8 @@ PR #11·#10·#12가 계약 → 구현 → 기록 순서로 머지되고 main pus
 - `twins(A)` = `pair_dup_tokens(A,·) > 0`인 파일 수.
 
 ### 2.7 이력 계약
-- **앵커**: `HEAD_TIME` = HEAD 커밋의 커미터 시각. 모든 "최근"·"경과"는 이 시각 기준. 같은 HEAD·같은 트리를 언제 재도 같은 값. `reproduce.window_anchor = {type: "head_committer_time", timestamp}`. `scanned_at`은 감사 메타데이터.
+- **앵커**: `HEAD_TIME` = HEAD 커밋의 커미터 시각. 모든 "최근"·"경과"는 이 시각 기준. 같은 HEAD·같은 트리를 언제 재도 같은 값. `reproduce.window_anchor = {type: "head_committer_time", timestamp}`. `scanned_at`은 감사 메타데이터 — 바이트 비교에서 빠지는 필드다(D154).
+- **시각의 정규 표기**(D157): `analysis_input_id`에 들어가거나 `reproduce`에 인쇄되는 모든 시각 문자열은 **UTC · RFC 3339 · 초 정밀 · `Z` 접미 · 소수 초 없음**(`YYYY-MM-DDTHH:MM:SSZ`)이고, **unix 초**(`PersonIdent.getWhen()`, `%ct`)에서 생성한다 — git의 서식 출력(`%cI`)을 쓰지 않는다. JCS(§2.8)는 문자열 안을 건드리지 않으므로 같은 순간이 `…10Z`와 `…10+09:00`으로 적히면 다른 바이트가 되어 id가 갈린다. 실제로 겪었다: `%cI`가 UTC를 `Z`로도 `+00:00`으로도 쓰는 것을 CI가 잡아 계산기가 `%ct`로 바뀌었다(PR #4, §2.9 `reproducibility/`). 대상: `window_anchor.timestamp`, 캠페인 `anchor.window_anchor`, 사건의 `claimed_at`·`validated_at`, 커밋 시각이 들어가는 어떤 문자열도. `scanned_at`도 같은 표기다(비교 제외이지만 표기는 하나).
 - **창 W**: 커미터 시각 ∈ `[HEAD_TIME − window.months(12), HEAD_TIME]`인 비머지 커밋, 최신순 최대 `window.max_commits`(2,000). 먼저 닥치는 상한 적용, `window_applied.bound_hit` 기록.
 - **90일 지표는 창 안으로 잘린다.** `distinct_authors_90d`(§2.1)와 `change_exposure_90d`(§5.5)는 `[HEAD_TIME − 90d, HEAD_TIME] ∩ W`에서 계산한다. 커밋 수 상한이 90일보다 짧은 구간을 남기면(`bound_hit: count`) 두 지표는 잘린 구간만 본다. 시간 상한은 90일을 자를 수 없다(90일 ⊂ 12개월) — 절단은 `count`에서만 일어난다. **자르는 근거는 둘이다**(D150): (1) **일관성** — §2.1 표의 이력 성분은 전부 "W 안"이다(`chg_commits`·`chg_days`·`churn`·`ownership_max_share`·`minor_contributor_share`). 90일 지표만 창 밖을 읽으면 같은 표 안에서 "W"가 필드마다 다른 것을 뜻하게 된다. (2) **비용** — §4.5의 커밋 워크는 창으로 잘려 있고, 창 밖 90일 구간을 읽으려면 추가 워크가 필요하다. D147의 한정 걷기는 F 후보의 마지막 커밋만 겨눈 것이라 이 용도를 덮지 않는다. 재현성(D87)은 이 결정의 근거가 **아니다** — 자르면 90일 지표가 창 밖을 읽지 않으므로 D87이 걸릴 자리가 없고, 자르지 않았더라도 창 밖 커밋은 §2.8이 적은 대로 완전한 클론에서는 SHA 연쇄로 봉인되며 불완전한 클론은 `last_commit_map_sha256`(D146)과 `history_complete`(D148)가 구분한다.
 - **절단 사실은 창의 속성이다 — 존재로 판정한다.** `authors_window_truncated` = 최근 90일 안에 창이 제외한 커밋이 **있는가**. "90일을 다 못 봤다"가 아니다: 10일 된 리포는 90일을 못 봤지만 잃은 것이 없고, `truncated`는 "데이터를 잃었다"로 읽히므로 그 경우 거짓이어야 한다. 파일마다 적지 않는다 — 어느 파일을 보든 같은 사실이고, 파일별로 적으면 "이 파일이 잘린 구간에 커밋을 가졌나"를 아는 것처럼 읽히는데 **그 커밋들이 창에서 사라져 판정하는 것이므로 알 수 없다**. `reproduce.window_applied`에 `authors_window_truncated`(불리언)와 `authors_window_days`(90일 지표가 실제로 본 일수 = `max(0, min(90, HEAD_TIME − 창의 가장 오래된 커밋 시각))` — 커미터 시각이 뒤죽박죽이면 음수가 될 수 있어 0에서 자른다, `invalid_metadata`와 같은 부류)를 적는다. 이름이 `90d`인데 실제로 1.6일을 본 경우, 그 사실을 아는 자리가 여기다.
@@ -479,11 +516,11 @@ PR #11·#10·#12가 계약 → 구현 → 기록 순서로 머지되고 main pus
   | 정체성 | 의미 | 불변성 |
   |---|---|---|
   | `repository_state_id` | 특정 git 트리의 정체성 | 트리가 같으면 동일. **캠페인 앵커의 봉인은 이것**(§5.4) |
-  | `analysis_input_id` | 특정 툴체인·계약·입력으로 수행한 **분석**의 정체성 | 입력이 같으면 분석 결과 동일. **캐시 키** |
+  | `analysis_input_id` | 특정 툴체인·계약·입력으로 수행한 **분석**의 정체성 | 입력이 같으면 분석 결과 동일. 조립된 리포트의 **캐시 키** — 개별 측정의 캐시 키는 이 입력 목록의 사영이다(§4.5, D159) |
   | `validated_tree_id` | 실제 **검증된** 코드 트리의 정체성 | 검증 대상이 무엇이었는지 고정(§5.5, §6.3) |
 - **`repository_state_id`** = 정렬된 `(path, content_id)` 전체의 sha256.
-- **`analysis_input_id`** = sha256(`schema_version`, `contract_version`, `core_tool_version`, 엔진 버전(pmd·archunit·jgit), `history_backend`, 컴포넌트 전략과 그 알고리즘 버전, 측정 알고리즘 버전, 소스 파일 `(path, content_id)`, 클래스 파일 `(path, sha256(bytes))`, `window_anchor`, 창 안 커밋 SHA 목록(순서 포함; `reproduce`에는 그 해시 `commit_list_sha256`로 기록하고 목록은 head + 창 규칙에서 재생성), **파일별 마지막 비머지 커밋 맵**(경로 → 마지막 비머지 커밋 SHA, 미커밋 파일은 `null`; `reproduce`에는 그 해시 `last_commit_map_sha256`로 기록, D146), 모든 분석 파라미터). **원칙: 여기 포함되지 않은 입력은 분석 결과에 영향을 주어서는 안 된다** — 그리고 **여기 포함된 모든 입력은 `reproduce` 블록에 값 또는 해시로 나타나야 한다.** 마지막 커밋 맵을 넣는 이유(D146): `age_last_days`(§2.1)는 창 밖 커밋에서 나오는데 창 안 목록만으로는 그 의존이 id에 없었다. 커밋 SHA가 부모 해시를 담아 창 안 목록이 조상을 전이적으로 봉인하는 것은 사실이지만 **완전한 클론에서만** 참이라(shallow clone은 같은 SHA에 잘린 조상을 갖는다) 계약은 그 봉인에 **기대지 않고** 의존을 명시적으로 넣는다. 그러면 `age_last_days`를 바꿀 수 있는 모든 것 — 다른 마지막 커밋, 잘린 조상으로 인한 다른 마지막 커밋, 미커밋 파일 — 이 맵을 바꾸고 맵이 id를 바꾼다. 이 맵은 §4.5의 한정 걷기 뒤에야 완성되므로 **`analysis_input_id`는 이력 걷기 뒤에 계산된다** — 측정 캐시는 내용 주소(§4.5)라 영향이 없고, id는 조립된 리포트의 키다. 캐시 키와 `reproduce` 블록의 동일성을 계약으로 선언한다(`contract/reproducibility/`에 "reproduce만으로 id 재계산" 케이스). 툴체인 버전이 빠지면 PMD 7.16과 7.17이 같은 키를 만들어 잘못된 캐시 적중이 생긴다 — 그래서 포함한다.
-- **정규 인코딩** — 해시는 바이트에 대한 것이므로 입력을 바이트로 펴는 방법이 계약이어야 한다. 두 구현이 같은 입력에서 다른 바이트를 만들면 "두 머신 바이트 동일"이 그 자리에서 깨진다. 방법은 **RFC 8785 JCS**(D138)(JSON Canonicalization Scheme): 키를 UTF-16 코드 유닛 순으로 정렬, 공백 없음, 문자열은 최소 이스케이프, 숫자는 ES6 직렬화. `reproduce.canonical_encoding = "RFC8785-JCS"`로 인쇄한다. **id 입력에 부동소수점을 두지 않는다** — 분수 파라미터(`verify.min_changed_line_coverage` 같은 것)는 id 입력에서 **십진 문자열**(`"0.8"`)로 넣는다. JCS가 숫자를 결정적으로 직렬화하긴 하지만, 산술 계약(§2.5)이 측정 경로에서 `double`을 금지하는 것과 같은 이유로 해시 경로에서도 이진 부동소수점을 입력으로 받지 않는다. 검증: `contract/reproducibility/`에 RFC 8785의 테스트 벡터를 같은 바이트로 내는 케이스를 둔다 — 구현이 언어마다 달라도 그 벡터에서 갈리면 인코딩이 계약과 다른 것이다.
+- **`analysis_input_id`** = sha256(`schema_version`, `contract_version`, `core_tool_version`, 엔진 버전(pmd·archunit·jgit), `history_backend`, 컴포넌트 전략과 그 알고리즘 버전, 측정 알고리즘 버전, 소스 파일 `(path, content_id)`, 클래스 파일 `(path, sha256(bytes))`, `window_anchor`, 창 안 커밋 SHA 목록(순서 포함; `reproduce`에는 그 해시 `commit_list_sha256`로 기록하고 목록은 head + 창 규칙에서 재생성), **파일별 마지막 비머지 커밋 맵**(경로 → 마지막 비머지 커밋 SHA, 미커밋 파일은 `null`; `reproduce`에는 그 해시 `last_commit_map_sha256`로 기록, D146), 모든 분석 파라미터). **원칙: 여기 포함되지 않은 입력은 분석 결과에 영향을 주어서는 안 된다** — 그리고 **여기 포함된 모든 입력은 `reproduce` 블록에 값 또는 해시로 나타나야 한다.** `reproduce`의 필드는 **세 종류뿐**이다(D158): (i) **id 입력** — 위 목록의 값 또는 해시(`tool_version`·`schema_version`·`contract_version`·`algorithm_versions`·`environment`·`history_backend.name`·`window_anchor`·`head`·`repository_state_id`·`classes_id`·`commit_list_sha256`·`last_commit_map_sha256`·`component.strategy`·`parameters`·`percentile_method`·`bytecode_scope`의 범위 정의), (ii) **id 입력의 결정적 함수** — id가 같으면 반드시 같은 값(`analysis_input_id` 자신, `window_applied`의 나머지, `history_complete`·`graft_boundary_shas`, `component.resolved_root`·`count`, `bytecode_scope`의 집계), (iii) **비교 제외**(D154) — id 입력도 그 함수도 아닌 것: `scanned_at`(벽시계)과 `classes_reproduction_inputs`(원인이 아니라 재현 안내). "두 머신 바이트 동일"(§2.9)은 (i)·(ii)에 대한 주장이고 (iii)은 그 비교에서 빠진다. 넷째 종류는 없다 — id 입력도 함수도 아닌데 비교되는 필드가 있으면 그것이 재현성의 구멍이다. §7 예시의 주석은 이 셋을 표시하고, §2.8이 정본이다. 마지막 커밋 맵을 넣는 이유(D146): `age_last_days`(§2.1)는 창 밖 커밋에서 나오는데 창 안 목록만으로는 그 의존이 id에 없었다. 커밋 SHA가 부모 해시를 담아 창 안 목록이 조상을 전이적으로 봉인하는 것은 사실이지만 **완전한 클론에서만** 참이라(shallow clone은 같은 SHA에 잘린 조상을 갖는다) 계약은 그 봉인에 **기대지 않고** 의존을 명시적으로 넣는다. 그러면 `age_last_days`를 바꿀 수 있는 모든 것 — 다른 마지막 커밋, 잘린 조상으로 인한 다른 마지막 커밋, 미커밋 파일 — 이 맵을 바꾸고 맵이 id를 바꾼다. 이 맵은 §4.5의 한정 걷기 뒤에야 완성되므로 **`analysis_input_id`는 이력 걷기 뒤에 계산된다** — 측정 캐시는 내용 주소(§4.5)라 영향이 없고, id는 조립된 리포트의 키다. 캐시 키와 `reproduce` 블록의 동일성을 계약으로 선언한다(`contract/reproducibility/`에 "reproduce만으로 id 재계산" 케이스). 툴체인 버전이 빠지면 PMD 7.16과 7.17이 같은 키를 만들어 잘못된 캐시 적중이 생긴다 — 그래서 포함한다.
+- **정규 인코딩** — 해시는 바이트에 대한 것이므로 입력을 바이트로 펴는 방법이 계약이어야 한다. 두 구현이 같은 입력에서 다른 바이트를 만들면 "두 머신 바이트 동일"이 그 자리에서 깨진다. 방법은 **RFC 8785 JCS**(D138)(JSON Canonicalization Scheme): 키를 UTF-16 코드 유닛 순으로 정렬, 공백 없음, 문자열은 최소 이스케이프, 숫자는 ES6 직렬화. JCS는 **문자열 안**은 건드리지 않으므로 문자열로 들어가는 시각은 §2.7의 정규 표기(D157 — UTC·RFC 3339·초·`Z`)여야 같은 순간이 같은 바이트가 된다. `reproduce.canonical_encoding = "RFC8785-JCS"`로 인쇄한다. **id 입력에 부동소수점을 두지 않는다** — 분수 파라미터(`verify.min_changed_line_coverage`, composite `weights` 같은 것)는 id 입력에서 **십진 문자열**(`"0.8"`, `"0.5"`)로 넣고, **`reproduce.parameters`는 그 문자열을 그대로 인쇄한다**(D156) — 인쇄 형식과 해시 입력 형식이 **같다**. 되돌리는 규칙이 없기 때문에 되돌릴 것도 없다: `reproduce.parameters`를 JCS로 펴면 그것이 곧 id 입력의 파라미터 부분이고, "`reproduce`만으로 id 재계산"(D111)은 그래서 성립한다. 정수 파라미터는 JSON 정수(JCS가 정수를 그대로 인쇄한다), 이름·열거 값은 문자열. JCS가 숫자를 결정적으로 직렬화하긴 하지만, 산술 계약(§2.5)이 측정 경로에서 `double`을 금지하는 것과 같은 이유로 해시 경로에서도 이진 부동소수점을 입력으로 받지 않는다. 검증: `contract/reproducibility/`에 RFC 8785의 테스트 벡터를 같은 바이트로 내는 케이스를 둔다 — 구현이 언어마다 달라도 그 벡터에서 갈리면 인코딩이 계약과 다른 것이다.
 - **`validated_tree_id`** = 검증이 실행된 트리의 `repository_state_id`; 함께 `validated_analysis_input_id`를 기록. 검증은 결과와 **검증 입력 정체성**의 쌍이다.
 - **이력 완전성은 진단 필드다**(D148): `reproduce.history_complete`(불리언)와 shallow면 `graft_boundary_shas`. id 입력이 아니다 — shallow는 마지막 커밋 맵이 달라져 id가 이미 갈린다 — 그러나 두 클론의 id가 **왜** 다른지를 읽는 사람이 여기서 본다.
 - **`classes_id`** = `bytecode_scope` 안 `.class` 파일의 정렬된 `(상대 경로, bytes)` sha256. 실제 바이트 해시라 **지표 재현에는 이 값만으로 충분**하다.
@@ -498,8 +535,8 @@ PR #11·#10·#12가 계약 → 구현 → 기록 순서로 머지되고 main pus
 | 디렉터리 | 케이스(최소) | 게이트 |
 |---|---|---|
 | `percentile/` | 동점, N=1, N<20, 언어 분리, 0 팽창, **렌즈 백분위(H/Dx/F 각 모집단, 0 포함)**, **P90 type-7 예시(18.1)**, **IQR=0 → low**, `median`·`IQR`도 type-7, `n_ranked ≠ n_population` | G0 |
-| `schema/` | 산출물 스키마 7종(report·change·gate·validate·campaign·event·fixture_change)마다 **긍정 1 + 거부되어야 할 변조 ≥ 1**. 변조는 구조 오류만이 아니라 **하드룰**을 겨눈다 — 사건에 정체 필드(D48), 원장 사건에 코드 상태(D55), `change` 항목에 판정 단어·점수(B.2), `validated`인데 `validated_tree_id` 없음(D89). **하드룰은 한 스키마에만 걸면 뚫린다**: `report`의 파일·finding에 `author`·`severity`·`score`를 넣는 변조가 각각 거부되어야 하고(D126), 자유 텍스트(`population_note`·`zone_note`·`composite_note`)의 판정 어휘도 렌더러와 **같은 사전**으로 막는다(D127). 직렬화 스케일은 스키마가 아니라 **원문 텍스트 린트**로(D125) | G0 |
-| `reproducibility/` | 같은 트리·다른 PMD 버전 → `analysis_input_id` 다름·`repository_state_id` 같음; 파라미터 하나 변경 → id 변경; `reproduce`에 없는 환경 변수를 바꿔도 결과 불변(원칙 검사); 두 머신 바이트 동일; **full clone vs `--depth 3` shallow clone(같은 트리·같은 창 안 커밋 목록) → `last_commit_map_sha256`이 달라 id 다름 ∧ shallow는 `age_unknown` ∧ `history_complete: false`**(D146·D148·D149) | G0 |
+| `schema/` | 산출물 스키마 7종(report·change·gate·validate·campaign·event·fixture_change)마다 **긍정 1 + 거부되어야 할 변조 ≥ 1**. 변조는 구조 오류만이 아니라 **하드룰**을 겨눈다 — 사건에 정체 필드(D48), 원장 사건에 코드 상태(D55), `change` 항목에 판정 단어·점수(B.2), `validated`인데 `validated_tree_id` 없음(D89). **하드룰은 한 스키마에만 걸면 뚫린다**: `report`의 파일·finding에 `author`·`severity`·`score`를 넣는 변조가 각각 거부되어야 하고(D126), 자유 텍스트(`population_note`·`zone_note`·`composite_note`)의 판정 어휘도 렌더러와 **같은 사전**으로 막는다(D127). 직렬화 스케일은 스키마가 아니라 **원문 텍스트 린트**로(D125) — 린트는 §2.5 표 `D155-1`의 **모든 유리수 필드**를 보고, 표에 없는 유리수 필드가 나오면 실패한다(D155) | G0 |
+| `reproducibility/` | 같은 트리·다른 PMD 버전 → `analysis_input_id` 다름·`repository_state_id` 같음; 파라미터 하나 변경 → id 변경; `reproduce`에 없는 환경 변수를 바꿔도 결과 불변(원칙 검사); 두 머신 바이트 동일; **full clone vs `--depth 3` shallow clone(같은 트리·같은 창 안 커밋 목록) → `last_commit_map_sha256`이 달라 id 다름 ∧ shallow는 `age_unknown` ∧ `history_complete: false`**(D146·D148·D149); **"두 머신 바이트 동일"의 비교 대상**(D154) = 산출물에서 `reproduce.scanned_at`·`reproduce.classes_reproduction_inputs`를 **뺀 전부** — 두 실행의 산출물이 그 규칙으로 동일하고 제외 필드는 실제로 다름(`scanned_at`)을 함께 단언한다; **파라미터 하나 변경**(`cpd.minimum_tokens`) → 그 파라미터를 읽는 측정(`pair_dup_tokens`)만 캐시 미스, 다른 측정은 적중(D159); **시각 표기**: 같은 unix 초를 `Z`와 `+09:00`으로 적은 두 입력이 정규 표기로 같은 바이트(D157) | G0 |
 | `cpd/` | 겹침 합집합(150), 무순서 쌍, 자기 중복, 임계 경계, **같은 열 4발생 = 클러스터 1개** | G0 |
 | `history/` | 앵커 고정(같은 HEAD 다른 날짜), 머지 제외, rename(tie-break·`rename_ambiguous`), 상한 두 종류, coarse, **shallow clone → `age_unknown`**(`.git/shallow` 명시 감지 — 감지 없이 200 같은 그럴듯한 수가 나오면 실패), **창 밖 마지막 커밋 복구**(창 안 커밋이 없는 파일의 `age_last_days`가 한정 걷기로 나온다 — §7의 1250이 이 경로다, D147·D149), 음수 나이 → `invalid_metadata`, **`scan`·`change` 경로에서 blame 호출 시 실패**(부재 검사이므로 `must_be_caught` + `must_not_be_caught`). **§2.4 파일 쌍**: `shared`·`tc = shared / min(chg_commits_a, chg_commits_b)`·보고 임계(`shared ≥ 5 ∧ tc ≥ 0.5`)·정적 의존 유무의 부착, 그리고 **같은 작업을 스쿼시/비스쿼시로 만든 쌍**(분모가 작아져 `tc`가 커지는 것을 값으로 고정한다 — 판정은 없고 `commit_granularity: coarse` 표기만). **§2.1 저자 사실**: 커밋별 저자가 다른 합성 리포에서 `distinct_authors_90d`·`ownership_max_share`·`minor_contributor_share`(`team_count`는 팀 매핑이 있을 때), 그리고 **`attribution=off`에서 정체가 산출물에 없음** — 이것은 부재 검사이고 모양이 아니라 **출처**로 가른다(이 표 뒤의 "부재를 보는 검사" 문단). **90일 지표의 창 절단**: 커밋 수 상한이 90일보다 짧은 구간을 남기는 리포에서 창 밖 커밋이 `distinct_authors_90d`를 움직이지 않는다(§2.7·D137) — `authors_window_truncated`·`authors_window_days` 표기와 함께, 상한이 넉넉한 변이를 대조로 | G0 |
 | `graph/` | 외부 의사 노드, auto 전략 4종, 순환, NCCD 검산 | G0 |
@@ -604,7 +641,7 @@ MCP propose → apply(브랜치) ──► sandbox.validate ──► validate.j
 ### 4.5 이력 백엔드 (P7이 참조)
 - 기본은 **JGit 단독**. blame이 매 스캔 경로에서 빠진 뒤(D18) 남는 비용은 커밋 워크와 diff다. 순서대로: 창 상한(12개월 ∧ 2,000커밋) → `RevWalk.setRetainBody(false)` → 커밋별 변경 경로 집합을 `build/jqradar/history-cache`에 캐시(증분, 키 = 커밋 SHA) → rename 탐지는 창 안 커밋과 아래 한정 걷기의 후보 경로에만.
 - **창 밖 한정 걷기**(D147): 창 안에 커밋이 없는 파일(= F 후보, 유계 부분집합)의 마지막 비머지 커밋은 창 안 워크에 등장하지 않는다. 그래서 창의 가장 오래된 커밋에서 **뒤로 한 번** 걷되 — 파일별 반복이 아니라 후보 집합에 대한 단일 역방향 패스 — 후보 전원의 마지막 커밋이 정해지면 멈춘다. rename 탐지는 이 패스에서 후보 경로에만 붙는다. 이력 끝(루트)에 닿으면 남은 후보는 그 시점까지의 결과로 확정되고, graft 경계에 닿으면(shallow) 멈추고 `age_unknown`(D148). 비용은 **첫 실행에서만** 크다 — 커밋별 변경 경로 캐시(키 = SHA)가 있어 둘째 실행부터는 조회 사슬이다. 이 패스가 끝나야 파일별 마지막 커밋 맵(§2.8 `last_commit_map_sha256`)이 완성되고 `analysis_input_id`가 계산된다. P7 매트릭스의 "창 밖 걷기 깊이" 행이 이것을 잰다.
-- **내용 주소 측정 캐시**: 국소 측정(파일 CYCLO·NCSS, 두 파일 간 `pair_dup_tokens`, 메서드 시그니처 목록)은 커밋이 아니라 **파일 내용**에만 의존하므로 캐시 키는 `(content_id[, twin content_id], 엔진 버전)`. 전이 스캔(§5.5)이 커밋을 100개 거슬러도 바뀐 파일만 다시 재고 나머지는 적중한다 — 전이 모델이 싼 이유.
+- **내용 주소 측정 캐시**: 국소 측정(파일 CYCLO·NCSS, 두 파일 간 `pair_dup_tokens`, 메서드 시그니처 목록)은 커밋이 아니라 **파일 내용**에 의존하므로 캐시 키의 첫 부분은 `content_id`(들)다. 그러나 내용만이 아니다 — **캐시 키 = 그 측정이 읽는 §2.8 입력의 사영**(D159): 내용 + 그 측정에 닿는 엔진·알고리즘 버전 + 그 측정이 읽는 분석 파라미터. 예: `pair_dup_tokens`의 키 = (`content_id` A, `content_id` B, pmd 버전, `algorithm_versions.cpd_aggregation`, `cpd.minimum_tokens`) — `cpd.minimum_tokens`가 바뀌면 같은 두 파일에서 다른 값이 나오므로 키에 없으면 거짓 적중이다. CPD의 언어(java·kotlin)는 파라미터가 아니라 **파일 확장자에서 결정되는 내용의 속성**이라 `content_id`가 이미 담고 있다. 둘째 예: `cx`의 키 = (`content_id`, pmd 버전, `algorithm_versions.measures`) — 읽는 파라미터가 없다. 원칙: 어느 캐시 키에 있는 것은 §2.8 입력 목록에 있어야 하고, §2.8에 없는 것은 어느 캐시 키에도 없어야 한다 — 그래야 "캐시 적중 = 같은 `analysis_input_id`에서 같은 값"이 성립한다. `analysis_input_id`는 모든 측정 키의 비내용 부분 ∪ 트리 ∪ 창의 합이고, 각 측정 키는 그 사영이다. 전이 스캔(§5.5)이 커밋을 100개 거슬러도 바뀐 파일만 다시 재고 나머지는 적중한다 — 전이 모델이 싼 이유.
 - **전이 캐시**: finding별 전이 목록을 `(finding_id, commit, analysis_input_id)`로 캐시해 `--at`을 증분으로. 툴체인이 바뀌면(`analysis_input_id` 변경) 전체 재계산 — P7의 캐시 무효화 시나리오.
 - 그래도 P7 예산을 넘으면 `--history-backend=native`(옵트인)로 `git log --name-status`·`git blame --porcelain`을 ProcessBuilder로 부른다. 옵트인인 이유: rename 추적·공백·blame 휴리스틱이 두 구현 사이에 달라 **같은 트리에서 다른 숫자**가 나올 수 있다. 조건: (a) 배터리 리포 적합성 테스트(O8) 통과, (b) `reproduce.history_backend{name, git_version}` 인쇄, (c) 백엔드가 다른 두 실행 사이의 델타·원장 전이는 거부.
 - 한정 blame(§5.6)은 이 백엔드 위에서 캠페인 생성 시에만 돈다. 매 스캔 경로에서 blame이 호출되면 `contract/history/` 픽스처가 실패한다(G0 — `scan`이 생기는 G1보다 앞서 강제 장치가 있어야 한다).
@@ -875,45 +912,46 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
 {
   "schema": "jqradar/3",
   "project": "sample-service",
-  "reproduce": {
-    "tool_version": "3.7.5", "schema_version": "jqradar/3", "contract_version": "2026-09-10", "scanned_at": "2026-09-07T15:00:00Z",   // scanned_at은 감사용, 나머지는 analysis_input_id 입력
+  "reproduce": {                    // 필드는 세 종류뿐(D158·§2.8): [id] id 입력 · [fn] id 입력의 결정적 함수 · [x] 비교 제외(D154)
+    "tool_version": "3.9.0", "schema_version": "jqradar/3", "contract_version": "2026-09-21", "scanned_at": "2026-09-07T15:00:00Z",   // [id] [id] [id] · scanned_at [x] 벽시계 — 시각 표기는 D157
     "algorithm_versions": { "component_strategy": "auto-1", "measures": "1", "percentile": "1", "succession": "1", "cpd_aggregation": "1" },
     "window_anchor": { "type": "head_committer_time", "timestamp": "2026-09-05T11:42:10Z" },
     "head": "git-sha",
     "repository_state_id": "sha256:…", "analysis_input_id": "sha256:…", "classes_id": "sha256:…",
-    "environment": { "pmd": "7.16.0", "archunit": "1.5.0", "jgit": "7.3.0", "git": null },
-    "classes_reproduction_inputs": { "jdk": "21.0.4", "gradle": "9.1.0", "kotlin": "2.2.0", "compiler_args": ["-parameters"], "annotation_processors": [], "dependency_lock": "sha256:…" },
+    "environment": { "pmd": "7.16.0", "archunit": "1.5.0", "jgit": "7.3.0", "git": null },                                          // [id]
+    "classes_reproduction_inputs": { "jdk": "21.0.4", "gradle": "9.1.0", "kotlin": "2.2.0", "compiler_args": ["-parameters"], "annotation_processors": [], "dependency_lock": "sha256:…" },   // [x] 원인이 아니라 재현 안내(§2.8) — classes_id가 원인
     "history_backend": { "name": "jgit", "git_version": null },
     "window_applied": { "months": 12, "max_commits": 2000, "bound_hit": "time", "commits_in_window": 1340, "merge_commits_excluded": 210,
                         "authors_window_truncated": false, "authors_window_days": 90,   // 90일 지표가 실제로 본 일수(§2.7)
                         "commit_list_sha256": "…",         // 창 안 커밋 SHA 목록(순서 포함)의 해시 — analysis_input_id 입력. 목록 자체는 head + 창 규칙에서 재생성
                         "last_commit_map_sha256": "…",     // 파일별 마지막 비머지 커밋 맵의 해시 — analysis_input_id 입력(D146)
-                        "history_complete": true, "graft_boundary_shas": [] },   // 진단 필드(D148) — id 입력 아님
+                        "history_complete": true, "graft_boundary_shas": [] },   // [fn] 진단 필드(D148) — id 입력 아님, 비교 대상
     "bytecode_scope": { "class_roots": ["build/classes/java/main","build/classes/kotlin/main"], "test_classes_included": false,
                         "generated_excluded": true, "external_edges": 812, "external_included_in_metrics": false },
     "component": { "strategy": "auto", "resolved_root": "com.company.dept.project", "count": 41 },
     "parameters": { "cpd.minimum_tokens": 100, "percentile.min_population": 20, "frozen.min_days": 180, "rename.similarity": 60,
-                    "hotspot.change_unit": "chg_commits", "verify.min_changed_line_coverage": 0.8,
-                    "profile": "jqradar-default", "weights": {"H":0.5,"Dx":0.3,"F":0.2} },
-    "percentile_method": { "rank": "average", "formula": "(rank_avg-1)/(N-1)", "quantile": "type7-linear" }
+                    "hotspot.change_unit": "chg_commits", "verify.min_changed_line_coverage": "0.8",                    // [id] 분수는 십진 문자열 그대로(D156) — 인쇄 = 해시 입력
+                    "profile": "jqradar-default", "weights": {"H":"0.5","Dx":"0.3","F":"0.2"} },
+    "percentile_method": { "rank": "average", "formula": "(rank_avg-1)/(N-1)", "quantile": "type7-linear",
+                           "arithmetic": "exact-rational", "output": {"sqrt": "BigDecimal MathContext(34, HALF_EVEN)", "rounding": "HALF_EVEN", "scales": "D155-1"} }   // [id]
   },
   "population": {
     "all":    { "n": 340, "java": 312, "kotlin": 28,
-                "spread": { "cx.java": {"median": 18, "iqr": 27, "max": 87}, "fan_in": {"median": 4, "iqr": 7, "max": 35}, "age_last_days": {"median": 140, "iqr": 310, "p90": 900, "max": 2100, "valid_n": 338, "unknown_n": 2} } },
+                "spread": { "cx.java": {"median": 18.00, "iqr": 27.00, "max": 87.00}, "fan_in": {"median": 4.00, "iqr": 7.00, "max": 35.00}, "age_last_days": {"median": 140.00, "iqr": 310.00, "p90": 900.00, "max": 2100.00, "valid_n": 338, "unknown_n": 2} } },   // 정수 측정의 요약은 2자리(D155)
     "active": { "n": 212, "java": 194, "kotlin": 18,
-                "spread": { "cx.java": {"median": 21, "iqr": 30, "max": 87}, "chg_commits": {"median": 3, "iqr": 5, "max": 18} } },
-    "dx":     { "n": 37, "spread": { "union_dup_tokens": {"median": 130, "iqr": 110, "max": 240}, "active_twin_ratio": {"median": 0.33, "iqr": 0.5, "max": 1.0} } },
+                "spread": { "cx.java": {"median": 21.00, "iqr": 30.00, "max": 87.00}, "chg_commits": {"median": 3.00, "iqr": 5.00, "max": 18.00} } },
+    "dx":     { "n": 37, "spread": { "union_dup_tokens": {"median": 130.00, "iqr": 110.00, "max": 240.00}, "active_twin_ratio": {"median": 0.3300, "iqr": 0.5000, "max": 1.0000} } },   // 비율 측정의 요약은 4자리
     "median_files_per_commit": 4, "commit_granularity": "fine", "population_note": null
   },
-  "system": { "components": 41, "CCD": 512, "ACD": 12.49, "RACD": 0.305, "CCD_balanced": 185.48, "NCCD": 2.76,
+  "system": { "components": 41, "CCD": 512, "ACD": 12.49, "RACD": 0.3046, "CCD_balanced": 185.48, "NCCD": 2.76,   // RACD는 비율(4자리), 나머지 Lakos 절대량은 2자리(D155)
               "cycles": [ {"id":"cyc-1","size":3,"members":["…"],"break_candidates":[{"from":"…","to":"…"}]} ] },
-  "components": [ { "id": "….order", "Ca": 24, "Ce": 15, "I": 0.38, "A": 0.0, "D": 0.62, "zone": "stable-concrete",
+  "components": [ { "id": "….order", "Ca": 24, "Ce": 15, "I": 0.3800, "A": 0.0000, "D": 0.6200, "zone": "stable-concrete",
                     "zone_note": "Martin Zone of Pain 후보. 도메인 코어·유틸리티는 정당할 수 있음", "cycle_id": "cyc-1", "class_edge_count": 131 } ],
   "files": [
     { "id": "f:order-service", "path": "src/main/java/…/order/OrderService.java", "component": "….order", "lang": "java",
       "measures": { "cx": 87, "cx_method": "cyclo", "loc": 640, "file_tokens": 5200, "smells": {"p1":0,"p2":3,"p3":9,"total":12},
                     "chg_commits": 18, "chg_days": 14, "churn": 2210,
-                    "union_dup_tokens": 240, "dup_extent": 0.046, "self_dup_tokens": 0, "twins": 2, "active_twins": 1, "active_twin_ratio": 0.5,
+                    "union_dup_tokens": 240, "dup_extent": 0.0462, "self_dup_tokens": 0, "twins": 2, "active_twins": 1, "active_twin_ratio": 0.5000,   // 240/5200 = 0.04615… → 0.0462
                     "fan_in": 24, "age_last_days": 6 },
       "percentiles": { "cx": 0.9741, "chg_commits": 0.9384, "union_dup_tokens": 0.8889, "active_twin_ratio": 0.7083 },
       "percentile_population": { "cx": {"population":"active","lang":"java","n_ranked":194}, "chg_commits": {"population":"active","n_ranked":212},
@@ -921,11 +959,11 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
       "lenses": { "H": 95.6, "Dx": 79.3, "F": 0.0, "composite": 71.6, "composite_note": null },
       "lens_percentiles": { "H": {"pct": 0.9289, "population": "active", "n_ranked": 212}, "Dx": {"pct": 0.8056, "population": "dx", "n_ranked": 37},
                             "F": {"pct": 0.4436, "population": "all", "n_ranked": 338, "n_population": 340} },  // 나이 미상 2건은 F = null이라 랭킹에서 빠진다
-      "arch_context": { "I": 0.38, "A": 0.0, "D": 0.62, "zone": "stable-concrete", "cycle_id": "cyc-1" } },
+      "arch_context": { "I": 0.3800, "A": 0.0000, "D": 0.6200, "zone": "stable-concrete", "cycle_id": "cyc-1" } },
     { "id": "f:order-policy", "path": "src/main/java/…/order/OrderPolicy.java", "component": "….order", "lang": "java",
       "measures": { "cx": 80, "cx_method": "cyclo", "loc": 410, "file_tokens": 3300, "smells": {"p1":0,"p2":1,"p3":4,"total":5},
                     "chg_commits": 0, "chg_days": 0, "churn": 0,
-                    "union_dup_tokens": 0, "dup_extent": 0.0, "self_dup_tokens": 0, "twins": 0, "active_twins": 0, "active_twin_ratio": null,
+                    "union_dup_tokens": 0, "dup_extent": 0.0000, "self_dup_tokens": 0, "twins": 0, "active_twins": 0, "active_twin_ratio": null,
                     "fan_in": 35, "age_last_days": 1250 },
       "percentiles": { "cx": 0.9486, "fan_in": 0.9794, "chg_commits": null, "union_dup_tokens": null, "active_twin_ratio": null },
       "percentile_population": { "cx": {"population":"all","lang":"java","n_ranked":312}, "fan_in": {"population":"all","n_ranked":340},
@@ -933,14 +971,14 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
                                  "union_dup_tokens": {"population":"dx","n_ranked":37,"reason":"no_twins"}, "active_twin_ratio": {"population":"dx","n_ranked":37,"reason":"no_twins"} },
       "lenses": { "H": null, "Dx": null, "F": 96.4, "composite": null, "composite_note": "H,Dx null — not in active/dx population" },
       "lens_percentiles": { "H": null, "Dx": null, "F": {"pct": 0.9911, "population": "all", "n_ranked": 338, "n_population": 340} },
-      "arch_context": { "I": 0.38, "A": 0.0, "D": 0.62, "zone": "stable-concrete", "cycle_id": "cyc-1" } }
+      "arch_context": { "I": 0.3800, "A": 0.0000, "D": 0.6200, "zone": "stable-concrete", "cycle_id": "cyc-1" } }
   ],
   "duplicate_clusters": [ { "id": "dup:<token_hash>:120", "tokens": 120,
       "occurrences": [ {"path":"…/OrderService.java","start_token":1200,"end_token":1320,"start_line":45,"end_line":82},
                        {"path":"…/OldOrderService.java","start_token":4010,"end_token":4130,"start_line":210,"end_line":247} ],
       "identical_under": ["tokens"], "mechanical_fix_candidate": true } ],
   "duplication_pairs": [ { "a": "…/OldOrderService.java", "b": "…/OrderService.java", "pair_dup_tokens": 240 } ],
-  "hidden_couplings": [ { "a": "…/OrderService.java", "b": "…/InvoiceMapper.java", "shared": 9, "tc": 0.75, "static_dependency": false } ],
+  "hidden_couplings": [ { "a": "…/OrderService.java", "b": "…/InvoiceMapper.java", "shared": 9, "tc": 0.7500, "static_dependency": false } ],
   "findings": [
     { "id": "fnd:h-order-service", "kind": "hotspot", "lens": "H", "file": "f:order-service", "priority": 95.6, "lens_pct": 0.9289,
       "interpretation": "investigate_first", "confidence": "medium",              // cx n=194 → medium, chg n=212 → high, min = medium
@@ -948,7 +986,7 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
     { "id": "fnd:dx-order-service", "kind": "duplication_exposure", "lens": "Dx", "file": "f:order-service", "priority": 79.3, "lens_pct": 0.8056,
       "interpretation": "investigate", "confidence": "low",                      // dx n=37 < 50
       "evidence": [ {"ref":"dup:<token_hash>:120"}, {"measure":"union_dup_tokens","value":240,"pct":0.8889,"population":"dx","n_ranked":37},
-                    {"measure":"active_twin_ratio","value":0.5,"pct":0.7083,"population":"dx","n_ranked":37} ] },
+                    {"measure":"active_twin_ratio","value":0.5000,"pct":0.7083,"population":"dx","n_ranked":37} ] },
     { "id": "fnd:f-order-policy", "kind": "frozen_core", "lens": "F", "file": "f:order-policy", "priority": 96.4, "lens_pct": 0.9911,
       "interpretation": "investigate_first", "confidence": "high",              // all n=312/340 ≥ 200, 조건 없음
       "evidence": [ {"measure":"cx","value":80,"pct":0.9486,"population":"all","n_ranked":312}, {"measure":"fan_in","value":35,"pct":0.9794,"population":"all","n_ranked":340},
@@ -1414,6 +1452,14 @@ CodeScene 조사(2026-09)에서 가져온 것과 이유를 항목마다 적는�
 
 **v3.8.9 결정 — 닫힘의 단위와 결정에 의한 분리**
 - D153 [§9] D151의 "닫힘"을 보충한다(개정 아님). **한 key는 여러 D로 닫힐 수 있다**(`닫힘 — D146·D147·D148`; 계산기는 표시의 유무만 본다). **"부분 닫힘"이라는 셋째 상태는 만들지 않는다** — D가 key의 일부만 닫았다면 주장이 실은 둘이었다는 뜻이므로(dedupe가 덜 됨) key를 쪼갠다: 닫힌 부분은 새 key로 `닫힘 — D<n>`, 남은 부분은 원래 key로 열린 채. **쪼갬은 종합자가 아니라 닫는 결정이 한다** — 대응표의 "결정에 의한 분리" 행에는 D 번호가 반드시 붙고, D 번호 없는 분리는 종합자의 쪼갬으로 보아 한 key로 접는다. 닫힘의 귀속은 주장으로 하고 절 겹침으로 하지 않는다. 이유: 상태를 늘리면 "부분"이 판단이 되어 계산이 사람 보고로 돌아가고, D 번호 표지가 없으면 계산기가 종합자의 쪼갬(막아야 함)과 결정의 분리(허용)를 가를 수 없다.
+
+**v3.9.0 결정 — 재현성·직렬화 군(교차 검토 key 여섯)**
+- D154 [§2.9, §2.8, §2.7] **"두 머신 바이트 동일"의 비교 대상** = 산출물에서 `reproduce.scanned_at`(벽시계)과 `reproduce.classes_reproduction_inputs`(원인이 아니라 재현 안내)를 **뺀 전부**. 제외 목록에 있는 필드는 id 입력이 아니어야 하고, id 입력이 아닌데 제외 목록에 없는 필드는 id 입력의 결정적 함수여야 한다 — 그 밖의 종류는 없다. `contract/reproducibility/`가 두 실행의 산출물이 그 규칙으로 동일하고 제외 필드는 실제로 다름을 단언한다.
+- D155 [§2.5, §2.3, §2.9, §7] **산출물의 모든 유리수 필드에 스케일을 배정한다**(표 `D155-1`): 정수 측정·개수는 정수, 비율(0–1)은 4자리(`pct`·`dup_extent`·`tc`·`I`·`A`·`D`·`RACD` …), 렌즈·composite는 1자리, Lakos 절대량(`ACD`·`CCD_balanced`·`NCCD`)은 2자리, 요약 통계는 대상 측정에 따라(정수 측정 2자리·비율 4자리·렌즈 1자리), 전부 HALF_EVEN·스케일 고정·후행 0 유지. 표에 없는 유리수 필드가 나오면 스케일 린트가 실패한다. §7 예시와 §2.3의 예시 값을 표에 맞췄다(`RACD` 0.3046, `dup_extent` 0.0462, `I` 0.3800 …).
+- D156 [§2.8, §7] 분수 파라미터는 id 입력에서 십진 문자열이고 **`reproduce.parameters`는 그 문자열을 그대로 인쇄한다** — 인쇄 형식 = 해시 입력 형식. 되돌리는 규칙이 없으므로 되돌릴 것도 없고, `reproduce.parameters`를 JCS로 펴면 그것이 id 입력의 파라미터 부분이다(D111이 그래서 성립). 정수 파라미터는 JSON 정수, 이름·열거 값은 문자열. §7의 `verify.min_changed_line_coverage`·`weights`가 문자열이 됐다.
+- D157 [§2.7, §2.8, §7] **시각의 정규 표기**: id 입력과 `reproduce`의 모든 시각 문자열은 UTC · RFC 3339 · 초 정밀 · `Z` · 소수 초 없음(`YYYY-MM-DDTHH:MM:SSZ`)이고 unix 초에서 생성한다 — git 서식 출력(`%cI`)을 쓰지 않는다. JCS는 문자열 안을 건드리지 않는다. 근거는 겪은 사고(PR #4 — `%cI`가 `Z`/`+00:00`을 섞어 CI가 잡았다).
+- D158 [§2.8, §7] `reproduce`의 필드는 **세 종류뿐** — id 입력 / id 입력의 결정적 함수 / 비교 제외 — 이고 §7 예시의 주석은 그 셋을 `[id]`·`[fn]`·`[x]`로 표시한다. §2.8이 정본이다. §7의 옛 주석("`scanned_at`은 감사용, 나머지는 id 입력")은 `classes_reproduction_inputs`(§2.8이 명시 제외)·`history_complete`·`graft_boundary_shas`(진단) 때문에 거짓이었고 지웠다.
+- D159 [§4.5, §2.8, §2.9] **측정 캐시 키 = 그 측정이 읽는 §2.8 입력의 사영**: 내용(`content_id`들) + 그 측정에 닿는 엔진·알고리즘 버전 + 그 측정이 읽는 분석 파라미터(예: `pair_dup_tokens` ← `cpd.minimum_tokens`·`algorithm_versions.cpd_aggregation`; `cx` ← `algorithm_versions.measures`만. CPD의 언어는 파라미터가 아니라 파일 확장자에서 오는 내용의 속성이다). 어느 캐시 키에 있는 것은 §2.8에 있어야 하고 §2.8에 없는 것은 어느 키에도 없어야 한다 — "캐시 적중 = 같은 `analysis_input_id`에서 같은 값"의 조건. `analysis_input_id`는 모든 측정 키의 비내용 부분 ∪ 트리 ∪ 창의 합. 픽스처: 파라미터 하나 변경 → 그것을 읽는 측정만 캐시 미스.
 
 **열어둔 것**
 - O3 WARN→FAIL 승격 — 조직 결정.

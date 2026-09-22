@@ -46,17 +46,52 @@ import vocabulary  # noqa: E402
 PRD_BLOCKS = ["report", "gate", "validate", "fixture_change", "campaign", "event", "ledger_row"]
 
 # D115 직렬화 스케일 — 경로 패턴 -> 허용 소수 자릿수. `*`는 한 단계 와일드카드.
-SCALE_RULES = [
-    (["files", "*", "lenses", "H"], 1),
-    (["files", "*", "lenses", "Dx"], 1),
-    (["files", "*", "lenses", "F"], 1),
-    (["files", "*", "lenses", "composite"], 1),
-    (["findings", "*", "priority"], 1),
-    (["files", "*", "percentiles", "*"], 4),
-    (["files", "*", "lens_percentiles", "*", "pct"], 4),
-    (["findings", "*", "lens_pct"], 4),
-    (["findings", "*", "evidence", "*", "pct"], 4),
-]
+# 스케일 표 `D155-1`(§2.5) — **필드 이름**으로 매긴다. 표에 없는 유리수 필드는 위반이다.
+# 스케일은 고정이다: 자릿수가 많아도, 적어도(후행 0을 떼도) 위반이다 — "바이트 동일"은 파싱된
+# 수가 아니라 직렬화된 텍스트에 대한 주장이라(§2.5) 0.38과 0.3800은 다른 바이트다.
+SCALES_VERSION = "D155-1"
+KIND_SCALE = {"integer": 0, "ratio": 4, "lens": 1, "lakos": 2}
+FIELD_KIND = {
+    **{f: "integer" for f in (
+        "cx", "loc", "file_tokens", "chg_commits", "chg_days", "churn", "fan_in", "twins",
+        "active_twins", "shared", "union_dup_tokens", "self_dup_tokens", "Ca", "Ce", "CCD",
+        "components", "n_ranked", "n_population", "valid_n", "unknown_n", "age_last_days",
+        "debt_age_days",
+        "change_exposure_90d", "authors_window_days", "distinct_authors_90d", "team_count")},
+    **{f: "ratio" for f in (
+        "pct", "lens_pct", "dup_extent", "active_twin_ratio", "tc", "ownership_max_share",
+        "minor_contributor_share", "I", "A", "D", "RACD")},
+    **{f: "lens" for f in ("H", "Dx", "F", "composite", "priority")},
+    **{f: "lakos" for f in ("ACD", "CCD_balanced", "NCCD")},
+}
+SUMMARY_KEYS = ("median", "iqr", "p90", "max")
+
+
+def scale_for(path: list, parent: dict | None = None) -> int | None:
+    """경로의 유리수 필드에 배정된 스케일. 표에 없으면 None."""
+    leaf = str(path[-1])
+    if leaf == "value" and isinstance(parent, dict) and "measure" in parent:
+        # 증거의 `value`는 그 측정의 값이다 — 스케일도 그 측정의 것(표 적용, 확장 아님).
+        kind = FIELD_KIND.get(str(parent["measure"]))
+        return KIND_SCALE[kind] if kind else None
+    if leaf in SUMMARY_KEYS and "spread" in [str(p) for p in path]:
+        # 요약 통계는 대상 측정에 따른다(D155). `cx.java`처럼 언어 접미어가 붙을 수 있다.
+        measure = str(path[-2]).split(".")[0]
+        kind = FIELD_KIND.get(measure)
+        return {"integer": 2, "ratio": 4, "lens": 1}.get(kind)
+    if len(path) >= 2 and str(path[-2]) == "percentiles":
+        return 4
+    kind = FIELD_KIND.get(leaf)
+    return KIND_SCALE[kind] if kind else None
+
+
+class _Dec(str):
+    """JSON **숫자** 리터럴(소수). 문자열 `"0.8"`(D156의 파라미터)과 구별하기 위한 표지."""
+
+
+class _Int(str):
+    """JSON **숫자** 리터럴(정수)."""
+
 
 
 # --------------------------------------------------------------------------
@@ -155,29 +190,31 @@ def decimals(literal: str) -> int | None:
 
 
 def scale_violations(text: str) -> list[dict]:
-    """`double`을 거치지 않고 리터럴 원문으로 검사한다(D125)."""
-    doc = json.loads(text, parse_float=str, parse_int=str)
+    """`double`을 거치지 않고 리터럴 원문으로 검사한다(D125). 규칙은 표 `D155-1`(D155)."""
+    doc = json.loads(text, parse_float=_Dec, parse_int=_Int)
     found: list[dict] = []
 
-    def walk(node, path):
+    def walk(node, path, parent=None):
         if isinstance(node, dict):
             for k, v in node.items():
-                walk(v, path + [k])
+                walk(v, path + [k], node)
         elif isinstance(node, list):
             for i, v in enumerate(node):
-                walk(v, path + [i])
-        elif isinstance(node, str):
-            for rule, scale in SCALE_RULES:
-                if path_matches(path, rule):
-                    got = decimals(node)
-                    if got is None:
-                        found.append({"path": "/" + "/".join(map(str, path)),
-                                      "literal": node, "problem": "exponent_notation"})
-                    elif got > scale:
-                        found.append({"path": "/" + "/".join(map(str, path)),
-                                      "literal": node, "allowed_scale": scale,
-                                      "actual_scale": got})
-                    break
+                walk(v, path + [i], parent)
+        elif type(node) is _Dec:                       # 소수 리터럴만. 문자열은 보지 않는다
+            where = "/" + "/".join(map(str, path))
+            got = decimals(node)
+            scale = scale_for(path, parent)
+            if got is None:
+                found.append({"path": where, "literal": node, "problem": "exponent_notation"})
+            elif scale is None:
+                found.append({"path": where, "literal": node, "problem": "unlisted_rational_field",
+                              "note": f"표 {SCALES_VERSION}에 없는 유리수 필드"})
+            elif scale == 0:
+                found.append({"path": where, "literal": node, "problem": "decimal_in_integer_field"})
+            elif got != scale:
+                found.append({"path": where, "literal": node,
+                              "allowed_scale": scale, "actual_scale": got})
 
     walk(doc, [])
     return found

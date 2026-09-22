@@ -1,0 +1,18 @@
+{
+  "case": "scale-unlisted-rational-field",
+  "generated_by": "contract/schema/compute.py",
+  "check": "scale_lint",
+  "kind": "hard_rule",
+  "contract_ref": "D155",
+  "what": "표 `D155-1`에 없는 유리수 필드가 산출물에 나오면 린트가 실패한다(D155) — 새 필드는 표에 먼저 들어온다",
+  "mechanism": "원문 린트(스키마 아님)",
+  "verdict": "reject",
+  "violations": [
+    {
+      "path": "/system/foo_ratio",
+      "literal": "0.5",
+      "problem": "unlisted_rational_field",
+      "note": "표 D155-1에 없는 유리수 필드"
+    }
+  ]
+}

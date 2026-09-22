@@ -1,0 +1,63 @@
+{
+  "case": "time-notation-canonical",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.7",
+    "§2.8",
+    "D157",
+    "D138"
+  ],
+  "what_this_pins": "**시각의 정규 표기**(D157): id 입력과 `reproduce`의 모든 시각 문자열은 UTC · RFC 3339 · 초 정밀 · `Z` · 소수 초 없음(`YYYY-MM-DDTHH:MM:SSZ`)이고 **unix 초에서 생성한다**. 같은 unix 초를 `Z`·`+00:00`·`+09:00`·`-07:00`으로 적은 넷이 정규 표기로 **같은 바이트**가 된다.\n\n왜 픽스처가 필요한가: JCS(§2.8, D138)는 문자열 **안**을 건드리지 않는다. 그래서 같은 순간이 `…10Z`와 `…10+09:00`으로 들어오면 `analysis_input_id`가 갈린다 — 이 케이스는 그것을 먼저 **보인다**(`raw_ids_differ`, 검사가 무는 자리) 다음에 정규 표기로 넷이 한 id로 모이는 것을 보인다. 겪은 사고를 그대로 재현한 단언도 있다: 파이썬 `isoformat()`은 UTC를 `+00:00`으로 적어 D157 패턴에 **실패한다** — PR #4에서 `%cI`가, 그 뒤 이 계산기의 `isoformat()`이 정확히 그 자리에 있었다. git `%cI`는 버전마다 출력이 달라 결정적 단언이 안 되므로 `isoformat()`이 그 대역이다.",
+  "canonical_encoding": "RFC8785-JCS",
+  "unix_seconds": 1788608530,
+  "canonical": "2026-09-05T11:42:10Z",
+  "notations": {
+    "utc_z": {
+      "raw": "2026-09-05T11:42:10Z",
+      "unix_seconds": 1788608530,
+      "same_instant": true,
+      "raw_id": "sha256:c14e2606ad02ae1ccdd3bfc5cc6a8260cdb5041b81a4faeaaa352e19a04c253f",
+      "canonical": "2026-09-05T11:42:10Z",
+      "canonical_id": "sha256:c14e2606ad02ae1ccdd3bfc5cc6a8260cdb5041b81a4faeaaa352e19a04c253f"
+    },
+    "utc_offset": {
+      "raw": "2026-09-05T11:42:10+00:00",
+      "unix_seconds": 1788608530,
+      "same_instant": true,
+      "raw_id": "sha256:0eba6b8e81eeb9a8569101f0234609a469d4865752eb14230416536146d287c2",
+      "canonical": "2026-09-05T11:42:10Z",
+      "canonical_id": "sha256:c14e2606ad02ae1ccdd3bfc5cc6a8260cdb5041b81a4faeaaa352e19a04c253f"
+    },
+    "kst": {
+      "raw": "2026-09-05T20:42:10+09:00",
+      "unix_seconds": 1788608530,
+      "same_instant": true,
+      "raw_id": "sha256:507f8d295d297d38055c863e4a74a4ce5e194a210203e952fd15f6ab517ff07d",
+      "canonical": "2026-09-05T11:42:10Z",
+      "canonical_id": "sha256:c14e2606ad02ae1ccdd3bfc5cc6a8260cdb5041b81a4faeaaa352e19a04c253f"
+    },
+    "pdt": {
+      "raw": "2026-09-05T04:42:10-07:00",
+      "unix_seconds": 1788608530,
+      "same_instant": true,
+      "raw_id": "sha256:e0707b5ed01519b21f8d3388cec7871e5868aa9a63e095a210db7ab2a7368e8e",
+      "canonical": "2026-09-05T11:42:10Z",
+      "canonical_id": "sha256:c14e2606ad02ae1ccdd3bfc5cc6a8260cdb5041b81a4faeaaa352e19a04c253f"
+    }
+  },
+  "non_canonical_producers": {
+    "python_isoformat": {
+      "output": "2026-09-05T11:42:10+00:00",
+      "matches_d157": false
+    }
+  },
+  "assertions": {
+    "all_notations_same_instant": true,
+    "raw_strings_differ": true,
+    "raw_ids_differ": true,
+    "canonical_strings_identical": true,
+    "canonical_ids_identical": true,
+    "canonical_matches_d157_pattern": true,
+    "python_isoformat_fails_d157_pattern": true
+  }
+}

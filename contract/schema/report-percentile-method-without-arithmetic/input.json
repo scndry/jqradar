@@ -1,0 +1,20 @@
+{
+  "case": "report-percentile-method-without-arithmetic",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "required(장치의 전부)",
+  "contract_ref": "D115·D155",
+  "what": "`percentile_method`는 방법의 선언 전부다 — `arithmetic: exact-rational`(D115)과 `output.scales`(D155)가 빠지면 같은 `rank·formula·quantile`로도 다른 바이트를 낼 수 있다. 선언이 절반이면 재현성 주장도 절반이다.",
+  "patch": [
+    {
+      "op": "remove",
+      "path": [
+        "reproduce",
+        "percentile_method",
+        "arithmetic"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "case": "scale-racd-three-decimals",
+  "check": "scale_lint",
+  "kind": "hard_rule",
+  "base": "prd:§7:report",
+  "mechanism": "원문 린트(스키마 아님)",
+  "contract_ref": "D155",
+  "what": "비율은 4자리다(D155 표 `D155-1`). `RACD` 0.305는 §2.3이 옛 판에서 인용한 자릿수이고 이제 계약 밖이다",
+  "text_patch": [
+    {
+      "find": "\"RACD\": 0.3046",
+      "replace": "\"RACD\": 0.305"
+    }
+  ]
+}

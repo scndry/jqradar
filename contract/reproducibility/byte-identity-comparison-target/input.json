@@ -1,0 +1,112 @@
+{
+  "case": "byte-identity-comparison-target",
+  "contract_refs": [
+    "§2.8",
+    "§2.9",
+    "D154",
+    "D157",
+    "D158"
+  ],
+  "what_this_pins": "**\"두 머신 바이트 동일\"의 비교 대상**(D154) = 산출물에서 `reproduce.scanned_at`(벽시계)과 `reproduce.classes_reproduction_inputs`(원인이 아니라 재현 안내)를 **뺀 전부**. 같은 트리·같은 툴체인·같은 파라미터로 두 머신이 스캔한다 — 다른 것은 스캔한 시각과 그 머신의 JDK 패치 버전(재현 안내)뿐이다.\n\n단언 넷이 한 규칙의 네 면이다. (1) 제외 규칙을 적용한 두 산출물은 **JCS 바이트가 같다**. (2) 규칙을 적용하지 않으면 **다르다** — 제외 필드가 실제로 다르지 않으면 (1)은 아무것도 증명하지 않는다(D131). (3) 제외 목록의 두 필드는 `analysis_input_id`의 입력에 **없다** — 제외 목록에 있는 것은 id 입력이 아니어야 한다(D154 둘째 문장). (4) **넷째 종류가 잡히는가**: `reproduce`에 id 입력도 그 함수도 아닌 필드(머신 이름)를 하나 심으면 (1)이 실패해야 한다 — 그것이 D158이 \"재현성의 구멍\"이라 부른 것이고, 규칙이 그것을 물지 않으면 규칙이 아니다.\n\n`scanned_at`은 비교에서 빠지지만 표기는 하나다(D157) — 두 값이 `YYYY-MM-DDTHH:MM:SSZ`인지도 본다. `history_complete`·`graft_boundary_shas`는 id 입력의 함수([fn])라 비교 대상에 **남는다**.",
+  "repo": {
+    "tree": "tree/",
+    "history": [
+      {
+        "message": "seed: order domain",
+        "paths": [
+          "src/main/java/com/example/order/OrderPolicy.java"
+        ]
+      },
+      {
+        "message": "feat: order total",
+        "paths": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      }
+    ],
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-01-02T03:04:05+00:00",
+    "step_seconds": 86400
+  },
+  "environment": {
+    "pmd": "7.16.0",
+    "archunit": "1.5.0",
+    "jgit": "7.3.0"
+  },
+  "shared_inputs": {
+    "schema_version": "jqradar/3",
+    "contract_version": "2026-09-21",
+    "core_tool_version": "3.9.0",
+    "history_backend": {
+      "name": "jgit",
+      "git_version": null
+    },
+    "component": {
+      "strategy": "auto",
+      "algorithm_version": "auto-1"
+    },
+    "algorithm_versions": {
+      "measures": "1",
+      "percentile": "1",
+      "succession": "1",
+      "cpd_aggregation": "1"
+    },
+    "parameters": {
+      "cpd.minimum_tokens": 100,
+      "percentile.min_population": 20,
+      "frozen.min_days": 180,
+      "rename.similarity": 60,
+      "hotspot.change_unit": "chg_commits",
+      "verify.min_changed_line_coverage": "0.8",
+      "profile": "jqradar-default",
+      "weights": {
+        "H": "0.5",
+        "Dx": "0.3",
+        "F": "0.2"
+      }
+    }
+  },
+  "machines": {
+    "a": {
+      "scanned_at_unix": 1788793200,
+      "classes_reproduction_inputs": {
+        "jdk": "21.0.4",
+        "gradle": "9.1.0",
+        "kotlin": "2.2.0",
+        "compiler_args": [
+          "-parameters"
+        ],
+        "annotation_processors": [],
+        "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+      }
+    },
+    "b": {
+      "scanned_at_unix": 1788859800,
+      "classes_reproduction_inputs": {
+        "jdk": "21.0.5",
+        "gradle": "9.1.0",
+        "kotlin": "2.2.0",
+        "compiler_args": [
+          "-parameters"
+        ],
+        "annotation_processors": [],
+        "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+      }
+    }
+  },
+  "excluded_fields": [
+    "reproduce.scanned_at",
+    "reproduce.classes_reproduction_inputs"
+  ],
+  "fourth_kind_mutation": {
+    "$comment": "id 입력도 그 함수도 아닌데 비교 목록에서 빠지지 않은 필드 — D158이 말하는 넷째 종류. 규칙이 이것을 잡아야 한다.",
+    "field": "machine_hostname",
+    "values": {
+      "a": "build-01",
+      "b": "build-02"
+    }
+  }
+}

@@ -28,7 +28,7 @@
       "04c5de269bd939509087a13312869a28d540f773"
     ],
     "head": "04c5de269bd939509087a13312869a28d540f773",
-    "head_committer_time": "2026-01-03T03:04:05+00:00",
+    "head_committer_time": "2026-01-03T03:04:05Z",
     "unreachable_commit_count": 0
   },
   "runs": {
@@ -39,7 +39,7 @@
         "jgit": "7.3.0"
       },
       "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-      "analysis_input_id": "sha256:de4597e92228ad5f8e1dbb748eb94394497dc6177b0f477f4694135a836d1159"
+      "analysis_input_id": "sha256:26059a11ada88ab5dc2ca551e14d2bd53a6c1180f9667a850f8669931215bca7"
     },
     "b": {
       "environment": {
@@ -48,7 +48,7 @@
         "jgit": "7.3.0"
       },
       "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-      "analysis_input_id": "sha256:46a90b9dc2a648803f44023473c0241cf4a9bdf0c3e2b75be5188f98a5a37770"
+      "analysis_input_id": "sha256:ca0be442112426aa17f37b24ceb5e60af4755394c70f215a902265c59eaaf823"
     }
   },
   "assertions": {

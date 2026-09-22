@@ -1,0 +1,15 @@
+{
+  "case": "scale-lakos-three-decimals",
+  "check": "scale_lint",
+  "kind": "hard_rule",
+  "base": "prd:§7:report",
+  "mechanism": "원문 린트(스키마 아님)",
+  "contract_ref": "D155",
+  "what": "Lakos 절대량(`ACD`·`CCD_balanced`·`NCCD`)은 2자리다(D155)",
+  "text_patch": [
+    {
+      "find": "\"ACD\": 12.49",
+      "replace": "\"ACD\": 12.492"
+    }
+  ]
+}

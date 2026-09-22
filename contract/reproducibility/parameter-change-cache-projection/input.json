@@ -1,0 +1,120 @@
+{
+  "case": "parameter-change-cache-projection",
+  "contract_refs": [
+    "§2.8",
+    "§4.5",
+    "§2.9",
+    "D159",
+    "D87"
+  ],
+  "what_this_pins": "**측정 캐시 키 = 그 측정이 읽는 §2.8 입력의 사영**(D159). 파라미터 하나(`cpd.minimum_tokens` 100→120)를 바꾸면 (1) `analysis_input_id`는 바뀌고 `repository_state_id`는 그대로다(§2.9 \"파라미터 하나 변경 → id 변경\"); (2) 그 파라미터를 **읽는** 측정(`pair_dup_tokens`)의 키만 바뀌어 캐시 미스이고, 읽지 않는 측정(`cx`)의 키는 그대로라 적중이다.\n\n사영은 `measure_projections`에 **선언**하고, 둘 다 §4.5가 글자 그대로 예로 든 것이다 — `pair_dup_tokens`의 키 = (`content_id` A, `content_id` B, pmd 버전, `algorithm_versions.cpd_aggregation`, `cpd.minimum_tokens`), `cx`의 키 = (`content_id`, pmd 버전, `algorithm_versions.measures`)이고 `cx`는 읽는 파라미터가 없다. CPD의 언어(java·kotlin)는 파라미터가 아니라 파일 확장자에서 결정되는 내용의 속성이라 `content_id`가 이미 담는다 — 이 픽스처의 첫 판이 §4.5의 옛 예를 따라 `cpd.language`를 파라미터로 사영에 넣었고, 그 파라미터는 문서 어디에도 없었다. 계약이 그 예를 지웠으니 픽스처가 따라왔다(§0-29 보정 2026-09-22).\n\n원칙의 양방향을 함께 단언한다: 어느 키에 있는 것은 §2.8에 있어야 한다(`projections_subset_of_2_8_inputs`) — 그리고 검사가 무는 것을 두 변조로 보인다. 키에서 `cpd.minimum_tokens`를 빼면 파라미터가 바뀌어도 **거짓 적중**이 난다(`dropping_parameter_from_key_yields_false_hit` — D159가 \"키에 없으면 거짓 적중\"이라 한 그 문장). 키에 §2.8 밖의 입력(`machine_hostname`)을 넣으면 부분집합 검사가 **거부**한다(`foreign_input_is_rejected`).",
+  "repo": {
+    "tree": "tree/",
+    "history": [
+      {
+        "message": "seed: order domain",
+        "paths": [
+          "src/main/java/com/example/order/OrderPolicy.java"
+        ]
+      },
+      {
+        "message": "feat: order total",
+        "paths": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      }
+    ],
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-01-02T03:04:05+00:00",
+    "step_seconds": 86400
+  },
+  "environment": {
+    "pmd": "7.16.0",
+    "archunit": "1.5.0",
+    "jgit": "7.3.0"
+  },
+  "shared_inputs": {
+    "schema_version": "jqradar/3",
+    "contract_version": "2026-09-21",
+    "core_tool_version": "3.9.0",
+    "history_backend": {
+      "name": "jgit",
+      "git_version": null
+    },
+    "component": {
+      "strategy": "auto",
+      "algorithm_version": "auto-1"
+    },
+    "algorithm_versions": {
+      "measures": "1",
+      "percentile": "1",
+      "succession": "1",
+      "cpd_aggregation": "1"
+    },
+    "parameters": {
+      "cpd.minimum_tokens": 100,
+      "percentile.min_population": 20,
+      "frozen.min_days": 180,
+      "rename.similarity": 60,
+      "hotspot.change_unit": "chg_commits",
+      "verify.min_changed_line_coverage": "0.8",
+      "profile": "jqradar-default",
+      "weights": {
+        "H": "0.5",
+        "Dx": "0.3",
+        "F": "0.2"
+      }
+    }
+  },
+  "parameter_change": {
+    "name": "cpd.minimum_tokens",
+    "from": 100,
+    "to": 120
+  },
+  "measure_projections": {
+    "pair_dup_tokens": {
+      "source": "§4.5 첫째 예 (D159) — 글자 그대로",
+      "content": [
+        "src/main/java/com/example/order/OrderPolicy.java",
+        "src/main/java/com/example/order/OrderService.java"
+      ],
+      "environment": [
+        "pmd"
+      ],
+      "algorithm_versions": [
+        "cpd_aggregation"
+      ],
+      "parameters": [
+        "cpd.minimum_tokens"
+      ]
+    },
+    "cx": {
+      "source": "§4.5 둘째 예 (D159) — 글자 그대로: (`content_id`, pmd 버전, `algorithm_versions.measures`), 읽는 파라미터 없음",
+      "content": [
+        "src/main/java/com/example/order/OrderService.java"
+      ],
+      "environment": [
+        "pmd"
+      ],
+      "algorithm_versions": [
+        "measures"
+      ],
+      "parameters": []
+    }
+  },
+  "mutations": {
+    "projection_missing_parameter": {
+      "$comment": "D159: \"`cpd.minimum_tokens`가 바뀌면 같은 두 파일에서 다른 값이 나오므로 키에 없으면 거짓 적중이다.\" 그 거짓 적중이 실제로 나는지.",
+      "measure": "pair_dup_tokens",
+      "drop_parameter": "cpd.minimum_tokens"
+    },
+    "projection_with_foreign_input": {
+      "$comment": "§2.8에 없는 것은 어느 캐시 키에도 없어야 한다. 부분집합 검사가 이것을 거부해야 한다.",
+      "measure": "cx",
+      "add_parameter": "machine_hostname"
+    }
+  }
+}
