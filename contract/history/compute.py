@@ -377,6 +377,22 @@ def build_expected(inp: dict, workdir: Path) -> dict:
                 "commit_granularity": granularity,
             })
 
+    # §3.5·D167 — `hidden_couplings`는 §7에서 배열이라 순서가 바이트다(D154). 정렬 키 =
+    # static_dependency asc(false 먼저) · tc desc · shared desc · a asc · b asc, 비교는
+    # 반올림 전 정확값(Fraction). 정렬은 인쇄되는 키이지 점수가 아니다(B.2).
+    hidden_couplings = sorted(
+        ({"a": p["a"], "b": p["b"], "shared": p["shared"], "tc": p["tc"],
+          "static_dependency": p["static_dependency"], "hidden_coupling": p["hidden_coupling"]}
+         for p in pairs if p["reported"]),
+        key=lambda p: (p["static_dependency"] is not False, -p["tc"], -p["shared"], p["a"], p["b"]))
+
+    # §2.4·D164 — 분자(shared)와 분모(chg_commits)가 같은 구간(W 안)이라 tc ≤ 1이 불변식이다.
+    # 이 계산기는 둘 다 `selected`에서 세므로 구조적으로 성립한다 — 케이스가 요구하면 인쇄한다.
+    invariants = None
+    if "tc_at_most_one" in inp.get("invariants", []):
+        invariants = {"tc_at_most_one": all(
+            p["tc"] is not None and p["tc"] <= 1 for p in pairs)}
+
     # ------------------------------------------------------------------
     # §2.1 저자 사실 — 익명 집계만 (D48·D135)
     # ------------------------------------------------------------------
@@ -500,6 +516,9 @@ def build_expected(inp: dict, workdir: Path) -> dict:
         "renames": renames,
         "files": files,
         "pairs": pairs,
+        # 쌍이 있는 케이스만 인쇄한다 — 빈 배열을 열넷에 더하는 것은 계약이 아니라 잡음이다.
+        **({"hidden_couplings": hidden_couplings} if pairs else {}),
+        **({"invariants": invariants} if invariants is not None else {}),
         "authorship_note": ("저자 정체는 이 파일에 없다 — 익명 집계만 기록한다"
                             "(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 "
                             "계산기는 그것을 메모리에서만 쓴다."),

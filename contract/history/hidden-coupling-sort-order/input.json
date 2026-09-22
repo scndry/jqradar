@@ -1,0 +1,158 @@
+{
+  "case": "hidden-coupling-sort-order",
+  "contract_refs": [
+    "§3.5",
+    "§2.4",
+    "§2.9",
+    "D167",
+    "D154"
+  ],
+  "what_this_pins": "**`hidden_couplings`의 정렬 키**(D167) = `static_dependency asc(false 먼저) · tc desc · shared desc · a asc · b asc`, 비교는 반올림 전 정확값. 배열이라 순서가 바이트다(D154) — 키가 없으면 두 머신이 같은 쌍을 다른 순서로 인쇄한다. 보고되는 쌍 넷이 키를 하나씩 밟는다: (C,D)는 `tc = 1`로 가장 높지만 **정적 의존이 있어 마지막**(첫 키); (G,H)·(A,B)·(E,F)는 셋 다 `tc = 3/5`로 동점 — (G,H)가 `shared = 9`로 먼저(셋째 키), (A,B)·(E,F)는 `shared = 6`까지 동점이라 **`a asc`**가 가른다(넷째 키). 기대 순서: (G,H) · (A,B) · (E,F) · (C,D). (I,J)는 `shared = 2`로 보고 기준 미달이라 `hidden_couplings`에 없다 — 정렬은 보고된 쌍의 것이다. 정렬은 인쇄되는 키이지 점수가 아니다(B.2) — 첫 자리가 \"가장 나쁜\" 쌍이 아니라 \"정적 의존 없이 가장 자주 함께 바뀐\" 쌍이다. 교차 검토 R1-9가 지목한 자리다.",
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "static_dependency": {
+    "src/A.java|src/B.java": false,
+    "src/C.java|src/D.java": true,
+    "src/E.java|src/F.java": false,
+    "src/G.java|src/H.java": false,
+    "src/I.java|src/J.java": false
+  },
+  "measure_files": [
+    "src/A.java",
+    "src/B.java",
+    "src/C.java",
+    "src/D.java",
+    "src/E.java",
+    "src/F.java",
+    "src/G.java",
+    "src/H.java",
+    "src/I.java",
+    "src/J.java"
+  ],
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-03-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "gh",
+        "at_seconds": 0,
+        "repeat": 9,
+        "step_seconds": 3600,
+        "message": "touch G+H",
+        "write": {
+          "src/G.java": "class X { int v{k}; }\n",
+          "src/H.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "g",
+        "at_seconds": 100000,
+        "repeat": 6,
+        "step_seconds": 3600,
+        "message": "touch G",
+        "write": {
+          "src/G.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "h",
+        "at_seconds": 200000,
+        "repeat": 6,
+        "step_seconds": 3600,
+        "message": "touch H",
+        "write": {
+          "src/H.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "ab",
+        "at_seconds": 300000,
+        "repeat": 6,
+        "step_seconds": 3600,
+        "message": "touch A+B",
+        "write": {
+          "src/A.java": "class X { int v{k}; }\n",
+          "src/B.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "a",
+        "at_seconds": 400000,
+        "repeat": 4,
+        "step_seconds": 3600,
+        "message": "touch A",
+        "write": {
+          "src/A.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "b",
+        "at_seconds": 500000,
+        "repeat": 4,
+        "step_seconds": 3600,
+        "message": "touch B",
+        "write": {
+          "src/B.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "ef",
+        "at_seconds": 600000,
+        "repeat": 6,
+        "step_seconds": 3600,
+        "message": "touch E+F",
+        "write": {
+          "src/E.java": "class X { int v{k}; }\n",
+          "src/F.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "e",
+        "at_seconds": 700000,
+        "repeat": 4,
+        "step_seconds": 3600,
+        "message": "touch E",
+        "write": {
+          "src/E.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "f",
+        "at_seconds": 800000,
+        "repeat": 4,
+        "step_seconds": 3600,
+        "message": "touch F",
+        "write": {
+          "src/F.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "cd",
+        "at_seconds": 900000,
+        "repeat": 6,
+        "step_seconds": 3600,
+        "message": "touch C+D",
+        "write": {
+          "src/C.java": "class X { int v{k}; }\n",
+          "src/D.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "ij",
+        "at_seconds": 1000000,
+        "repeat": 2,
+        "step_seconds": 3600,
+        "message": "touch I+J",
+        "write": {
+          "src/I.java": "class X { int v{k}; }\n",
+          "src/J.java": "class X { int v{k}; }\n"
+        }
+      }
+    ]
+  }
+}

@@ -24,6 +24,7 @@
 | [`self-duplication/`](self-duplication/) | 자기 중복은 `union_dup_tokens`에 들어가되 `twins`를 늘리지 않는다. twins=0이면 dx 모집단 밖(D29) |
 | [`threshold-boundary/`](threshold-boundary/) | `minimumTokens=100`에서 99는 아니고 100은 맞다. 거부된 것도 기록한다 |
 | [`four-occurrences-one-cluster/`](four-occurrences-one-cluster/) | 네 파일의 같은 열 = 클러스터 **1개**(쌍 6개가 아니다, D39) |
+| [`mixed-cluster/`](mixed-cluster/) | **D166** — A 2회·B 1회 혼합 클러스터: `union(A) 200`·`pair(A,B) 200`·**`self(A) 0`**·`twins(A) 1`. 자기 중복은 한 파일에만 있는 클러스터의 것이다 — 혼합의 반복을 넣으면 두 번 셈 |
 
 ## 실행
 

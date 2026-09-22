@@ -1,0 +1,581 @@
+{
+  "case": "shared-window-limited",
+  "contract_refs": [
+    "§2.4",
+    "§2.1",
+    "§2.7",
+    "D164",
+    "D150"
+  ],
+  "what_this_pins": "**`shared`는 W 안에서 두 파일을 함께 만진 비머지 커밋 수**(D164) — 분모 `chg_commits`와 같은 구간이라 **`tc ≤ 1`이 불변식**이다. 같은 이력을 두 창으로 본다: A·B를 함께 만진 커밋이 HEAD로부터 15개월 전에 셋, 창 안에 여섯이다. 12개월 창에서는 `shared = 6`, `chg_commits_a = 8`, `chg_commits_b = 10`, `tc = 6/8 = 3/4`. 창을 20년으로 넓히면 셋이 **들어와** `shared = 9`, `chg_commits_a = 11`, `chg_commits_b = 13`, `tc = 9/11`. 창 밖 커밋은 창을 넓혀야만 들어온다 — 분자만 전 이력으로 세면 12개월 창에서 `tc = 9/8 > 1`이 나오는데, 이 계산기는 분자·분모를 같은 `selected`에서 세므로 그 값이 구조적으로 나올 수 없고 `invariants.tc_at_most_one`이 두 변이 모두 참이다.\n\n근거는 **일관성**이다(D164 — §2.1의 이력 성분 전부가 \"W 안\"인데 분자만 예외면 \"W\"가 필드마다 다른 뜻이 된다). 재현성(D87)은 근거가 아니다 — 창 밖 커밋은 SHA 연쇄가 봉인한다(D150). 교차 검토 S7(일곱 전원 모순)이 지목한 자리다.",
+  "variants": {
+    "window_12m": {
+      "window_anchor": {
+        "type": "head_committer_time",
+        "timestamp": "2025-04-10T09:40:00+00:00"
+      },
+      "head": "c28010009",
+      "window_applied": {
+        "months": 12,
+        "max_commits": 2000,
+        "bound_hit": "time",
+        "commits_in_window": 12,
+        "merge_commits_excluded": 0,
+        "authors_window_truncated": false,
+        "authors_window_days": 2.439814814815,
+        "commits_excluded_within_90d": 0
+      },
+      "commits": [
+        {
+          "sha": "c28010009",
+          "at": "2025-04-10T09:40:00+00:00",
+          "subject": "touch B #4",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "7eb65ad1a",
+          "at": "2025-04-10T08:40:00+00:00",
+          "subject": "touch B #3",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "c547c4445",
+          "at": "2025-04-10T07:40:00+00:00",
+          "subject": "touch B #2",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "aa1f44760",
+          "at": "2025-04-10T06:40:00+00:00",
+          "subject": "touch B #1",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "cbb51802b",
+          "at": "2025-04-09T03:53:20+00:00",
+          "subject": "touch A #2",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "6f4094549",
+          "at": "2025-04-09T02:53:20+00:00",
+          "subject": "touch A #1",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "fe2f5b240",
+          "at": "2025-04-08T04:06:40+00:00",
+          "subject": "touch A+B #6",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "c3c9423f0",
+          "at": "2025-04-08T03:06:40+00:00",
+          "subject": "touch A+B #5",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "1d90c326f",
+          "at": "2025-04-08T02:06:40+00:00",
+          "subject": "touch A+B #4",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "f63294308",
+          "at": "2025-04-08T01:06:40+00:00",
+          "subject": "touch A+B #3",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "f4ea975f4",
+          "at": "2025-04-08T00:06:40+00:00",
+          "subject": "touch A+B #2",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "98f89790d",
+          "at": "2025-04-07T23:06:40+00:00",
+          "subject": "touch A+B #1",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "b372c99d2",
+          "at": "2024-01-01T02:00:00+00:00",
+          "subject": "touch A+B #3",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "a28e77d0a",
+          "at": "2024-01-01T01:00:00+00:00",
+          "subject": "touch A+B #2",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": false
+        },
+        {
+          "sha": "0209b7f58",
+          "at": "2024-01-01T00:00:00+00:00",
+          "subject": "touch A+B #1",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": false
+        }
+      ],
+      "median_files_per_commit": 1.5,
+      "commit_granularity": "fine",
+      "renames": [],
+      "files": {
+        "src/A.java": {
+          "chg_commits": 8,
+          "chg_days": 3,
+          "churn": 28,
+          "touched_by": [
+            "cbb51802b",
+            "6f4094549",
+            "fe2f5b240",
+            "c3c9423f0",
+            "1d90c326f",
+            "f63294308",
+            "f4ea975f4",
+            "98f89790d"
+          ],
+          "age_last_days": 1.240740740741,
+          "distinct_authors_90d": 1,
+          "contributor_count": 1,
+          "ownership_max_share": 1,
+          "minor_contributor_share": 0,
+          "contribution_shares_sorted": [
+            1
+          ]
+        },
+        "src/B.java": {
+          "chg_commits": 10,
+          "chg_days": 3,
+          "churn": 32,
+          "touched_by": [
+            "c28010009",
+            "7eb65ad1a",
+            "c547c4445",
+            "aa1f44760",
+            "fe2f5b240",
+            "c3c9423f0",
+            "1d90c326f",
+            "f63294308",
+            "f4ea975f4",
+            "98f89790d"
+          ],
+          "age_last_days": 0,
+          "distinct_authors_90d": 1,
+          "contributor_count": 1,
+          "ownership_max_share": 1,
+          "minor_contributor_share": 0,
+          "contribution_shares_sorted": [
+            1
+          ]
+        }
+      },
+      "pairs": [
+        {
+          "a": "src/A.java",
+          "b": "src/B.java",
+          "shared": 6,
+          "chg_commits_a": 8,
+          "chg_commits_b": 10,
+          "denominator": 8,
+          "tc": 0.75,
+          "reported": true,
+          "static_dependency": false,
+          "hidden_coupling": true,
+          "commit_granularity": "fine"
+        }
+      ],
+      "hidden_couplings": [
+        {
+          "a": "src/A.java",
+          "b": "src/B.java",
+          "shared": 6,
+          "tc": 0.75,
+          "static_dependency": false,
+          "hidden_coupling": true
+        }
+      ],
+      "invariants": {
+        "tc_at_most_one": true
+      },
+      "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다."
+    },
+    "window_240m": {
+      "window_anchor": {
+        "type": "head_committer_time",
+        "timestamp": "2025-04-10T09:40:00+00:00"
+      },
+      "head": "c28010009",
+      "window_applied": {
+        "months": 240,
+        "max_commits": 2000,
+        "bound_hit": "none",
+        "commits_in_window": 15,
+        "merge_commits_excluded": 0,
+        "authors_window_truncated": false,
+        "authors_window_days": 90,
+        "commits_excluded_within_90d": 0
+      },
+      "commits": [
+        {
+          "sha": "c28010009",
+          "at": "2025-04-10T09:40:00+00:00",
+          "subject": "touch B #4",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "7eb65ad1a",
+          "at": "2025-04-10T08:40:00+00:00",
+          "subject": "touch B #3",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "c547c4445",
+          "at": "2025-04-10T07:40:00+00:00",
+          "subject": "touch B #2",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "aa1f44760",
+          "at": "2025-04-10T06:40:00+00:00",
+          "subject": "touch B #1",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "cbb51802b",
+          "at": "2025-04-09T03:53:20+00:00",
+          "subject": "touch A #2",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "6f4094549",
+          "at": "2025-04-09T02:53:20+00:00",
+          "subject": "touch A #1",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "fe2f5b240",
+          "at": "2025-04-08T04:06:40+00:00",
+          "subject": "touch A+B #6",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "c3c9423f0",
+          "at": "2025-04-08T03:06:40+00:00",
+          "subject": "touch A+B #5",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "1d90c326f",
+          "at": "2025-04-08T02:06:40+00:00",
+          "subject": "touch A+B #4",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "f63294308",
+          "at": "2025-04-08T01:06:40+00:00",
+          "subject": "touch A+B #3",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "f4ea975f4",
+          "at": "2025-04-08T00:06:40+00:00",
+          "subject": "touch A+B #2",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "98f89790d",
+          "at": "2025-04-07T23:06:40+00:00",
+          "subject": "touch A+B #1",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "b372c99d2",
+          "at": "2024-01-01T02:00:00+00:00",
+          "subject": "touch A+B #3",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "a28e77d0a",
+          "at": "2024-01-01T01:00:00+00:00",
+          "subject": "touch A+B #2",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        },
+        {
+          "sha": "0209b7f58",
+          "at": "2024-01-01T00:00:00+00:00",
+          "subject": "touch A+B #1",
+          "is_merge": false,
+          "shallow_boundary": false,
+          "paths": [
+            "src/A.java",
+            "src/B.java"
+          ],
+          "in_window": true
+        }
+      ],
+      "median_files_per_commit": 2,
+      "commit_granularity": "fine",
+      "renames": [],
+      "files": {
+        "src/A.java": {
+          "chg_commits": 11,
+          "chg_days": 4,
+          "churn": 38,
+          "touched_by": [
+            "cbb51802b",
+            "6f4094549",
+            "fe2f5b240",
+            "c3c9423f0",
+            "1d90c326f",
+            "f63294308",
+            "f4ea975f4",
+            "98f89790d",
+            "b372c99d2",
+            "a28e77d0a",
+            "0209b7f58"
+          ],
+          "age_last_days": 1.240740740741,
+          "distinct_authors_90d": 1,
+          "contributor_count": 1,
+          "ownership_max_share": 1,
+          "minor_contributor_share": 0,
+          "contribution_shares_sorted": [
+            1
+          ]
+        },
+        "src/B.java": {
+          "chg_commits": 13,
+          "chg_days": 4,
+          "churn": 42,
+          "touched_by": [
+            "c28010009",
+            "7eb65ad1a",
+            "c547c4445",
+            "aa1f44760",
+            "fe2f5b240",
+            "c3c9423f0",
+            "1d90c326f",
+            "f63294308",
+            "f4ea975f4",
+            "98f89790d",
+            "b372c99d2",
+            "a28e77d0a",
+            "0209b7f58"
+          ],
+          "age_last_days": 0,
+          "distinct_authors_90d": 1,
+          "contributor_count": 1,
+          "ownership_max_share": 1,
+          "minor_contributor_share": 0,
+          "contribution_shares_sorted": [
+            1
+          ]
+        }
+      },
+      "pairs": [
+        {
+          "a": "src/A.java",
+          "b": "src/B.java",
+          "shared": 9,
+          "chg_commits_a": 11,
+          "chg_commits_b": 13,
+          "denominator": 11,
+          "tc": 0.818181818182,
+          "reported": true,
+          "static_dependency": false,
+          "hidden_coupling": true,
+          "commit_granularity": "fine"
+        }
+      ],
+      "hidden_couplings": [
+        {
+          "a": "src/A.java",
+          "b": "src/B.java",
+          "shared": 9,
+          "tc": 0.818181818182,
+          "static_dependency": false,
+          "hidden_coupling": true
+        }
+      ],
+      "invariants": {
+        "tc_at_most_one": true
+      },
+      "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다."
+    }
+  },
+  "non_terminating": {
+    "/variants/window_12m/window_applied/authors_window_days": "527/216",
+    "/variants/window_12m/files/src/A.java/age_last_days": "67/54",
+    "/variants/window_240m/files/src/A.java/age_last_days": "67/54",
+    "/variants/window_240m/pairs/0/tc": "9/11",
+    "/variants/window_240m/hidden_couplings/0/tc": "9/11"
+  },
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

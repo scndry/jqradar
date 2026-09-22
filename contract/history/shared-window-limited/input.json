@@ -1,0 +1,135 @@
+{
+  "case": "shared-window-limited",
+  "contract_refs": [
+    "§2.4",
+    "§2.1",
+    "§2.7",
+    "D164",
+    "D150"
+  ],
+  "what_this_pins": "**`shared`는 W 안에서 두 파일을 함께 만진 비머지 커밋 수**(D164) — 분모 `chg_commits`와 같은 구간이라 **`tc ≤ 1`이 불변식**이다. 같은 이력을 두 창으로 본다: A·B를 함께 만진 커밋이 HEAD로부터 15개월 전에 셋, 창 안에 여섯이다. 12개월 창에서는 `shared = 6`, `chg_commits_a = 8`, `chg_commits_b = 10`, `tc = 6/8 = 3/4`. 창을 20년으로 넓히면 셋이 **들어와** `shared = 9`, `chg_commits_a = 11`, `chg_commits_b = 13`, `tc = 9/11`. 창 밖 커밋은 창을 넓혀야만 들어온다 — 분자만 전 이력으로 세면 12개월 창에서 `tc = 9/8 > 1`이 나오는데, 이 계산기는 분자·분모를 같은 `selected`에서 세므로 그 값이 구조적으로 나올 수 없고 `invariants.tc_at_most_one`이 두 변이 모두 참이다.\n\n근거는 **일관성**이다(D164 — §2.1의 이력 성분 전부가 \"W 안\"인데 분자만 예외면 \"W\"가 필드마다 다른 뜻이 된다). 재현성(D87)은 근거가 아니다 — 창 밖 커밋은 SHA 연쇄가 봉인한다(D150). 교차 검토 S7(일곱 전원 모순)이 지목한 자리다.",
+  "invariants": [
+    "tc_at_most_one"
+  ],
+  "static_dependency": {
+    "src/A.java|src/B.java": false
+  },
+  "measure_files": [
+    "src/A.java",
+    "src/B.java"
+  ],
+  "window_per_variant": {
+    "window_12m": {
+      "months": 12,
+      "max_commits": 2000
+    },
+    "window_240m": {
+      "months": 240,
+      "max_commits": 2000
+    }
+  },
+  "variants": {
+    "window_12m": {
+      "committer": {
+        "name": "fixture",
+        "email": "fixture@example.invalid"
+      },
+      "base_time": "2024-01-01T00:00:00+00:00",
+      "commits": [
+        {
+          "id": "ab-old",
+          "at_seconds": 0,
+          "repeat": 3,
+          "step_seconds": 3600,
+          "message": "touch A+B",
+          "write": {
+            "src/A.java": "class X { int v{k}; }\n",
+            "src/B.java": "class X { int v{k}; }\n"
+          }
+        },
+        {
+          "id": "ab",
+          "at_seconds": 40000000,
+          "repeat": 6,
+          "step_seconds": 3600,
+          "message": "touch A+B",
+          "write": {
+            "src/A.java": "class X { int v{k}; }\n",
+            "src/B.java": "class X { int v{k}; }\n"
+          }
+        },
+        {
+          "id": "a",
+          "at_seconds": 40100000,
+          "repeat": 2,
+          "step_seconds": 3600,
+          "message": "touch A",
+          "write": {
+            "src/A.java": "class X { int v{k}; }\n"
+          }
+        },
+        {
+          "id": "b",
+          "at_seconds": 40200000,
+          "repeat": 4,
+          "step_seconds": 3600,
+          "message": "touch B",
+          "write": {
+            "src/B.java": "class X { int v{k}; }\n"
+          }
+        }
+      ]
+    },
+    "window_240m": {
+      "committer": {
+        "name": "fixture",
+        "email": "fixture@example.invalid"
+      },
+      "base_time": "2024-01-01T00:00:00+00:00",
+      "commits": [
+        {
+          "id": "ab-old",
+          "at_seconds": 0,
+          "repeat": 3,
+          "step_seconds": 3600,
+          "message": "touch A+B",
+          "write": {
+            "src/A.java": "class X { int v{k}; }\n",
+            "src/B.java": "class X { int v{k}; }\n"
+          }
+        },
+        {
+          "id": "ab",
+          "at_seconds": 40000000,
+          "repeat": 6,
+          "step_seconds": 3600,
+          "message": "touch A+B",
+          "write": {
+            "src/A.java": "class X { int v{k}; }\n",
+            "src/B.java": "class X { int v{k}; }\n"
+          }
+        },
+        {
+          "id": "a",
+          "at_seconds": 40100000,
+          "repeat": 2,
+          "step_seconds": 3600,
+          "message": "touch A",
+          "write": {
+            "src/A.java": "class X { int v{k}; }\n"
+          }
+        },
+        {
+          "id": "b",
+          "at_seconds": 40200000,
+          "repeat": 4,
+          "step_seconds": 3600,
+          "message": "touch B",
+          "write": {
+            "src/B.java": "class X { int v{k}; }\n"
+          }
+        }
+      ]
+    }
+  }
+}
