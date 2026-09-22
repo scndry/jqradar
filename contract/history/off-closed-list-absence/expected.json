@@ -1,0 +1,104 @@
+{
+  "case": "off-closed-list-absence",
+  "contract_refs": [
+    "§2.1",
+    "§2.7",
+    "D126",
+    "D131",
+    "D161",
+    "D162"
+  ],
+  "what_this_pins": "**off 모드가 내는 저자 유래 필드는 셋으로 닫힌다**(D162): `distinct_authors_90d`·`ownership_max_share`·`minor_contributor_share`. `team_count`·`teams_folded`는 off에서 **필드 부재**(`null`도 아니다), `people_artifact`는 `null`, 저자 사실(`author`·`authors`·`author_id`·`teams`)은 어느 모드에서도 report에 없다(D126·D161). 부재 검사이므로 D131대로 `must_be_caught`(닫힌 목록 밖이 있으면 잡힘)와 `must_not_be_caught`(셋은 잡히면 안 됨 — 그리고 `distinct_authors_90d = 1`도 잡히면 안 된다: 그것은 \"한 사람이 만졌다\"는 사실이지 정체가 아니다, D162)를 함께 둔다. team 모드의 `team_count`도 잡히면 안 된다 — 닫힌 목록은 off의 것이다.",
+  "check": "closed_list_absence",
+  "off_allowed_author_fields": [
+    "distinct_authors_90d",
+    "ownership_max_share",
+    "minor_contributor_share"
+  ],
+  "team_only_fields": [
+    "team_count",
+    "teams_folded"
+  ],
+  "never_in_report": [
+    "author",
+    "authors",
+    "author_id",
+    "teams"
+  ],
+  "bite_check": [
+    {
+      "name": "off인데 team_count·teams_folded가 있다",
+      "why": "D162 — off에서는 필드 부재다. 0이나 null로 두는 것도 위반이다(세지 않는 것이지 셀 수 없는 것이 아니다)",
+      "hits": [
+        "/files/0/measures/team_count",
+        "/files/0/measures/teams_folded"
+      ],
+      "caught": true
+    },
+    {
+      "name": "off인데 team_count만 null로 있다",
+      "why": "D162 — `null`도 아니다. 필드가 있으면 스키마의 dependentRequired(D161)에도 걸린다",
+      "hits": [
+        "/files/0/measures/team_count"
+      ],
+      "caught": true
+    },
+    {
+      "name": "off인데 people_artifact가 people.json이다",
+      "why": "D161 — off에서 저자 사실 파일이 있으면 위반이고, 그 존재 표시는 자백이다",
+      "hits": [
+        "/people_artifact"
+      ],
+      "caught": true
+    },
+    {
+      "name": "파일 레코드에 author",
+      "why": "D126 — 어느 모드에서도 report에 저자 사실은 없다. `people.json`이 그 자리다(D161)",
+      "hits": [
+        "/files/0/author"
+      ],
+      "caught": true
+    },
+    {
+      "name": "team 모드인데 measures에 teams 배열",
+      "why": "D161 — 팀별 커밋 수는 `people.json`의 것이고 report의 `team_count`는 접은 뒤의 수 하나다",
+      "hits": [
+        "/files/0/measures/teams"
+      ],
+      "caught": true
+    }
+  ],
+  "false_positive_check": [
+    {
+      "name": "off — 닫힌 목록 셋만",
+      "why": "D162의 셋은 off에서도 나온다. 잡으면 계약이 준 것을 막는 것이다",
+      "hits": [],
+      "passed": true
+    },
+    {
+      "name": "off — distinct_authors_90d = 1, ownership_max_share = 1",
+      "why": "\"한 사람이 만졌다\"는 사실이지 누구인지가 아니다 — k 하한은 익명 집계에 걸지 않는다(D162, D108의 논거)",
+      "hits": [],
+      "passed": true
+    },
+    {
+      "name": "team — team_count·teams_folded 있고 people_artifact = people.json",
+      "why": "닫힌 목록은 off의 것이다. team 모드에서 둘은 계약이 요구하는 필드다(D161)",
+      "hits": [],
+      "passed": true
+    },
+    {
+      "name": "off — 저자 유래 아닌 필드는 무엇이든",
+      "why": "검사는 저자 유래 필드만 본다 — cx·chg_commits는 대상이 아니다",
+      "hits": [],
+      "passed": true
+    }
+  ],
+  "verdict": "accept",
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}
