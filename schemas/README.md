@@ -1,4 +1,4 @@
-# `schemas/` — 산출물 JSON Schema 7종 (§7)
+# `schemas/` — 산출물 JSON Schema 8종 (§7)
 
 §7의 jsonc 스케치를 **기계 검증 가능하게** 옮긴 것이다. draft 2020-12.
 
@@ -11,6 +11,7 @@
 | [`campaign.schema.json`](campaign.schema.json) | `campaign create` → 조직이 소유하는 정의 | §5.4 | 있음 ✅ |
 | [`event.schema.json`](event.schema.json) | 사건 파일 = 원장의 사건 층 | §5.5 | 있음 ✅ |
 | [`fixture_change.schema.json`](fixture_change.schema.json) | `expected.json`을 바꾼 이유 | §2.9 끝 | 있음 ✅ |
+| [`people.schema.json`](people.schema.json) | 저자 사실 — `people.attribution ∈ {team, individual}`에서만 생기는 `build/` 산출물, `.jqradar/`에는 절대 없음(D161) | §2.7, §7 | 있음 ✅ |
 
 ## 원칙
 
@@ -58,7 +59,7 @@ python3 contract/schema/vocabulary.py --sync # 판정 어휘 사전 -> 스키마
 
 ## 아직 스키마가 없는 §7 예시
 
-**원장 뷰 한 행**(§5.5) — 저장되지 않고 파생되는 뷰라 산출물 스키마 7종에 들지 않는다. 게이트는 G2b이고(§0-15), `--at` 재구성 결정성(D79)을 검사하려면 그때 필요하다.
+**원장 뷰 한 행**(§5.5) — 저장되지 않고 파생되는 뷰라 산출물 스키마 8종에 들지 않는다. 게이트는 G2b이고(§0-15), `--at` 재구성 결정성(D79)을 검사하려면 그때 필요하다.
 
 ## 케이스는 어디 있나
 

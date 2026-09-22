@@ -37,6 +37,8 @@
 | 두 머신 바이트 동일 | **비교 대상의 정의**(D154) = `reproduce.scanned_at`·`reproduce.classes_reproduction_inputs`를 뺀 전부. 두 머신의 산출물이 그 규칙으로 JCS 바이트 동일 ∧ 제외 필드는 **실제로 다름** ∧ 제외 필드는 id 입력에 없음 ∧ 넷째 종류 필드(머신 이름)를 심으면 잡힘(D158) | [`byte-identity-comparison-target/`](byte-identity-comparison-target/) ✅ — 실제 두 머신에서의 실행은 G1(측정 코드)부터 |
 | 도달 불가 커밋이 새지 않는다 | 버려진 브랜치를 더해도 `head`·`repository_state_id`·`analysis_input_id` **셋 다 같고** 도달 불가 개수만 다르다. 구현이 `git log --all`로 이력을 읽으면 값은 갈리는데 id는 같아서 재현성 주장이 조용히 샌다 | [`unreachable-commits-do-not-leak/`](unreachable-commits-do-not-leak/) ✅ |
 | 시각 표기 | 같은 unix 초를 `Z`·`+00:00`·`+09:00`·`-07:00`으로 적은 넷이 정규 표기(`YYYY-MM-DDTHH:MM:SSZ`, D157)로 **같은 바이트·같은 id**. 먼저 날것 넷이 **네 id**를 내는 것을 보인다(JCS는 문자열 안을 안 건드린다). 파이썬 `isoformat()`(`+00:00`)이 패턴에 실패하는 것도 단언 — 이 계산기가 v3.9.0 전까지 정확히 그 자리에 있었다 | [`time-notation-canonical/`](time-notation-canonical/) ✅ |
+| `people.attribution` 토글 | 같은 트리·이력·툴체인을 `off`와 `team`으로 → `analysis_input_id` **변경** ∧ `repository_state_id` 불변(D160). `off`에서도 `people`이 해시에 들어간다. 사영: `team_count` 키만 미스, `cx`·`pair_dup_tokens` 적중 | [`attribution-toggle-changes-id/`](attribution-toggle-changes-id/) ✅ |
+| 매핑 한 줄 수정 | 둘 다 `team`, 팀 매핑 파일 한 줄만 다름 → `team_mapping_sha256`이 바뀌어 id 변경, `team_count` 키만 미스(D160·D159). 키에서 매핑 해시를 빼면 **거짓 적중**이 나는 것(검사가 무는가)도 단언 | [`team-mapping-edit-cache-projection/`](team-mapping-edit-cache-projection/) ✅ |
 | full clone vs `--depth 3` shallow clone | 같은 트리·같은 창 안 커밋 목록 → `last_commit_map_sha256`이 달라 id 다름 ∧ shallow는 `age_unknown` ∧ `history_complete: false`(D146·D148·D149) | 미작성 |
 | 정규 인코딩 = RFC 8785 JCS | RFC 벡터를 **같은 바이트로** 내는가. 순진한 sorted-key JSON이 그 벡터에서 **갈리는가**(검사가 무는가). id 입력 영역에서는 둘이 바이트 동일한가. float를 **거부**하는가 | [`jcs-canonical-encoding/`](jcs-canonical-encoding/) ✅ |
 
@@ -61,6 +63,10 @@ D128에 따라 **해시 형식(`pattern`)의 강제도 이 디렉터리가 진�
 ## 결정 — 시각의 정규 표기 (D157)
 
 `head_committer_time`은 `window_anchor.timestamp`로 id에 **해시로** 들어간다. PR #4에서 `%cI`가 UTC를 `Z`/`+00:00`으로 섞어 CI가 잡았고 계산기가 `%ct`로 바뀌었다 — 그런데 그 뒤의 `isoformat()`이 `+00:00`을 냈다. 표기가 계약이 아니어서 계산기가 제 사정대로 적은 것이고, 어느 머신의 어느 라이브러리가 어떻게 적느냐에 id가 걸려 있었다. v3.9.0이 §2.7에 표기를 정했다(D157): UTC · RFC 3339 · 초 · `Z` · 소수 초 없음, unix 초에서 생성. `canonical_time()`이 그 구현이고 `time-notation-canonical/`이 계약이다. 이 전환으로 `same-tree-different-pmd`·`unreachable-commits-do-not-leak`의 `analysis_input_id`가 움직였다 — `fixture-changes/2026-09-21-time-notation-d157.json`이 그 사실을 진다.
+
+## 결정 — 저작 정책은 id 입력이다 (D160)
+
+"정책이지 파라미터가 아니다"(§4.3, B.6)는 조직이 **어디에** 적는가의 분류이지 **무엇이 결과를 바꾸는가**의 분류가 아니다 — 교차 검토 S2가 리뷰어 다섯 전원 모순으로 지목했다. v3.9.1이 `people.attribution`과 팀 매핑 파일의 해시를 §2.8 입력에 넣고 `reproduce.people`로 인쇄하게 했다(off에서도 `{off, null}`). 계산기의 id 스펙에 `people`이 들어가 기존 다섯 케이스의 id가 움직였다 — `fixture-changes/2026-09-22-people-in-analysis-input-id.json`. 매핑 파일의 해시는 정체가 아니다(파일 하나의 해시, `policy_hash`와 같은 부류) — 픽스처의 매핑 내용은 가짜 이름이고 `expected.json`에는 해시와 줄 수만 남는다. `team_count`의 키(§4.5 셋째 예)는 저자 집합·attribution·매핑 해시·k인데, 저자 집합은 창 안 커밋 목록의 함수라 이 픽스처는 `commit_list_sha256`을 그 자리에 둔다.
 
 ## 결정 — 비교 대상과 캐시 키의 경계 (D154·D158·D159)
 

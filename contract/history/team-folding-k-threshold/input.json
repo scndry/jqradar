@@ -1,0 +1,171 @@
+{
+  "case": "team-folding-k-threshold",
+  "contract_refs": [
+    "§2.1",
+    "§2.7",
+    "D11",
+    "D161",
+    "D162"
+  ],
+  "what_this_pins": "**k 하한(≥3인)은 팀 집계의 조건이다**(D161): 매핑에서 3인 미만 팀은 `other`로 접히고 `team_count`는 접은 뒤의 수, `teams_folded`가 접힌 팀 수를 병기한다. 매핑: `payments`(a·b·c·d, 4인) · `platform`(e·f·g, 3인 — 경계, 접히지 않는다) · `billing`(h, 1인 — 접힌다). 네 파일이 네 경우를 밟는다: `OnlyBilling.java`는 h만 만졌다 → **`team_count: 1, teams_folded: 1`** — \"작은 팀 하나가 만졌다\"는 사실은 남고 `billing`이라는 라벨은 `teams`에 없다(`other`만 있다); `PaymentsAndBilling.java`는 a와 h → `2, 1`; `OnlyPayments.java`는 a·b → `1, 0`; `PlatformBoundary.java`는 e·f·g(정확히 3인 팀) → `1, 0` — 3은 미만이 아니다. `null`도 억제도 아니다 — 값은 있고 정체는 없다(§0-30 \"포기한 것\"). 익명 집계 셋(`distinct_authors_90d` 등)은 k에 걸리지 않고 그대로 나온다(D162) — `OnlyBilling`의 `distinct_authors_90d = 1`이 그 자리다.",
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "people": {
+    "attribution": "team",
+    "team_mapping": {
+      "payments": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "platform": [
+        "e",
+        "f",
+        "g"
+      ],
+      "billing": [
+        "h"
+      ]
+    }
+  },
+  "measure_files": [
+    "src/OnlyBilling.java",
+    "src/PaymentsAndBilling.java",
+    "src/OnlyPayments.java",
+    "src/PlatformBoundary.java"
+  ],
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "authors": {
+      "a": {
+        "name": "Author A",
+        "email": "a@example.invalid"
+      },
+      "b": {
+        "name": "Author B",
+        "email": "b@example.invalid"
+      },
+      "c": {
+        "name": "Author C",
+        "email": "c@example.invalid"
+      },
+      "d": {
+        "name": "Author D",
+        "email": "d@example.invalid"
+      },
+      "e": {
+        "name": "Author E",
+        "email": "e@example.invalid"
+      },
+      "f": {
+        "name": "Author F",
+        "email": "f@example.invalid"
+      },
+      "g": {
+        "name": "Author G",
+        "email": "g@example.invalid"
+      },
+      "h": {
+        "name": "Author H",
+        "email": "h@example.invalid"
+      }
+    },
+    "base_time": "2026-05-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "ob-h",
+        "at_seconds": 0,
+        "author": "h",
+        "repeat": 3,
+        "step_seconds": 3600,
+        "message": "h -> src/OnlyBilling.java",
+        "write": {
+          "src/OnlyBilling.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "pb-a",
+        "at_seconds": 100000,
+        "author": "a",
+        "repeat": 4,
+        "step_seconds": 3600,
+        "message": "a -> src/PaymentsAndBilling.java",
+        "write": {
+          "src/PaymentsAndBilling.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "pb-h",
+        "at_seconds": 200000,
+        "author": "h",
+        "repeat": 2,
+        "step_seconds": 3600,
+        "message": "h -> src/PaymentsAndBilling.java",
+        "write": {
+          "src/PaymentsAndBilling.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "op-a",
+        "at_seconds": 300000,
+        "author": "a",
+        "repeat": 2,
+        "step_seconds": 3600,
+        "message": "a -> src/OnlyPayments.java",
+        "write": {
+          "src/OnlyPayments.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "op-b",
+        "at_seconds": 400000,
+        "author": "b",
+        "repeat": 3,
+        "step_seconds": 3600,
+        "message": "b -> src/OnlyPayments.java",
+        "write": {
+          "src/OnlyPayments.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "pl-e",
+        "at_seconds": 500000,
+        "author": "e",
+        "repeat": 1,
+        "step_seconds": 3600,
+        "message": "e -> src/PlatformBoundary.java",
+        "write": {
+          "src/PlatformBoundary.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "pl-f",
+        "at_seconds": 510000,
+        "author": "f",
+        "repeat": 1,
+        "step_seconds": 3600,
+        "message": "f -> src/PlatformBoundary.java",
+        "write": {
+          "src/PlatformBoundary.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "pl-g",
+        "at_seconds": 520000,
+        "author": "g",
+        "repeat": 1,
+        "step_seconds": 3600,
+        "message": "g -> src/PlatformBoundary.java",
+        "write": {
+          "src/PlatformBoundary.java": "class X { int v{id}; }\n"
+        }
+      }
+    ]
+  }
+}

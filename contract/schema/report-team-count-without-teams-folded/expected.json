@@ -1,0 +1,14 @@
+{
+  "case": "report-team-count-without-teams-folded",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D161",
+  "what": "`team_count`는 `teams_folded`와 함께만(D161) — 접힌 팀 수가 없으면 `team_count: 1`이 '큰 팀 하나'인지 '작은 팀 하나가 접힌 것'인지 읽을 수 없다. 예시를 team 모드로 옮겨(`reproduce.people`·`people_artifact`) 그 규칙만 따로 밟는다.",
+  "mechanism": "dependentRequired",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/files/0/measures"
+  ]
+}

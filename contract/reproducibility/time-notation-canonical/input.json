@@ -45,6 +45,10 @@
           "Dx": "0.3",
           "F": "0.2"
         }
+      },
+      "people": {
+        "attribution": "off",
+        "team_mapping_sha256": null
       }
     }
   }

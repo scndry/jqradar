@@ -1,0 +1,121 @@
+{
+  "case": "attribution-toggle-changes-id",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.8",
+    "§2.7",
+    "§4.3",
+    "§2.9",
+    "D160",
+    "D159",
+    "D87"
+  ],
+  "what_this_pins": "**`people.attribution`은 id 입력이다**(D160). 같은 트리·같은 이력·같은 툴체인을 `off`와 `team`으로 스캔하면 `repository_state_id`는 **같고** `analysis_input_id`는 **달라야** 한다 — 모드는 산출물을 바꾸고(`team_count`의 유무, §2.1), \\\"정책이지 파라미터가 아니다\\\"(§4.3, B.6)는 조직이 적는 자리의 분류이지 결과를 바꾸는 입력의 면제가 아니다. 이 케이스가 잡는 실패: `people`이 id에서 빠져 off 결과와 team 결과가 서로 캐시 적중하는 것 — 교차 검토 S2(리뷰어 다섯 전원 모순)가 지목한 자리다.\\n\\n`off`에서도 `people`은 인쇄되고 해시에 들어간다(`{attribution: off, team_mapping_sha256: null}`) — 모드가 무엇이었나도 재현의 일부다. 사영(D159): `people`을 읽는 측정은 `team_count`뿐이므로 토글에 그 키만 미스이고 `cx`·`pair_dup_tokens`는 적중이다. 변조로 검사가 무는 것을 보인다: `team_count` 키에서 매핑 해시를 빼면 두 변이의 키가 같아진다(`false_hit`) — 이 케이스에서는 attribution도 함께 바뀌므로 그것만으로는 거짓 적중이 나지 않는다(`expect_false_hit: false`, 매핑 한 줄 수정 케이스가 그 자리를 진다).",
+  "canonical_encoding": "RFC8785-JCS",
+  "variants": {
+    "off": {
+      "people": {
+        "attribution": "off",
+        "team_mapping_sha256": null
+      },
+      "team_mapping_lines": null,
+      "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+      "analysis_input_id": "sha256:c86744cddaf2b071907f0015934ffbf3615bd15c92798d8d2626b6f9b8b6dd27"
+    },
+    "team": {
+      "people": {
+        "attribution": "team",
+        "team_mapping_sha256": "sha256:6a0c00d08d61fc79ed78624263f25e798f647a45f897bb670210f1ad6011d2c6"
+      },
+      "team_mapping_lines": 3,
+      "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+      "analysis_input_id": "sha256:38eb6c6c3a139b88f32ae50481c335077f4d388baa1d4fdc9647cb548c88e00f"
+    }
+  },
+  "measure_projections": {
+    "team_count": {
+      "source": "§4.5 셋째 예 (D160) — (창 안 커밋의 저자 집합, attribution, team_mapping_sha256, k 하한). 저자 집합은 창 안 커밋 목록의 함수라 이 픽스처는 commit_list_sha256을 그 자리에 둔다",
+      "content": [],
+      "environment": [
+        "jgit"
+      ],
+      "algorithm_versions": [
+        "measures"
+      ],
+      "parameters": [],
+      "people": [
+        "attribution",
+        "team_mapping_sha256"
+      ],
+      "history": [
+        "commit_list_sha256"
+      ]
+    },
+    "pair_dup_tokens": {
+      "source": "§4.5 첫째 예 (D159) — 글자 그대로",
+      "content": [
+        "src/main/java/com/example/order/OrderPolicy.java",
+        "src/main/java/com/example/order/OrderService.java"
+      ],
+      "environment": [
+        "pmd"
+      ],
+      "algorithm_versions": [
+        "cpd_aggregation"
+      ],
+      "parameters": [
+        "cpd.minimum_tokens"
+      ]
+    },
+    "cx": {
+      "source": "§4.5 둘째 예 (D159) — 글자 그대로",
+      "content": [
+        "src/main/java/com/example/order/OrderService.java"
+      ],
+      "environment": [
+        "pmd"
+      ],
+      "algorithm_versions": [
+        "measures"
+      ],
+      "parameters": []
+    }
+  },
+  "cache_keys": {
+    "off": {
+      "team_count": "sha256:d72c9669c11727c450f84978ada0a2eb8775e610e1425047d486e0f393d3a805",
+      "pair_dup_tokens": "sha256:05e38df2eedeb210e6e6498abd4cd9dfc3f734c8421b5b2bec48273367b6a556",
+      "cx": "sha256:ea6dd3674ff51153b7bc6dddc3cc877afb3123a3f17161eae589ef87d84d74fe"
+    },
+    "team": {
+      "team_count": "sha256:c51674810d6767714212cec487c04003aef4c7e6631a23a0fccafd30e5985c20",
+      "pair_dup_tokens": "sha256:05e38df2eedeb210e6e6498abd4cd9dfc3f734c8421b5b2bec48273367b6a556",
+      "cx": "sha256:ea6dd3674ff51153b7bc6dddc3cc877afb3123a3f17161eae589ef87d84d74fe"
+    }
+  },
+  "cache": {
+    "miss": [
+      "team_count"
+    ],
+    "hit": [
+      "cx",
+      "pair_dup_tokens"
+    ],
+    "readers_of_people": [
+      "team_count"
+    ]
+  },
+  "mutation_drop_mapping_from_key": {
+    "measure": "team_count",
+    "dropped": "team_mapping_sha256",
+    "false_hit": false
+  },
+  "assertions": {
+    "people_inputs_differ": true,
+    "repository_state_id_equal": true,
+    "analysis_input_id_differs": true,
+    "only_people_readers_miss": true,
+    "content_measures_hit": true,
+    "projections_subset_of_2_8_inputs": true
+  }
+}

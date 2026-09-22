@@ -39,6 +39,8 @@
 | [`author-facts-minor-threshold/`](author-facts-minor-threshold/) | 마이너 기여자 `< 5%` 경계. 20커밋에서 0.05는 미만이 아니고, 21커밋에서 1/21은 미만이다 |
 | [`identity-absent-when-attribution-off/`](identity-absent-when-attribution-off/) | **D48·D135** — 정체가 산출물에 없다. 모양이 아니라 **출처**로 가른다 |
 | [`authors-window-truncated-by-count/`](authors-window-truncated-by-count/) | **D137** — 90일 지표를 창 안으로 자른다. 같은 이력을 두 창으로 봐 `distinct_authors_90d`가 1과 2로 갈린다 |
+| [`team-folding-k-threshold/`](team-folding-k-threshold/) | **D161** — k 하한(≥3인)은 팀 집계의 조건. 3인 미만 팀은 `other`로 접혀 2인 팀 하나만 만진 파일은 `team_count: 1, teams_folded: 1` — 값은 있고 라벨은 없다. 정확히 3인 팀은 접히지 않는다 |
+| [`off-closed-list-absence/`](off-closed-list-absence/) | **D162·D126** — off가 내는 저자 유래 필드는 셋으로 닫힌다(`team_count`는 필드 부재, 저자 사실은 어느 모드에도 없다). 부재 검사라 `must_be_caught` 5 + `must_not_be_caught` 4 — `distinct_authors_90d = 1`은 잡히면 안 된다 |
 
 ## blame 검사는 값이 아니라 부재를 본다
 

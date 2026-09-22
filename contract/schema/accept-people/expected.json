@@ -1,0 +1,11 @@
+{
+  "case": "accept-people",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "positive",
+  "contract_ref": "D161",
+  "what": "§7의 `people.json` 스케치가 8번째 스키마를 통과한다 — team 모드, `other`로 접힌 2인 팀 하나(`folded_from: 1`), `authors: null`.",
+  "schema": "people.schema.json",
+  "verdict": "accept",
+  "rejected_at": []
+}

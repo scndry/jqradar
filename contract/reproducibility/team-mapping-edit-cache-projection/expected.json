@@ -1,0 +1,120 @@
+{
+  "case": "team-mapping-edit-cache-projection",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.8",
+    "§4.5",
+    "§2.9",
+    "D160",
+    "D159"
+  ],
+  "what_this_pins": "**매핑 한 줄 수정 → `team_count`의 캐시 키만 미스, `cx`·`pair_dup_tokens` 적중**(D160·D159). 두 변이는 둘 다 `team` 모드이고 팀 매핑 파일의 한 줄(`billing`에 한 사람 추가)만 다르다. `team_mapping_sha256`이 바뀌므로 `analysis_input_id`는 바뀌고 리포트는 다시 조립되지만, 내용 주소 측정은 매핑을 읽지 않으니 적중이다 — 그래서 매핑 수정이 싸다(§4.5).\\n\\n매핑 파일의 해시는 정체가 아니다(D160) — 저자 해시(사람 하나에 대응)와 달리 파일 하나의 해시이고 `policy_hash`와 같은 부류다. 이 픽스처의 매핑 내용은 가짜 이름이고 `expected.json`에는 해시와 줄 수만 남는다.\\n\\n변조로 검사가 무는 것을 보인다: `team_count` 키에서 `team_mapping_sha256`을 빼면 매핑이 바뀌어도 키가 같다 — **거짓 적중**이다(`dropping_mapping_hash_yields_false_hit`). D160이 매핑 해시를 키에 넣는 이유가 그 한 줄이다.",
+  "canonical_encoding": "RFC8785-JCS",
+  "variants": {
+    "mapping_a": {
+      "people": {
+        "attribution": "team",
+        "team_mapping_sha256": "sha256:6a0c00d08d61fc79ed78624263f25e798f647a45f897bb670210f1ad6011d2c6"
+      },
+      "team_mapping_lines": 3,
+      "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+      "analysis_input_id": "sha256:38eb6c6c3a139b88f32ae50481c335077f4d388baa1d4fdc9647cb548c88e00f"
+    },
+    "mapping_b": {
+      "people": {
+        "attribution": "team",
+        "team_mapping_sha256": "sha256:5517f5253abf3aefdc9b81891b8aa00c73981ce1a3b2f291d3168422fdfc45fc"
+      },
+      "team_mapping_lines": 3,
+      "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+      "analysis_input_id": "sha256:bb02bd4385eb22e49354e7dcfd882243de33609503d6cc16728f0e98e2fec834"
+    }
+  },
+  "measure_projections": {
+    "team_count": {
+      "source": "§4.5 셋째 예 (D160) — (창 안 커밋의 저자 집합, attribution, team_mapping_sha256, k 하한). 저자 집합은 창 안 커밋 목록의 함수라 이 픽스처는 commit_list_sha256을 그 자리에 둔다",
+      "content": [],
+      "environment": [
+        "jgit"
+      ],
+      "algorithm_versions": [
+        "measures"
+      ],
+      "parameters": [],
+      "people": [
+        "attribution",
+        "team_mapping_sha256"
+      ],
+      "history": [
+        "commit_list_sha256"
+      ]
+    },
+    "pair_dup_tokens": {
+      "source": "§4.5 첫째 예 (D159) — 글자 그대로",
+      "content": [
+        "src/main/java/com/example/order/OrderPolicy.java",
+        "src/main/java/com/example/order/OrderService.java"
+      ],
+      "environment": [
+        "pmd"
+      ],
+      "algorithm_versions": [
+        "cpd_aggregation"
+      ],
+      "parameters": [
+        "cpd.minimum_tokens"
+      ]
+    },
+    "cx": {
+      "source": "§4.5 둘째 예 (D159) — 글자 그대로",
+      "content": [
+        "src/main/java/com/example/order/OrderService.java"
+      ],
+      "environment": [
+        "pmd"
+      ],
+      "algorithm_versions": [
+        "measures"
+      ],
+      "parameters": []
+    }
+  },
+  "cache_keys": {
+    "mapping_a": {
+      "team_count": "sha256:c51674810d6767714212cec487c04003aef4c7e6631a23a0fccafd30e5985c20",
+      "pair_dup_tokens": "sha256:05e38df2eedeb210e6e6498abd4cd9dfc3f734c8421b5b2bec48273367b6a556",
+      "cx": "sha256:ea6dd3674ff51153b7bc6dddc3cc877afb3123a3f17161eae589ef87d84d74fe"
+    },
+    "mapping_b": {
+      "team_count": "sha256:dd71969734bfc7e8caef027252b0aa8044f5b93b1667a9d9e89784329a2443f6",
+      "pair_dup_tokens": "sha256:05e38df2eedeb210e6e6498abd4cd9dfc3f734c8421b5b2bec48273367b6a556",
+      "cx": "sha256:ea6dd3674ff51153b7bc6dddc3cc877afb3123a3f17161eae589ef87d84d74fe"
+    }
+  },
+  "cache": {
+    "miss": [
+      "team_count"
+    ],
+    "hit": [
+      "cx",
+      "pair_dup_tokens"
+    ],
+    "readers_of_people": [
+      "team_count"
+    ]
+  },
+  "mutation_drop_mapping_from_key": {
+    "measure": "team_count",
+    "dropped": "team_mapping_sha256",
+    "false_hit": true
+  },
+  "assertions": {
+    "people_inputs_differ": true,
+    "repository_state_id_equal": true,
+    "analysis_input_id_differs": true,
+    "only_people_readers_miss": true,
+    "content_measures_hit": true,
+    "projections_subset_of_2_8_inputs": true,
+    "dropping_mapping_hash_yields_false_hit": true
+  }
+}

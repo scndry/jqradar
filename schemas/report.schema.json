@@ -12,7 +12,8 @@
     "system",
     "components",
     "files",
-    "findings"
+    "findings",
+    "people_artifact"
   ],
   "properties": {
     "schema": {
@@ -22,6 +23,10 @@
     "project": {
       "type": "string",
       "description": "프로젝트 이름(§7). 설명이며 재계산 대상이 아니다."
+    },
+    "people_artifact": {
+      "enum": ["people.json", null],
+      "description": "저자 사실이 가는 8번째 산출물의 존재 표시(§7, D161). `people.attribution ∈ {team, individual}`이면 `\"people.json\"`, `off`면 `null` — 아래 `allOf`가 `reproduce.people.attribution`과 묶는다. 저자 사실 자체는 이 문서에 오지 않는다(D126)."
     },
     "reproduce": {
       "$ref": "#/$defs/reproduce"
@@ -127,6 +132,7 @@
         "tool_version",
         "schema_version",
         "contract_version",
+        "people",
         "window_anchor",
         "head",
         "repository_state_id",
@@ -141,6 +147,27 @@
         "classes_id"
       ],
       "properties": {
+        "people": {
+          "type": "object",
+          "description": "저작 정책 — 정책이지만 산출물을 바꾸므로 **id 입력**이다(§2.8, D160). `parameters` 안이 아닌 이유는 B.6 — 조직이 적는 자리가 다르다. `off`에서도 인쇄한다: 모드가 무엇이었나도 재현의 일부다.",
+          "required": ["attribution", "team_mapping_sha256"],
+          "properties": {
+            "attribution": {"enum": ["off", "team", "individual"], "description": "§2.7·D11. 기본 off."},
+            "team_mapping_sha256": {
+              "type": ["string", "null"],
+              "pattern": "^sha256:",
+              "description": "조직 제공 팀 매핑 파일의 해시(D160). 정체가 아니다 — 파일 하나의 해시. `off`면 `null`, 아니면 `sha256:` 접두(D128대로 접두만)."
+            }
+          },
+          "allOf": [
+            {
+              "if": {"properties": {"attribution": {"const": "off"}}, "required": ["attribution"]},
+              "then": {"properties": {"team_mapping_sha256": {"const": null}}, "description": "off에는 매핑이 없다 — 해시가 있으면 어느 모드였는지 `reproduce`가 두 말을 한다(D160)."},
+              "else": {"properties": {"team_mapping_sha256": {"type": "string"}}, "description": "team·individual은 매핑이 있어야 한다(§2.7)."}
+            }
+          ],
+          "additionalProperties": false
+        },
         "tool_version": {
           "type": "string",
           "description": "jQRadar 버전(§2.8 `core_tool_version`). major.minor.patch."
@@ -874,8 +901,19 @@
             "integer",
             "null"
           ],
-          "description": "이 파일을 만진 팀 수(§2.1). `people.attribution ∈ {team, individual}`일 때만(D11)."
+          "description": "이 파일을 만진 팀 수 — 매핑에서 3인 미만 팀을 `other`로 접은 뒤의 수(§2.1, D161). `people.attribution ∈ {team, individual}`일 때만; `off`에서는 **필드 부재**(`null`이 아니다, D162) — 최상위 `allOf`가 그것을 건다. `teams_folded`와 함께만(`dependentRequired`)."
+        },
+        "teams_folded": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "`team_count`를 낼 때 `other`로 접힌 3인 미만 팀의 수(§2.1, D161). 2인 팀 하나만 만진 파일 → `team_count: 1, teams_folded: 1` — 사실은 남고 라벨은 남지 않는다. `team_count`와 함께만."
         }
+      },
+      "dependentRequired": {
+        "team_count": ["teams_folded"],
+        "teams_folded": ["team_count"]
       },
       "additionalProperties": false
     },
@@ -1281,5 +1319,37 @@
       }
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "reproduce": {
+            "properties": {"people": {"properties": {"attribution": {"const": "off"}}, "required": ["attribution"]}},
+            "required": ["people"]
+          }
+        },
+        "required": ["reproduce"]
+      },
+      "then": {
+        "properties": {
+          "people_artifact": {"const": null},
+          "files": {
+            "items": {
+              "properties": {
+                "measures": {
+                  "not": {"anyOf": [{"required": ["team_count"]}, {"required": ["teams_folded"]}]}
+                }
+              }
+            }
+          }
+        },
+        "description": "`off`에서는 `people.json`이 없고(D161) `team_count`·`teams_folded`는 필드 부재다(D162) — off가 내는 저자 유래 필드는 `distinct_authors_90d`·`ownership_max_share`·`minor_contributor_share` 셋으로 닫힌다. `null`도 아니다: 매핑이 없으면 셀 수 없는 것이 아니라 세지 않는 것이다."
+      },
+      "else": {
+        "properties": {"people_artifact": {"const": "people.json"}},
+        "description": "`team`·`individual`이면 저자 사실은 `people.json`에 있고 이 문서는 그 존재를 가리킨다(D161)."
+      }
+    }
+  ],
   "additionalProperties": false
 }

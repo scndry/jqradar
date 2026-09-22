@@ -1,0 +1,21 @@
+{
+  "case": "people-path-under-jqradar",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "people.schema.json",
+  "base": "prd:§7:people",
+  "mechanism": "not",
+  "contract_ref": "D48·D161",
+  "what": "`people.json`에 `.jqradar/` 아래 경로가 있으면 거부 — 저자 사실이 커밋 대상 디렉터리를 가리키면 그것이 곧 정체의 커밋이다(D48). `note`가 문장으로 `.jqradar/`를 말하는 것은 경로가 아니라 걸리지 않는다(긍정 케이스가 그것을 보인다).",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "files",
+        0,
+        "path"
+      ],
+      "value": ".jqradar/people/OrderService.json"
+    }
+  ]
+}

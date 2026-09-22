@@ -36,6 +36,14 @@ import exact  # noqa: E402
 
 GENERATED_BY = "contract/history/compute.py"
 SECONDS_PER_DAY = 86400
+K_THRESHOLD = 3  # §2.7·D161 — 팀 집계의 k 하한. 3인 미만 팀은 `other`로 접힌다.
+
+# D162 — off 모드가 내는 저자 유래 필드의 **닫힌 목록**. 이 밖의 저자 유래 필드가 off
+# 산출물에 있으면 위반이다. 저자 사실(`author`·`authors`·`author_id`)은 어느 모드에서도
+# report에 오지 않는다(D126·D161).
+OFF_ALLOWED_AUTHOR_FIELDS = ("distinct_authors_90d", "ownership_max_share", "minor_contributor_share")
+TEAM_ONLY_FIELDS = ("team_count", "teams_folded")
+NEVER_IN_REPORT = ("author", "authors", "author_id", "teams")
 
 
 # --------------------------------------------------------------------------
@@ -429,6 +437,38 @@ def build_expected(inp: dict, workdir: Path) -> dict:
             entry["ownership_max_share"] = None
             entry["minor_contributor_share"] = None
 
+    # ------------------------------------------------------------------
+    # §2.1 팀 집계 — k 하한은 여기에만 건다 (D161·D162)
+    # ------------------------------------------------------------------
+    # `off`에서는 이 블록이 돌지 않고 `team_count`·`teams_folded`는 **필드 부재**다(D162).
+    # 매핑은 명세의 저자 id → 팀. 3인 미만 팀은 `other`로 접고, 접힌 팀의 수를
+    # `teams_folded`(파일 단위)와 `folded_from`(`other` 항목)에 남긴다 — 값은 있고
+    # 라벨은 없다. 팀 라벨은 합성 리포의 가짜 값이라 expected에 남아도 정체가 아니다.
+    people = inp.get("people")
+    if people and people.get("attribution") in ("team", "individual"):
+        mapping = people["team_mapping"]
+        key_of = {hashlib.sha256(spec["authors"][a]["email"].encode()).hexdigest(): team
+                  for team, members in mapping.items() for a in members}
+        small = {team for team, members in mapping.items() if len(members) < K_THRESHOLD}
+        for path, entry in files.items():
+            touching = [c for c in selected
+                        if any(canonical(p) == path for p in c["paths"])]
+            per_team: dict[str, int] = {}
+            folded: set[str] = set()
+            for c in touching:
+                team = key_of[c["_author_key"]]  # 매핑 밖 저자는 이 픽스처가 만들지 않는다
+                if team in small:
+                    folded.add(team)
+                    team = "other"
+                per_team[team] = per_team.get(team, 0) + 1
+            teams = [{"team": t, "commits": n} for t, n in sorted(per_team.items())]
+            for t in teams:
+                if t["team"] == "other":
+                    t["folded_from"] = len(folded)
+            entry["teams"] = teams
+            entry["team_count"] = len(per_team)
+            entry["teams_folded"] = len(folded)
+
     return {
         "case": inp["case"],
         "contract_refs": inp["contract_refs"],
@@ -718,6 +758,57 @@ def check_identity_absence(inp: dict) -> dict:
     }
 
 
+def _keys_with_paths(node, prefix=""):
+    if isinstance(node, dict):
+        for k, v in node.items():
+            path = f"{prefix}/{k}"
+            yield path, k, v
+            yield from _keys_with_paths(v, path)
+    elif isinstance(node, list):
+        for i, v in enumerate(node):
+            yield from _keys_with_paths(v, f"{prefix}/{i}")
+
+
+def closed_list_violations(document: dict) -> list[str]:
+    """§2.7·D162 — off 산출물에 닫힌 목록 셋 밖의 저자 유래 필드가 없다. D126·D161 —
+    저자 사실은 어느 모드에서도 report에 없다. 위반한 경로를 돌려준다."""
+    attribution = document.get("reproduce", {}).get("people", {}).get("attribution")
+    out = []
+    for path, key, value in _keys_with_paths(document):
+        if key in NEVER_IN_REPORT:
+            out.append(path)
+        elif attribution == "off" and key in TEAM_ONLY_FIELDS:
+            out.append(path)
+        elif attribution == "off" and key == "people_artifact" and value is not None:
+            out.append(path)
+    return out
+
+
+def check_closed_list_absence(inp: dict) -> dict:
+    """부재 검사이므로 `must_be_caught`와 `must_not_be_caught`를 함께 둔다(D131)."""
+    caught, passed = [], []
+    for sample in inp["must_be_caught"]:
+        hits = closed_list_violations(sample["document"])
+        caught.append({"name": sample["name"], "why": sample["why"], "hits": hits, "caught": bool(hits)})
+    for sample in inp["must_not_be_caught"]:
+        hits = closed_list_violations(sample["document"])
+        passed.append({"name": sample["name"], "why": sample["why"], "hits": hits, "passed": not hits})
+    missed = [c["name"] for c in caught if not c["caught"]]
+    wrong = [f["name"] for f in passed if not f["passed"]]
+    return {
+        "case": inp["case"],
+        "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"],
+        "check": "closed_list_absence",
+        "off_allowed_author_fields": list(OFF_ALLOWED_AUTHOR_FIELDS),
+        "team_only_fields": list(TEAM_ONLY_FIELDS),
+        "never_in_report": list(NEVER_IN_REPORT),
+        "bite_check": caught,
+        "false_positive_check": passed,
+        "verdict": "reject" if (missed or wrong) else "accept",
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="§2.7 이력 계약")
     ap.add_argument("--check", action="store_true")
@@ -735,6 +826,8 @@ def main() -> int:
             expected = check_no_blame(inp)
         elif inp.get("check") == "identity_absence":
             expected = check_identity_absence(inp)
+        elif inp.get("check") == "closed_list_absence":
+            expected = check_closed_list_absence(inp)
         elif "variants" in inp:
             # 같은 작업을 두 이력으로 만들어 값을 나란히 둔다(§2.4 스쿼시 대조, D134).
             expected = {"case": inp["case"], "contract_refs": inp["contract_refs"],

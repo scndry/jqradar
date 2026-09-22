@@ -1,0 +1,15 @@
+{
+  "case": "report-reproduce-without-people",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D111·D160",
+  "what": "`people.attribution`과 매핑 해시는 id 입력이다(D160). id 입력은 `reproduce`에 값 또는 해시로 나타나야 하고(D111) 그것은 `required`로 강제된다 — 빠지면 같은 id로 off 결과와 team 결과가 서로 캐시 적중한다.",
+  "mechanism": "required(id 입력)",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/people_artifact",
+    "/reproduce"
+  ]
+}

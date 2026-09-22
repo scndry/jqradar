@@ -1,0 +1,360 @@
+{
+  "case": "team-folding-k-threshold",
+  "contract_refs": [
+    "§2.1",
+    "§2.7",
+    "D11",
+    "D161",
+    "D162"
+  ],
+  "what_this_pins": "**k 하한(≥3인)은 팀 집계의 조건이다**(D161): 매핑에서 3인 미만 팀은 `other`로 접히고 `team_count`는 접은 뒤의 수, `teams_folded`가 접힌 팀 수를 병기한다. 매핑: `payments`(a·b·c·d, 4인) · `platform`(e·f·g, 3인 — 경계, 접히지 않는다) · `billing`(h, 1인 — 접힌다). 네 파일이 네 경우를 밟는다: `OnlyBilling.java`는 h만 만졌다 → **`team_count: 1, teams_folded: 1`** — \"작은 팀 하나가 만졌다\"는 사실은 남고 `billing`이라는 라벨은 `teams`에 없다(`other`만 있다); `PaymentsAndBilling.java`는 a와 h → `2, 1`; `OnlyPayments.java`는 a·b → `1, 0`; `PlatformBoundary.java`는 e·f·g(정확히 3인 팀) → `1, 0` — 3은 미만이 아니다. `null`도 억제도 아니다 — 값은 있고 정체는 없다(§0-30 \"포기한 것\"). 익명 집계 셋(`distinct_authors_90d` 등)은 k에 걸리지 않고 그대로 나온다(D162) — `OnlyBilling`의 `distinct_authors_90d = 1`이 그 자리다.",
+  "shallow_depth": null,
+  "window_anchor": {
+    "type": "head_committer_time",
+    "timestamp": "2026-05-07T00:26:40+00:00"
+  },
+  "head": "c5cc6e0cc",
+  "window_applied": {
+    "months": 12,
+    "max_commits": 2000,
+    "bound_hit": "none",
+    "commits_in_window": 17,
+    "merge_commits_excluded": 0,
+    "authors_window_truncated": false,
+    "authors_window_days": 6.018518518519,
+    "commits_excluded_within_90d": 0
+  },
+  "commits": [
+    {
+      "sha": "c5cc6e0cc",
+      "at": "2026-05-07T00:26:40+00:00",
+      "subject": "g -> src/PlatformBoundary.java",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PlatformBoundary.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "f6816c88c",
+      "at": "2026-05-06T21:40:00+00:00",
+      "subject": "f -> src/PlatformBoundary.java",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PlatformBoundary.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "b7995d79e",
+      "at": "2026-05-06T18:53:20+00:00",
+      "subject": "e -> src/PlatformBoundary.java",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PlatformBoundary.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "37aff106e",
+      "at": "2026-05-05T17:06:40+00:00",
+      "subject": "b -> src/OnlyPayments.java #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyPayments.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "daee35c81",
+      "at": "2026-05-05T16:06:40+00:00",
+      "subject": "b -> src/OnlyPayments.java #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyPayments.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "7d414a727",
+      "at": "2026-05-05T15:06:40+00:00",
+      "subject": "b -> src/OnlyPayments.java #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyPayments.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "7e24469cb",
+      "at": "2026-05-04T12:20:00+00:00",
+      "subject": "a -> src/OnlyPayments.java #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyPayments.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "dcd0ea52a",
+      "at": "2026-05-04T11:20:00+00:00",
+      "subject": "a -> src/OnlyPayments.java #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyPayments.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "81b4b990e",
+      "at": "2026-05-03T08:33:20+00:00",
+      "subject": "h -> src/PaymentsAndBilling.java #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "dff2164b8",
+      "at": "2026-05-03T07:33:20+00:00",
+      "subject": "h -> src/PaymentsAndBilling.java #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "01cbd13fe",
+      "at": "2026-05-02T06:46:40+00:00",
+      "subject": "a -> src/PaymentsAndBilling.java #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "65d20747b",
+      "at": "2026-05-02T05:46:40+00:00",
+      "subject": "a -> src/PaymentsAndBilling.java #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "dcc5a3ac0",
+      "at": "2026-05-02T04:46:40+00:00",
+      "subject": "a -> src/PaymentsAndBilling.java #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "fbcdfe0f1",
+      "at": "2026-05-02T03:46:40+00:00",
+      "subject": "a -> src/PaymentsAndBilling.java #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "b7a36e866",
+      "at": "2026-05-01T02:00:00+00:00",
+      "subject": "h -> src/OnlyBilling.java #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "cb3cad46f",
+      "at": "2026-05-01T01:00:00+00:00",
+      "subject": "h -> src/OnlyBilling.java #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "9aebc5813",
+      "at": "2026-05-01T00:00:00+00:00",
+      "subject": "h -> src/OnlyBilling.java #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyBilling.java"
+      ],
+      "in_window": true
+    }
+  ],
+  "median_files_per_commit": 1,
+  "commit_granularity": "fine",
+  "renames": [],
+  "files": {
+    "src/OnlyBilling.java": {
+      "chg_commits": 3,
+      "chg_days": 1,
+      "churn": 5,
+      "touched_by": [
+        "b7a36e866",
+        "cb3cad46f",
+        "9aebc5813"
+      ],
+      "age_last_days": 5.935185185185,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ],
+      "teams": [
+        {
+          "team": "other",
+          "commits": 3,
+          "folded_from": 1
+        }
+      ],
+      "team_count": 1,
+      "teams_folded": 1
+    },
+    "src/PaymentsAndBilling.java": {
+      "chg_commits": 6,
+      "chg_days": 2,
+      "churn": 11,
+      "touched_by": [
+        "81b4b990e",
+        "dff2164b8",
+        "01cbd13fe",
+        "65d20747b",
+        "dcc5a3ac0",
+        "fbcdfe0f1"
+      ],
+      "age_last_days": 3.662037037037,
+      "distinct_authors_90d": 2,
+      "contributor_count": 2,
+      "ownership_max_share": 0.666666666667,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        0.666666666667,
+        0.333333333333
+      ],
+      "teams": [
+        {
+          "team": "other",
+          "commits": 2,
+          "folded_from": 1
+        },
+        {
+          "team": "payments",
+          "commits": 4
+        }
+      ],
+      "team_count": 2,
+      "teams_folded": 1
+    },
+    "src/OnlyPayments.java": {
+      "chg_commits": 5,
+      "chg_days": 2,
+      "churn": 9,
+      "touched_by": [
+        "37aff106e",
+        "daee35c81",
+        "7d414a727",
+        "7e24469cb",
+        "dcd0ea52a"
+      ],
+      "age_last_days": 1.305555555556,
+      "distinct_authors_90d": 2,
+      "contributor_count": 2,
+      "ownership_max_share": 0.6,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        0.6,
+        0.4
+      ],
+      "teams": [
+        {
+          "team": "payments",
+          "commits": 5
+        }
+      ],
+      "team_count": 1,
+      "teams_folded": 0
+    },
+    "src/PlatformBoundary.java": {
+      "chg_commits": 3,
+      "chg_days": 2,
+      "churn": 5,
+      "touched_by": [
+        "c5cc6e0cc",
+        "f6816c88c",
+        "b7995d79e"
+      ],
+      "age_last_days": 0,
+      "distinct_authors_90d": 3,
+      "contributor_count": 3,
+      "ownership_max_share": 0.333333333333,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        0.333333333333,
+        0.333333333333,
+        0.333333333333
+      ],
+      "teams": [
+        {
+          "team": "platform",
+          "commits": 3
+        }
+      ],
+      "team_count": 1,
+      "teams_folded": 0
+    }
+  },
+  "pairs": [],
+  "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
+  "non_terminating": {
+    "/window_applied/authors_window_days": "325/54",
+    "/files/src/OnlyBilling.java/age_last_days": "641/108",
+    "/files/src/PaymentsAndBilling.java/age_last_days": "791/216",
+    "/files/src/PaymentsAndBilling.java/ownership_max_share": "2/3",
+    "/files/src/PaymentsAndBilling.java/contribution_shares_sorted/0": "2/3",
+    "/files/src/PaymentsAndBilling.java/contribution_shares_sorted/1": "1/3",
+    "/files/src/OnlyPayments.java/age_last_days": "47/36",
+    "/files/src/PlatformBoundary.java/ownership_max_share": "1/3",
+    "/files/src/PlatformBoundary.java/contribution_shares_sorted/0": "1/3",
+    "/files/src/PlatformBoundary.java/contribution_shares_sorted/1": "1/3",
+    "/files/src/PlatformBoundary.java/contribution_shares_sorted/2": "1/3"
+  },
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

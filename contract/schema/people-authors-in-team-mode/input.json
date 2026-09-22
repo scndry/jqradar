@@ -1,0 +1,26 @@
+{
+  "case": "people-authors-in-team-mode",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "people.schema.json",
+  "base": "prd:§7:people",
+  "mechanism": "if/then",
+  "contract_ref": "D161",
+  "what": "`team` 모드는 팀 라벨까지다 — 저자 사실(`authors`)은 `individual`만 낸다(D161·§7). team인데 authors가 채워지면 조직이 켜지 않은 범위가 나간 것이다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "files",
+        0,
+        "authors"
+      ],
+      "value": [
+        {
+          "author_id": "someone",
+          "commits": 3
+        }
+      ]
+    }
+  ]
+}
