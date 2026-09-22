@@ -139,6 +139,17 @@ def build_history(tree: Path, spec: dict, workdir: Path) -> dict:
             "unreachable_commit_count": len(unreachable)}
 
 
+DEFAULT_PEOPLE = {"attribution": "off", "team_mapping_sha256": None}
+K_THRESHOLD = 3  # §2.7·D161 — 팀 집계의 k 하한. 익명 집계에는 걸지 않는다(D162).
+
+
+def team_mapping_sha256(text: str | None) -> str | None:
+    """조직 제공 팀 매핑 파일의 해시(D160). 파일 하나의 해시라 정체가 아니다."""
+    if text is None:
+        return None
+    return "sha256:" + hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
 def analysis_input_id(shared: dict, environment: dict, files: list[tuple[str, str]],
                       history: dict) -> tuple[str, dict]:
     """§2.8 — 툴체인·계약·입력 전부. 여기 없는 입력은 결과에 영향을 주면 안 된다(D87)."""
@@ -157,6 +168,9 @@ def analysis_input_id(shared: dict, environment: dict, files: list[tuple[str, st
         "commit_list_sha256": hashlib.sha256(
             canonical(history["commit_shas"])).hexdigest(),
         "parameters": shared["parameters"],
+        # D160 — 저작 정책은 산출물을 바꾸므로 id 입력이다. off에서도 들어간다(모드가
+        # 무엇이었나도 재현의 일부). `parameters`와 별도인 이유는 B.6 — 조직이 적는 자리가 다르다.
+        "people": shared.get("people", DEFAULT_PEOPLE),
     }
     return sha256(spec), spec
 
@@ -479,7 +493,8 @@ def run_time_notations(inp: dict) -> dict:
 
 
 def measure_cache_key(projection: dict, files: dict[str, str], env: dict,
-                      algorithm_versions: dict, parameters: dict) -> tuple[str, dict]:
+                      algorithm_versions: dict, parameters: dict,
+                      people: dict | None = None, history: dict | None = None) -> tuple[str, dict]:
     """§4.5·D159 — 캐시 키 = 내용 + 닿는 엔진·알고리즘 버전 + 읽는 파라미터. 사영이다."""
     key = {
         "content": [files[p] for p in projection["content"]],
@@ -487,15 +502,26 @@ def measure_cache_key(projection: dict, files: dict[str, str], env: dict,
         "algorithm_versions": {a: algorithm_versions[a] for a in projection["algorithm_versions"]},
         "parameters": {p: parameters[p] for p in projection["parameters"]},
     }
+    # D160 — `team_count`의 키 = (창 안 커밋의 저자 집합, attribution, team_mapping_sha256,
+    # k 하한). 저자 집합은 창 안 커밋 목록의 함수이므로 이 픽스처는 `commit_list_sha256`을
+    # 그 자리에 둔다(합성 이력의 저자는 하나다) — 정체를 키에 두지 않는다.
+    if projection.get("people"):
+        key["people"] = {k: people[k] for k in projection["people"]}
+        key["k_threshold"] = K_THRESHOLD
+    if projection.get("history"):
+        key["history"] = {h: history[h] for h in projection["history"]}
     return sha256(key), key
 
 
 def projection_within_2_8(projection: dict, env: dict, algorithm_versions: dict,
-                          parameters: dict) -> bool:
+                          parameters: dict, people: dict | None = None,
+                          history: dict | None = None) -> bool:
     """어느 키에 있는 것은 §2.8 입력 목록에 있어야 한다(D159)."""
     return (set(projection["environment"]) <= set(env)
             and set(projection["algorithm_versions"]) <= set(algorithm_versions)
-            and set(projection["parameters"]) <= set(parameters))
+            and set(projection["parameters"]) <= set(parameters)
+            and set(projection.get("people", [])) <= set(people or DEFAULT_PEOPLE)
+            and set(projection.get("history", [])) <= {"commit_list_sha256"})
 
 
 def run_parameter_projection(case_dir: Path, inp: dict) -> dict:
@@ -571,6 +597,76 @@ def run_parameter_projection(case_dir: Path, inp: dict) -> dict:
     }
 
 
+def run_people_variants(case_dir: Path, inp: dict) -> dict:
+    """§2.8·D160 — 저작 정책 두 변이(같은 트리·같은 이력): `analysis_input_id`는 다르고
+    `repository_state_id`는 같다. 그리고 사영(D159): `people`을 읽는 측정(`team_count`)만
+    캐시 미스, `cx`·`pair_dup_tokens`는 적중 — 매핑 한 줄이 바뀌어도 리포트는 다시
+    조립되지만 내용 주소 측정은 다시 재지 않는다."""
+    tree = case_dir / inp["repo"]["tree"]
+    files = tree_files(tree)
+    fmap = dict(files)
+    with tempfile.TemporaryDirectory() as tmp:
+        history = build_history(tree, inp["repo"], Path(tmp) / "repo")
+    shared, env = inp["shared_inputs"], inp["environment"]
+    algo, params = shared["algorithm_versions"], shared["parameters"]
+    hist_inputs = {"commit_list_sha256": hashlib.sha256(canonical(history["commit_shas"])).hexdigest()}
+
+    variants, keys = {}, {}
+    for name, v in inp["people_variants"].items():
+        people = {"attribution": v["attribution"],
+                  "team_mapping_sha256": team_mapping_sha256(v.get("team_mapping"))}
+        aid, _ = analysis_input_id({**shared, "people": people}, env, files, history)
+        variants[name] = {"people": people,
+                          "team_mapping_lines": (len(v["team_mapping"].splitlines())
+                                                 if v.get("team_mapping") is not None else None),
+                          "repository_state_id": repository_state_id(files),
+                          "analysis_input_id": aid}
+        keys[name] = {m: measure_cache_key(proj, fmap, env, algo, params, people, hist_inputs)[0]
+                      for m, proj in inp["measure_projections"].items()}
+    a, b = list(variants)
+    projections = inp["measure_projections"]
+    misses = sorted(m for m in projections if keys[a][m] != keys[b][m])
+    hits = sorted(m for m in projections if keys[a][m] == keys[b][m])
+    readers = sorted(m for m, proj in projections.items() if proj.get("people"))
+
+    # 변조: team_count 사영에서 매핑 해시를 빼면 매핑이 바뀌어도 거짓 적중이 난다(D160).
+    mut = inp["mutation_drop_mapping_from_key"]
+    proj = json.loads(json.dumps(projections[mut["measure"]]))
+    proj["people"] = [f for f in proj["people"] if f != "team_mapping_sha256"]
+    k_a = measure_cache_key(proj, fmap, env, algo, params, variants[a]["people"], hist_inputs)[0]
+    k_b = measure_cache_key(proj, fmap, env, algo, params, variants[b]["people"], hist_inputs)[0]
+    mutation = {"measure": mut["measure"], "dropped": "team_mapping_sha256",
+                "false_hit": k_a == k_b}
+
+    people_fields_differ = variants[a]["people"] != variants[b]["people"]
+    return {
+        "case": inp["case"],
+        "generated_by": GENERATED_BY,
+        "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"],
+        "canonical_encoding": CANONICAL_ENCODING,
+        "variants": variants,
+        "measure_projections": projections,
+        "cache_keys": keys,
+        "cache": {"miss": misses, "hit": hits, "readers_of_people": readers},
+        "mutation_drop_mapping_from_key": mutation,
+        "assertions": {
+            "people_inputs_differ": people_fields_differ,
+            "repository_state_id_equal":
+                variants[a]["repository_state_id"] == variants[b]["repository_state_id"],
+            "analysis_input_id_differs":
+                variants[a]["analysis_input_id"] != variants[b]["analysis_input_id"],
+            "only_people_readers_miss": misses == readers and len(misses) >= 1,
+            "content_measures_hit": hits == sorted(set(projections) - set(readers)) and len(hits) >= 1,
+            "projections_subset_of_2_8_inputs": all(
+                projection_within_2_8(pr, env, algo, params, variants[a]["people"], hist_inputs)
+                for pr in projections.values()),
+            **({"dropping_mapping_hash_yields_false_hit": mutation["false_hit"]}
+               if mut.get("expect_false_hit", True) else {}),
+        },
+    }
+
+
 def run_case(case_dir: Path) -> dict:
     inp = json.loads((case_dir / "input.json").read_text(encoding="utf-8"))
     if "canonical_vectors" in inp:
@@ -581,6 +677,8 @@ def run_case(case_dir: Path) -> dict:
         return run_byte_identity(case_dir, inp)
     if "time_notations" in inp:
         return run_time_notations(inp)
+    if "people_variants" in inp:
+        return run_people_variants(case_dir, inp)
     if "measure_projections" in inp:
         return run_parameter_projection(case_dir, inp)
     tree = case_dir / inp["repo"]["tree"]
