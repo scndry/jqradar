@@ -1,0 +1,14 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "reproducibility.parameters (`cpd.language`) · pair_dup_tokens 캐시 키 사영",
+    "old": "`parameters`에 `cpd.language: \"java\"` — §4.5·D159의 옛 예가 `pair_dup_tokens` 키의 원소로 들었다",
+    "new": "`cpd.language` 없음 — §0-29 보정(2026-09-22): CPD의 언어는 파라미터가 아니라 파일 확장자에서 결정되는 내용의 속성이라 `content_id`가 이미 담는다",
+    "note": "id 값이 바뀐다. 세 케이스(byte-identity-comparison-target · time-notation-canonical · parameter-change-cache-projection)의 첫 판이 §4.5의 옛 예를 따라 `cpd.language`를 파라미터에 두었고, 파라미터는 `analysis_input_id`에 값으로 들어가므로 그것을 빼면 id·산출물 해시·`pair_dup_tokens` 키가 전부 움직인다. 이 파라미터는 문서 어디에도 없었다 — 픽스처가 계약의 예를 따랐고 그 예가 틀렸던 자리다. 계약이 예를 지웠으니 픽스처가 따라온다(계약 → 픽스처 순서, 보정 커밋 c90f3ab이 이 커밋보다 앞선다). 단언은 전부 그대로 참이다: 넷의 시각 표기가 한 id로 모이고, 비교 대상은 바이트 동일하고, `cpd.minimum_tokens` 변경에 `pair_dup_tokens`만 미스다. `cx`의 사영 출처가 \"§2.1에서 읽어 선언\"에서 \"§4.5 둘째 예\"로 바뀐 것도 같은 보정이다 — 픽스처가 옳았던 자리라 계약이 따라간 쪽.",
+    "fixtures": [
+      "reproducibility/byte-identity-comparison-target",
+      "reproducibility/time-notation-canonical",
+      "reproducibility/parameter-change-cache-projection"
+    ]
+  }
+}

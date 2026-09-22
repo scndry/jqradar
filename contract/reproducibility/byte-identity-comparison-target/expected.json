@@ -15,7 +15,7 @@
     "reproduce.classes_reproduction_inputs"
   ],
   "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-  "analysis_input_id": "sha256:0058ced757f17a70b621e49ed2a66ecece58dc3c4b2d7d1ba8158ad0705ebff7",
+  "analysis_input_id": "sha256:27accd255d7b822b723d82b4b6082cfdbdbbe42375b549b218fe82709b415d8f",
   "comparison_target": {
     "schema": "jqradar/3",
     "reproduce": {
@@ -34,7 +34,7 @@
       },
       "head": "04c5de269bd939509087a13312869a28d540f773",
       "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-      "analysis_input_id": "sha256:0058ced757f17a70b621e49ed2a66ecece58dc3c4b2d7d1ba8158ad0705ebff7",
+      "analysis_input_id": "sha256:27accd255d7b822b723d82b4b6082cfdbdbbe42375b549b218fe82709b415d8f",
       "environment": {
         "pmd": "7.16.0",
         "archunit": "1.5.0",
@@ -56,7 +56,6 @@
       },
       "parameters": {
         "cpd.minimum_tokens": 100,
-        "cpd.language": "java",
         "percentile.min_population": 20,
         "frozen.min_days": 180,
         "rename.similarity": 60,
@@ -98,8 +97,8 @@
         "annotation_processors": [],
         "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
       },
-      "output_sha256": "sha256:42bae41b7520bb7f3f5d8ebf7c57e02354d169413bb55e1edcb0dd95840e3a60",
-      "comparison_target_sha256": "sha256:d77b876812aca63552d10f446e763a5944052baa36459b2da556cecea678e965"
+      "output_sha256": "sha256:aaa1f41ffe349e8f20a99458b3f6a05cb42e18442b80d6c4dea8d31613b62883",
+      "comparison_target_sha256": "sha256:72989ea0515189b9ddd154022ec466e22d47e0682cfeb07918a3326ea99eedcb"
     },
     "b": {
       "scanned_at": "2026-09-08T09:30:00Z",
@@ -113,8 +112,8 @@
         "annotation_processors": [],
         "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
       },
-      "output_sha256": "sha256:9df6dce27670f4ed1b887166a71e6342246f449143412bbdd3b6097bd2fa9900",
-      "comparison_target_sha256": "sha256:d77b876812aca63552d10f446e763a5944052baa36459b2da556cecea678e965"
+      "output_sha256": "sha256:b4c051f6919b93c8db2c0b1177385c0b445290f2c294e48ee7d5ddc2ca6f0d60",
+      "comparison_target_sha256": "sha256:72989ea0515189b9ddd154022ec466e22d47e0682cfeb07918a3326ea99eedcb"
     }
   },
   "fourth_kind_mutation": {

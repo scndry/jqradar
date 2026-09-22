@@ -34,7 +34,6 @@
       },
       "parameters": {
         "cpd.minimum_tokens": 100,
-        "cpd.language": "java",
         "percentile.min_population": 20,
         "frozen.min_days": 180,
         "rename.similarity": 60,
