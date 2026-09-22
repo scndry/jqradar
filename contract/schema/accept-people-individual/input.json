@@ -1,0 +1,45 @@
+{
+  "case": "accept-people-individual",
+  "check": "schema",
+  "kind": "positive",
+  "schema": "people.schema.json",
+  "base": "prd:§7:people",
+  "contract_ref": "D161·D163",
+  "what": "§7 예시를 `individual`로 옮긴 긍정 — `authors`는 매핑 파일의 키로, `authors_unmapped`는 정수로. `team` 조건(둘 다 null)의 `else`가 individual을 과잉 거부하지 않는지 보인다(D131 — 변조만 있는 조건은 아무것도 증명하지 않는다).",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "attribution"
+      ],
+      "value": "individual"
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        0,
+        "authors"
+      ],
+      "value": [
+        {
+          "author_id": "m-0017",
+          "commits": 9
+        },
+        {
+          "author_id": "m-0042",
+          "commits": 2
+        }
+      ]
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        0,
+        "authors_unmapped"
+      ],
+      "value": 1
+    }
+  ]
+}

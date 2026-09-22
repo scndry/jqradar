@@ -1,0 +1,11 @@
+{
+  "case": "accept-people-individual",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "positive",
+  "contract_ref": "D161·D163",
+  "what": "§7 예시를 `individual`로 옮긴 긍정 — `authors`는 매핑 파일의 키로, `authors_unmapped`는 정수로. `team` 조건(둘 다 null)의 `else`가 individual을 과잉 거부하지 않는지 보인다(D131 — 변조만 있는 조건은 아무것도 증명하지 않는다).",
+  "schema": "people.schema.json",
+  "verdict": "accept",
+  "rejected_at": []
+}

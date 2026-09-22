@@ -1,0 +1,14 @@
+{
+  "case": "people-individual-without-authors-unmapped",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D163",
+  "what": "`individual`인데 `authors_unmapped`가 `null`이다 → 거부. 매핑에 없는 저자를 `unmapped`로 접은 수가 없으면 `authors` 목록이 전부인지 일부인지 읽을 수 없다(D163) — 팀의 `teams_folded`(D161)와 같은 자리.",
+  "mechanism": "if/then",
+  "schema": "people.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/files/0/authors_unmapped"
+  ]
+}

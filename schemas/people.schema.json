@@ -122,7 +122,7 @@
       "properties": {
         "author_id": {
           "type": "string",
-          "description": "저자 식별자 — **무엇인지는 계약에 없다**(`x-jqradar-unresolved`). 조직이 `individual`을 켠 범위에서만 나오는 값이고 개인 순위 표면은 만들지 않는다(§11)."
+          "description": "저자 식별자 = **조직 팀 매핑 파일이 정한 키**다 — git 이름·이메일이 아니다(D163). jQRadar는 git 저자를 그대로 내지 않고 매핑이 준 키로만 낸다(D48의 \"추론 금지\"와 같은 선). 형식은 매핑 파일이 정하는 조직의 것(B.6)이라 `pattern`을 걸지 않는다 — git 이메일을 그대로 넣는 것은 D163 위반이지만, 매핑이 그 이메일을 키로 정했을 때만 같은 모양이 정당하므로 `@` 모양을 스키마가 거부할 수는 없다. 조직이 `individual`을 켠 범위에서만 나오는 값이고 개인 순위 표면은 만들지 않는다(§11)."
         },
         "commits": {
           "type": "integer",
@@ -137,7 +137,8 @@
         "teams",
         "team_count",
         "teams_folded",
-        "authors"
+        "authors",
+        "authors_unmapped"
       ],
       "additionalProperties": false,
       "properties": {
@@ -169,6 +170,14 @@
             "$ref": "#/$defs/authorEntry"
           },
           "description": "`individual`일 때만 배열, `team`에서는 `null`(§7·D161)."
+        },
+        "authors_unmapped": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "매핑에 없어 `unmapped`로 접힌 저자의 수(D163) — 팀의 `other`·`teams_folded`와 같은 처리: 값은 있고 정체는 없다. `individual`에서 `authors`와 함께 정수, `team`에서는 `null`."
         }
       }
     }
@@ -192,17 +201,48 @@
               "properties": {
                 "authors": {
                   "const": null
+                },
+                "authors_unmapped": {
+                  "const": null
                 }
               }
             }
           }
         },
-        "description": "`team` 모드는 저자 사실을 내지 않는다 — 팀 라벨까지다(D161). `individual`만 `authors`를 채운다."
+        "description": "`team` 모드는 저자 사실을 내지 않는다 — 팀 라벨까지다(D161). `authors`·`authors_unmapped` 둘 다 `null`."
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "attribution": {
+            "const": "individual"
+          }
+        },
+        "required": [
+          "attribution"
+        ]
+      },
+      "then": {
+        "properties": {
+          "files": {
+            "items": {
+              "properties": {
+                "authors": {
+                  "type": "array"
+                },
+                "authors_unmapped": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "description": "`individual`은 `authors` 배열과 `authors_unmapped` 정수를 함께 낸다(D163) — 접힌 수가 없으면 목록이 전부인지 알 수 없다. `off`는 enum이 먼저 거부하므로 여기서 다시 겨누지 않는다(거부 위치를 하나로)."
       }
     }
   ],
   "x-jqradar-unresolved": {
-    "author_id": "`individual` 모드의 `author_id`가 무엇인지(매핑 파일의 식별자? 이메일?)는 v3.9.1이 정하지 않았다 — 자리(파일)와 k만 정했다. 결정(D163 예정)이 오기 전까지 `type: string`만 건다. 추측으로 채우지 않는다(CLAUDE.md §7).",
     "team_count_consistency": "`team_count == len(teams)`·`teams_folded == Σ folded_from`은 JSON Schema로 표현할 수 없다 — `contract/history/`의 값 픽스처가 진다."
   }
 }

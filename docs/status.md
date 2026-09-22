@@ -4,13 +4,13 @@
 
 **#1의 범위는 §2.1–2.9다**(D136). §6.3–6.6 교차 검토는 값 층 픽스처(`contract/validation`·`security`)가 서는 **G3 입장 조건**으로 옮겼다 — 문장만 읽은 검토를 통과로 세지 않기 위해서다.
 
-**있는 것**: `prd.md` v3.9.1(D1–D162). `contract/` 케이스 **113종** — percentile 6 · **schema 69** · cpd 5 · **history 17** · graph 8 · **reproducibility 8**. `schemas/` **8종**(`people.schema.json`, D161). Gradle 골격과 자체 ArchUnit 규칙 넷 + 반례(11 tests). CI **5잡**. `docs/preregistration/p1a.md`, `docs/battery.md`(실측).
+**있는 것**: `prd.md` v3.9.2(D1–D163). `contract/` 케이스 **115종** — percentile 6 · **schema 71** · cpd 5 · **history 17** · graph 8 · **reproducibility 8**. `schemas/` **8종**(`people.schema.json`, D161). Gradle 골격과 자체 ArchUnit 규칙 넷 + 반례(11 tests). CI **5잡**. `docs/preregistration/p1a.md`, `docs/battery.md`(실측).
 
 **§2.9의 배정 공백은 닫혔다**: §2.4 파일 쌍(D134)과 §2.1 저자 사실(D135)이 `contract/history/`로 배정되고 케이스 넷이 섰다. 정체 부재 검사는 **출처로 가른다** — 저자 해시와 `repository_state_id`는 둘 다 64 hex라 모양으로 못 가르므로, 알고 있는 저자 식별자의 해시 72개가 산출물에 없음을 본다.
 
 **v3.9.0이 열린 25 중 여섯을 주장으로 닫았다** — S5(D154 비교 대상) · N3(D158 `reproduce` 세 종류) · S6(D159 캐시 키 사영) · O-3(D155 스케일 표) · S13(D156 분수 파라미터 문자열) · R4-2(D157 시각 표기). 계약이 먼저 서고(`docs/prd-v390` 첫 커밋, 스위트 붉음) 스키마·린트·픽스처가 따라가 초록이 됐다: `percentile_method`의 `arithmetic`·`output`이 `required`, 분수 파라미터가 `type: string`(JSON 숫자 → 거부), 스케일 린트가 표 `D155-1` 전체를 보고(변조 5 추가) `display.RACD`가 4자리, 재현성 케이스 셋(비교 대상·시각 표기·캐시 키 사영, 반례 넷이 물었다). 표 `D155-1`을 글자 그대로 구현한 린트가 §7 예시에서 `age_last_days` 요약 넷을 잡았고 코드에서 채우지 않고 멈췄다 — 소유자가 §0-29 보정으로 표에 넣었다(판 번호 불변, PR #17의 전례). 같은 보정이 §4.5의 `cpd.language`(문서에 없던 파라미터)를 지웠고 픽스처가 따라갔다. **닫힘 표시가 붙었다** — 여섯 행에 근거 열과 `닫힘 — D154…D159`. 아래 출력은 그 뒤 계산기가 낸 것이다: 닫힘 11 · 열림 19. 이 수는 적은 것이 아니라 계산된 것이다.
 
-**v3.9.1이 열린 19 중 셋을 주장으로 닫았다** — S2(D160 저작 정책은 id 입력) · S9(D161 저자 사실은 `people.json`, k는 팀 집계에) · R4-6(D162 off 닫힌 목록). 같은 순서: 계약 먼저(스위트 붉음 — 이번엔 §7 추출기의 '7개' 가정이 스키마보다 먼저 멈췄다) → 추출기·스키마 8종·변조 9 → 재현성 둘(토글·매핑 한 줄, 기존 다섯의 id 이동 = `fixture_change`) → history 둘(팀 접기·off 부재 검사) → 초록. **열어 둔 것**: `people.json`의 `author_id`가 무엇인지는 계약에 없다 — 스키마는 `type: string`만 걸고 `x-jqradar-unresolved`에 적었다(D163 예정). **닫힘 표시가 붙었다** — 셋에 근거 열과 `닫힘 — D160·D161·D162`. `--count`: 닫힘 14 · 열림 16 — 계산기가 낸 수다.
+**v3.9.1이 열린 19 중 셋을 주장으로 닫았다** — S2(D160 저작 정책은 id 입력) · S9(D161 저자 사실은 `people.json`, k는 팀 집계에) · R4-6(D162 off 닫힌 목록). 같은 순서: 계약 먼저(스위트 붉음 — 이번엔 §7 추출기의 '7개' 가정이 스키마보다 먼저 멈췄다) → 추출기·스키마 8종·변조 9 → 재현성 둘(토글·매핑 한 줄, 기존 다섯의 id 이동 = `fixture_change`) → history 둘(팀 접기·off 부재 검사) → 초록. `author_id`는 v3.9.2(D163, 한 줄 판)가 닫았다 — 조직 팀 매핑 파일이 정한 키이고 git 이름·이메일이 아니며, 매핑에 없는 저자는 `unmapped`로 접혀 `authors_unmapped`로 센다. 교차 검토 key가 아니라 닫힘 표시는 없다. **닫힘 표시가 붙었다** — 셋에 근거 열과 `닫힘 — D160·D161·D162`. `--count`: 닫힘 14 · 열림 16 — 계산기가 낸 수다.
 
 **남은 것은 열린 발견이다.** O14가 D151·D152로 닫히고 `g0-review.py --count`가 서면서 이 수는 **사람 보고가 아니라 계산**이 됐다. 지금 출력:
 
