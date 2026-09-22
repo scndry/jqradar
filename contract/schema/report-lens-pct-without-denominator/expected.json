@@ -4,8 +4,8 @@
   "check": "schema",
   "kind": "hard_rule",
   "contract_ref": "D116·D122",
-  "what": "분모(n_ranked)를 인쇄하지 않으면 pct를 재계산할 수 없다",
-  "mechanism": "required",
+  "what": "분모(n_ranked)를 인쇄하지 않으면 pct를 재계산할 수 없다 — D171 뒤에는 `pct`가 non-null이면 `n_ranked`가 `then`으로 요구된다(맨 null 금지와 한 기구).",
+  "mechanism": "if/then",
   "schema": "report.schema.json",
   "verdict": "reject",
   "rejected_at": [

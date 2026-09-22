@@ -866,7 +866,7 @@
             "integer",
             "null"
           ],
-          "description": "정적 클래스 그래프에서 직접 의존하는 프로젝트 내부 클래스 수(§2.1, ArchUnit). 테스트·리플렉션·DI 이름 기반 연결·외부 시스템 호출은 세지 않으며 이 한계를 F의 설명에 병기한다."
+          "description": "정적 클래스 그래프에서 직접 의존하는 프로젝트 내부 클래스 수(§2.1, ArchUnit). 테스트·리플렉션·DI 이름 기반 연결·외부 시스템 호출은 세지 않으며 이 한계를 F의 설명에 병기한다. **클래스가 `bytecode_scope`에 없으면 `null`**(`reason: no_bytecode`), null이면 F도 null(§3.3, D170) — 0으로 내려앉히지 않는다."
         },
         "age_last_days": {
           "type": [
@@ -912,9 +912,74 @@
         }
       },
       "dependentRequired": {
-        "team_count": ["teams_folded"],
-        "teams_folded": ["team_count"]
+        "team_count": [
+          "teams_folded"
+        ],
+        "teams_folded": [
+          "team_count"
+        ]
       },
+      "additionalProperties": false
+    },
+    "lensPercentile": {
+      "type": "object",
+      "description": "렌즈 하나의 백분위 기록 — **항상 객체**, 맨 `null`이 아니다(D171): 맨 `null`은 '값이 null'과 '모집단에서 제외'의 구분을 지운다. `pct`가 null이면 `reason`이 왜인지 말하고(성분의 열거 그대로 — 렌즈가 null인 이유는 성분이 null인 이유), non-null이면 `n_ranked`(분모)가 있다.",
+      "required": [
+        "pct",
+        "population"
+      ],
+      "properties": {
+        "pct": {
+          "$ref": "#/$defs/percentileValue"
+        },
+        "population": {
+          "$ref": "#/$defs/populationName"
+        },
+        "n_ranked": {
+          "type": "integer",
+          "description": "공식의 **분모** — 그 렌즈 값이 non-null인 파일 수(D116·D122). 나이 미상이면 F = null이라 랭킹에서 빠지므로 모집단 크기와 갈린다."
+        },
+        "n_population": {
+          "type": "integer",
+          "description": "모집단 크기. **`n_ranked`와 다를 때만** 적는다(D122)."
+        },
+        "reason": {
+          "enum": [
+            "not_in_active",
+            "no_twins",
+            "age_unknown",
+            "insufficient_population",
+            "no_bytecode"
+          ],
+          "description": "`pct`가 null인 이유(D171) — `interpretation`도 이 값으로 null이고 `anchor_class`(§5.5)도 같은 경로다."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "pct": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "pct"
+            ]
+          },
+          "then": {
+            "required": [
+              "reason"
+            ],
+            "description": "pct가 null이면 이유가 있어야 한다(D171)."
+          },
+          "else": {
+            "required": [
+              "n_ranked"
+            ],
+            "description": "pct가 있으면 분모가 있어야 한다(D116·D122)."
+          }
+        }
+      ],
       "additionalProperties": false
     },
     "file": {
@@ -948,47 +1013,69 @@
         },
         "percentiles": {
           "type": "object",
-          "description": "성분 백분위(§2.5). 결합 전에 백분위로 만든다(D2).",
+          "description": "성분 백분위(§2.5). 결합 전에 백분위로 만든다(D2). **두 단계** `<field>.<population>`(D168) — 기록의 뜻은 \"파일이 속한 모집단마다 그 모집단이 매기는 필드의 백분위\"이고 소속이 기준이지 소비자(렌즈)가 기준이 아니다: `active` 파일은 `cx.active`와 `cx.all`을 둘 다 갖는다. 옛 모양(`<field>` → 수)은 거부된다.",
           "additionalProperties": {
-            "$ref": "#/$defs/percentileValue"
+            "type": "object",
+            "minProperties": 1,
+            "propertyNames": {
+              "$ref": "#/$defs/populationName"
+            },
+            "additionalProperties": {
+              "$ref": "#/$defs/percentileValue"
+            },
+            "description": "`<population>` → pct. 속하지 않은 모집단은 `null`이고 그 이유는 `percentile_population`의 `reason`에 있다(D168)."
           }
         },
         "percentile_population": {
           "type": "object",
-          "description": "성분마다 어느 모집단에서 몇 개를 상대로 잰 값인가(§2.5). **'값이 null'과 '모집단에서 제외'를 구분한다**(D38).",
+          "description": "성분마다 어느 모집단에서 몇 개를 상대로 잰 값인가(§2.5). **'값이 null'과 '모집단에서 제외'를 구분한다**(D38). **두 단계** `<field>.<population>`(D168) — 모집단 이름은 키라 `population` 필드가 없다.",
           "additionalProperties": {
             "type": "object",
-            "required": [
-              "population",
-              "n_ranked"
-            ],
-            "properties": {
-              "population": {
-                "$ref": "#/$defs/populationName"
-              },
-              "lang": {
-                "type": "string",
-                "description": "`cx`처럼 언어별로 재는 성분(§2.5, D12)."
-              },
-              "n_ranked": {
-                "type": "integer",
-                "description": "공식 `(rank_avg−1)/(N−1)`의 **분모** — 그 성분 값이 non-null인 파일 수(§2.5, D116·D122). 인쇄된 분모로 pct를 재계산할 수 없으면 그 pct는 의견이다(B.4)."
-              },
-              "n_population": {
-                "type": "integer",
-                "description": "모집단 크기. **`n_ranked`와 다를 때만** 적는다(D122) — 예: `age_last_days`는 `all` 340 중 유효 338."
-              },
-              "reason": {
-                "enum": [
-                  "not_in_active",
-                  "no_twins",
-                  "age_unknown",
-                  "insufficient_population"
-                ],
-                "description": "pct가 null인 이유(§2.5, D38). 값이 없는 것과 모집단에 없는 것은 다르다."
-              }
+            "minProperties": 1,
+            "propertyNames": {
+              "$ref": "#/$defs/populationName"
             },
-            "additionalProperties": false
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "lang": {
+                  "type": "string",
+                  "description": "`cx`처럼 언어별로 재는 성분(§2.5, D12)."
+                },
+                "n_ranked": {
+                  "type": "integer",
+                  "description": "공식 `(rank_avg−1)/(N−1)`의 **분모** — 그 성분 값이 non-null인 파일 수(§2.5, D116·D122). 인쇄된 분모로 pct를 재계산할 수 없으면 그 pct는 의견이다(B.4)."
+                },
+                "n_population": {
+                  "type": "integer",
+                  "description": "모집단 크기. **`n_ranked`와 다를 때만** 적는다(D122) — 예: `age_last_days`는 `all` 340 중 유효 338."
+                },
+                "reason": {
+                  "enum": [
+                    "not_in_active",
+                    "no_twins",
+                    "age_unknown",
+                    "insufficient_population",
+                    "no_bytecode"
+                  ],
+                  "description": "pct가 null인 이유(§2.5, D38·D170). 값이 없는 것과 모집단에 없는 것은 다르다. `no_bytecode` = 클래스가 `bytecode_scope`에 없어 `fan_in`을 셀 수 없다(D170) — '의존하는 클래스가 없다'(0)와 다른 상태."
+                }
+              },
+              "anyOf": [
+                {
+                  "required": [
+                    "n_ranked"
+                  ]
+                },
+                {
+                  "required": [
+                    "reason"
+                  ]
+                }
+              ],
+              "additionalProperties": false,
+              "description": "분모가 있거나(pct가 있다) 이유가 있다(pct가 null이다) — 둘 다 없는 항목은 아무것도 말하지 않는다(D168)."
+            }
           }
         },
         "lenses": {
@@ -1020,39 +1107,26 @@
         },
         "lens_percentiles": {
           "type": "object",
-          "description": "렌즈 값 자체의 백분위(§2.5) — `interpretation`의 **유일한** 근거(D34). null인 렌즈 값은 제외하고 **0은 포함**한다.",
-          "additionalProperties": {
-            "type": [
-              "object",
-              "null"
-            ],
-            "required": [
-              "pct",
-              "population",
-              "n_ranked"
-            ],
-            "properties": {
-              "pct": {
-                "$ref": "#/$defs/percentileValue"
-              },
-              "population": {
-                "$ref": "#/$defs/populationName"
-              },
-              "n_ranked": {
-                "type": "integer",
-                "description": "공식의 **분모** — 그 렌즈 값이 non-null인 파일 수(D116·D122). 나이 미상이면 F = null이라 랭킹에서 빠지므로 모집단 크기와 갈린다."
-              },
-              "n_population": {
-                "type": "integer",
-                "description": "모집단 크기. **`n_ranked`와 다를 때만** 적는다(D122)."
-              }
+          "description": "렌즈 값 자체의 백분위(§2.5) — `interpretation`의 **유일한** 근거(D34). null인 렌즈 값은 제외하고 **0은 포함**한다. **렌즈는 H·Dx·F 셋**(D172) — `composite`는 렌즈가 아니라 `--profile`의 가중합이고 백분위·`interpretation`·`anchor_class`가 없다(넷째 순위 표면을 만들지 않는다, B.2·B.3). 그래서 키가 닫혀 있다.",
+          "properties": {
+            "H": {
+              "$ref": "#/$defs/lensPercentile"
             },
-            "additionalProperties": false
-          }
+            "Dx": {
+              "$ref": "#/$defs/lensPercentile"
+            },
+            "F": {
+              "$ref": "#/$defs/lensPercentile"
+            }
+          },
+          "additionalProperties": false
         },
         "arch_context": {
-          "type": "object",
-          "description": "소속 컴포넌트의 맥락을 **붙인 것**(§3.4). 파일 점수에 곱하거나 더하지 않는다.",
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "소속 컴포넌트의 맥락을 **붙인 것**(§3.4). 파일 점수에 곱하거나 더하지 않는다. 클래스가 `bytecode_scope`에 없으면 **`null`**(D170) — 소속이 없는 것이지 0이 아니다.",
           "properties": {
             "I": {
               "type": "number"
@@ -1076,7 +1150,50 @@
           "additionalProperties": false
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "measures": {
+                "properties": {
+                  "fan_in": {
+                    "type": "null"
+                  }
+                },
+                "required": [
+                  "fan_in"
+                ]
+              }
+            },
+            "required": [
+              "measures"
+            ]
+          },
+          "then": {
+            "properties": {
+              "percentile_population": {
+                "required": [
+                  "fan_in"
+                ],
+                "properties": {
+                  "fan_in": {
+                    "additionalProperties": {
+                      "required": [
+                        "reason"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "percentile_population"
+            ],
+            "description": "`fan_in`이 null이면 그 이유(`no_bytecode`)가 `percentile_population.fan_in.<population>.reason`에 있어야 한다(D170) — 0으로 내려앉힌 것과 셀 수 없었던 것을 산출물이 갈라 말한다."
+          }
+        }
+      ]
     },
     "duplicateCluster": {
       "type": "object",

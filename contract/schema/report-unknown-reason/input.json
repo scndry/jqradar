@@ -5,8 +5,8 @@
   "schema": "report.schema.json",
   "base": "prd:§7:report",
   "mechanism": "enum(전사)",
-  "contract_ref": "D38",
-  "what": "percentile_population.reason은 정해진 네 값뿐",
+  "contract_ref": "D38·D170",
+  "what": "percentile_population.reason은 정해진 다섯 값뿐(D38 + `no_bytecode`, D170)",
   "patch": [
     {
       "op": "set",
@@ -15,6 +15,7 @@
         1,
         "percentile_population",
         "chg_commits",
+        "active",
         "reason"
       ],
       "value": "dunno"

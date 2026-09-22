@@ -81,6 +81,10 @@ def scale_for(path: list, parent: dict | None = None) -> int | None:
         return {"integer": 2, "ratio": 4, "lens": 1}.get(kind)
     if len(path) >= 2 and str(path[-2]) == "percentiles":
         return 4
+    if len(path) >= 3 and str(path[-3]) == "percentiles":
+        # D168 — 두 단계 기록 `percentiles.<field>.<population>`: 리프 키가 모집단 이름이어도
+        # 값은 같은 `pct`다. 표의 이름은 경로에서 찾는다(§2.5 표 D155-1 아래 문장).
+        return 4
     kind = FIELD_KIND.get(leaf)
     return KIND_SCALE[kind] if kind else None
 

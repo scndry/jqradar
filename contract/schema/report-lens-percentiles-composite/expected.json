@@ -1,0 +1,14 @@
+{
+  "case": "report-lens-percentiles-composite",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D172",
+  "what": "`lens_percentiles.composite` 있음 → 거부. composite는 렌즈가 아니다(D172) — 백분위를 두면 프로필·리포마다 흔들리는 집합 위의 넷째 순위 표면이 된다(B.2·B.3). 렌즈는 H·Dx·F 셋으로 닫혀 있다.",
+  "mechanism": "additionalProperties:false",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/files/0/lens_percentiles"
+  ]
+}

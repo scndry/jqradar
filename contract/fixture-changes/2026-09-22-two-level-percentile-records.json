@@ -1,0 +1,14 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "schema.report — percentiles·percentile_population 두 단계, lens_percentiles 항상 객체 (D168·D171)",
+    "old": "`percentiles.<field>` = 수, `percentile_population.<field>` = {population, n_ranked, …}, `lens_percentiles.<lens>` = 객체 | null",
+    "new": "`percentiles.<field>.<population>` = 수, `percentile_population.<field>.<population>` = {lang?, n_ranked | reason, …}, `lens_percentiles.<lens>` = 항상 객체(pct null이면 reason)",
+    "note": "변조 셋의 거부 경로가 새 모양을 따라 움직였다 — 값(verdict)은 셋 다 reject 그대로. `report-percentile-out-of-range`: `/files/0/percentiles/cx` → `/files/0/percentiles/cx/active`(패치 경로를 두 단계로 재조준). `report-unknown-reason`: `/files/1/percentile_population/chg_commits/reason` → `…/chg_commits/active/reason`(같은 이유, 열거에 `no_bytecode`가 더해져 what을 다섯 값으로). `report-lens-pct-without-denominator`: 거부 기구가 `required`에서 `if/then`(pct non-null → n_ranked)으로 — 맨 null 금지(D171)와 한 기구가 됐다. 나머지 report 변조 32의 expected는 불변 — 첫 커밋에서 붉었던 것은 기반 예시가 옛 스키마에 걸렸기 때문이고(§0-33 실측 36), 스키마가 새 모양을 알자 같은 자리에서 같은 이유로 거부된다.",
+    "fixtures": [
+      "schema/report-percentile-out-of-range",
+      "schema/report-unknown-reason",
+      "schema/report-lens-pct-without-denominator"
+    ]
+  }
+}
