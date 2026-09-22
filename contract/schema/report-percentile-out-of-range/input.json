@@ -6,7 +6,7 @@
   "base": "prd:§7:report",
   "mechanism": "range",
   "contract_ref": "§2.5",
-  "what": "백분위는 0..1이다",
+  "what": "백분위는 0..1이다 (D168 뒤 경로는 `percentiles.<field>.<population>`)",
   "patch": [
     {
       "op": "set",
@@ -14,7 +14,8 @@
         "files",
         0,
         "percentiles",
-        "cx"
+        "cx",
+        "active"
       ],
       "value": 97
     }

@@ -3,12 +3,12 @@
   "generated_by": "contract/schema/compute.py",
   "check": "schema",
   "kind": "structural",
-  "contract_ref": "D38",
-  "what": "percentile_population.reason은 정해진 네 값뿐",
+  "contract_ref": "D38·D170",
+  "what": "percentile_population.reason은 정해진 다섯 값뿐(D38 + `no_bytecode`, D170)",
   "mechanism": "enum(전사)",
   "schema": "report.schema.json",
   "verdict": "reject",
   "rejected_at": [
-    "/files/1/percentile_population/chg_commits/reason"
+    "/files/1/percentile_population/chg_commits/active/reason"
   ]
 }

@@ -4,7 +4,7 @@
 
 **#1의 범위는 §2.1–2.9다**(D136). §6.3–6.6 교차 검토는 값 층 픽스처(`contract/validation`·`security`)가 서는 **G3 입장 조건**으로 옮겼다 — 문장만 읽은 검토를 통과로 세지 않기 위해서다.
 
-**있는 것**: `prd.md` v3.9.3(D1–D167). `contract/` 케이스 **118종** — percentile 6 · schema 71 · **cpd 6** · **history 19** · graph 8 · **reproducibility 8**. `schemas/` **8종**(`people.schema.json`, D161). Gradle 골격과 자체 ArchUnit 규칙 넷 + 반례(11 tests). CI **5잡**. `docs/preregistration/p1a.md`, `docs/battery.md`(실측).
+**있는 것**: `prd.md` v3.9.4(D1–D173). `contract/` 케이스 **123종** — percentile 6 · **schema 76** · cpd 6 · history 19 · graph 8 · **reproducibility 8**. `schemas/` **8종**(`people.schema.json`, D161). Gradle 골격과 자체 ArchUnit 규칙 넷 + 반례(11 tests). CI **5잡**. `docs/preregistration/p1a.md`, `docs/battery.md`(실측).
 
 **§2.9의 배정 공백은 닫혔다**: §2.4 파일 쌍(D134)과 §2.1 저자 사실(D135)이 `contract/history/`로 배정되고 케이스 넷이 섰다. 정체 부재 검사는 **출처로 가른다** — 저자 해시와 `repository_state_id`는 둘 다 64 hex라 모양으로 못 가르므로, 알고 있는 저자 식별자의 해시 72개가 산출물에 없음을 본다.
 
@@ -13,6 +13,8 @@
 **v3.9.1이 열린 19 중 셋을 주장으로 닫았다** — S2(D160 저작 정책은 id 입력) · S9(D161 저자 사실은 `people.json`, k는 팀 집계에) · R4-6(D162 off 닫힌 목록). 같은 순서: 계약 먼저(스위트 붉음 — 이번엔 §7 추출기의 '7개' 가정이 스키마보다 먼저 멈췄다) → 추출기·스키마 8종·변조 9 → 재현성 둘(토글·매핑 한 줄, 기존 다섯의 id 이동 = `fixture_change`) → history 둘(팀 접기·off 부재 검사) → 초록. `author_id`는 v3.9.2(D163, 한 줄 판)가 닫았다 — 조직 팀 매핑 파일이 정한 키이고 git 이름·이메일이 아니며, 매핑에 없는 저자는 `unmapped`로 접혀 `authors_unmapped`로 센다. 교차 검토 key가 아니라 닫힘 표시는 없다. **닫힘 표시가 붙었다** — 셋에 근거 열과 `닫힘 — D160·D161·D162`. `--count`: 닫힘 14 · 열림 16 — 계산기가 낸 수다.
 
 **v3.9.3이 열린 16 중 넷을 주장으로 닫았다** — S7(D164 `shared`는 W 안, tc ≤ 1) · S4(D165 파일×클러스터 수준·새 발생 수·서로 다른 파일 ≥ 2·게이트 손잡이) · R2-5(D166 자기 중복은 한 파일에만 있는 클러스터의 것) · R1-9(D167 `hidden_couplings` 정렬 키). 이 군은 §7 예시의 모양을 바꾸지 않아 첫 커밋이 **초록**이었다 — 예고대로. 픽스처: `cpd/mixed-cluster`(200·200·0·1), `history/shared-window-limited`(두 창, tc ≤ 1 불변식 인쇄), `history/hidden-coupling-sort-order`(키 넷을 밟는 쌍 넷). `hidden_couplings` 배열이 쌍 있는 케이스에 더해져 기존 둘의 expected에 키가 늘었다(`fixture_change`). `gate/`(G1)는 문장만. **닫힘 표시가 붙었다** — 넷에 근거 열과 `닫힘 — D164·D165·D166·D167`. `--count`: 닫힘 18 · 열림 12 — 계산기가 낸 수다.
+
+**v3.9.4가 열린 12 중 일곱을 주장으로 닫았다** — N1(D168 두 단계 기록, 뜻은 소속) · S3(D169 지름길의 렌즈별 조건) · S10+15(D170 적격 main 소스·`no_bytecode`) · O-4(D171 `interpretation`은 `lens_pct`의 함수, 항상 객체) · R1-5·R4-3(D172 composite는 렌즈가 아니다) · S14(D173 `population_note` 시험). 식은 건드리지 않았다 — §7의 렌즈 값·pct 전부 불변을 첫 커밋에서 대조했다(더한 것은 OrderService의 `cx.all` 0.9678·`fan_in.all` 0.8820). 첫 커밋의 붉음은 schema 36(예시가 옛 모양에 걸림) + 스케일 린트 8(리프 키가 모집단 이름) — 후자는 소유자가 예상 밖으로 잡아 D155-1 아래 "표의 이름은 경로에서 찾는다"를 적었고 린트가 경로 규칙을 얻었다. 스키마: 두 단계 `percentiles`·`percentile_population`, `lensPercentile`(항상 객체, pct null ↔ reason), `lens_percentiles`는 H·Dx·F로 닫힘, `arch_context` nullable, `fan_in` null → reason(if/then), `reason` + `no_bytecode`. 변조 +5, 재조준 3(`fixture_change`). `lens/`(G1)는 문장만. **닫힘 표시는 후속 PR.**
 
 **남은 것은 열린 발견이다.** O14가 D151·D152로 닫히고 `g0-review.py --count`가 서면서 이 수는 **사람 보고가 아니라 계산**이 됐다. 지금 출력:
 

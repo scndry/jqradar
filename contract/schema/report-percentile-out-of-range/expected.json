@@ -4,11 +4,11 @@
   "check": "schema",
   "kind": "structural",
   "contract_ref": "§2.5",
-  "what": "백분위는 0..1이다",
+  "what": "백분위는 0..1이다 (D168 뒤 경로는 `percentiles.<field>.<population>`)",
   "mechanism": "range",
   "schema": "report.schema.json",
   "verdict": "reject",
   "rejected_at": [
-    "/files/0/percentiles/cx"
+    "/files/0/percentiles/cx/active"
   ]
 }

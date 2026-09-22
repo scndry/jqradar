@@ -1,0 +1,22 @@
+{
+  "case": "report-lens-percentile-bare-null",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "type(항상 객체)",
+  "contract_ref": "D171",
+  "what": "`lens_percentiles.H`가 맨 `null` → 거부. 맨 null은 '값이 null'과 '모집단에서 제외'의 구분(§2.5)을 렌즈에서 다시 지운다 — 항상 `{pct, population, reason?}` 객체다(D171). 옛 모양(§7의 `H: null`)이 새 스키마를 통과하면 이행이 안 된 것이다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "files",
+        1,
+        "lens_percentiles",
+        "H"
+      ],
+      "value": null
+    }
+  ]
+}

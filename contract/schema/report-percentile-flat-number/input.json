@@ -1,0 +1,22 @@
+{
+  "case": "report-percentile-flat-number",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "type(두 단계)",
+  "contract_ref": "D168",
+  "what": "`percentiles.cx`가 객체가 아니라 수 → 거부. 기록은 `<field>.<population>` 두 단계다(D168) — 옛 모양(`cx: 0.9741`)이 통과하면 `active` 파일의 `cx.all`이 사라진 채로 통과한다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "files",
+        0,
+        "percentiles",
+        "cx"
+      ],
+      "value": 0.9741
+    }
+  ]
+}

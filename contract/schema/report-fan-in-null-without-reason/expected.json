@@ -1,0 +1,14 @@
+{
+  "case": "report-fan-in-null-without-reason",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D170",
+  "what": "`fan_in: null`인데 `reason` 없음 → 거부. 클래스가 `bytecode_scope`에 없어 셀 수 없었다는 사실(`no_bytecode`)이 `percentile_population.fan_in.<population>.reason`에 있어야 한다(D170) — 없으면 0으로 내려앉힌 것과 구별되지 않는다.",
+  "mechanism": "if/then",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/files/0/percentile_population/fan_in/all"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "case": "report-lens-pct-null-without-reason",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D171",
+  "what": "`lens_percentiles.H.pct`가 null인데 `reason` 없음 → 거부. `interpretation`은 `lens_pct`의 함수라 null이면 왜인지가 있어야 한다(D171) — `anchor_class`(§5.5)도 같은 경로.",
+  "mechanism": "if/then",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/files/1/lens_percentiles/H"
+  ]
+}
