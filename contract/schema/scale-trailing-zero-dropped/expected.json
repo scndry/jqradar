@@ -1,0 +1,18 @@
+{
+  "case": "scale-trailing-zero-dropped",
+  "generated_by": "contract/schema/compute.py",
+  "check": "scale_lint",
+  "kind": "hard_rule",
+  "contract_ref": "D155",
+  "what": "스케일은 고정이고 후행 0을 유지한다(D155) — `0.38`은 `0.3800`과 같은 값이지만 같은 바이트가 아니다. 바이트 동일은 파싱된 수가 아니라 직렬화된 텍스트에 대한 주장이다",
+  "mechanism": "원문 린트(스키마 아님)",
+  "verdict": "reject",
+  "violations": [
+    {
+      "path": "/components/0/I",
+      "literal": "0.38",
+      "allowed_scale": 4,
+      "actual_scale": 2
+    }
+  ]
+}
