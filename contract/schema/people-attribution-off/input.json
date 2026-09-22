@@ -1,0 +1,19 @@
+{
+  "case": "people-attribution-off",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "people.schema.json",
+  "base": "prd:§7:people",
+  "mechanism": "enum(어휘가 계약)",
+  "contract_ref": "D161",
+  "what": "`off`에서 `people.json`이 있으면 계약 위반이다(D161) — 저자 사실은 조직이 켠 범위에서만 나온다(D11). `attribution`의 enum에 `off`가 없어 구조로 막힌다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "attribution"
+      ],
+      "value": "off"
+    }
+  ]
+}

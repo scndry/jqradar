@@ -1,0 +1,32 @@
+{
+  "case": "report-team-count-when-off",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "if/then",
+  "contract_ref": "D162",
+  "what": "off 모드가 내는 저자 유래 필드는 셋으로 닫힌다(D162) — `team_count`·`teams_folded`는 필드 부재다. `null`도 아니다: 매핑이 없으면 셀 수 없는 것이 아니라 세지 않는 것이다. §7 예시(off)에 둘을 넣으면 거부되어야 한다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "files",
+        0,
+        "measures",
+        "team_count"
+      ],
+      "value": 1
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        0,
+        "measures",
+        "teams_folded"
+      ],
+      "value": 0
+    }
+  ]
+}

@@ -43,7 +43,7 @@ sys.path.insert(0, str(CASE_DIR))
 import vocabulary  # noqa: E402
 
 # §7의 jsonc 블록 순서. `prd:§7:<이름>`으로 참조한다.
-PRD_BLOCKS = ["report", "gate", "validate", "fixture_change", "campaign", "event", "ledger_row"]
+PRD_BLOCKS = ["report", "gate", "validate", "fixture_change", "campaign", "event", "ledger_row", "people"]
 
 # D115 직렬화 스케일 — 경로 패턴 -> 허용 소수 자릿수. `*`는 한 단계 와일드카드.
 # 스케일 표 `D155-1`(§2.5) — **필드 이름**으로 매긴다. 표에 없는 유리수 필드는 위반이다.

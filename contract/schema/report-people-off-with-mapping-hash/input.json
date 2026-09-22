@@ -1,0 +1,21 @@
+{
+  "case": "report-people-off-with-mapping-hash",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "if/then",
+  "contract_ref": "D160",
+  "what": "`off`에는 매핑이 없다 — `team_mapping_sha256`이 `null`이 아니면 `reproduce`가 어느 모드였는지 두 말을 한다(D160).",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "reproduce",
+        "people",
+        "team_mapping_sha256"
+      ],
+      "value": "sha256:4444444444444444444444444444444444444444444444444444444444444444"
+    }
+  ]
+}

@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jqradar:schema:people:1",
+  "title": "jqradar people.json — 저자 사실 (8번째 산출물)",
+  "description": "저자 사실은 `report.json`이 아니라 이 별도 산출물로 간다(§2.7·§7, D161). `people.attribution ∈ {team, individual}`에서만 생성되는 `build/` 산출물이고 `.jqradar/`에는 절대 없다(D48). `report.json`은 `people_artifact`로 존재만 가리킨다. `report`의 `author` 거부(D126)는 이 파일이 있어도 조건 없이 그대로다 — 조건부로 열면 변조가 \"조건 없을 때\"만 겨눠 방어가 약해진다.",
+  "type": "object",
+  "required": [
+    "schema",
+    "analysis_input_id",
+    "attribution",
+    "team_mapping_sha256",
+    "k_threshold",
+    "files",
+    "note"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "jqradar/people/1",
+      "description": "산출물 스키마 버전(§7)."
+    },
+    "analysis_input_id": {
+      "type": "string",
+      "pattern": "^sha256:",
+      "description": "어느 분석의 것인가 — `report.json`과 같은 id(§2.8). 모드와 매핑 해시가 id 입력이므로(D160) 이 파일의 내용은 그 id의 함수다. 형식 강제는 D128대로 접두만."
+    },
+    "attribution": {
+      "enum": [
+        "team",
+        "individual"
+      ],
+      "description": "`off`는 여기 올 수 없다 — off에서 이 파일이 있으면 계약 위반이다(D161). enum이 그것을 구조로 막는다."
+    },
+    "team_mapping_sha256": {
+      "type": "string",
+      "pattern": "^sha256:",
+      "description": "조직 제공 팀 매핑 파일의 해시(§2.7, D160). 정체가 아니다 — 파일 하나의 해시이고 `policy_hash`와 같은 부류. team·individual 둘 다 매핑이 있어야 하므로 여기서는 `null`이 아니다."
+    },
+    "k_threshold": {
+      "const": 3,
+      "description": "k 하한(≥3인, D11·D161) — 팀 집계의 조건이다. 3인 미만 팀은 `other`로 접힌다. 익명 집계에는 걸지 않는다(D162)."
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/fileFacts"
+      },
+      "description": "파일별 팀 사실(그리고 `individual`일 때만 저자 사실)."
+    },
+    "note": {
+      "type": "string",
+      "description": "사람이 읽는 주석(§7 예시). 이 파일의 자리를 말한다 — `build/` 산출물, `.jqradar/`에 커밋되지 않는다."
+    }
+  },
+  "$defs": {
+    "safePath": {
+      "type": "string",
+      "not": {
+        "pattern": "(^|/)\\.jqradar(/|$)"
+      },
+      "description": "파일 경로. **`.jqradar/` 아래 경로는 거부한다**(D48·D161) — 저자 사실이 커밋 대상 디렉터리를 가리키면 그것이 곧 정체의 커밋이다. `note`에는 이 규칙을 걸지 않는다(문장으로 `.jqradar/`를 언급하는 것은 경로가 아니다)."
+    },
+    "teamEntry": {
+      "type": "object",
+      "required": [
+        "team",
+        "commits"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "team": {
+          "type": "string",
+          "description": "팀 라벨. `other`는 3인 미만 팀을 접은 자리(D161)."
+        },
+        "commits": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "그 팀이 이 파일을 만진 비머지 커밋 수(W 안)."
+        },
+        "folded_from": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "`other`에 접힌 3인 미만 팀의 수(§7 예시). `other` 항목에만 있다."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "team": {
+                "const": "other"
+              }
+            },
+            "required": [
+              "team"
+            ]
+          },
+          "then": {
+            "required": [
+              "folded_from"
+            ],
+            "description": "`other`는 접힌 결과이므로 무엇이 접혔는지 수로 남긴다(D161)."
+          },
+          "else": {
+            "not": {
+              "required": [
+                "folded_from"
+              ]
+            },
+            "description": "실명 팀에 `folded_from`이 있으면 접힘의 뜻이 흐려진다."
+          }
+        }
+      ]
+    },
+    "authorEntry": {
+      "type": "object",
+      "required": [
+        "author_id",
+        "commits"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "author_id": {
+          "type": "string",
+          "description": "저자 식별자 — **무엇인지는 계약에 없다**(`x-jqradar-unresolved`). 조직이 `individual`을 켠 범위에서만 나오는 값이고 개인 순위 표면은 만들지 않는다(§11)."
+        },
+        "commits": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "fileFacts": {
+      "type": "object",
+      "required": [
+        "path",
+        "teams",
+        "team_count",
+        "teams_folded",
+        "authors"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/safePath"
+        },
+        "teams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/teamEntry"
+          }
+        },
+        "team_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "3인 미만 팀을 `other`로 접은 뒤의 팀 수(`other`는 하나로 셈, §2.1·D161)."
+        },
+        "teams_folded": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "`other`로 접힌 3인 미만 팀의 수(§2.1·D161). `team_count`와 함께만."
+        },
+        "authors": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/authorEntry"
+          },
+          "description": "`individual`일 때만 배열, `team`에서는 `null`(§7·D161)."
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "attribution": {
+            "const": "team"
+          }
+        },
+        "required": [
+          "attribution"
+        ]
+      },
+      "then": {
+        "properties": {
+          "files": {
+            "items": {
+              "properties": {
+                "authors": {
+                  "const": null
+                }
+              }
+            }
+          }
+        },
+        "description": "`team` 모드는 저자 사실을 내지 않는다 — 팀 라벨까지다(D161). `individual`만 `authors`를 채운다."
+      }
+    }
+  ],
+  "x-jqradar-unresolved": {
+    "author_id": "`individual` 모드의 `author_id`가 무엇인지(매핑 파일의 식별자? 이메일?)는 v3.9.1이 정하지 않았다 — 자리(파일)와 k만 정했다. 결정(D163 예정)이 오기 전까지 `type: string`만 건다. 추측으로 채우지 않는다(CLAUDE.md §7).",
+    "team_count_consistency": "`team_count == len(teams)`·`teams_folded == Σ folded_from`은 JSON Schema로 표현할 수 없다 — `contract/history/`의 값 픽스처가 진다."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "case": "people-authors-in-team-mode",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D161",
+  "what": "`team` 모드는 팀 라벨까지다 — 저자 사실(`authors`)은 `individual`만 낸다(D161·§7). team인데 authors가 채워지면 조직이 켜지 않은 범위가 나간 것이다.",
+  "mechanism": "if/then",
+  "schema": "people.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/files/0/authors"
+  ]
+}
