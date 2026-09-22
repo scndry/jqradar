@@ -740,6 +740,16 @@
       "commit_granularity": "fine"
     }
   ],
+  "hidden_couplings": [
+    {
+      "a": "src/A.java",
+      "b": "src/B.java",
+      "shared": 5,
+      "tc": 0.5,
+      "static_dependency": false,
+      "hidden_coupling": true
+    }
+  ],
   "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
   "non_terminating": {
     "/window_applied/authors_window_days": "1027/108",

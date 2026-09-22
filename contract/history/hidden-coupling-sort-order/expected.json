@@ -1,0 +1,1043 @@
+{
+  "case": "hidden-coupling-sort-order",
+  "contract_refs": [
+    "§3.5",
+    "§2.4",
+    "§2.9",
+    "D167",
+    "D154"
+  ],
+  "what_this_pins": "**`hidden_couplings`의 정렬 키**(D167) = `static_dependency asc(false 먼저) · tc desc · shared desc · a asc · b asc`, 비교는 반올림 전 정확값. 배열이라 순서가 바이트다(D154) — 키가 없으면 두 머신이 같은 쌍을 다른 순서로 인쇄한다. 보고되는 쌍 넷이 키를 하나씩 밟는다: (C,D)는 `tc = 1`로 가장 높지만 **정적 의존이 있어 마지막**(첫 키); (G,H)·(A,B)·(E,F)는 셋 다 `tc = 3/5`로 동점 — (G,H)가 `shared = 9`로 먼저(셋째 키), (A,B)·(E,F)는 `shared = 6`까지 동점이라 **`a asc`**가 가른다(넷째 키). 기대 순서: (G,H) · (A,B) · (E,F) · (C,D). (I,J)는 `shared = 2`로 보고 기준 미달이라 `hidden_couplings`에 없다 — 정렬은 보고된 쌍의 것이다. 정렬은 인쇄되는 키이지 점수가 아니다(B.2) — 첫 자리가 \"가장 나쁜\" 쌍이 아니라 \"정적 의존 없이 가장 자주 함께 바뀐\" 쌍이다. 교차 검토 R1-9가 지목한 자리다.",
+  "shallow_depth": null,
+  "window_anchor": {
+    "type": "head_committer_time",
+    "timestamp": "2026-03-12T14:46:40+00:00"
+  },
+  "head": "d4b283bc4",
+  "window_applied": {
+    "months": 12,
+    "max_commits": 2000,
+    "bound_hit": "none",
+    "commits_in_window": 57,
+    "merge_commits_excluded": 0,
+    "authors_window_truncated": false,
+    "authors_window_days": 11.615740740741,
+    "commits_excluded_within_90d": 0
+  },
+  "commits": [
+    {
+      "sha": "d4b283bc4",
+      "at": "2026-03-12T14:46:40+00:00",
+      "subject": "touch I+J #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/I.java",
+        "src/J.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "9897e372b",
+      "at": "2026-03-12T13:46:40+00:00",
+      "subject": "touch I+J #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/I.java",
+        "src/J.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "cc37a7fa4",
+      "at": "2026-03-11T15:00:00+00:00",
+      "subject": "touch C+D #6",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/C.java",
+        "src/D.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "4a8bf718b",
+      "at": "2026-03-11T14:00:00+00:00",
+      "subject": "touch C+D #5",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/C.java",
+        "src/D.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "2a71081f5",
+      "at": "2026-03-11T13:00:00+00:00",
+      "subject": "touch C+D #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/C.java",
+        "src/D.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "f34e45244",
+      "at": "2026-03-11T12:00:00+00:00",
+      "subject": "touch C+D #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/C.java",
+        "src/D.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "2fab6b2b0",
+      "at": "2026-03-11T11:00:00+00:00",
+      "subject": "touch C+D #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/C.java",
+        "src/D.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "6ef5115e1",
+      "at": "2026-03-11T10:00:00+00:00",
+      "subject": "touch C+D #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/C.java",
+        "src/D.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "8e9e0944b",
+      "at": "2026-03-10T09:13:20+00:00",
+      "subject": "touch F #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/F.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "e164115b6",
+      "at": "2026-03-10T08:13:20+00:00",
+      "subject": "touch F #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/F.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "85dd95016",
+      "at": "2026-03-10T07:13:20+00:00",
+      "subject": "touch F #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/F.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "a3decd34f",
+      "at": "2026-03-10T06:13:20+00:00",
+      "subject": "touch F #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/F.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "1751bd407",
+      "at": "2026-03-09T05:26:40+00:00",
+      "subject": "touch E #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/E.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "3ccaa387c",
+      "at": "2026-03-09T04:26:40+00:00",
+      "subject": "touch E #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/E.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "fa1708cc7",
+      "at": "2026-03-09T03:26:40+00:00",
+      "subject": "touch E #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/E.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "e59ecdf46",
+      "at": "2026-03-09T02:26:40+00:00",
+      "subject": "touch E #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/E.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "a0953f540",
+      "at": "2026-03-08T03:40:00+00:00",
+      "subject": "touch E+F #6",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/E.java",
+        "src/F.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "c3745b6a7",
+      "at": "2026-03-08T02:40:00+00:00",
+      "subject": "touch E+F #5",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/E.java",
+        "src/F.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "b38c488ba",
+      "at": "2026-03-08T01:40:00+00:00",
+      "subject": "touch E+F #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/E.java",
+        "src/F.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "9212c9f38",
+      "at": "2026-03-08T00:40:00+00:00",
+      "subject": "touch E+F #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/E.java",
+        "src/F.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "c597066be",
+      "at": "2026-03-07T23:40:00+00:00",
+      "subject": "touch E+F #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/E.java",
+        "src/F.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "29a211fd4",
+      "at": "2026-03-07T22:40:00+00:00",
+      "subject": "touch E+F #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/E.java",
+        "src/F.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "cb1a8b929",
+      "at": "2026-03-06T21:53:20+00:00",
+      "subject": "touch B #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "06529dc42",
+      "at": "2026-03-06T20:53:20+00:00",
+      "subject": "touch B #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "a62f31b71",
+      "at": "2026-03-06T19:53:20+00:00",
+      "subject": "touch B #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "eea68611a",
+      "at": "2026-03-06T18:53:20+00:00",
+      "subject": "touch B #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "13c7117ec",
+      "at": "2026-03-05T18:06:40+00:00",
+      "subject": "touch A #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "bd663edce",
+      "at": "2026-03-05T17:06:40+00:00",
+      "subject": "touch A #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "155a5f5df",
+      "at": "2026-03-05T16:06:40+00:00",
+      "subject": "touch A #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "dd265cb63",
+      "at": "2026-03-05T15:06:40+00:00",
+      "subject": "touch A #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "1516a2043",
+      "at": "2026-03-04T16:20:00+00:00",
+      "subject": "touch A+B #6",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "4a1e27184",
+      "at": "2026-03-04T15:20:00+00:00",
+      "subject": "touch A+B #5",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "93ac3a164",
+      "at": "2026-03-04T14:20:00+00:00",
+      "subject": "touch A+B #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "a14491bab",
+      "at": "2026-03-04T13:20:00+00:00",
+      "subject": "touch A+B #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "000ebef40",
+      "at": "2026-03-04T12:20:00+00:00",
+      "subject": "touch A+B #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "136b99a07",
+      "at": "2026-03-04T11:20:00+00:00",
+      "subject": "touch A+B #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "745723afa",
+      "at": "2026-03-03T12:33:20+00:00",
+      "subject": "touch H #6",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/H.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "25992e46e",
+      "at": "2026-03-03T11:33:20+00:00",
+      "subject": "touch H #5",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/H.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "73cdf6fd2",
+      "at": "2026-03-03T10:33:20+00:00",
+      "subject": "touch H #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/H.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "36dc307e2",
+      "at": "2026-03-03T09:33:20+00:00",
+      "subject": "touch H #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/H.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "2b622208c",
+      "at": "2026-03-03T08:33:20+00:00",
+      "subject": "touch H #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/H.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "d91653a81",
+      "at": "2026-03-03T07:33:20+00:00",
+      "subject": "touch H #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/H.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "608804b49",
+      "at": "2026-03-02T08:46:40+00:00",
+      "subject": "touch G #6",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "c52c02941",
+      "at": "2026-03-02T07:46:40+00:00",
+      "subject": "touch G #5",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "0f114eca7",
+      "at": "2026-03-02T06:46:40+00:00",
+      "subject": "touch G #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "d23655b63",
+      "at": "2026-03-02T05:46:40+00:00",
+      "subject": "touch G #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "04d76cd97",
+      "at": "2026-03-02T04:46:40+00:00",
+      "subject": "touch G #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "df5a3c82a",
+      "at": "2026-03-02T03:46:40+00:00",
+      "subject": "touch G #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "e930331a7",
+      "at": "2026-03-01T08:00:00+00:00",
+      "subject": "touch G+H #9",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java",
+        "src/H.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "d79069ad9",
+      "at": "2026-03-01T07:00:00+00:00",
+      "subject": "touch G+H #8",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java",
+        "src/H.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "49d4ce738",
+      "at": "2026-03-01T06:00:00+00:00",
+      "subject": "touch G+H #7",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java",
+        "src/H.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "e637b4502",
+      "at": "2026-03-01T05:00:00+00:00",
+      "subject": "touch G+H #6",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java",
+        "src/H.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "bb2bf87a5",
+      "at": "2026-03-01T04:00:00+00:00",
+      "subject": "touch G+H #5",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java",
+        "src/H.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "154c89ded",
+      "at": "2026-03-01T03:00:00+00:00",
+      "subject": "touch G+H #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java",
+        "src/H.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "9a765854b",
+      "at": "2026-03-01T02:00:00+00:00",
+      "subject": "touch G+H #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java",
+        "src/H.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "b02120676",
+      "at": "2026-03-01T01:00:00+00:00",
+      "subject": "touch G+H #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java",
+        "src/H.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "1cd2be147",
+      "at": "2026-03-01T00:00:00+00:00",
+      "subject": "touch G+H #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/G.java",
+        "src/H.java"
+      ],
+      "in_window": true
+    }
+  ],
+  "median_files_per_commit": 2,
+  "commit_granularity": "fine",
+  "renames": [],
+  "files": {
+    "src/A.java": {
+      "chg_commits": 10,
+      "chg_days": 2,
+      "churn": 30,
+      "touched_by": [
+        "13c7117ec",
+        "bd663edce",
+        "155a5f5df",
+        "dd265cb63",
+        "1516a2043",
+        "4a1e27184",
+        "93ac3a164",
+        "a14491bab",
+        "000ebef40",
+        "136b99a07"
+      ],
+      "age_last_days": 6.861111111111,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    },
+    "src/B.java": {
+      "chg_commits": 10,
+      "chg_days": 2,
+      "churn": 30,
+      "touched_by": [
+        "cb1a8b929",
+        "06529dc42",
+        "a62f31b71",
+        "eea68611a",
+        "1516a2043",
+        "4a1e27184",
+        "93ac3a164",
+        "a14491bab",
+        "000ebef40",
+        "136b99a07"
+      ],
+      "age_last_days": 5.703703703704,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    },
+    "src/C.java": {
+      "chg_commits": 6,
+      "chg_days": 1,
+      "churn": 22,
+      "touched_by": [
+        "cc37a7fa4",
+        "4a8bf718b",
+        "2a71081f5",
+        "f34e45244",
+        "2fab6b2b0",
+        "6ef5115e1"
+      ],
+      "age_last_days": 0.990740740741,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    },
+    "src/D.java": {
+      "chg_commits": 6,
+      "chg_days": 1,
+      "churn": 22,
+      "touched_by": [
+        "cc37a7fa4",
+        "4a8bf718b",
+        "2a71081f5",
+        "f34e45244",
+        "2fab6b2b0",
+        "6ef5115e1"
+      ],
+      "age_last_days": 0.990740740741,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    },
+    "src/E.java": {
+      "chg_commits": 10,
+      "chg_days": 3,
+      "churn": 30,
+      "touched_by": [
+        "1751bd407",
+        "3ccaa387c",
+        "fa1708cc7",
+        "e59ecdf46",
+        "a0953f540",
+        "c3745b6a7",
+        "b38c488ba",
+        "9212c9f38",
+        "c597066be",
+        "29a211fd4"
+      ],
+      "age_last_days": 3.388888888889,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    },
+    "src/F.java": {
+      "chg_commits": 10,
+      "chg_days": 3,
+      "churn": 30,
+      "touched_by": [
+        "8e9e0944b",
+        "e164115b6",
+        "85dd95016",
+        "a3decd34f",
+        "a0953f540",
+        "c3745b6a7",
+        "b38c488ba",
+        "9212c9f38",
+        "c597066be",
+        "29a211fd4"
+      ],
+      "age_last_days": 2.231481481481,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    },
+    "src/G.java": {
+      "chg_commits": 15,
+      "chg_days": 2,
+      "churn": 46,
+      "touched_by": [
+        "608804b49",
+        "c52c02941",
+        "0f114eca7",
+        "d23655b63",
+        "04d76cd97",
+        "df5a3c82a",
+        "e930331a7",
+        "d79069ad9",
+        "49d4ce738",
+        "e637b4502",
+        "bb2bf87a5",
+        "154c89ded",
+        "9a765854b",
+        "b02120676",
+        "1cd2be147"
+      ],
+      "age_last_days": 10.25,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    },
+    "src/H.java": {
+      "chg_commits": 15,
+      "chg_days": 2,
+      "churn": 46,
+      "touched_by": [
+        "745723afa",
+        "25992e46e",
+        "73cdf6fd2",
+        "36dc307e2",
+        "2b622208c",
+        "d91653a81",
+        "e930331a7",
+        "d79069ad9",
+        "49d4ce738",
+        "e637b4502",
+        "bb2bf87a5",
+        "154c89ded",
+        "9a765854b",
+        "b02120676",
+        "1cd2be147"
+      ],
+      "age_last_days": 9.092592592593,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    },
+    "src/I.java": {
+      "chg_commits": 2,
+      "chg_days": 1,
+      "churn": 6,
+      "touched_by": [
+        "d4b283bc4",
+        "9897e372b"
+      ],
+      "age_last_days": 0,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    },
+    "src/J.java": {
+      "chg_commits": 2,
+      "chg_days": 1,
+      "churn": 6,
+      "touched_by": [
+        "d4b283bc4",
+        "9897e372b"
+      ],
+      "age_last_days": 0,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    }
+  },
+  "pairs": [
+    {
+      "a": "src/A.java",
+      "b": "src/B.java",
+      "shared": 6,
+      "chg_commits_a": 10,
+      "chg_commits_b": 10,
+      "denominator": 10,
+      "tc": 0.6,
+      "reported": true,
+      "static_dependency": false,
+      "hidden_coupling": true,
+      "commit_granularity": "fine"
+    },
+    {
+      "a": "src/C.java",
+      "b": "src/D.java",
+      "shared": 6,
+      "chg_commits_a": 6,
+      "chg_commits_b": 6,
+      "denominator": 6,
+      "tc": 1,
+      "reported": true,
+      "static_dependency": true,
+      "hidden_coupling": false,
+      "commit_granularity": "fine"
+    },
+    {
+      "a": "src/E.java",
+      "b": "src/F.java",
+      "shared": 6,
+      "chg_commits_a": 10,
+      "chg_commits_b": 10,
+      "denominator": 10,
+      "tc": 0.6,
+      "reported": true,
+      "static_dependency": false,
+      "hidden_coupling": true,
+      "commit_granularity": "fine"
+    },
+    {
+      "a": "src/G.java",
+      "b": "src/H.java",
+      "shared": 9,
+      "chg_commits_a": 15,
+      "chg_commits_b": 15,
+      "denominator": 15,
+      "tc": 0.6,
+      "reported": true,
+      "static_dependency": false,
+      "hidden_coupling": true,
+      "commit_granularity": "fine"
+    },
+    {
+      "a": "src/I.java",
+      "b": "src/J.java",
+      "shared": 2,
+      "chg_commits_a": 2,
+      "chg_commits_b": 2,
+      "denominator": 2,
+      "tc": 1,
+      "reported": false,
+      "static_dependency": false,
+      "hidden_coupling": false,
+      "commit_granularity": "fine"
+    }
+  ],
+  "hidden_couplings": [
+    {
+      "a": "src/G.java",
+      "b": "src/H.java",
+      "shared": 9,
+      "tc": 0.6,
+      "static_dependency": false,
+      "hidden_coupling": true
+    },
+    {
+      "a": "src/A.java",
+      "b": "src/B.java",
+      "shared": 6,
+      "tc": 0.6,
+      "static_dependency": false,
+      "hidden_coupling": true
+    },
+    {
+      "a": "src/E.java",
+      "b": "src/F.java",
+      "shared": 6,
+      "tc": 0.6,
+      "static_dependency": false,
+      "hidden_coupling": true
+    },
+    {
+      "a": "src/C.java",
+      "b": "src/D.java",
+      "shared": 6,
+      "tc": 1,
+      "static_dependency": true,
+      "hidden_coupling": false
+    }
+  ],
+  "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
+  "non_terminating": {
+    "/window_applied/authors_window_days": "2509/216",
+    "/files/src/A.java/age_last_days": "247/36",
+    "/files/src/B.java/age_last_days": "154/27",
+    "/files/src/C.java/age_last_days": "107/108",
+    "/files/src/D.java/age_last_days": "107/108",
+    "/files/src/E.java/age_last_days": "61/18",
+    "/files/src/F.java/age_last_days": "241/108",
+    "/files/src/H.java/age_last_days": "491/54"
+  },
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

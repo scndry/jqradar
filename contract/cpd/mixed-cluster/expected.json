@@ -1,0 +1,116 @@
+{
+  "case": "mixed-cluster",
+  "contract_refs": [
+    "§2.6",
+    "§2.1",
+    "D166"
+  ],
+  "what_this_pins": "**혼합 클러스터**(A 2회·B 1회, 각 100토큰, 겹침 없음)의 값 넷 — §2.6·§2.9가 적은 그대로: `union_dup_tokens(A) = 200`, `pair_dup_tokens(A,B) = 200`(A쪽 두 구간 합집합), **`self_dup_tokens(A) = 0`**, `twins(A) = 1`. `self_dup_tokens`는 **발생이 한 파일에만 있는 클러스터**가 덮는 구간의 토큰 수라(§2.6이 정본, D166) A의 반복은 여기 들지 않는다 — 그 토큰은 `pair_dup_tokens`에 이미 있어 넣으면 두 번 셈이다. 분할: `union_dup_tokens` ⊇ 교차 파일 구간 ∪ 자기 중복 구간. §2.1의 옛 한 줄(\"같은 파일 안 반복 일치 토큰\")대로 읽으면 여기서 100이 나온다 — 교차 검토 R2-5가 지목한 두 값이고, 이 케이스가 하나로 고정한다. 자기 중복 클러스터가 따로 하나 있어(B에만, 120토큰) `self_dup_tokens(B) = 240`(두 발생 120씩)이 정의의 반대편을 보인다.",
+  "parameters": {
+    "cpd.minimum_tokens": 100
+  },
+  "clusters": [
+    {
+      "id": "dup:h-mixed:100",
+      "tokens": 100,
+      "occurrences": [
+        {
+          "path": "A.java",
+          "start_token": 100,
+          "end_token": 200
+        },
+        {
+          "path": "A.java",
+          "start_token": 500,
+          "end_token": 600
+        },
+        {
+          "path": "B.java",
+          "start_token": 300,
+          "end_token": 400
+        }
+      ],
+      "occurrence_count": 3,
+      "files": [
+        "A.java",
+        "B.java"
+      ],
+      "self_duplication": false
+    },
+    {
+      "id": "dup:h-self-b:120",
+      "tokens": 120,
+      "occurrences": [
+        {
+          "path": "B.java",
+          "start_token": 800,
+          "end_token": 920
+        },
+        {
+          "path": "B.java",
+          "start_token": 1200,
+          "end_token": 1320
+        }
+      ],
+      "occurrence_count": 2,
+      "files": [
+        "B.java"
+      ],
+      "self_duplication": true
+    }
+  ],
+  "rejected_clusters": [],
+  "files": {
+    "A.java": {
+      "file_tokens": 4000,
+      "duplicated_ranges": [
+        [
+          100,
+          200
+        ],
+        [
+          500,
+          600
+        ]
+      ],
+      "union_dup_tokens": 200,
+      "dup_extent": 0.05,
+      "self_dup_tokens": 0,
+      "twins": 1
+    },
+    "B.java": {
+      "file_tokens": 2000,
+      "duplicated_ranges": [
+        [
+          300,
+          400
+        ],
+        [
+          800,
+          920
+        ],
+        [
+          1200,
+          1320
+        ]
+      ],
+      "union_dup_tokens": 340,
+      "dup_extent": 0.17,
+      "self_dup_tokens": 240,
+      "twins": 1
+    }
+  },
+  "duplication_pairs": [
+    {
+      "a": "A.java",
+      "b": "B.java",
+      "pair_dup_tokens": 200
+    }
+  ],
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/cpd/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}
