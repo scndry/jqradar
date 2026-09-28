@@ -363,28 +363,58 @@ def build_expected(inp: dict, workdir: Path) -> dict:
             # §2.4 보고 기준: shared >= 5 AND tc >= 0.5. 임계 비교는 반올림 전
             # 정확값으로 한다(§2.5 산술 계약) — 직렬화된 tc로 비교하면 경계가 흔들린다.
             reported = bool(shared >= 5 and tc is not None and tc >= Fraction(1, 2))
-            pairs.append({
+            # D176 — 명세가 명시적으로 `null`을 주면 그래프 밖 파일(테스트 소스 세트)이 든 쌍이다:
+            # 정적 의존을 **판정하지 않는다**(`reason: outside_bytecode_scope`), `hidden_coupling`도 판정 없음.
+            # 명세에 아예 없는 쌍(옛 케이스)은 그대로 None/False — 기존 expected를 움직이지 않는다.
+            sd = static_dependency.get((lo, hi), "unspecified")
+            entry = {
                 "a": lo, "b": hi,
                 "shared": shared,
                 "chg_commits_a": len(commits_a), "chg_commits_b": len(commits_b),
                 "denominator": denominator,
                 "tc": tc,
                 "reported": reported,
-                "static_dependency": static_dependency.get((lo, hi)),
+                "static_dependency": None if sd == "unspecified" else sd,
                 # §3.5 — 정적 의존이 없는 쌍이 숨은 결합이다. 판정이 아니라 목록이며
                 # 테스트-대상 쌍은 긍정 해석을 병기한다.
-                "hidden_coupling": reported and static_dependency.get((lo, hi)) is False,
+                "hidden_coupling": (None if sd is None else (reported and sd is False)),
                 "commit_granularity": granularity,
-            })
+            }
+            if sd is None:
+                entry["reason"] = "outside_bytecode_scope"
+            pairs.append(entry)
+
+    # §2.7·§5.5·D174 — 창 W(측정: 비머지, 브랜치 포함)와 first-parent(전이의 후보: main에
+    # 닿은 순서)는 **다른 집합, 다른 질문**이다. 케이스가 요구하면 두 집합을 나란히 인쇄해
+    # 다름을 값으로 남긴다 — 후보 쪽의 전이 계산은 `ledger/`(G2b)의 일이고 여기서는 집합만.
+    first_parent_view = None
+    if inp.get("compare_first_parent"):
+        by_sha = {c["sha"]: c for c in commits}
+        chain, cur = [], head["sha"]
+        while cur in by_sha:
+            chain.append(by_sha[cur])
+            cur = by_sha[cur]["parents"][0] if by_sha[cur]["parents"] else None
+        w_set = [c["sha"][:9] for c in selected]
+        fp_set = [c["sha"][:9] for c in chain]
+        first_parent_view = {
+            "window_commits": w_set,
+            "first_parent_commits": fp_set,
+            "in_window_not_first_parent": [x for x in w_set if x not in fp_set],
+            "first_parent_not_in_window": [x for x in fp_set if x not in w_set],
+            "sets_differ": set(w_set) != set(fp_set),
+        }
 
     # §3.5·D167 — `hidden_couplings`는 §7에서 배열이라 순서가 바이트다(D154). 정렬 키 =
     # static_dependency asc(false 먼저) · tc desc · shared desc · a asc · b asc, 비교는
     # 반올림 전 정확값(Fraction). 정렬은 인쇄되는 키이지 점수가 아니다(B.2).
     hidden_couplings = sorted(
         ({"a": p["a"], "b": p["b"], "shared": p["shared"], "tc": p["tc"],
-          "static_dependency": p["static_dependency"], "hidden_coupling": p["hidden_coupling"]}
+          "static_dependency": p["static_dependency"], "hidden_coupling": p["hidden_coupling"],
+          **({"reason": p["reason"]} if "reason" in p else {})}
          for p in pairs if p["reported"]),
-        key=lambda p: (p["static_dependency"] is not False, -p["tc"], -p["shared"], p["a"], p["b"]))
+        # D176 — false · true · null: 모르는 것은 숨은 결합의 증거가 아니라 앞에 올 수 없다.
+        key=lambda p: (p["static_dependency"] is not False, p["static_dependency"] is None,
+                       -p["tc"], -p["shared"], p["a"], p["b"]))
 
     # §2.4·D164 — 분자(shared)와 분모(chg_commits)가 같은 구간(W 안)이라 tc ≤ 1이 불변식이다.
     # 이 계산기는 둘 다 `selected`에서 세므로 구조적으로 성립한다 — 케이스가 요구하면 인쇄한다.
@@ -519,6 +549,7 @@ def build_expected(inp: dict, workdir: Path) -> dict:
         # 쌍이 있는 케이스만 인쇄한다 — 빈 배열을 열넷에 더하는 것은 계약이 아니라 잡음이다.
         **({"hidden_couplings": hidden_couplings} if pairs else {}),
         **({"invariants": invariants} if invariants is not None else {}),
+        **({"first_parent_view": first_parent_view} if first_parent_view is not None else {}),
         "authorship_note": ("저자 정체는 이 파일에 없다 — 익명 집계만 기록한다"
                             "(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 "
                             "계산기는 그것을 메모리에서만 쓴다."),

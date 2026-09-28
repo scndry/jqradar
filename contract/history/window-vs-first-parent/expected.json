@@ -1,0 +1,122 @@
+{
+  "case": "window-vs-first-parent",
+  "contract_refs": [
+    "§2.7",
+    "§5.5",
+    "§2.9",
+    "D174"
+  ],
+  "what_this_pins": "**§2.7의 창 W와 §5.5의 first-parent는 다른 집합, 다른 질문이다**(D174). 브랜치 커밋 둘(b1·b2)을 머지 커밋 m1로 main에 붙인 이력에서 W = {seed, b1, b2} — 비머지 커밋이고 first-parent 한정이 아니라 브랜치 커밋이 들어오며 m1은 빠진다(\"무엇이 바뀌었나\"). first-parent 이력 = {m1, seed} — §5.5의 후보 커밋이 사는 곳이고 b1·b2는 없다(\"언제 main에 닿았나\"). `first_parent_view.sets_differ`가 참이고 `in_window_not_first_parent` = {b1, b2}, `first_parent_not_in_window` = {m1}이다. 집합을 통일하면 한쪽이 틀린다 — W를 first-parent로 하면 A.java의 `chg_commits`가 3(seed·b1·b2)에서 1(seed만)이 되고(브랜치 작업이 측정에서 사라진다), 후보를 비머지로 하면 PR로 들어온 해소가 후보를 못 만든다. 그래서 D174는 집합이 아니라 두 절이 서로를 가리키는 문장을 고쳤다. 후보 쪽의 전이 계산은 `ledger/`(G2b)의 일이고 여기서는 집합만 값으로 남긴다. 교차 검토 S12(R3-8)가 지목한 자리.",
+  "shallow_depth": null,
+  "window_anchor": {
+    "type": "head_committer_time",
+    "timestamp": "2026-02-01T03:00:00+00:00"
+  },
+  "head": "370628522",
+  "window_applied": {
+    "months": 12,
+    "max_commits": 2000,
+    "bound_hit": "none",
+    "commits_in_window": 3,
+    "merge_commits_excluded": 1,
+    "authors_window_truncated": false,
+    "authors_window_days": 0.125,
+    "commits_excluded_within_90d": 0
+  },
+  "commits": [
+    {
+      "sha": "370628522",
+      "at": "2026-02-01T03:00:00+00:00",
+      "subject": "merge feature",
+      "is_merge": true,
+      "shallow_boundary": false,
+      "paths": [],
+      "in_window": false
+    },
+    {
+      "sha": "336d5182a",
+      "at": "2026-02-01T02:00:00+00:00",
+      "subject": "feature: edit A (2)",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "d8bd97f01",
+      "at": "2026-02-01T01:00:00+00:00",
+      "subject": "feature: edit A (1)",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "567f3927e",
+      "at": "2026-02-01T00:00:00+00:00",
+      "subject": "seed",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": true
+    }
+  ],
+  "median_files_per_commit": 1,
+  "commit_granularity": "fine",
+  "renames": [],
+  "files": {
+    "src/A.java": {
+      "chg_commits": 3,
+      "chg_days": 1,
+      "churn": 5,
+      "touched_by": [
+        "336d5182a",
+        "d8bd97f01",
+        "567f3927e"
+      ],
+      "age_last_days": 0.041666666667,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    }
+  },
+  "pairs": [],
+  "first_parent_view": {
+    "window_commits": [
+      "336d5182a",
+      "d8bd97f01",
+      "567f3927e"
+    ],
+    "first_parent_commits": [
+      "370628522",
+      "567f3927e"
+    ],
+    "in_window_not_first_parent": [
+      "336d5182a",
+      "d8bd97f01"
+    ],
+    "first_parent_not_in_window": [
+      "370628522"
+    ],
+    "sets_differ": true
+  },
+  "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
+  "non_terminating": {
+    "/files/src/A.java/age_last_days": "1/24"
+  },
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

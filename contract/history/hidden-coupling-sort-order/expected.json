@@ -5,26 +5,99 @@
     "§2.4",
     "§2.9",
     "D167",
-    "D154"
+    "D154",
+    "D176"
   ],
-  "what_this_pins": "**`hidden_couplings`의 정렬 키**(D167) = `static_dependency asc(false 먼저) · tc desc · shared desc · a asc · b asc`, 비교는 반올림 전 정확값. 배열이라 순서가 바이트다(D154) — 키가 없으면 두 머신이 같은 쌍을 다른 순서로 인쇄한다. 보고되는 쌍 넷이 키를 하나씩 밟는다: (C,D)는 `tc = 1`로 가장 높지만 **정적 의존이 있어 마지막**(첫 키); (G,H)·(A,B)·(E,F)는 셋 다 `tc = 3/5`로 동점 — (G,H)가 `shared = 9`로 먼저(셋째 키), (A,B)·(E,F)는 `shared = 6`까지 동점이라 **`a asc`**가 가른다(넷째 키). 기대 순서: (G,H) · (A,B) · (E,F) · (C,D). (I,J)는 `shared = 2`로 보고 기준 미달이라 `hidden_couplings`에 없다 — 정렬은 보고된 쌍의 것이다. 정렬은 인쇄되는 키이지 점수가 아니다(B.2) — 첫 자리가 \"가장 나쁜\" 쌍이 아니라 \"정적 의존 없이 가장 자주 함께 바뀐\" 쌍이다. 교차 검토 R1-9가 지목한 자리다.",
+  "what_this_pins": "**`hidden_couplings`의 정렬 키**(D167) = `static_dependency asc(false 먼저) · tc desc · shared desc · a asc · b asc`, 비교는 반올림 전 정확값. 배열이라 순서가 바이트다(D154) — 키가 없으면 두 머신이 같은 쌍을 다른 순서로 인쇄한다. 보고되는 쌍 넷이 키를 하나씩 밟는다: (C,D)는 `tc = 1`로 가장 높지만 **정적 의존이 있어 마지막**(첫 키); (G,H)·(A,B)·(E,F)는 셋 다 `tc = 3/5`로 동점 — (G,H)가 `shared = 9`로 먼저(셋째 키), (A,B)·(E,F)는 `shared = 6`까지 동점이라 **`a asc`**가 가른다(넷째 키). 기대 순서: (G,H) · (A,B) · (E,F) · (C,D). (I,J)는 `shared = 2`로 보고 기준 미달이라 `hidden_couplings`에 없다 — 정렬은 보고된 쌍의 것이다. 정렬은 인쇄되는 키이지 점수가 아니다(B.2) — 첫 자리가 \"가장 나쁜\" 쌍이 아니라 \"정적 의존 없이 가장 자주 함께 바뀐\" 쌍이다. 교차 검토 R1-9가 지목한 자리다. **D176**: (A, ATest)는 테스트-대상 쌍 — `shared = 6`, `tc = 1`로 가장 높지만 `static_dependency: null`(`reason: outside_bytecode_scope`, 판정하지 않음)이라 **맨 뒤**다: false · true · null. `hidden_coupling`도 null. A의 `chg_commits`가 10에서 16이 됐지만 (A,B)의 tc는 `6/min(16,10)`으로 그대로 3/5.",
   "shallow_depth": null,
   "window_anchor": {
     "type": "head_committer_time",
-    "timestamp": "2026-03-12T14:46:40+00:00"
+    "timestamp": "2026-03-13T22:33:20+00:00"
   },
-  "head": "d4b283bc4",
+  "head": "f6cf55a33",
   "window_applied": {
     "months": 12,
     "max_commits": 2000,
     "bound_hit": "none",
-    "commits_in_window": 57,
+    "commits_in_window": 63,
     "merge_commits_excluded": 0,
     "authors_window_truncated": false,
-    "authors_window_days": 11.615740740741,
+    "authors_window_days": 12.939814814815,
     "commits_excluded_within_90d": 0
   },
   "commits": [
+    {
+      "sha": "f6cf55a33",
+      "at": "2026-03-13T22:33:20+00:00",
+      "subject": "touch A+ATest #6",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/ATest.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "61eb56f4a",
+      "at": "2026-03-13T21:33:20+00:00",
+      "subject": "touch A+ATest #5",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/ATest.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "6c38f92f7",
+      "at": "2026-03-13T20:33:20+00:00",
+      "subject": "touch A+ATest #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/ATest.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "a62e12821",
+      "at": "2026-03-13T19:33:20+00:00",
+      "subject": "touch A+ATest #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/ATest.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "8a8b57b14",
+      "at": "2026-03-13T18:33:20+00:00",
+      "subject": "touch A+ATest #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/ATest.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "ad165de46",
+      "at": "2026-03-13T17:33:20+00:00",
+      "subject": "touch A+ATest #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/ATest.java"
+      ],
+      "in_window": true
+    },
     {
       "sha": "d4b283bc4",
       "at": "2026-03-12T14:46:40+00:00",
@@ -687,10 +760,16 @@
   "renames": [],
   "files": {
     "src/A.java": {
-      "chg_commits": 10,
-      "chg_days": 2,
-      "churn": 30,
+      "chg_commits": 16,
+      "chg_days": 3,
+      "churn": 53,
       "touched_by": [
+        "f6cf55a33",
+        "61eb56f4a",
+        "6c38f92f7",
+        "a62e12821",
+        "8a8b57b14",
+        "ad165de46",
         "13c7117ec",
         "bd663edce",
         "155a5f5df",
@@ -702,7 +781,7 @@
         "000ebef40",
         "136b99a07"
       ],
-      "age_last_days": 6.861111111111,
+      "age_last_days": 0,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -727,7 +806,7 @@
         "000ebef40",
         "136b99a07"
       ],
-      "age_last_days": 5.703703703704,
+      "age_last_days": 7.027777777778,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -748,7 +827,7 @@
         "2fab6b2b0",
         "6ef5115e1"
       ],
-      "age_last_days": 0.990740740741,
+      "age_last_days": 2.314814814815,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -769,7 +848,7 @@
         "2fab6b2b0",
         "6ef5115e1"
       ],
-      "age_last_days": 0.990740740741,
+      "age_last_days": 2.314814814815,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -794,7 +873,7 @@
         "c597066be",
         "29a211fd4"
       ],
-      "age_last_days": 3.388888888889,
+      "age_last_days": 4.712962962963,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -819,7 +898,7 @@
         "c597066be",
         "29a211fd4"
       ],
-      "age_last_days": 2.231481481481,
+      "age_last_days": 3.555555555556,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -849,7 +928,7 @@
         "b02120676",
         "1cd2be147"
       ],
-      "age_last_days": 10.25,
+      "age_last_days": 11.574074074074,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -879,7 +958,7 @@
         "b02120676",
         "1cd2be147"
       ],
-      "age_last_days": 9.092592592593,
+      "age_last_days": 10.416666666667,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -896,7 +975,7 @@
         "d4b283bc4",
         "9897e372b"
       ],
-      "age_last_days": 0,
+      "age_last_days": 1.324074074074,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -913,6 +992,27 @@
         "d4b283bc4",
         "9897e372b"
       ],
+      "age_last_days": 1.324074074074,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    },
+    "src/ATest.java": {
+      "chg_commits": 6,
+      "chg_days": 1,
+      "churn": 23,
+      "touched_by": [
+        "f6cf55a33",
+        "61eb56f4a",
+        "6c38f92f7",
+        "a62e12821",
+        "8a8b57b14",
+        "ad165de46"
+      ],
       "age_last_days": 0,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
@@ -928,7 +1028,7 @@
       "a": "src/A.java",
       "b": "src/B.java",
       "shared": 6,
-      "chg_commits_a": 10,
+      "chg_commits_a": 16,
       "chg_commits_b": 10,
       "denominator": 10,
       "tc": 0.6,
@@ -936,6 +1036,20 @@
       "static_dependency": false,
       "hidden_coupling": true,
       "commit_granularity": "fine"
+    },
+    {
+      "a": "src/A.java",
+      "b": "src/ATest.java",
+      "shared": 6,
+      "chg_commits_a": 16,
+      "chg_commits_b": 6,
+      "denominator": 6,
+      "tc": 1,
+      "reported": true,
+      "static_dependency": null,
+      "hidden_coupling": null,
+      "commit_granularity": "fine",
+      "reason": "outside_bytecode_scope"
     },
     {
       "a": "src/C.java",
@@ -1022,18 +1136,29 @@
       "tc": 1,
       "static_dependency": true,
       "hidden_coupling": false
+    },
+    {
+      "a": "src/A.java",
+      "b": "src/ATest.java",
+      "shared": 6,
+      "tc": 1,
+      "static_dependency": null,
+      "hidden_coupling": null,
+      "reason": "outside_bytecode_scope"
     }
   ],
   "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
   "non_terminating": {
-    "/window_applied/authors_window_days": "2509/216",
-    "/files/src/A.java/age_last_days": "247/36",
-    "/files/src/B.java/age_last_days": "154/27",
-    "/files/src/C.java/age_last_days": "107/108",
-    "/files/src/D.java/age_last_days": "107/108",
-    "/files/src/E.java/age_last_days": "61/18",
-    "/files/src/F.java/age_last_days": "241/108",
-    "/files/src/H.java/age_last_days": "491/54"
+    "/window_applied/authors_window_days": "2795/216",
+    "/files/src/B.java/age_last_days": "253/36",
+    "/files/src/C.java/age_last_days": "125/54",
+    "/files/src/D.java/age_last_days": "125/54",
+    "/files/src/E.java/age_last_days": "509/108",
+    "/files/src/F.java/age_last_days": "32/9",
+    "/files/src/G.java/age_last_days": "625/54",
+    "/files/src/H.java/age_last_days": "125/12",
+    "/files/src/I.java/age_last_days": "143/108",
+    "/files/src/J.java/age_last_days": "143/108"
   },
   "_fixture": {
     "generated_by": "contract/history/compute.py",

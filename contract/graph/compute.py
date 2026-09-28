@@ -54,14 +54,11 @@ def longest_common_prefix(packages: list[str]) -> list[str]:
 def resolve_auto(packages: list[str], weights: dict[str, int],
                  split_share: Fraction) -> tuple[dict[str, str], dict]:
     """§2.2 `auto` — 최장 공통 접두어 아래 첫 레벨. 자식 1개면 하향,
-    전체의 `split_share`(60%)를 넘는 자식은 추가 분할, 다중 루트는 루트별.
-
-    **미해결**: §2.2는 "60% 초과 자식은 추가 분할"이라 적을 뿐 *무엇의* 60%인지
-    정하지 않는다. 패키지 수로 세는 것과 클래스 수로 세는 것이 갈린다 — 패키지가
-    셋이고 클래스가 6:1:1이면 패키지 기준 33%, 클래스 기준 75%다. 여기서는
-    **클래스 수**로 읽는다: 규칙의 목적이 "한 자식이 코드 대부분을 쥐어 컴포넌트가
-    사실상 하나가 되는 것"을 막는 데 있고, 그 '대부분'은 패키지 개수가 아니라
-    코드의 양이기 때문이다. 계약이 정하면 따라간다.
+    루트의 전체 **클래스 수**의 `split_share`(60%)를 넘는 자식은 추가 분할(D130),
+    다중 루트는 루트별. 분할은 **한 번**이다 — 루트 아래 한 단계에서 한 번 쪼개고
+    손자는 다시 보지 않는다(D177). 재귀는 N을 깊은 분포에 의존하게 해 이동마다
+    `context_changed`(D175)가 늘고, 1회는 결과가 예측 가능하다. 더 고운 경계는
+    `depth:<n>`·`module`의 자리다.
     """
     roots: dict[str, list[str]] = {}
     for p in packages:

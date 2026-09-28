@@ -1,0 +1,10 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "history.hidden_couplings — 테스트-대상 쌍의 static_dependency null·정렬 맨 뒤 (D176)",
+    "old": "보고 쌍 넷 (G,H)·(A,B)·(E,F)·(C,D); A의 chg_commits 10",
+    "new": "보고 쌍 다섯 — (A,ATest)가 `static_dependency: null`·`reason: outside_bytecode_scope`·`hidden_coupling: null`로 맨 뒤; A의 chg_commits 16",
+    "note": "`hidden-coupling-sort-order`에 테스트-대상 쌍 하나를 더했다(D176 — 그래프 밖 파일이 든 쌍은 정적 의존을 판정하지 않고 정렬은 false · true · null). 기존 네 쌍의 순서·tc·shared는 불변이고, A를 만진 커밋이 여섯 늘어 `chg_commits_a`가 10 → 16이 됐지만 (A,B)의 tc는 `6/min(16,10)`으로 그대로 3/5다. 계산기는 명세가 **명시적으로** null을 준 쌍만 판정 없음으로 두고 명세에 없는 쌍(옛 케이스)은 그대로 None/False라 다른 케이스의 expected는 움직이지 않았다(`shallow-clone-age-unknown`의 미지정 쌍 포함).",
+    "fixtures": ["history/hidden-coupling-sort-order"]
+  }
+}
