@@ -79,10 +79,13 @@
           "then": {
             "properties": {
               "rule": {
-                "const": "nccd_increase"
+                "enum": [
+                  "nccd_increase",
+                  "new_component_cycle"
+                ]
               }
             },
-            "description": "D98 — `context_changed`는 **NCCD 규칙 전용**이다. 컴포넌트 집합이 바뀌면 WARN 대신 이 값을 내서 N 변화와 의존 악화를 섞지 않는다. 다른 규칙이 이 결과를 쓰면 '판정을 피하는 탈출구'가 되므로 거부한다."
+            "description": "D98·D175 — `context_changed`는 **컴포넌트 그래프를 비교하는 두 규칙**(`nccd_increase`·`new_component_cycle`)의 것이다. 컴포넌트 식별자 집합이 바뀌면(§5.3 표 아래 판정 기준 — N이 아니다) 두 그래프의 비교가 정의되지 않으므로 WARN/FAIL 대신 이 값을 내서 N 변화와 의존 악화를 섞지 않는다. exit에는 0으로 기여한다(판정이 아니다). 다른 규칙이 이 결과를 쓰면 '판정을 피하는 탈출구'가 되므로 거부한다."
           }
         }
       ],
@@ -98,7 +101,7 @@
             "FAIL",
             "context_changed"
           ],
-          "description": "§5.3. `context_changed`는 NCCD 규칙 전용 — **컴포넌트 집합이 바뀌면 WARN 대신** 이 값을 낸다. N 변화와 의존 악화를 섞지 않기 위해서다(D98). WARN→FAIL 승격은 조직 결정으로 열려 있다(O3)."
+          "description": "§5.3. `context_changed`는 컴포넌트 그래프를 비교하는 두 규칙(`nccd_increase`·`new_component_cycle`)의 것 — **컴포넌트 식별자 집합이 바뀌면 WARN/FAIL 대신** 이 값을 내고 exit에는 0으로 기여한다(D98·D175). N 변화와 의존 악화를 섞지 않기 위해서다. WARN→FAIL 승격은 조직 결정으로 열려 있다(O3)."
         },
         "items": {
           "type": "array",

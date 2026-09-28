@@ -1,0 +1,11 @@
+{
+  "case": "accept-report-test-pair",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "positive",
+  "contract_ref": "D176",
+  "what": "테스트-대상 쌍의 정상 모양 — `static_dependency: null` + `reason: outside_bytecode_scope`가 통과한다(D176). §7 예시에는 test pair가 없어 첫 커밋이 초록이었다 — 이 긍정이 없으면 nullable 이행이 검사되지 않는다.",
+  "schema": "report.schema.json",
+  "verdict": "accept",
+  "rejected_at": []
+}

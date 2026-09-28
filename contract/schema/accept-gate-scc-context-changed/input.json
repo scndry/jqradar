@@ -1,0 +1,20 @@
+{
+  "case": "accept-gate-scc-context-changed",
+  "check": "schema",
+  "kind": "positive",
+  "schema": "gate.schema.json",
+  "base": "prd:§7:gate",
+  "contract_ref": "D175",
+  "what": "`new_component_cycle`이 `context_changed`를 낸다 — 컴포넌트 식별자 집합이 바뀌어 '새 SCC'가 정의되지 않는 비교일 때(D175). D98의 NCCD 처리와 같은 값이고 exit 기여 0. §7 예시는 PASS라 첫 커밋이 초록이었다 — 이 긍정이 없으면 스키마가 옛 계약(NCCD 전용)을 강제해도 스위트가 모른다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "checks",
+        1,
+        "result"
+      ],
+      "value": "context_changed"
+    }
+  ]
+}

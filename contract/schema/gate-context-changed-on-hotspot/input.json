@@ -1,0 +1,21 @@
+{
+  "case": "gate-context-changed-on-hotspot",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "gate.schema.json",
+  "base": "prd:§7:gate",
+  "mechanism": "if/then",
+  "contract_ref": "D98·D175",
+  "what": "`hotspot_cx_increase`에 `context_changed` → 여전히 거부. 넓힌 것은 컴포넌트 그래프를 비교하는 두 규칙뿐이다 — 원값 델타 규칙이 이 값을 쓰면 판정 탈출구다(D98). `gate-context-changed-on-other-rule`(`new_duplication`)과 함께 경계의 양쪽.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "checks",
+        2,
+        "result"
+      ],
+      "value": "context_changed"
+    }
+  ]
+}
