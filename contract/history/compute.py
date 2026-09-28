@@ -377,6 +377,26 @@ def build_expected(inp: dict, workdir: Path) -> dict:
                 "commit_granularity": granularity,
             })
 
+    # §2.7·§5.5·D174 — 창 W(측정: 비머지, 브랜치 포함)와 first-parent(전이의 후보: main에
+    # 닿은 순서)는 **다른 집합, 다른 질문**이다. 케이스가 요구하면 두 집합을 나란히 인쇄해
+    # 다름을 값으로 남긴다 — 후보 쪽의 전이 계산은 `ledger/`(G2b)의 일이고 여기서는 집합만.
+    first_parent_view = None
+    if inp.get("compare_first_parent"):
+        by_sha = {c["sha"]: c for c in commits}
+        chain, cur = [], head["sha"]
+        while cur in by_sha:
+            chain.append(by_sha[cur])
+            cur = by_sha[cur]["parents"][0] if by_sha[cur]["parents"] else None
+        w_set = [c["sha"][:9] for c in selected]
+        fp_set = [c["sha"][:9] for c in chain]
+        first_parent_view = {
+            "window_commits": w_set,
+            "first_parent_commits": fp_set,
+            "in_window_not_first_parent": [x for x in w_set if x not in fp_set],
+            "first_parent_not_in_window": [x for x in fp_set if x not in w_set],
+            "sets_differ": set(w_set) != set(fp_set),
+        }
+
     # §3.5·D167 — `hidden_couplings`는 §7에서 배열이라 순서가 바이트다(D154). 정렬 키 =
     # static_dependency asc(false 먼저) · tc desc · shared desc · a asc · b asc, 비교는
     # 반올림 전 정확값(Fraction). 정렬은 인쇄되는 키이지 점수가 아니다(B.2).
@@ -519,6 +539,7 @@ def build_expected(inp: dict, workdir: Path) -> dict:
         # 쌍이 있는 케이스만 인쇄한다 — 빈 배열을 열넷에 더하는 것은 계약이 아니라 잡음이다.
         **({"hidden_couplings": hidden_couplings} if pairs else {}),
         **({"invariants": invariants} if invariants is not None else {}),
+        **({"first_parent_view": first_parent_view} if first_parent_view is not None else {}),
         "authorship_note": ("저자 정체는 이 파일에 없다 — 익명 집계만 기록한다"
                             "(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 "
                             "계산기는 그것을 메모리에서만 쓴다."),
