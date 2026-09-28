@@ -42,7 +42,7 @@
 | [`team-folding-k-threshold/`](team-folding-k-threshold/) | **D161** — k 하한(≥3인)은 팀 집계의 조건. 3인 미만 팀은 `other`로 접혀 2인 팀 하나만 만진 파일은 `team_count: 1, teams_folded: 1` — 값은 있고 라벨은 없다. 정확히 3인 팀은 접히지 않는다 |
 | [`off-closed-list-absence/`](off-closed-list-absence/) | **D162·D126** — off가 내는 저자 유래 필드는 셋으로 닫힌다(`team_count`는 필드 부재, 저자 사실은 어느 모드에도 없다). 부재 검사라 `must_be_caught` 5 + `must_not_be_caught` 4 — `distinct_authors_90d = 1`은 잡히면 안 된다 |
 | [`shared-window-limited/`](shared-window-limited/) | **D164** — `shared`는 W 안. 같은 이력을 12개월·240개월 창으로 봐 `shared` 6 → 9, 두 창 모두 `tc ≤ 1`(불변식 인쇄). 근거는 일관성, 재현성이 아니다(D150) |
-| [`hidden-coupling-sort-order/`](hidden-coupling-sort-order/) | **D167** — 정렬 키 넷을 하나씩 밟는 쌍 넷: (G,H) · (A,B) · (E,F) · (C,D). 정적 의존 있는 쌍은 `tc = 1`이어도 마지막, 동점은 `shared` 다음 `a` |
+| [`hidden-coupling-sort-order/`](hidden-coupling-sort-order/) | **D167·D176** — 정렬 키를 하나씩 밟는 쌍 다섯: (G,H) · (A,B) · (E,F) · (C,D) · (A,ATest). 정적 의존 있는 쌍은 `tc = 1`이어도 뒤, 동점은 `shared` 다음 `a`, 테스트-대상 쌍은 판정 없음(`null` + `reason`)이라 **맨 뒤** |
 | [`window-vs-first-parent/`](window-vs-first-parent/) | **D174** — W = {seed, b1, b2}(브랜치 포함, 머지 제외), first-parent = {m1, seed}. 다른 집합, 다른 질문 — 통일하면 한쪽이 틀린다. 후보 쪽 전이는 `ledger/`(G2b) |
 
 ## blame 검사는 값이 아니라 부재를 본다
