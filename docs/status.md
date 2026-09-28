@@ -4,7 +4,7 @@
 
 **#1의 범위는 §2.1–2.9다**(D136). §6.3–6.6 교차 검토는 값 층 픽스처(`contract/validation`·`security`)가 서는 **G3 입장 조건**으로 옮겼다 — 문장만 읽은 검토를 통과로 세지 않기 위해서다.
 
-**있는 것**: `prd.md` v3.9.4(D1–D173). `contract/` 케이스 **123종** — percentile 6 · **schema 76** · cpd 6 · history 19 · graph 8 · **reproducibility 8**. `schemas/` **8종**(`people.schema.json`, D161). Gradle 골격과 자체 ArchUnit 규칙 넷 + 반례(11 tests). CI **5잡**. `docs/preregistration/p1a.md`, `docs/battery.md`(실측).
+**있는 것**: `prd.md` v3.9.9(D1–D178). `contract/` 케이스 **129종** — percentile 6 · **schema 80** · cpd 6 · **history 20** · **graph 9** · reproducibility 8. `schemas/` **8종**(`people.schema.json`, D161). Gradle 골격과 자체 ArchUnit 규칙 넷 + 반례(11 tests). CI **5잡**. `docs/preregistration/p1a.md`, `docs/battery.md`(실측).
 
 **§2.9의 배정 공백은 닫혔다**: §2.4 파일 쌍(D134)과 §2.1 저자 사실(D135)이 `contract/history/`로 배정되고 케이스 넷이 섰다. 정체 부재 검사는 **출처로 가른다** — 저자 해시와 `repository_state_id`는 둘 다 64 hex라 모양으로 못 가르므로, 알고 있는 저자 식별자의 해시 72개가 산출물에 없음을 본다.
 
@@ -16,14 +16,16 @@
 
 **v3.9.4가 열린 12 중 일곱을 주장으로 닫았다** — N1(D168 두 단계 기록, 뜻은 소속) · S3(D169 지름길의 렌즈별 조건) · S10+15(D170 적격 main 소스·`no_bytecode`) · O-4(D171 `interpretation`은 `lens_pct`의 함수, 항상 객체) · R1-5·R4-3(D172 composite는 렌즈가 아니다) · S14(D173 `population_note` 시험). 식은 건드리지 않았다 — §7의 렌즈 값·pct 전부 불변을 첫 커밋에서 대조했다(더한 것은 OrderService의 `cx.all` 0.9678·`fan_in.all` 0.8820). 첫 커밋의 붉음은 schema 36(예시가 옛 모양에 걸림) + 스케일 린트 8(리프 키가 모집단 이름) — 후자는 소유자가 예상 밖으로 잡아 D155-1 아래 "표의 이름은 경로에서 찾는다"를 적었고 린트가 경로 규칙을 얻었다. 스키마: 두 단계 `percentiles`·`percentile_population`, `lensPercentile`(항상 객체, pct null ↔ reason), `lens_percentiles`는 H·Dx·F로 닫힘, `arch_context` nullable, `fan_in` null → reason(if/then), `reason` + `no_bytecode`. 변조 +5, 재조준 3(`fixture_change`). `lens/`(G1)는 문장만. **닫힘 표시가 붙었다** — 일곱에 근거 열과 `닫힘 — D168…D173`. `--count`: 닫힘 25 · 열림 5 — 계산기가 낸 수다. 남은 다섯은 S8(§2.2·§2.4·§3.5) · S11(§2.6·§5.3·§6.3) · S12(§2.7·§5.5) · N6(§2.2·§5.3) · O-6(§2.2·§2.3) — 절이 흩어져 있어 군이 아니라 한 줄 판들일 듯하다.
 
+**다섯 한 줄 판(v3.9.5–v3.9.9, D174–D178)이 남은 다섯을 닫았다** — S12(D174 W와 first-parent는 다른 질문) · N6(D175 SCC 게이트도 `context_changed`) · S8(D176 그래프 밖 쌍은 판정하지 않음) · O-6(D177 auto 분할은 1회) · S11(D165·D178 §6.3이 §5.3의 손잡이를 가리킴). 다섯 첫 커밋이 전부 초록이었고, 그중 둘(N6·S8)은 초록이 이행의 증거가 아니었다 — §7이 안 바뀌어 스위트가 옛 스키마를 몰랐다; 긍정 케이스(`accept-gate-scc-context-changed`·`accept-report-test-pair`)가 그 자리를 채웠다. 픽스처: `history/window-vs-first-parent`, `history/hidden-coupling-sort-order`의 (A,ATest), `graph/auto-oversized-grandchild-not-split`. **닫힘 표시가 붙었다** — `--count`: 닫힘 30 · 열림 0 · 밖 2. **열림 0은 D151의 정지 조건이 아니다**(§0-38) — 다음은 3차 라운드, 입력을 바꿔서: 쌍 목록에 §2 내부 쌍(§2.6↔§2.1 토크나이저)과 다섯 판이 만든 접점(§2.7↔§5.5, §2.2↔§5.3, §2.4↔§3.5의 null 정렬).
+
 **남은 것은 열린 발견이다.** O14가 D151·D152로 닫히고 `g0-review.py --count`가 서면서 이 수는 **사람 보고가 아니라 계산**이 됐다. 지금 출력:
 
 ```
     G0 #1 열린 발견 — 기록에서 센 수 (D140·D151·D152)
       읽은 종합: 2026-09-11-종합-서브에이전트-사전검토.md, 2026-09-14-종합-2차-다중모델-패널.md
       범위 안 `dedupe_key`  총 30
-        닫힘  25 — D111, D126, D146, D147, D148, D149, D150, D154, D155, D156, D157, D158, D159, D160, D161, D162, D164, D165, D166, D167, D168, D169, D170, D171, D172, D173
-        열림  5
+        닫힘  30 — D111, D126, D146, D147, D148, D149, D150, D154, D155, D156, D157, D158, D159, D160, D161, D162, D164, D165, D166, D167, D168, D169, D170, D171, D172, D173, D174, D175, D176, D177, D178
+        열림  0
       범위 밖 (G3 목록으로) 2
       **닫힘 표시는 기록에서만 읽는다** — `닫힘 — D<n>`이 적힌 key만 닫힌 것으로 센다.
       `prd.md`를 읽어 추측하지 않는다. 표시가 없으면 열린 것이다.
