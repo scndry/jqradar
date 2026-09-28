@@ -1,0 +1,62 @@
+{
+  "case": "window-vs-first-parent",
+  "contract_refs": [
+    "§2.7",
+    "§5.5",
+    "§2.9",
+    "D174"
+  ],
+  "what_this_pins": "**§2.7의 창 W와 §5.5의 first-parent는 다른 집합, 다른 질문이다**(D174). 브랜치 커밋 둘(b1·b2)을 머지 커밋 m1로 main에 붙인 이력에서 W = {seed, b1, b2} — 비머지 커밋이고 first-parent 한정이 아니라 브랜치 커밋이 들어오며 m1은 빠진다(\"무엇이 바뀌었나\"). first-parent 이력 = {m1, seed} — §5.5의 후보 커밋이 사는 곳이고 b1·b2는 없다(\"언제 main에 닿았나\"). `first_parent_view.sets_differ`가 참이고 `in_window_not_first_parent` = {b1, b2}, `first_parent_not_in_window` = {m1}이다. 집합을 통일하면 한쪽이 틀린다 — W를 first-parent로 하면 A.java의 `chg_commits`가 3(seed·b1·b2)에서 1(seed만)이 되고(브랜치 작업이 측정에서 사라진다), 후보를 비머지로 하면 PR로 들어온 해소가 후보를 못 만든다. 그래서 D174는 집합이 아니라 두 절이 서로를 가리키는 문장을 고쳤다. 후보 쪽의 전이 계산은 `ledger/`(G2b)의 일이고 여기서는 집합만 값으로 남긴다. 교차 검토 S12(R3-8)가 지목한 자리.",
+  "compare_first_parent": true,
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "measure_files": [
+    "src/A.java"
+  ],
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-02-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "seed",
+        "at_seconds": 0,
+        "message": "seed",
+        "write": {
+          "src/A.java": "class A {}\n"
+        }
+      },
+      {
+        "id": "b1",
+        "at_seconds": 3600,
+        "message": "feature: edit A (1)",
+        "write": {
+          "src/A.java": "class A { int x; }\n"
+        },
+        "on": "seed"
+      },
+      {
+        "id": "b2",
+        "at_seconds": 7200,
+        "message": "feature: edit A (2)",
+        "write": {
+          "src/A.java": "class A { int x, y; }\n"
+        },
+        "on": "b1"
+      },
+      {
+        "id": "m1",
+        "at_seconds": 10800,
+        "message": "merge feature",
+        "merge_of": [
+          "seed",
+          "b2"
+        ]
+      }
+    ]
+  }
+}

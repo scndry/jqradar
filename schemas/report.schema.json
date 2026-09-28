@@ -1281,7 +1281,7 @@
     },
     "hiddenCoupling": {
       "type": "object",
-      "description": "숨은 결합(§2.4, §3.5). **판정하지 않는다** — 테스트-대상 쌍은 긍정 해석을 병기한다.",
+      "description": "숨은 결합(§2.4, §3.5). **판정하지 않는다** — 테스트-대상 쌍은 긍정 해석을 병기한다. 정적 의존은 §2.2의 클래스 그래프에서만 판정한다(D176) — 그래프 밖 파일(테스트 소스 세트)이 든 쌍은 `static_dependency: null` + `reason`이고 정렬은 false · true · null 순(D167·D176).",
       "required": [
         "a",
         "b",
@@ -1304,11 +1304,40 @@
           "description": "`shared / min(chg_commits_a, chg_commits_b)`(§2.4). 보고 기준 `tc ≥ 0.5`."
         },
         "static_dependency": {
-          "type": "boolean",
-          "description": "정적 의존이 없는 쌍을 우선 보인다(§3.5)."
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "정적 의존 유무(§2.2 클래스 그래프). 그래프 밖 파일이 든 쌍은 **`null`** — 판정하지 않은 것이지 없는 것이 아니다(D176). 정렬은 false · true · null."
+        },
+        "reason": {
+          "enum": [
+            "outside_bytecode_scope"
+          ],
+          "description": "`static_dependency`가 null인 이유(D176). `outside_bytecode_scope` = 쌍의 한쪽이 `bytecode_scope` 밖(테스트 소스 세트) — D170의 `no_bytecode`(클래스가 없다)와 다른 상태."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "static_dependency": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "static_dependency"
+            ]
+          },
+          "then": {
+            "required": [
+              "reason"
+            ],
+            "description": "판정하지 않았으면 왜인지가 있어야 한다(D176) — 없으면 '정적 의존 없음'과 구별되지 않는다."
+          }
+        }
+      ]
     },
     "finding": {
       "type": "object",
