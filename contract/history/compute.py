@@ -265,6 +265,11 @@ def build_expected(inp: dict, workdir: Path) -> dict:
     if inp.get("shallow_depth"):
         scanned = shallow_clone(workdir, int(inp["shallow_depth"]),
                                 workdir.parent / "shallow")
+    # D189 — 미커밋 신규 파일: 작업트리에만 있고 어느 커밋에도 없다. 명세가 주면 스캔 대상 트리에 쓴다.
+    for rel, content in inp.get("uncommitted_files", {}).items():
+        target = scanned / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(content, encoding="utf-8")
     commits = read_history(scanned)
     boundary = shallow_boundary(scanned)
     for c in commits:
@@ -342,8 +347,17 @@ def build_expected(inp: dict, workdir: Path) -> dict:
                 if inp.get("age_boundary"):
                     # §3.3의 지시변수 둘째 항을 **정확값**으로 — 179일 23시간은 ≥ 180이 아니다.
                     entry["age_at_least_180_exact"] = exact_days >= 180
+        elif (not boundary and (scanned / path).exists()
+              and not any(canonical(p) == path for c in commits for p in c["paths"])):
+            # §2.1·D189 — **미커밋 신규 파일**: 작업트리에는 있는데 마지막 커밋이 없다. 이름은
+            # `uncommitted`이지 `age_unknown`이 아니다 — 사유마다 구제가 다르다(커밋하라 / shallow를
+            # 풀라 / 도구의 한계). `age_unknown`으로 접으면 `history_complete`가 shallow만 설명하고
+            # 이 null은 다시 이름 없는 null이 된다. 이름은 §2.5 사전(D188)에서 온다.
+            entry["age_last_days"] = None
+            entry["age_reason"] = "uncommitted"
+            entry["age_basis"] = "no_commit"
         else:
-            # §2.1 — 결정 불가(shallow clone·미커밋 신규·rename 조상 복구 실패)면 null.
+            # §2.1 — 결정 불가(shallow clone·rename 조상 복구 실패)면 null.
             # "오래되지 않았다"와 "나이를 모른다"는 다른 상태다(D37). F도 null이 된다(§3.3).
             entry["age_last_days"] = None
             entry["age_reason"] = inp.get("age_unknown_reason", "age_unknown")
@@ -357,6 +371,13 @@ def build_expected(inp: dict, workdir: Path) -> dict:
     # 그것을 계산하는 것은 §2.2의 일이다.
     static_dependency = {tuple(sorted(k.split("|"))): v
                          for k, v in inp.get("static_dependency", {}).items()}
+    # D176·D190 — 그래프 밖 **파일**의 이유를 명세가 준다: `outside_bytecode_scope`(범위 밖 — 테스트
+    # 소스 세트) 또는 `no_bytecode`(적격이지만 클래스 없음). 쌍의 `reason`은 여기서 **계산**한다 —
+    # 쌍에 직접 적게 하면 동률 규칙이 계산이 아니라 입력이 된다.
+    graph_absent = inp.get("class_graph_absent", {})
+    for path, why in graph_absent.items():
+        if why not in ("outside_bytecode_scope", "no_bytecode"):
+            raise ValueError(f"class_graph_absent[{path}]: §2.5 사전의 쌍 자리 이름이 아니다 — {why}")
     pairs = []
     measured = list(files)
     for i, a in enumerate(measured):
@@ -378,6 +399,13 @@ def build_expected(inp: dict, workdir: Path) -> dict:
             # 정적 의존을 **판정하지 않는다**(`reason: outside_bytecode_scope`), `hidden_coupling`도 판정 없음.
             # 명세에 아예 없는 쌍(옛 케이스)은 그대로 None/False — 기존 expected를 움직이지 않는다.
             sd = static_dependency.get((lo, hi), "unspecified")
+            absent = [graph_absent[f] for f in (lo, hi) if f in graph_absent]
+            if sd is None and not absent:
+                raise ValueError(f"({lo}, {hi}): 명세가 null을 줬는데 그래프 밖 파일이 없다 — class_graph_absent에 적어라(D190)")
+            if isinstance(sd, bool) and absent:
+                # D176이 막은 오류 그 자체 — 그래프 밖 파일이 든 쌍을 false/true로 계산하면 가장
+                # 노골적인 정적 의존이 숨은 결합으로 인쇄된다.
+                raise ValueError(f"({lo}, {hi}): 그래프 밖 파일이 들었는데 static_dependency가 {sd}다(D176·D190)")
             entry = {
                 "a": lo, "b": hi,
                 "shared": shared,
@@ -392,7 +420,11 @@ def build_expected(inp: dict, workdir: Path) -> dict:
                 "commit_granularity": granularity,
             }
             if sd is None:
-                entry["reason"] = "outside_bytecode_scope"
+                # D190 **동률 규칙** — 두 파일이 모두 밖이고 사유가 다르면 `outside_bytecode_scope`가
+                # 앞선다: 범위 결정이 클래스 유무보다 앞선다. 한쪽만 밖이면 그 파일의 이유.
+                entry["reason"] = ("outside_bytecode_scope" if "outside_bytecode_scope" in absent
+                                   else "no_bytecode")
+                entry["graph_absent"] = {f: graph_absent[f] for f in (lo, hi) if f in graph_absent}
             pairs.append(entry)
 
     # §2.7·§5.5·D174 — 창 W(측정: 비머지, 브랜치 포함)와 first-parent(전이의 후보: main에

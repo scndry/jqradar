@@ -6,9 +6,11 @@
     "§2.9",
     "D167",
     "D154",
-    "D176"
+    "D176",
+    "D190",
+    "D188"
   ],
-  "what_this_pins": "**`hidden_couplings`의 정렬 키**(D167) = `static_dependency asc(false 먼저) · tc desc · shared desc · a asc · b asc`, 비교는 반올림 전 정확값. 배열이라 순서가 바이트다(D154) — 키가 없으면 두 머신이 같은 쌍을 다른 순서로 인쇄한다. 보고되는 쌍 넷이 키를 하나씩 밟는다: (C,D)는 `tc = 1`로 가장 높지만 **정적 의존이 있어 마지막**(첫 키); (G,H)·(A,B)·(E,F)는 셋 다 `tc = 3/5`로 동점 — (G,H)가 `shared = 9`로 먼저(셋째 키), (A,B)·(E,F)는 `shared = 6`까지 동점이라 **`a asc`**가 가른다(넷째 키). 기대 순서: (G,H) · (A,B) · (E,F) · (C,D). (I,J)는 `shared = 2`로 보고 기준 미달이라 `hidden_couplings`에 없다 — 정렬은 보고된 쌍의 것이다. 정렬은 인쇄되는 키이지 점수가 아니다(B.2) — 첫 자리가 \"가장 나쁜\" 쌍이 아니라 \"정적 의존 없이 가장 자주 함께 바뀐\" 쌍이다. 교차 검토 R1-9가 지목한 자리다. **D176**: (A, ATest)는 테스트-대상 쌍 — `shared = 6`, `tc = 1`로 가장 높지만 `static_dependency: null`(`reason: outside_bytecode_scope`, 판정하지 않음)이라 **맨 뒤**다: false · true · null. `hidden_coupling`도 null. A의 `chg_commits`가 10에서 16이 됐지만 (A,B)의 tc는 `6/min(16,10)`으로 그대로 3/5.",
+  "what_this_pins": "**`hidden_couplings`의 정렬 키**(D167) = `static_dependency asc(false 먼저) · tc desc · shared desc · a asc · b asc`, 비교는 반올림 전 정확값. 배열이라 순서가 바이트다(D154) — 키가 없으면 두 머신이 같은 쌍을 다른 순서로 인쇄한다. 보고되는 쌍 넷이 키를 하나씩 밟는다: (C,D)는 `tc = 1`로 가장 높지만 **정적 의존이 있어 마지막**(첫 키); (G,H)·(A,B)·(E,F)는 셋 다 `tc = 3/5`로 동점 — (G,H)가 `shared = 9`로 먼저(셋째 키), (A,B)·(E,F)는 `shared = 6`까지 동점이라 **`a asc`**가 가른다(넷째 키). 기대 순서: (G,H) · (A,B) · (E,F) · (C,D). (I,J)는 `shared = 2`로 보고 기준 미달이라 `hidden_couplings`에 없다 — 정렬은 보고된 쌍의 것이다. 정렬은 인쇄되는 키이지 점수가 아니다(B.2) — 첫 자리가 \"가장 나쁜\" 쌍이 아니라 \"정적 의존 없이 가장 자주 함께 바뀐\" 쌍이다. 교차 검토 R1-9가 지목한 자리다. **D176**: (A, ATest)는 테스트-대상 쌍 — `shared = 6`, `tc = 1`로 가장 높지만 `static_dependency: null`(`reason: outside_bytecode_scope`, 판정하지 않음)이라 **맨 뒤**다: false · true · null. `hidden_coupling`도 null. A의 `chg_commits`가 10에서 16이 됐지만 (A,B)의 tc는 `6/min(16,10)`으로 그대로 3/5. **D190**: 쌍의 어느 한쪽이라도 클래스 그래프에 없으면 판정하지 않고, 사유는 그 파일이 그래프에 없는 이유를 §2.5 사전(D188)에서 — (A, M)은 M이 적격 소스인데 클래스가 없어(`module-info.java`·컴파일 제외, D170) `reason: no_bytecode`; (P, PTest)는 **둘 다** 밖이고 사유가 다르다(P `no_bytecode`, PTest `outside_bytecode_scope`) — **동률 규칙**으로 `outside_bytecode_scope`(범위 결정이 클래스 유무보다 앞선다). 사유는 쌍에 적지 않고 파일의 이유(`class_graph_absent`)에서 **계산**한다. 셋 다 `tc = 1`·`shared = 6`이라 null 안에서는 `a asc · b asc`가 가른다: (A,ATest) · (A,M) · (P,PTest). 새 커밋 열둘은 HEAD 앞에 끼워 HEAD 커밋의 시각(앵커)·기존 파일의 나이·기존 다섯 쌍의 값과 순서가 불변이다 — SHA는 체인이 바뀌어 달라진다.",
   "window": {
     "months": 12,
     "max_commits": 2000
@@ -19,7 +21,9 @@
     "src/E.java|src/F.java": false,
     "src/G.java|src/H.java": false,
     "src/I.java|src/J.java": false,
-    "src/A.java|src/ATest.java": null
+    "src/A.java|src/ATest.java": null,
+    "src/A.java|src/M.java": null,
+    "src/P.java|src/PTest.java": null
   },
   "measure_files": [
     "src/A.java",
@@ -32,7 +36,10 @@
     "src/H.java",
     "src/I.java",
     "src/J.java",
-    "src/ATest.java"
+    "src/ATest.java",
+    "src/M.java",
+    "src/P.java",
+    "src/PTest.java"
   ],
   "repo": {
     "committer": {
@@ -146,6 +153,17 @@
         }
       },
       {
+        "id": "pq",
+        "at_seconds": 950000,
+        "repeat": 6,
+        "step_seconds": 3600,
+        "message": "touch P+PTest",
+        "write": {
+          "src/P.java": "class X { int v{k}; }\n",
+          "src/PTest.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
         "id": "ij",
         "at_seconds": 1000000,
         "repeat": 2,
@@ -154,6 +172,17 @@
         "write": {
           "src/I.java": "class X { int v{k}; }\n",
           "src/J.java": "class X { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "am",
+        "at_seconds": 1050000,
+        "repeat": 6,
+        "step_seconds": 3600,
+        "message": "touch A+M",
+        "write": {
+          "src/A.java": "class X { int v{k}; }\n",
+          "src/M.java": "class X { int v{k}; }\n"
         }
       },
       {
@@ -168,5 +197,11 @@
         }
       }
     ]
+  },
+  "class_graph_absent": {
+    "src/ATest.java": "outside_bytecode_scope",
+    "src/M.java": "no_bytecode",
+    "src/P.java": "no_bytecode",
+    "src/PTest.java": "outside_bytecode_scope"
   }
 }
