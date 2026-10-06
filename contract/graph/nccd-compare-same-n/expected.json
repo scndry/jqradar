@@ -1,0 +1,57 @@
+{
+  "case": "nccd-compare-same-n",
+  "contract_refs": [
+    "§5.3",
+    "§2.3",
+    "§2.5",
+    "D183",
+    "D175"
+  ],
+  "what_this_pins": "**§5.3의 'NCCD 증가 > 5%'는 N이 같을 때 정수 비교 `20·CCD_head > 21·CCD_base`다**(D183). 분모 `(N+1)·log₂(N+1) − N`이 약분되어 `NCCD_head / NCCD_base = CCD_head / CCD_base`이므로 무리수 사이의 비교가 아니고, 임계는 `21/20`이지 십진 `1.05`가 아니다. 세 그래프 모두 N = 7, 같은 식별자 집합(A–G). base CCD 20(사슬 A→B→C→D, E→A, F→B, G 고립). `head_at_threshold`는 G→D로 CCD 21 — 정확히 5%라 `20·21 = 420 > 21·20 = 420`이 **거짓**. `head_over_threshold`는 G→C로 CCD 22 — `440 > 420` 참. `display_ratio_would_say`는 2자리 NCCD를 다시 읽어 나눈 결과다 — 계약은 그것을 읽지 않는다(§5.3: `change.json`의 2자리 값을 읽지 않는다). 식별자 집합이 다르면 비교 자체가 없다(D175 `context_changed`) — `identifier_sets_equal`이 그 전제.",
+  "base": {
+    "identifiers": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G"
+    ],
+    "components": 7,
+    "CCD": 20,
+    "NCCD": 1.18
+  },
+  "variants": {
+    "head_at_threshold": {
+      "components": 7,
+      "CCD": 21,
+      "NCCD": 1.24,
+      "same_identifier_set": true,
+      "ratio_exact": 1.05,
+      "nccd_increase_over_5pct": false,
+      "display_ratio_would_say": true
+    },
+    "head_over_threshold": {
+      "components": 7,
+      "CCD": 22,
+      "NCCD": 1.29,
+      "same_identifier_set": true,
+      "ratio_exact": 1.1,
+      "nccd_increase_over_5pct": true,
+      "display_ratio_would_say": true
+    }
+  },
+  "assertions": {
+    "identifier_sets_equal": true,
+    "at_threshold_is_not_over": true,
+    "over_threshold_is_over": true,
+    "threshold_is_twenty_one_over_twenty": true
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/graph/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

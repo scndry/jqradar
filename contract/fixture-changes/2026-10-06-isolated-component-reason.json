@@ -1,0 +1,16 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "graph.components[].reason (Ca+Ce = 0 → `isolated_component`)",
+    "old": "`Ca + Ce = 0`인 컴포넌트는 I·D만 `null`이고 이유가 없었다",
+    "new": "I·D `null` + `reason: isolated_component`, A는 값(D180)",
+    "note": "값은 하나도 바뀌지 않는다 — 다섯 케이스의 고립 컴포넌트 항목에 `reason` 키 하나가 더해진다(`nccd-cross-check`는 고립 9 + 사슬 끝 등 아홉 항목). 1차 리뷰어 5 유보 → 3차 S3-9·O3-12가 발견으로: 라이브러리는 0/0에 I = 1을 주고 계약은 말이 없었다. D180이 '모르는 것을 값으로 내려앉히지 않는다'(D170의 모양)로 정했고 reason 이름을 §2.5 사전에 넣었다. 계산기는 이미 null을 내고 있었으니 계약이 따라오고 reason만 더해진 것이다.",
+    "fixtures": [
+      "graph/auto-multiple-roots",
+      "graph/auto-oversized-child-splits",
+      "graph/auto-oversized-grandchild-not-split",
+      "graph/component-cycle",
+      "graph/nccd-cross-check"
+    ]
+  }
+}

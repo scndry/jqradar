@@ -23,6 +23,7 @@
 | [`auto-oversized-child-splits/`](auto-oversized-child-splits/) | `auto` 3/4 — **전체 클래스 수**의 60%를 넘는 자식은 추가 분할(D130) |
 | [`auto-multiple-roots/`](auto-multiple-roots/) | `auto` 4/4 — 루트가 여럿이면 루트별로 |
 | [`auto-oversized-grandchild-not-split/`](auto-oversized-grandchild-not-split/) | **D177** — 추가 분할은 **한 번**. 손자가 75%여도 다시 쪼개지 않아 N = 4(재귀면 5) |
+| [`nccd-compare-same-n/`](nccd-compare-same-n/) | **D183** — N이 같으면 NCCD 비교는 `20·CCD_head > 21·CCD_base`. base 20 → 21(정확히 5%, 거짓) · 22(참). 2자리 NCCD를 다시 읽으면 갈릴 수 있다 — 계약은 그것을 읽지 않는다 |
 | [`component-cycle/`](component-cycle/) | Tarjan SCC. 새 SCC는 게이트에서 1개라도 FAIL이다(§5.3) |
 | [`nccd-cross-check/`](nccd-cross-check/) | §2.3 본문의 검산 — N=41, CCD=512 → 185.48 / 12.49 / 0.3046 / **2.76** |
 | [`deep-enterprise-packages/`](deep-enterprise-packages/) | **P8의 합성 리포**(§9) — 깊은 기업형 패키지에서 `auto`가 업무 영역을 내는가 |

@@ -195,7 +195,50 @@ def generate_components(spec: dict) -> dict:
     return {"nodes": nodes, "edges": edges}
 
 
+def system_of(spec: dict) -> dict:
+    """노드·간선 명세 하나의 시스템 수(N·CCD·NCCD) — D183 비교 케이스가 두 그래프에 쓴다."""
+    if "generate" in spec:
+        spec = generate_components(spec["generate"])
+    nodes = sorted(spec["nodes"])
+    edges = {(e[0], e[1]) for e in spec["edges"]}
+    n = len(nodes)
+    ccd = sum(len(reachable(x, edges, nodes)) for x in nodes)
+    balanced = exact.irrational(lambda: (Decimal(n + 1) * exact.log2(Decimal(n + 1)) - Decimal(n)))
+    return {"identifiers": nodes, "components": n, "CCD": ccd,
+            "NCCD": exact.round_half_even(exact.irrational(lambda: Decimal(ccd) / balanced), 2)}
+
+
+def run_nccd_compare(inp: dict) -> dict:
+    """§5.3·D183 — N이 같을 때 'NCCD 증가 > 5%'는 정수 비교 `20·CCD_head > 21·CCD_base`로 환원된다.
+
+    분모 `(N+1)·log₂(N+1) − N`이 약분되므로 무리수 사이의 비교가 아니다. 경계(정확히 5%)를 양쪽에서
+    밟는다 — `head_at_threshold`는 21/20 그 자체라 '>'가 거짓, `head_over_threshold`는 참. 2자리로
+    직렬화된 NCCD를 다시 읽어 비교하면 어느 쪽인지 갈릴 수 있다 — 그것을 `display_ratio_would_say`로 함께
+    인쇄한다(계약은 그것을 읽지 않는다). 식별자 집합이 다르면 비교가 없다(D175)."""
+    base = system_of(inp["compare"]["base"])
+    out_variants, assertions = {}, {}
+    for name in ("head_at_threshold", "head_over_threshold"):
+        head = system_of(inp["compare"][name])
+        same = head["identifiers"] == base["identifiers"]
+        over = (20 * head["CCD"] > 21 * base["CCD"]) if same else None
+        out_variants[name] = {
+            "components": head["components"], "CCD": head["CCD"], "NCCD": head["NCCD"],
+            "same_identifier_set": same,
+            "ratio_exact": Fraction(head["CCD"], base["CCD"]),
+            "nccd_increase_over_5pct": over,
+            "display_ratio_would_say": (head["NCCD"] / base["NCCD"] > Decimal("1.05")),
+        }
+    assertions["identifier_sets_equal"] = all(v["same_identifier_set"] for v in out_variants.values())
+    assertions["at_threshold_is_not_over"] = out_variants["head_at_threshold"]["nccd_increase_over_5pct"] is False
+    assertions["over_threshold_is_over"] = out_variants["head_over_threshold"]["nccd_increase_over_5pct"] is True
+    assertions["threshold_is_twenty_one_over_twenty"] = out_variants["head_at_threshold"]["ratio_exact"] == Fraction(21, 20)
+    return {"case": inp["case"], "contract_refs": inp["contract_refs"], "what_this_pins": inp["what_this_pins"],
+            "base": base, "variants": out_variants, "assertions": assertions}
+
+
 def build_expected(inp: dict) -> dict:
+    if "compare" in inp:
+        return run_nccd_compare(inp)
     out: dict = {
         "case": inp["case"],
         "contract_refs": inp["contract_refs"],
@@ -254,11 +297,15 @@ def build_expected(inp: dict) -> dict:
     for n in nodes:
         ca = sum(1 for s, t in component_edges if t == n)
         ce = sum(1 for s, t in component_edges if s == n)
+        # D179 — 비율은 정수(Ca·Ce·클래스 수)에서 정확 유리수로. 라이브러리의 double은 쓰지 않는다.
+        # D180 — external을 접은 뒤 이웃이 없으면(Ca+Ce = 0) I·D는 null + reason, A는 값이다.
         i = Fraction(ce, ca + ce) if (ca + ce) else None
-        a = Fraction(abstract[n], total[n]) if total[n] else None
+        a = Fraction(abstract[n], total[n]) if total[n] else None   # D181 — 분모는 모든 클래스
         d = abs(a + i - 1) if (a is not None and i is not None) else None
-        components.append({"id": n, "Ca": ca, "Ce": ce, "I": i, "A": a, "D": d,
-                           "class_count": total[n]})
+        entry = {"id": n, "Ca": ca, "Ce": ce, "I": i, "A": a, "D": d, "class_count": total[n]}
+        if (ca + ce) == 0:
+            entry["reason"] = "isolated_component"
+        components.append(entry)
     out["components"] = components
 
     cycles = tarjan_scc(nodes, component_edges)

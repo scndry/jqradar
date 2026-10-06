@@ -1,0 +1,120 @@
+{
+  "case": "nccd-compare-same-n",
+  "contract_refs": [
+    "§5.3",
+    "§2.3",
+    "§2.5",
+    "D183",
+    "D175"
+  ],
+  "what_this_pins": "**§5.3의 'NCCD 증가 > 5%'는 N이 같을 때 정수 비교 `20·CCD_head > 21·CCD_base`다**(D183). 분모 `(N+1)·log₂(N+1) − N`이 약분되어 `NCCD_head / NCCD_base = CCD_head / CCD_base`이므로 무리수 사이의 비교가 아니고, 임계는 `21/20`이지 십진 `1.05`가 아니다. 세 그래프 모두 N = 7, 같은 식별자 집합(A–G). base CCD 20(사슬 A→B→C→D, E→A, F→B, G 고립). `head_at_threshold`는 G→D로 CCD 21 — 정확히 5%라 `20·21 = 420 > 21·20 = 420`이 **거짓**. `head_over_threshold`는 G→C로 CCD 22 — `440 > 420` 참. `display_ratio_would_say`는 2자리 NCCD를 다시 읽어 나눈 결과다 — 계약은 그것을 읽지 않는다(§5.3: `change.json`의 2자리 값을 읽지 않는다). 식별자 집합이 다르면 비교 자체가 없다(D175 `context_changed`) — `identifier_sets_equal`이 그 전제.",
+  "compare": {
+    "base": {
+      "nodes": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "edges": [
+        [
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "C"
+        ],
+        [
+          "C",
+          "D"
+        ],
+        [
+          "E",
+          "A"
+        ],
+        [
+          "F",
+          "B"
+        ]
+      ]
+    },
+    "head_at_threshold": {
+      "nodes": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "edges": [
+        [
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "C"
+        ],
+        [
+          "C",
+          "D"
+        ],
+        [
+          "E",
+          "A"
+        ],
+        [
+          "F",
+          "B"
+        ],
+        [
+          "G",
+          "D"
+        ]
+      ]
+    },
+    "head_over_threshold": {
+      "nodes": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "edges": [
+        [
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "C"
+        ],
+        [
+          "C",
+          "D"
+        ],
+        [
+          "E",
+          "A"
+        ],
+        [
+          "F",
+          "B"
+        ],
+        [
+          "G",
+          "C"
+        ]
+      ]
+    }
+  }
+}

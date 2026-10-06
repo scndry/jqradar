@@ -31,7 +31,8 @@
       "I": null,
       "A": 0,
       "D": null,
-      "class_count": 1
+      "class_count": 1,
+      "reason": "isolated_component"
     },
     {
       "id": "com.acme.core.order",
@@ -58,7 +59,8 @@
       "I": null,
       "A": 0,
       "D": null,
-      "class_count": 2
+      "class_count": 2,
+      "reason": "isolated_component"
     },
     {
       "id": "com.acme.web",
