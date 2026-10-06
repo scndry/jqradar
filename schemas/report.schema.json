@@ -25,7 +25,10 @@
       "description": "프로젝트 이름(§7). 설명이며 재계산 대상이 아니다."
     },
     "people_artifact": {
-      "enum": ["people.json", null],
+      "enum": [
+        "people.json",
+        null
+      ],
       "description": "저자 사실이 가는 8번째 산출물의 존재 표시(§7, D161). `people.attribution ∈ {team, individual}`이면 `\"people.json\"`, `off`면 `null` — 아래 `allOf`가 `reproduce.people.attribution`과 묶는다. 저자 사실 자체는 이 문서에 오지 않는다(D126)."
     },
     "reproduce": {
@@ -880,10 +883,17 @@
           "description": "컴포넌트로 접기 전 클래스 간선 수(§2.2). 접을 때 자기 간선·중복은 제거하되 이 수는 따로 센다."
         },
         "reason": {
-          "enum": [
-            "isolated_component"
+          "allOf": [
+            {
+              "$ref": "#/$defs/reason"
+            },
+            {
+              "enum": [
+                "isolated_component"
+              ]
+            }
           ],
-          "description": "I·D·zone이 null인 이유(§2.5 사전, D180). `isolated_component` = external을 접은 뒤 `Ca + Ce = 0` — 프로젝트 안에 이웃이 없다. A·cycle_id는 그래도 값이다."
+          "description": "I·D·zone이 null인 이유(§2.5 사전, D180·D188). 이 자리는 `isolated_component` 하나 — external을 접은 뒤 `Ca + Ce = 0`. A·cycle_id는 그래도 값이다."
         }
       },
       "additionalProperties": false,
@@ -1102,7 +1112,7 @@
     },
     "lensPercentile": {
       "type": "object",
-      "description": "렌즈 하나의 백분위 기록 — **항상 객체**, 맨 `null`이 아니다(D171): 맨 `null`은 '값이 null'과 '모집단에서 제외'의 구분을 지운다. `pct`가 null이면 `reason`이 왜인지 말하고(성분의 열거 그대로 — 렌즈가 null인 이유는 성분이 null인 이유), non-null이면 `n_ranked`(분모)가 있다.",
+      "description": "렌즈 하나의 백분위 기록 — **항상 객체**, 맨 `null`이 아니다(D171): 맨 `null`은 '값이 null'과 '모집단에서 제외'의 구분을 지운다. `pct`가 null이면 `reason`이 왜인지 말하고(§2.5 사전 — 렌즈가 null인 이유는 성분이 null인 이유, D188), non-null이면 `n_ranked`(분모)가 있다.",
       "required": [
         "pct",
         "population"
@@ -1123,14 +1133,8 @@
           "description": "모집단 크기. **`n_ranked`와 다를 때만** 적는다(D122)."
         },
         "reason": {
-          "enum": [
-            "not_in_active",
-            "no_twins",
-            "age_unknown",
-            "insufficient_population",
-            "no_bytecode"
-          ],
-          "description": "`pct`가 null인 이유(D171) — `interpretation`도 이 값으로 null이고 `anchor_class`(§5.5)도 같은 경로다."
+          "$ref": "#/$defs/reason",
+          "description": "`pct`가 null인 이유(§2.5 사전, D171·D188) — `interpretation`도 이 값으로 null이고, **파일 렌즈 finding에서는** `anchor_class`(§5.5)도 같은 경로다(D191 — 렌즈 없는 finding에는 그 필드가 없다). 렌즈별 부분집합은 `lens_percentiles`의 H·Dx·F에."
         }
       },
       "allOf": [
@@ -1215,45 +1219,82 @@
               "$ref": "#/$defs/populationName"
             },
             "additionalProperties": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/populationEntry"
+                },
+                {
+                  "properties": {
+                    "reason": {
+                      "enum": [
+                        "not_in_active",
+                        "no_twins",
+                        "insufficient_population"
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            "description": "그 밖의 성분 — 소속 사유 셋뿐(`not_in_active`·`no_twins`·`insufficient_population`). `<population>` → 항목. 쌍·컴포넌트의 이름은 여기 올 수 없다(D188)."
+          },
+          "properties": {
+            "age_last_days": {
               "type": "object",
-              "properties": {
-                "lang": {
-                  "type": "string",
-                  "description": "`cx`처럼 언어별로 재는 성분(§2.5, D12)."
-                },
-                "n_ranked": {
-                  "type": "integer",
-                  "description": "공식 `(rank_avg−1)/(N−1)`의 **분모** — 그 성분 값이 non-null인 파일 수(§2.5, D116·D122). 인쇄된 분모로 pct를 재계산할 수 없으면 그 pct는 의견이다(B.4)."
-                },
-                "n_population": {
-                  "type": "integer",
-                  "description": "모집단 크기. **`n_ranked`와 다를 때만** 적는다(D122) — 예: `age_last_days`는 `all` 340 중 유효 338."
-                },
-                "reason": {
-                  "enum": [
-                    "not_in_active",
-                    "no_twins",
-                    "age_unknown",
-                    "insufficient_population",
-                    "no_bytecode"
-                  ],
-                  "description": "pct가 null인 이유(§2.5, D38·D170). 값이 없는 것과 모집단에 없는 것은 다르다. `no_bytecode` = 클래스가 `bytecode_scope`에 없어 `fan_in`을 셀 수 없다(D170) — '의존하는 클래스가 없다'(0)와 다른 상태."
-                }
+              "minProperties": 1,
+              "propertyNames": {
+                "$ref": "#/$defs/populationName"
               },
-              "anyOf": [
-                {
-                  "required": [
-                    "n_ranked"
-                  ]
-                },
-                {
-                  "required": [
-                    "reason"
-                  ]
-                }
-              ],
-              "additionalProperties": false,
-              "description": "분모가 있거나(pct가 있다) 이유가 있다(pct가 null이다) — 둘 다 없는 항목은 아무것도 말하지 않는다(D168)."
+              "additionalProperties": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/populationEntry"
+                  },
+                  {
+                    "properties": {
+                      "reason": {
+                        "enum": [
+                          "not_in_active",
+                          "no_twins",
+                          "insufficient_population",
+                          "age_unknown",
+                          "invalid_metadata",
+                          "uncommitted",
+                          "rename_ancestry_lost"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              },
+              "description": "성분 `age_last_days`의 자리(§2.5 표 셋째 열, D188·D189): 소속 사유 셋 + `age_unknown`·`invalid_metadata`·`uncommitted`·`rename_ancestry_lost`."
+            },
+            "fan_in": {
+              "type": "object",
+              "minProperties": 1,
+              "propertyNames": {
+                "$ref": "#/$defs/populationName"
+              },
+              "additionalProperties": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/populationEntry"
+                  },
+                  {
+                    "properties": {
+                      "reason": {
+                        "enum": [
+                          "not_in_active",
+                          "no_twins",
+                          "insufficient_population",
+                          "no_bytecode"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              },
+              "description": "성분 `fan_in`의 자리(§2.5 표 셋째 열, D170·D188): 소속 사유 셋 + `no_bytecode`."
             }
           }
         },
@@ -1289,13 +1330,62 @@
           "description": "렌즈 값 자체의 백분위(§2.5) — `interpretation`의 **유일한** 근거(D34). null인 렌즈 값은 제외하고 **0은 포함**한다. **렌즈는 H·Dx·F 셋**(D172) — `composite`는 렌즈가 아니라 `--profile`의 가중합이고 백분위·`interpretation`·`anchor_class`가 없다(넷째 순위 표면을 만들지 않는다, B.2·B.3). 그래서 키가 닫혀 있다.",
           "properties": {
             "H": {
-              "$ref": "#/$defs/lensPercentile"
+              "allOf": [
+                {
+                  "$ref": "#/$defs/lensPercentile"
+                },
+                {
+                  "properties": {
+                    "reason": {
+                      "enum": [
+                        "not_in_active",
+                        "insufficient_population"
+                      ]
+                    }
+                  }
+                }
+              ],
+              "description": "H의 자리(§2.5 표 셋째 열): `not_in_active`·`insufficient_population`."
             },
             "Dx": {
-              "$ref": "#/$defs/lensPercentile"
+              "allOf": [
+                {
+                  "$ref": "#/$defs/lensPercentile"
+                },
+                {
+                  "properties": {
+                    "reason": {
+                      "enum": [
+                        "no_twins",
+                        "insufficient_population"
+                      ]
+                    }
+                  }
+                }
+              ],
+              "description": "Dx의 자리(§2.5 표 셋째 열): `no_twins`·`insufficient_population`."
             },
             "F": {
-              "$ref": "#/$defs/lensPercentile"
+              "allOf": [
+                {
+                  "$ref": "#/$defs/lensPercentile"
+                },
+                {
+                  "properties": {
+                    "reason": {
+                      "enum": [
+                        "insufficient_population",
+                        "age_unknown",
+                        "invalid_metadata",
+                        "uncommitted",
+                        "rename_ancestry_lost",
+                        "no_bytecode"
+                      ]
+                    }
+                  }
+                }
+              ],
+              "description": "F의 자리(§2.5 표 셋째 열): `insufficient_population` + 나이 넷(`age_unknown`·`invalid_metadata`·`uncommitted`·`rename_ancestry_lost`) + `no_bytecode`."
             }
           },
           "additionalProperties": false
@@ -1338,10 +1428,17 @@
               ]
             },
             "reason": {
-              "enum": [
-                "isolated_component"
+              "allOf": [
+                {
+                  "$ref": "#/$defs/reason"
+                },
+                {
+                  "enum": [
+                    "isolated_component"
+                  ]
+                }
               ],
-              "description": "I·D·zone이 null인 이유(§2.5 사전, D180). `isolated_component` = external을 접은 뒤 `Ca + Ce = 0` — 프로젝트 안에 이웃이 없다. A·cycle_id는 그래도 값이다."
+              "description": "I·D·zone이 null인 이유(§2.5 사전, D180·D188). 이 자리는 `isolated_component` 하나. 성분·렌즈의 이름(`not_in_active` …)은 여기 올 수 없다 — 클래스가 없는 파일은 `arch_context` 전체가 null이라(D170) reason 자리 자체가 없다."
             }
           },
           "additionalProperties": false,
@@ -1546,13 +1643,21 @@
             "boolean",
             "null"
           ],
-          "description": "정적 의존 유무(§2.2 클래스 그래프). 그래프 밖 파일이 든 쌍은 **`null`** — 판정하지 않은 것이지 없는 것이 아니다(D176). 정렬은 false · true · null."
+          "description": "정적 의존 유무(§2.2 클래스 그래프). 쌍의 **어느 한쪽이라도** 그래프 밖이면 **`null`** — 판정하지 않은 것이지 없는 것이 아니다(D176·D190). 정렬은 false · true · null."
         },
         "reason": {
-          "enum": [
-            "outside_bytecode_scope"
+          "allOf": [
+            {
+              "$ref": "#/$defs/reason"
+            },
+            {
+              "enum": [
+                "outside_bytecode_scope",
+                "no_bytecode"
+              ]
+            }
           ],
-          "description": "`static_dependency`가 null인 이유(D176). `outside_bytecode_scope` = 쌍의 한쪽이 `bytecode_scope` 밖(테스트 소스 세트) — D170의 `no_bytecode`(클래스가 없다)와 다른 상태."
+          "description": "`static_dependency`가 null인 이유(§2.5 사전, D176·D190) — 그 파일이 클래스 그래프에 없는 이유: `outside_bytecode_scope`(범위 밖 — 테스트 소스 세트) 또는 `no_bytecode`(적격이지만 클래스 없음). **동률 규칙**(D190): 둘 다 밖이고 사유가 다르면 `outside_bytecode_scope`가 앞선다 — 범위 결정이 클래스 유무보다 앞선다."
         }
       },
       "additionalProperties": false,
@@ -1630,7 +1735,7 @@
         },
         "lens_pct": {
           "$ref": "#/$defs/percentileValue",
-          "description": "이 렌즈 값의 백분위(§2.5) — `interpretation`이 쓰는 값."
+          "description": "이 렌즈 값의 백분위(§2.5) — `interpretation`이 쓰는 값. **파일 렌즈 finding에만 있다**(D191)."
         },
         "interpretation": {
           "$ref": "#/$defs/interpretation"
@@ -1697,7 +1802,51 @@
           }
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "hotspot",
+                  "duplication_exposure",
+                  "frozen_core"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "lens",
+              "file",
+              "lens_pct",
+              "interpretation"
+            ],
+            "description": "파일 렌즈 finding(H·Dx·F)에는 렌즈·파일·`lens_pct`·`interpretation`이 있다(§3.7·D191). `lens_pct`가 null이면 `interpretation`도 null이고 이유는 그 파일의 `lens_percentiles.<lens>.reason`에 있다(D171)."
+          },
+          "else": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "lens_pct"
+                  ]
+                },
+                {
+                  "required": [
+                    "interpretation"
+                  ]
+                }
+              ]
+            },
+            "description": "렌즈 없는 finding(순환·Hidden Coupling)에는 `lens_pct`·`interpretation`이 **필드로 없다**(D191) — `anchor_class`(§5.5)도 같고, 이 객체는 닫혀 있어 그 이름 자체가 거부된다. \"해당 없음\"은 null도 `reason`도 아니다(D162의 `team_count`와 같은 처리). `no_lens` 같은 상수 값은 정보가 없다."
+          }
+        }
+      ]
     },
     "noteText": {
       "type": [
@@ -1709,6 +1858,56 @@
         "type": "string",
         "pattern": "(?:\\b(?:[Aa][Ww][Ff][Uu][Ll]|[Bb][Aa][Dd]|[Cc][Rr][Aa][Pp][Pp][Yy]|[Dd][Aa][Nn][Gg][Ee][Rr][Oo][Uu][Ss]|[Gg][Aa][Rr][Bb][Aa][Gg][Ee]|[Hh][Oo][Rr][Rr][Ii][Bb][Ll][Ee]|[Nn][Aa][Ss][Tt][Yy]|[Pp][Oo][Oo][Rr]|[Rr][Ii][Ss][Kk][Yy]|[Rr][Oo][Tt][Tt][Ee][Nn]|[Ss][Ee][Vv][Ee][Rr][Ee]|[Ss][Ee][Vv][Ee][Rr][Ii][Tt][Yy]|[Ss][Mm][Ee][Ll][Ll][Yy]|[Tt][Ee][Rr][Rr][Ii][Bb][Ll][Ee]|[Uu][Gg][Ll][Yy]|[Uu][Nn][Hh][Ee][Aa][Ll][Tt][Hh][Yy]|[Ww][Oo][Rr][Ss][Tt])\\b|(?:나쁘|나쁜|나쁨|더러운|불량|심각|썩은|엉망|위험|지저분|최악|형편없))"
       }
+    },
+    "reason": {
+      "enum": [
+        "not_in_active",
+        "no_twins",
+        "insufficient_population",
+        "age_unknown",
+        "invalid_metadata",
+        "uncommitted",
+        "rename_ancestry_lost",
+        "no_bytecode",
+        "outside_bytecode_scope",
+        "isolated_component"
+      ],
+      "description": "`reason`의 **사전 — §2.5의 표 한 곳**(D188). 모든 `reason` 키(성분·렌즈·`arch_context`·`component`·`hidden_couplings`)가 여기서 고르고, 자리마다 허용 부분집합은 표의 셋째 열 \"오는 자리\" 그대로다 — 이 사전에 없는 이름은 어느 자리에서도 거부되고, 사전에는 있되 그 자리에 없는 이름도 거부된다. `not_in_active`(파일이 `active`에 속하지 않음 — 성분·렌즈 H) · `no_twins`(`twins = 0` — 성분·렌즈 Dx) · `insufficient_population`(N < 20 — 성분·렌즈) · `age_unknown`(shallow, D148) · `invalid_metadata`(음수 나이, §2.1) · `uncommitted`(미커밋 신규 파일, D189) · `rename_ancestry_lost`(rename 조상 복구 실패, D189) — 넷은 성분 `age_last_days`·렌즈 F · `no_bytecode`(적격 소스인데 클래스가 `bytecode_scope`에 없음, D170 — 성분 `fan_in`·렌즈 F·쌍 D190; `arch_context`는 전체가 null이라 reason 자리가 없다) · `outside_bytecode_scope`(범위 밖 파일이 쌍에 듦, D176 — 쌍) · `isolated_component`(`Ca + Ce = 0`, D180 — `arch_context`·`component`의 I·D·zone). `rename_ambiguous`는 표기, `*_note`는 자유 텍스트, \"해당 없음\"은 필드 부재(D191) — 셋 다 사전 밖."
+    },
+    "populationEntry": {
+      "type": "object",
+      "properties": {
+        "lang": {
+          "type": "string",
+          "description": "`cx`처럼 언어별로 재는 성분(§2.5, D12)."
+        },
+        "n_ranked": {
+          "type": "integer",
+          "description": "공식 `(rank_avg−1)/(N−1)`의 **분모** — 그 성분 값이 non-null인 파일 수(§2.5, D116·D122). 인쇄된 분모로 pct를 재계산할 수 없으면 그 pct는 의견이다(B.4)."
+        },
+        "n_population": {
+          "type": "integer",
+          "description": "모집단 크기. **`n_ranked`와 다를 때만** 적는다(D122) — 예: `age_last_days`는 `all` 340 중 유효 338."
+        },
+        "reason": {
+          "$ref": "#/$defs/reason",
+          "description": "pct가 null인 이유(§2.5 사전, D38·D188). 값이 없는 것과 모집단에 없는 것은 다르다. 자리별 부분집합은 `percentile_population`의 성분별 `properties`에 — 표의 셋째 열이다."
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "n_ranked"
+          ]
+        },
+        {
+          "required": [
+            "reason"
+          ]
+        }
+      ],
+      "additionalProperties": false,
+      "description": "분모가 있거나(pct가 있다) 이유가 있다(pct가 null이다) — 둘 다 없는 항목은 아무것도 말하지 않는다(D168)."
     }
   },
   "allOf": [
@@ -1716,20 +1915,50 @@
       "if": {
         "properties": {
           "reproduce": {
-            "properties": {"people": {"properties": {"attribution": {"const": "off"}}, "required": ["attribution"]}},
-            "required": ["people"]
+            "properties": {
+              "people": {
+                "properties": {
+                  "attribution": {
+                    "const": "off"
+                  }
+                },
+                "required": [
+                  "attribution"
+                ]
+              }
+            },
+            "required": [
+              "people"
+            ]
           }
         },
-        "required": ["reproduce"]
+        "required": [
+          "reproduce"
+        ]
       },
       "then": {
         "properties": {
-          "people_artifact": {"const": null},
+          "people_artifact": {
+            "const": null
+          },
           "files": {
             "items": {
               "properties": {
                 "measures": {
-                  "not": {"anyOf": [{"required": ["team_count"]}, {"required": ["teams_folded"]}]}
+                  "not": {
+                    "anyOf": [
+                      {
+                        "required": [
+                          "team_count"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "teams_folded"
+                        ]
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -1738,7 +1967,11 @@
         "description": "`off`에서는 `people.json`이 없고(D161) `team_count`·`teams_folded`는 필드 부재다(D162) — off가 내는 저자 유래 필드는 `distinct_authors_90d`·`ownership_max_share`·`minor_contributor_share` 셋으로 닫힌다. `null`도 아니다: 매핑이 없으면 셀 수 없는 것이 아니라 세지 않는 것이다."
       },
       "else": {
-        "properties": {"people_artifact": {"const": "people.json"}},
+        "properties": {
+          "people_artifact": {
+            "const": "people.json"
+          }
+        },
         "description": "`team`·`individual`이면 저자 사실은 `people.json`에 있고 이 문서는 그 존재를 가리킨다(D161)."
       }
     }

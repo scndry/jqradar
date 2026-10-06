@@ -3,12 +3,13 @@
   "generated_by": "contract/schema/compute.py",
   "check": "schema",
   "kind": "structural",
-  "contract_ref": "D38·D170",
-  "what": "percentile_population.reason은 정해진 다섯 값뿐(D38 + `no_bytecode`, D170)",
-  "mechanism": "enum(전사)",
+  "contract_ref": "D38·D170·D188",
+  "what": "percentile_population.reason은 §2.5 사전 표의 열 이름뿐(D188 — 한 곳 `$defs.reason`; 옛 다섯 D38·D170에 `invalid_metadata`·`uncommitted`·`rename_ancestry_lost`·`outside_bytecode_scope`·`isolated_component`가 더해져 열). 사전 밖 이름은 사전에서 한 번, 자리의 부분집합에서 한 번 거부된다.",
+  "mechanism": "enum($defs.reason — 사전이 계약)",
   "schema": "report.schema.json",
   "verdict": "reject",
   "rejected_at": [
+    "/files/1/percentile_population/chg_commits/active/reason",
     "/files/1/percentile_population/chg_commits/active/reason"
   ]
 }

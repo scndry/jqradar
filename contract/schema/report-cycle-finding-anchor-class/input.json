@@ -1,0 +1,21 @@
+{
+  "case": "report-cycle-finding-anchor-class",
+  "check": "schema",
+  "kind": "structural",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "additionalProperties:false",
+  "contract_ref": "D191",
+  "what": "순환 finding(`fnd:cyc-1`)에 `anchor_class`를 넣으면 거부(D191 — 렌즈 없는 finding에는 그 필드가 **없다**). 이 객체는 닫혀 있어 이름 자체가 거부된다 — §7 예시만 보고 닫은 스키마도 잡는다. `anchor_class`의 본 자리는 `change.json`의 `touched_legacy_findings[]`(§5.7)이고 거기서는 모든 항목에 `required`다 — PR 본문의 'PRD 공백' 참조.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "findings",
+        3,
+        "anchor_class"
+      ],
+      "value": "high"
+    }
+  ]
+}

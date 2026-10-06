@@ -1,0 +1,52 @@
+{
+  "case": "report-arch-context-not-in-active",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "allOf($defs.reason + 자리별 enum)",
+  "contract_ref": "D188·D180",
+  "what": "`arch_context`의 `reason`에 성분·렌즈의 이름 `not_in_active`가 오면 거부(D188 — 사전에는 있되 그 자리에 없는 이름). 사전이 한 곳이라는 말은 이름이 어디서나 통한다는 뜻이 아니라 표의 셋째 열 '오는 자리'가 자리마다의 부분집합이라는 뜻이다. 이 자리는 `isolated_component` 하나(D180).",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "files",
+        0,
+        "arch_context",
+        "I"
+      ],
+      "value": null
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        0,
+        "arch_context",
+        "D"
+      ],
+      "value": null
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        0,
+        "arch_context",
+        "zone"
+      ],
+      "value": null
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        0,
+        "arch_context",
+        "reason"
+      ],
+      "value": "not_in_active"
+    }
+  ]
+}
