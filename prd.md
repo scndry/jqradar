@@ -513,6 +513,8 @@ PR #11·#10·#12가 계약 → 구현 → 기록 순서로 머지되고 main pus
 
 **이 판이 하지 않은 것.** 닫힘 표시, 스키마·픽스처·계산기, 나머지 묶음 일곱. G0 #1은 통과가 아니다.
 
+**보정(2026-10-06, 같은 판 안).** 구현 세션이 스키마를 표대로 쓰다 공백 둘을 찾아 채우지 않고 보고했다. (1) `change.json`의 `touched_legacy_findings[]`가 모든 항목에 `anchor_class`를 요구하고 `kind`가 없어 순환·Hidden Coupling finding을 가를 열쇠가 없었다 — D191이 report의 finding에만 걸려 있었다. 항목에 `kind`를 두고 `anchor_class`는 파일 렌즈 finding에만(§5.7·§7 — D191의 대괄호에 §5.7·§7을 더했다; `touched_legacy_findings[]`의 정의는 §5.1이 아니라 §5.7에 있다). (2) 표의 `not_in_active`가 렌즈(H)에만 있어 active가 아닌데 `twins ≥ 1`인 파일의 Dx 사유에 이름이 없었다 — `dx = active ∩ twins ≥ 1`이라 active가 아니면 Dx도 같은 사유다; 표의 셋째 열에 Dx를 더했다. 둘 다 결정의 **착지가 덜 된 자리**이지 새 결정이 아니라 판 번호는 올리지 않는다(§0-29·§0-40과 같은 처리). 스키마가 따라갈 자리: `change.schema.json`의 항목에 `kind`와 if/then, `report.schema.json`의 Dx 부분집합에 `not_in_active`.
+
 **문서 규칙(v3.7.2)** — 본문(§1–§12)에는 계약·근거·결정만 쓴다. "언제 뭘 고쳤다"는 판 이력은 §0에만 남긴다 — 본문의 편집 메모는 읽는 사람이 아니라 쓰는 사람을 위한 것이었다. 문장 단위 "(vX.Y)" 태그는 본문(§1–§9, §11–§12)에서 제거했다 — 변경점은 §0와 git diff가 갖는다. §10 결정 기록의 판 표기는 기록의 일부(언제 결정·개정됐나)라 유지한다.
 
 **문서 규칙 2 — 본문은 언제나 자기 완결이어야 한다.** "이전 판과 같음"·"vX §n 그대로"·"나머지는 vY"라는 참조를 본문에 쓰지 않는다. 그것은 다음 재작성에서 내용이 사라지는 가장 확실한 경로였다 — §4·§8·§10 D1–D23·§6.5 전제조건·§9 P3–P6와 매트릭스·§7 예시가 그렇게 사라졌고, 참조가 가리키던 판은 이미 없었다. 줄이려면 본문을 줄이고, 옮기려면 옮긴 자리를 §n으로 가리킨다. 이전 판을 가리키는 문장이 본문에 있으면 리뷰에서 반려한다.
@@ -632,7 +634,7 @@ PR #11·#10·#12가 계약 → 구현 → 기록 순서로 머지되고 main pus
 - **`reason` 사전**(D188 — 모든 `reason` 키의 정본: 성분·렌즈·`arch_context`·`component`·`hidden_couplings`·`anchor_class`가 전부 여기서 고르고, §3.7·§2.4·§3.4·§2.2는 열거를 복제하지 않고 이 표를 가리킨다; 셋째 열 "오는 자리"는 스키마의 if/then 부분집합과 **같은 표**다 — 사전이 한 곳이라는 말은 스키마가 이 표를 베낀다는 뜻이다):
   | 이름 | 뜻 | 오는 자리 |
   |---|---|---|
-  | `not_in_active` | 파일이 `active`에 속하지 않음 | 성분·렌즈(H) |
+  | `not_in_active` | 파일이 `active`에 속하지 않음 | 성분·렌즈(H·Dx — `dx = active ∩ twins ≥ 1`이라 active가 아니면 Dx도 이 사유) |
   | `no_twins` | `twins = 0`이라 `dx` 밖 | 성분·렌즈(Dx) |
   | `insufficient_population` | 랭킹 집합 N < 20 | 성분·렌즈 |
   | `age_unknown` | shallow — graft 경계에서 나이를 못 정함(D148) | 성분(`age_last_days`)·렌즈(F) |
@@ -1010,7 +1012,7 @@ exit 0/1/2. `jqradar.yml` 선택, `check`만. 정책 이름·해시·출처를 `
 - `debt_age = HEAD_TIME − coalesce(first_observed_estimate.value, first_seen)`.
 
 ### 5.7 변경 리포트와 원장의 연결
-`change.json`에 **`touched_legacy_findings[]`**: 변경 파일 안의 캠페인 finding(파생) 각각에 대해 `{id, anchor_class, status_before, delta, status_after_if_merged, claimed_by_this_pr}` — `claimed_by_this_pr`은 **필수**다(이 PR이 그 finding의 사건 파일을 실었는가는 파생 가능한 사실이고, 선택으로 두면 전이 귀속(§5.5)과 어긋난다). "이 PR은 부채 3개를 건드렸고 1개 개선, 2개 그대로." 브라운필드에서 가장 센 문장이다 — **당신이 만지는 곳의 부채부터 줄인다.** 판정 단어는 없다.
+`change.json`에 **`touched_legacy_findings[]`**: 변경 파일 안의 캠페인 finding(파생) 각각에 대해 `{id, kind, anchor_class?, status_before, delta, status_after_if_merged, claimed_by_this_pr}` — `kind`는 report의 finding과 같은 열거이고, `anchor_class`는 **파일 렌즈 finding에만** 있다(순환·Hidden Coupling finding은 필드 없음 — D191이 report에 건 것과 같은 if/then); `claimed_by_this_pr`은 **필수**다(이 PR이 그 finding의 사건 파일을 실었는가는 파생 가능한 사실이고, 선택으로 두면 전이 귀속(§5.5)과 어긋난다). "이 PR은 부채 3개를 건드렸고 1개 개선, 2개 그대로." 브라운필드에서 가장 센 문장이다 — **당신이 만지는 곳의 부채부터 줄인다.** 판정 단어는 없다.
 ---
 
 ## 6. 수정 워크플로
@@ -1255,7 +1257,7 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
                    "event_file": "events/debt-2026Q4/fnd-dx-dup-3f9a…/pr482.json", "validated_tree_id": "sha256:…", "view": "at"},
   "transitions": [ {"at": "sha", "from": "open", "to": "resolved", "attributed_to": "pr482"} ] }
 ```
-`change.json.touched_legacy_findings[]` = `{id, anchor_class, status_before, delta: {…}, status_after_if_merged}`.
+`change.json.touched_legacy_findings[]` = `{id, kind, anchor_class?, status_before, delta: {…}, status_after_if_merged, claimed_by_this_pr}` — `anchor_class`는 파일 렌즈 finding에만(D191).
 
 **8번째 산출물 `people.json`**(D161) — `people.attribution ∈ {team, individual}`에서만 생성되고 `build/` 산출물이며 `.jqradar/`에는 절대 없다. `report.json`은 `people_artifact`로 그 존재만 가리킨다. `off`에서 이 파일이 있으면 계약 위반이다.
 ```jsonc
@@ -1720,7 +1722,7 @@ CodeScene 조사(2026-09)에서 가져온 것과 이유를 항목마다 적는�
 - D188 [§2.5, §2.1, §2.4, §3.4, §3.7, §2.9] **`reason`의 사전은 한 곳 — §2.5의 표**("이름 → 뜻 → 오는 자리", 열 이름). 성분·렌즈·`arch_context`·`component`·`hidden_couplings`·`anchor_class`의 모든 `reason`이 여기서 고르고, §3.7·§2.4·§3.4·§2.2는 열거를 복제하지 않고 표를 가리킨다(목록은 계약이 갖는다 — D182). 셋째 열은 스키마의 if/then 부분집합과 같은 표다. `rename_ambiguous`는 표기, `*_note`는 자유 텍스트 — 사전 밖. `invalid_metadata`가 처음으로 열거에 든다.
 - D189 [§2.1, §2.5, §2.9] 미커밋 신규 파일 → `uncommitted`, rename 조상 복구 실패 → `rename_ancestry_lost` — §2.1이 shallow(`age_unknown`)와 음수(`invalid_metadata`)를 갈라 둔 결 그대로, 사유마다 구제가 다르다(커밋하라 / 도구의 한계). `age_unknown`으로 접으면 둘은 다시 이름 없는 null이 된다.
 - D190 [§2.4, §2.5, §2.9] 쌍의 어느 한쪽이라도 클래스 그래프에 없으면 `static_dependency: null`, 사유는 그 파일이 그래프에 없는 이유 — `outside_bytecode_scope`(범위 밖) 또는 **`no_bytecode`**(적격이지만 클래스 없음) — D176이 가른 구분을 쌍에서도 지킨다. **동률 규칙**: 둘 다 밖이고 사유가 다르면 `outside_bytecode_scope`가 앞선다(범위 결정이 클래스 유무보다 앞선다). 정렬은 null 맨 뒤 그대로.
-- D191 [§5.5, §3.7, §2.5] 렌즈 없는 finding(순환·Hidden Coupling)에는 `anchor_class`·`lens_pct`·`interpretation`이 **필드로 없다** — D162의 `team_count`와 같은 처리: "해당 없음"은 null도 `reason`도 아니다. `no_lens` 같은 상수 값은 정보가 없다. §3.7·D171의 "`anchor_class`도 같은 경로"는 파일 렌즈 finding에만. 밖 key S3-24·O3-9도 이 결정이 닫는다 — 밖 key에도 닫힘 표시를 붙이고(D152·D153 — 수에 닿지 않는다) `--count`는 범위 밖의 열림/닫힘을 갈라 센다.
+- D191 [§5.5, §3.7, §2.5, §5.7, §7] 렌즈 없는 finding(순환·Hidden Coupling)에는 `anchor_class`·`lens_pct`·`interpretation`이 **필드로 없다** — D162의 `team_count`와 같은 처리: "해당 없음"은 null도 `reason`도 아니다. `no_lens` 같은 상수 값은 정보가 없다. §3.7·D171의 "`anchor_class`도 같은 경로"는 파일 렌즈 finding에만. `change.json`의 `touched_legacy_findings[]`도 같다 — `kind`를 갖고 `anchor_class`는 파일 렌즈 finding에만(§5.7·§7). 밖 key S3-24·O3-9도 이 결정이 닫는다 — 밖 key에도 닫힘 표시를 붙이고(D152·D153 — 수에 닿지 않는다) `--count`는 범위 밖의 열림/닫힘을 갈라 센다.
 
 **열어둔 것**
 - O3 WARN→FAIL 승격 — 조직 결정.
