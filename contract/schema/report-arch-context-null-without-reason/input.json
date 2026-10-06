@@ -1,0 +1,27 @@
+{
+  "case": "report-arch-context-null-without-reason",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "if/then",
+  "contract_ref": "D180",
+  "what": "I·D·zone이 null인데 `reason`이 없으면 거부 — '모르는 것'과 '값'을 산출물이 갈라 말해야 한다(D180, D170의 모양). 거꾸로 I가 값인데 reason이 있어도 거부된다(else).",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "files",
+        1,
+        "arch_context"
+      ],
+      "value": {
+        "I": null,
+        "A": 0.0,
+        "D": null,
+        "zone": null,
+        "cycle_id": null
+      }
+    }
+  ]
+}

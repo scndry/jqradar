@@ -1,0 +1,31 @@
+{
+  "case": "report-percentile-output-without-irrational",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "required(장치의 전부)",
+  "contract_ref": "D182",
+  "what": "`percentile_method.output.irrational`을 빼면 거부 — 무리수 연산(√·log₂)의 방법·정밀도가 인쇄되지 않으면 `CCD_balanced`·`NCCD`·렌즈 값이 어느 산술에서 나왔는지 재계산할 수 없다(D182). 옛 키 `sqrt`로 바꿔 넣어도 거부된다(`additionalProperties: false`) — 함수 목록은 계약이 갖는다.",
+  "patch": [
+    {
+      "op": "remove",
+      "path": [
+        "reproduce",
+        "percentile_method",
+        "output",
+        "irrational"
+      ]
+    },
+    {
+      "op": "set",
+      "path": [
+        "reproduce",
+        "percentile_method",
+        "output",
+        "sqrt"
+      ],
+      "value": "BigDecimal MathContext(34, HALF_EVEN)"
+    }
+  ]
+}

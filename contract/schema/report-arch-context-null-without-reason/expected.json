@@ -1,0 +1,14 @@
+{
+  "case": "report-arch-context-null-without-reason",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D180",
+  "what": "I·D·zone이 null인데 `reason`이 없으면 거부 — '모르는 것'과 '값'을 산출물이 갈라 말해야 한다(D180, D170의 모양). 거꾸로 I가 값인데 reason이 있어도 거부된다(else).",
+  "mechanism": "if/then",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/files/1/arch_context"
+  ]
+}

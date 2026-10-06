@@ -1,0 +1,22 @@
+{
+  "case": "report-arch-context-reason-on-value",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "if/then",
+  "contract_ref": "D180",
+  "what": "I가 값인데 `reason: isolated_component`가 붙어 있으면 거부 — 판정했는데 판정하지 않은 이유가 있는 것은 모순이다(D180). 소유자가 D176에서 지적한 역방향 구멍(boolean인데 reason)을 여기서는 처음부터 막는다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "files",
+        0,
+        "arch_context",
+        "reason"
+      ],
+      "value": "isolated_component"
+    }
+  ]
+}
