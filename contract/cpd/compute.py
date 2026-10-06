@@ -84,6 +84,12 @@ def build_expected(inp: dict) -> dict:
         # `duplicated_ranges`는 그 파일의 **모든** 발생 구간 합집합이다(§2.6).
         union = span(cross + selfd)
         total = file_tokens[path]
+        # D187 — 토큰을 세는 모든 수는 정규화 후 스트림의 것이라 분자(union)와 분모(file_tokens)가 같은
+        # 스트림이고 `dup_extent ≤ 1`이 불변식이다. 입력이 그것을 어기면(union > file_tokens) 분모가 다른
+        # 스트림이라는 뜻이므로 조용히 1을 넘기지 않고 멈춘다.
+        if total and union > total:
+            raise SystemExit(f"{inp['case']}: {path} union_dup_tokens {union} > file_tokens {total} — "
+                             f"분자·분모가 같은 스트림이 아니다(§2.6, D187)")
         per_file[path] = {
             "file_tokens": total,
             "duplicated_ranges": [list(r) for r in merge_ranges(cross + selfd)],
@@ -117,6 +123,9 @@ def build_expected(inp: dict) -> dict:
         "rejected_clusters": rejected,
         "files": per_file,
         "duplication_pairs": pairs,
+        # D187 — 분자·분모가 같은 정규화 후 스트림이라 dup_extent ≤ 1. 모든 케이스가 인쇄한다.
+        "invariants": {"dup_extent_at_most_one": all(
+            f["dup_extent"] is None or f["dup_extent"] <= 1 for f in per_file.values())},
     }
 
 
