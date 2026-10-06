@@ -494,6 +494,8 @@ PR #11·#10·#12가 계약 → 구현 → 기록 순서로 머지되고 main pus
 
 **이 판이 하지 않은 것.** 닫힘 표시, 스키마·픽스처, `change.json`의 §7 예시(T7 잔여), 나머지 묶음 여덟. G0 #1은 통과가 아니다.
 
+**보정(2026-10-06, 같은 판 안).** 린트가 8종 전부를 보고 "경과 시간(일)" 행을 알게 되자 §7 report 예시의 **정수 리터럴 셋**을 잡았다 — `files[0].measures.age_last_days` 6, `files[1].measures.age_last_days` 1250, `findings[2].evidence[2].value` 1250(`integer_in_scaled_field`, allowed 2). D184(2자리)와 D155(후행 0 유지)대로 `6.00`·`1250.00`·`1250.00`이어야 했고, 위 "움직이는 수 셋"에 그 둘이 빠져 있었다 — §0-29의 `age_last_days` 보정과 같은 모양이라 구현 세션은 코드에서 채우지 않고 멈췄다. 함께: 같은 evidence의 `p90_all` 900 → `900.00`(경과 시간의 P90이라 같은 행 — 요약 행에 `p90_all`을 이름으로 더했다; 정수라 린트가 조용했던 자리) 그리고 `debt_age_days` 953 → `953.00`(경과 시간 행에 이미 있는 이름). 그래서 움직이는 것은 셋이 아니라 **표기 다섯**이다 — 값은 하나도 안 바뀌었다. 판 번호는 올리지 않는다(PR #17·§0-29와 같은 처리).
+
 **문서 규칙(v3.7.2)** — 본문(§1–§12)에는 계약·근거·결정만 쓴다. "언제 뭘 고쳤다"는 판 이력은 §0에만 남긴다 — 본문의 편집 메모는 읽는 사람이 아니라 쓰는 사람을 위한 것이었다. 문장 단위 "(vX.Y)" 태그는 본문(§1–§9, §11–§12)에서 제거했다 — 변경점은 §0와 git diff가 갖는다. §10 결정 기록의 판 표기는 기록의 일부(언제 결정·개정됐나)라 유지한다.
 
 **문서 규칙 2 — 본문은 언제나 자기 완결이어야 한다.** "이전 판과 같음"·"vX §n 그대로"·"나머지는 vY"라는 참조를 본문에 쓰지 않는다. 그것은 다음 재작성에서 내용이 사라지는 가장 확실한 경로였다 — §4·§8·§10 D1–D23·§6.5 전제조건·§9 P3–P6와 매트릭스·§7 예시가 그렇게 사라졌고, 참조가 가리키던 판은 이미 없었다. 줄이려면 본문을 줄이고, 옮기려면 옮긴 자리를 §n으로 가리킨다. 이전 판을 가리키는 문장이 본문에 있으면 리뷰에서 반려한다.
@@ -636,7 +638,7 @@ PR #11·#10·#12가 계약 → 구현 → 기록 순서로 머지되고 main pus
   | 비율(0–1) | `pct`·`lens_pct`·`dup_extent`·`active_twin_ratio`·`tc`·`ownership_max_share`·`minor_contributor_share`·`I`·`A`·`D`·`RACD`·상대 변화(`delta`의 비율 표기 — `gate`의 `delta` 포함)·`changed_line_coverage`(`validate`, D185) | **4자리** |
   | 렌즈·composite(0–100) | `H`·`Dx`·`F`·`composite`·`priority`·`anchor_values`/`current_values`의 렌즈 값 | **1자리** |
   | Lakos 절대량 | `ACD`·`CCD_balanced`·`NCCD`·`nccd`(`gate`의 `[base, head]` — 소문자 이름 그대로, D185) | **2자리** |
-  | 요약 통계(`spread`의 `median`·`iqr`·`p90`·`max`, `median_files_per_commit`) | 대상이 정수 측정이면 **2자리**(type-7 보간이 사분위에서 `.25`·`.75`를 만든다 — 2자리가 정확값을 담는다; `median_files_per_commit`은 짝수면 `.5`라 `4.00`, D185), 비율 측정이면 4자리, 렌즈면 1자리 | 대상에 따름 |
+  | 요약 통계(`spread`의 `median`·`iqr`·`p90`·`max`, `median_files_per_commit`, evidence의 `p90_all`) | 대상이 정수 측정이면 **2자리**(type-7 보간이 사분위에서 `.25`·`.75`를 만든다 — 2자리가 정확값을 담는다; `median_files_per_commit`은 짝수면 `.5`라 `4.00`, D185), 비율 측정이면 4자리, 렌즈면 1자리 | 대상에 따름 |
   | 파라미터 | 정수는 정수, 분수는 **십진 문자열**(D156 — `"0.8"`), 이름은 문자열 | — |
   표에 없는 유리수 필드가 산출물에 나오면 `contract/schema/`의 스케일 린트가 **실패**한다 — 새 필드는 이 표에 먼저 들어온다. **표의 이름은 경로에서 찾는다**(D168): `percentiles.<field>.<population>`의 값은 `pct`(4자리)다 — 리프 키가 모집단 이름(`active`·`all`·`dx`)이어도 그것은 새 필드가 아니라 같은 백분위의 두 단계 기록이다. `lens_percentiles.<lens>.pct`도 같다.
 - **"바이트 동일"은 파싱된 숫자가 아니라 직렬화된 텍스트에 대한 주장이다.** 그래서 스케일은 **JSON Schema로 강제되지 않는다** — JSON 숫자는 이진 부동소수점으로 파싱되어 `multipleOf`가 깨진다(`95.6 % 0.1`, `0.8056 % 0.0001`이 거짓이 된다). 스케일 검사는 스키마가 아니라 **원문 텍스트 린트**의 일이고 `contract/schema/`가 진다.
@@ -1109,7 +1111,7 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
       "measures": { "cx": 87, "cx_method": "cyclo", "loc": 640, "file_tokens": 5200, "smells": {"p1":0,"p2":3,"p3":9,"total":12},
                     "chg_commits": 18, "chg_days": 14, "churn": 2210,
                     "union_dup_tokens": 240, "dup_extent": 0.0462, "self_dup_tokens": 0, "twins": 2, "active_twins": 1, "active_twin_ratio": 0.5000,   // 240/5200 = 0.04615… → 0.0462
-                    "fan_in": 24, "age_last_days": 6 },
+                    "fan_in": 24, "age_last_days": 6.00 },
       "percentiles": { "cx": {"active": 0.9741, "all": 0.9678}, "chg_commits": {"active": 0.9384},                  // <field>.<population> — 소속 기준(D168): active 파일은 cx의 all 백분위도 갖는다
                        "union_dup_tokens": {"dx": 0.8889}, "active_twin_ratio": {"dx": 0.7083}, "fan_in": {"all": 0.8820} },
       "percentile_population": { "cx": {"active": {"lang":"java","n_ranked":194}, "all": {"lang":"java","n_ranked":312}}, "chg_commits": {"active": {"n_ranked":212}},
@@ -1122,7 +1124,7 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
       "measures": { "cx": 80, "cx_method": "cyclo", "loc": 410, "file_tokens": 3300, "smells": {"p1":0,"p2":1,"p3":4,"total":5},
                     "chg_commits": 0, "chg_days": 0, "churn": 0,
                     "union_dup_tokens": 0, "dup_extent": 0.0000, "self_dup_tokens": 0, "twins": 0, "active_twins": 0, "active_twin_ratio": null,
-                    "fan_in": 35, "age_last_days": 1250 },
+                    "fan_in": 35, "age_last_days": 1250.00 },
       "percentiles": { "cx": {"all": 0.9486}, "fan_in": {"all": 0.9794}, "chg_commits": {"active": null}, "union_dup_tokens": {"dx": null}, "active_twin_ratio": {"dx": null} },
       "percentile_population": { "cx": {"all": {"lang":"java","n_ranked":312}}, "fan_in": {"all": {"n_ranked":340}},
                                  "chg_commits": {"active": {"n_ranked":212,"reason":"not_in_active"}},                 // 속하지 않은 모집단은 pct null + reason — 제외 사실을 남긴다(D168)
@@ -1149,7 +1151,7 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
     { "id": "fnd:f-order-policy", "kind": "frozen_core", "lens": "F", "file": "f:order-policy", "priority": 96.4, "lens_pct": 0.9911,
       "interpretation": "investigate_first", "confidence": "high",              // all n=312/340 ≥ 200, 조건 없음
       "evidence": [ {"measure":"cx","value":80,"pct":0.9486,"population":"all","n_ranked":312}, {"measure":"fan_in","value":35,"pct":0.9794,"population":"all","n_ranked":340},
-                    {"measure":"age_last_days","value":1250,"p90_all":900,"min_days":180} ] },
+                    {"measure":"age_last_days","value":1250.00,"p90_all":900.00,"min_days":180} ] },
     { "id": "fnd:cyc-1", "kind": "component_cycle", "component": "….order", "cycle": "cyc-1", "confidence": "high" }
   ]
 }
@@ -1216,7 +1218,7 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
   "anchor_values": {"Dx": 79.3, "union_dup_tokens": 240, "lens_pct": 0.8056}, "current_values": {"union_dup_tokens": 0},
   "first_seen": "2026-10-05T09:00:00Z", "first_observed_estimate": {"value": "2024-03-11T14:02:51Z", "method": "pickaxe", "confidence": "medium"},
   "succession": {"kind": "same"}, "current_priority": {"Dx": null, "interpretation": null, "note": "중복 해소로 dx 모집단 이탈"},
-  "debt_age_days": 953, "change_exposure_90d": 7,
+  "debt_age_days": 953.00, "change_exposure_90d": 7,
   "status": "closed", "merge_drift": true, "validation_scope": "pre_merge",
   "status_basis": {"transition": "open→resolved", "transition_commit": "sha", "event_at_transition": "validation_passed",
                    "event_file": "events/debt-2026Q4/fnd-dx-dup-3f9a…/pr482.json", "validated_tree_id": "sha256:…", "view": "at"},
