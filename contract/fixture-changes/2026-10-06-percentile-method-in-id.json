@@ -1,0 +1,18 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "reproducibility.analysis_input_id (id 입력에 `percentile_method` — `output.irrational`)",
+    "old": "계산기의 id 스펙에 `percentile_method`가 없었다 — §2.8이 [id]로 드는데 픽스처가 빠뜨리고 있었다",
+    "new": "`percentile_method`(rank·formula·quantile·arithmetic·output{irrational, rounding, scales})가 id 스펙에 들어간다(D182·§2.8)",
+    "note": "id 값이 바뀐다. D182가 `output`의 키를 `sqrt`에서 `irrational`로 바꿨고 `percentile_method`는 [id]라 그 변경이 id를 움직여야 하는데, 계산기의 스펙에 그 블록이 아예 없어 키만 바꿔서는 안 움직였다(소유자 정정, §0-39). 그래서 스펙에 넣는 것이 이 커밋이고, 이력이 있는 여섯 케이스와 `time-notation-canonical`(id 입력 골격의 사본)의 id가 전부 움직였다. `head`·`repository_state_id`·단언은 불변. `jcs-canonical-encoding`은 id가 없어 그대로. 빠져 있던 것 자체가 3차 T8(reproduce 세 종류에 자리 없는 값)과 같은 자리다.",
+    "fixtures": [
+      "reproducibility/same-tree-different-pmd",
+      "reproducibility/unreachable-commits-do-not-leak",
+      "reproducibility/byte-identity-comparison-target",
+      "reproducibility/parameter-change-cache-projection",
+      "reproducibility/attribution-toggle-changes-id",
+      "reproducibility/team-mapping-edit-cache-projection",
+      "reproducibility/time-notation-canonical"
+    ]
+  }
+}

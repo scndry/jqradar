@@ -49,6 +49,17 @@
       "people": {
         "attribution": "off",
         "team_mapping_sha256": null
+      },
+      "percentile_method": {
+        "rank": "average",
+        "formula": "(rank_avg-1)/(N-1)",
+        "quantile": "type7-linear",
+        "arithmetic": "exact-rational",
+        "output": {
+          "irrational": "BigDecimal MathContext(34, HALF_EVEN)",
+          "rounding": "HALF_EVEN",
+          "scales": "D155-1"
+        }
       }
     }
   }

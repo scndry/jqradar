@@ -1,0 +1,11 @@
+{
+  "case": "accept-report-isolated-component",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "positive",
+  "contract_ref": "D180",
+  "what": "`Ca + Ce = 0`인 컴포넌트의 정상 모양 — `arch_context`의 I·D·zone null + `reason: isolated_component`, A·cycle_id는 값 — 가 통과한다(D180). §7 예시에는 그런 컴포넌트가 없어 변조만으로는 nullable 이행이 검사되지 않는다(D131).",
+  "schema": "report.schema.json",
+  "verdict": "accept",
+  "rejected_at": []
+}
