@@ -4,7 +4,7 @@
 
 **#1의 범위는 §2.1–2.9다**(D136). §6.3–6.6 교차 검토는 값 층 픽스처(`contract/validation`·`security`)가 서는 **G3 입장 조건**으로 옮겼다 — 문장만 읽은 검토를 통과로 세지 않기 위해서다.
 
-**있는 것**: `prd.md` v3.9.9(D1–D178). `contract/` 케이스 **129종** — percentile 6 · **schema 80** · cpd 6 · **history 20** · **graph 9** · reproducibility 8. `schemas/` **8종**(`people.schema.json`, D161). Gradle 골격과 자체 ArchUnit 규칙 넷 + 반례(11 tests). CI **5잡**. `docs/preregistration/p1a.md`, `docs/battery.md`(실측).
+**있는 것**: `prd.md` v3.10.1(D1–D187). `contract/` 케이스 **152종** — percentile 6 · **schema 99** · cpd 6 · **history 21** · **graph 10** · **reproducibility 9**. CI 가드 하나 더: `ci/check-reproduce-kinds.sh`(§7 reproduce 줄마다 종류 표시). `schemas/` **8종**(`people.schema.json`, D161). Gradle 골격과 자체 ArchUnit 규칙 넷 + 반례(11 tests). CI **5잡**. `docs/preregistration/p1a.md`, `docs/battery.md`(실측).
 
 **§2.9의 배정 공백은 닫혔다**: §2.4 파일 쌍(D134)과 §2.1 저자 사실(D135)이 `contract/history/`로 배정되고 케이스 넷이 섰다. 정체 부재 검사는 **출처로 가른다** — 저자 해시와 `repository_state_id`는 둘 다 64 hex라 모양으로 못 가르므로, 알고 있는 저자 식별자의 해시 72개가 산출물에 없음을 본다.
 
@@ -19,6 +19,8 @@
 **다섯 한 줄 판(v3.9.5–v3.9.9, D174–D178)이 남은 다섯을 닫았다** — S12(D174 W와 first-parent는 다른 질문) · N6(D175 SCC 게이트도 `context_changed`) · S8(D176 그래프 밖 쌍은 판정하지 않음) · O-6(D177 auto 분할은 1회) · S11(D165·D178 §6.3이 §5.3의 손잡이를 가리킴). 다섯 첫 커밋이 전부 초록이었고, 그중 둘(N6·S8)은 초록이 이행의 증거가 아니었다 — §7이 안 바뀌어 스위트가 옛 스키마를 몰랐다; 긍정 케이스(`accept-gate-scc-context-changed`·`accept-report-test-pair`)가 그 자리를 채웠다. 픽스처: `history/window-vs-first-parent`, `history/hidden-coupling-sort-order`의 (A,ATest), `graph/auto-oversized-grandchild-not-split`. **닫힘 표시가 붙었다** — `--count`: 닫힘 30 · 열림 0 · 밖 2. **열림 0은 D151의 정지 조건이 아니다**(§0-38) — 다음은 3차 라운드, 입력을 바꿔서: 쌍 목록에 §2 내부 쌍(§2.6↔§2.1 토크나이저)과 다섯 판이 만든 접점(§2.7↔§5.5, §2.2↔§5.3, §2.4↔§3.5의 null 정렬).
 
 **3차 라운드(2026-10-06, 입력 `pairs@816c35bfca1d` — 처음으로 입력을 바꾼 라운드, D151(b))가 들어왔다.** 넷(Haiku·Sonnet·Opus·Fable, 각자 별도 세션, 넷 다 `--verify` 선행)의 기록과 종합(대응표 먼저)이 `docs/review/records/2026-10-06-*.md`에 있다. 계산기: **범위 안 총 70 = 닫힘 30 + 열림 40, 밖 16**. Haiku는 세 라운드 연속 0건·"모순 없음" 전부(통과의 증거가 아니다 — D141), 나머지 셋이 안 65·밖 16을 냈고 병합해 안 40·밖 14가 새 key다. 결정이 이웃 절에 안 내려간 모양이 아홉(reason 사전, D159의 사영이 측정 캐시에만, D175가 §5.3에만 + §7 gate.json의 SCC 행 PASS, '일'의 단위, 표 D155-1의 누락, reproduce 세 종류에 자리 없는 값, 산술 계약 밖의 double·log₂ …) — 3차 입력의 "볼 것"이 겨눈 그대로. Kotlin 축이 처음 열렸다(쌍 16 배정 §4.4). 쌍 9(토크나이저)는 사실상 아무도 못 봤다. **범위 안 새 발견 0이 아니므로 D151 연속의 첫째가 아니다** — 결정 판(묶음 열 개쯤)으로 간 뒤 쌍 목록이 또 바뀐다. 아래 출력 블록은 3차 뒤의 것이다.
+
+**결정 판 묶음이 시작됐다 — 1/10 산술(v3.10.0, D179–D183, PR #49 머지)과 2/10 단위·표(v3.10.1, D184–D187).** 2/10의 구현 PR에서 스케일 린트가 산출물 8종 전부를 보게 되자 **§7 report 예시의 `age_last_days: 6`·`1250`과 evidence `value: 1250`을 `integer_in_scaled_field`로 잡았다** — D184(경과 시간은 2자리, 후행 0 유지)대로면 `6.00`·`1250.00`이어야 하고 §0-40의 "움직이는 수 셋"에 그 둘이 없다. prd.md의 자리라 코드에서 채우지 않았고 소유자 보정을 기다린다(§0-29의 `age_last_days` 보정과 같은 모양 — 표를 글자 그대로 구현한 린트가 예시의 빈 곳을 잡는 두 번째 사례). 그 보정 뒤 `check-all`이 초록이 된다. 닫힘 표시는 묶음들이 끝난 뒤 한 PR.
 
 **남은 것은 열린 발견이다.** O14가 D151·D152로 닫히고 `g0-review.py --count`가 서면서 이 수는 **사람 보고가 아니라 계산**이 됐다. 지금 출력:
 
