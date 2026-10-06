@@ -1,0 +1,10 @@
+{
+  "case": "scale-accept-ledger_row",
+  "generated_by": "contract/schema/compute.py",
+  "check": "scale_lint",
+  "kind": "positive",
+  "contract_ref": "D155·D185",
+  "what": "§7 `ledger_row` 블록(원장 뷰 한 행)의 유리수 필드가 표를 지킨다 — `debt_age_days`는 경과 시간 행이라 2자리(`953.00`). 이 블록에 긍정 케이스가 없어 린트가 보지 않았고 `953`이 조용했다(§0-40 보정) — 8종 전부를 본다는 D185의 '전부'에 §7 블록 여덟 전부가 든다.",
+  "verdict": "accept",
+  "violations": []
+}

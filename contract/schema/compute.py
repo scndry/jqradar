@@ -73,7 +73,8 @@ FIELD_KIND = {
 }
 SUMMARY_KEYS = ("median", "iqr", "p90", "max")
 # 요약 통계 행에 이름으로 든 것 — `median_files_per_commit`은 짝수면 .5라 2자리 (D185)
-SUMMARY_NAMED = {"median_files_per_commit": 2}
+SUMMARY_NAMED = {"median_files_per_commit": 2,
+                 "p90_all": 2}   # evidence의 P90(age_last_days) — 경과 시간의 요약, §0-40 보정
 
 
 def scale_for(path: list, parent: dict | None = None) -> int | None:

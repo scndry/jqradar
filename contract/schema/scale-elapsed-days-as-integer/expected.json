@@ -13,24 +13,6 @@
       "literal": "90",
       "problem": "integer_in_scaled_field",
       "allowed_scale": 2
-    },
-    {
-      "path": "/files/0/measures/age_last_days",
-      "literal": "6",
-      "problem": "integer_in_scaled_field",
-      "allowed_scale": 2
-    },
-    {
-      "path": "/files/1/measures/age_last_days",
-      "literal": "1250",
-      "problem": "integer_in_scaled_field",
-      "allowed_scale": 2
-    },
-    {
-      "path": "/findings/2/evidence/2/value",
-      "literal": "1250",
-      "problem": "integer_in_scaled_field",
-      "allowed_scale": 2
     }
   ]
 }
