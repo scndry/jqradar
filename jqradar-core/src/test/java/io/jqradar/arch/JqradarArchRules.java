@@ -7,6 +7,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaCodeUnit;
 import com.tngtech.archunit.core.domain.JavaField;
+import com.tngtech.archunit.core.domain.JavaMethodCall;
 import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.CompositeArchRule;
@@ -178,7 +179,42 @@ public final class JqradarArchRules {
                 .because(why)
                 .allowEmptyShould(true);
 
-        return CompositeArchRule.of(noFields).and(noSignatures).and(noBoxedDependency);
+        // D179 — **라이브러리가 내는 double도 같은 금지.** ArchUnit `ArchitectureMetrics`의
+        // `double` 반환 메서드(`getInstability`·`getAbstractness`·`getNormalizedDistanceFromMainSequence`·
+        // `getAverageComponentDependency`·`getRelative…`·`getNormalizedCumulative…`)를 호출하지 않는다.
+        // 위 셋은 우리 시그니처·필드만 보므로 `BigDecimal.valueOf(metrics.getInstability(c))`는
+        // 통과한다 — 호출하지 않으면 규칙이 아무것도 잡지 않으니 호출 자체를 조건으로 둔다.
+        // 받는 것은 정수(Ca·Ce·간선·클래스 수·CCD)뿐이고 비율은 우리 산술이다(§2.2·§2.3).
+        ArchRule noLibraryDoubleCalls = noClasses()
+                .that().resideInAnyPackage(scope)
+                .should(callArchUnitMetricsReturningBinaryFloatingPoint())
+                .because("D179 — ArchUnit에서는 정수만 받고 비율은 정확 유리수로 다시 계산한다; "
+                        + "라이브러리의 double 반환값은 쓰지 않는다")
+                .allowEmptyShould(true);
+
+        return CompositeArchRule.of(noFields).and(noSignatures).and(noBoxedDependency)
+                .and(noLibraryDoubleCalls);
+    }
+
+    /** ArchUnit의 지표 패키지. 이 아래의 {@code double} 반환 메서드 호출이 위반이다(D179). */
+    private static final String ARCHUNIT_METRICS_PACKAGE = "com.tngtech.archunit.library.metrics";
+
+    private static ArchCondition<JavaClass> callArchUnitMetricsReturningBinaryFloatingPoint() {
+        return new ArchCondition<>("call ArchUnit metrics methods that return double/float") {
+            @Override
+            public void check(JavaClass clazz, ConditionEvents events) {
+                for (JavaMethodCall call : clazz.getMethodCallsFromSelf()) {
+                    boolean metrics = call.getTarget().getOwner().getPackageName()
+                            .startsWith(ARCHUNIT_METRICS_PACKAGE);
+                    if (metrics && isBinaryFloatingPoint(call.getTarget().getRawReturnType())) {
+                        events.add(SimpleConditionEvent.satisfied(call,
+                                call.getOrigin().getFullName() + " 이 "
+                                        + call.getTarget().getFullName() + " 을 호출한다 — 반환이 "
+                                        + call.getTarget().getRawReturnType().getName()));
+                    }
+                }
+            }
+        };
     }
 
     /** {@code double}·{@code float}과 그 박싱 타입. 배열도 성분 타입으로 판정한다. */

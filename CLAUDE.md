@@ -40,7 +40,7 @@ G0 통과 조건은 `prd.md` §9 "G0 체크리스트" 7항목. 순서:
 2. **`contract/` 스켈레톤과 G0 픽스처.** 디렉터리: `percentile/ schema/ reproducibility/ cpd/ history/ graph/`(G0) · `lens/ gate/ renderer/`(G1) · `ledger/ validation/ security/`(G2b·G3). 입력 모양은 계약별(§2.9): git 이력이 입력인 계약만 합성 리포, 나머지는 `input.json`. 각 케이스 = 합성 리포를 스크립트로 생성 + `expected.json`. 최소 케이스 목록은 §2.9 표. **기대값은 계산으로 만들고, 계산 스크립트를 함께 커밋한다.**
 3. **JSON Schema 8종** → `schemas/`: `report`, `change`, `gate`, `validate`, `campaign`, `event`, `fixture_change`(D119 — G0 체크리스트 #6의 CI가 검사할 대상), `people`(D161 — 저자 사실의 자리, `build/`에만). §7의 jsonc 스케치를 기계 검증 가능하게. **스키마마다 거부되어야 할 변조 입력 ≥ 1**(D118) — 첫 실행에 전부 통과하는 스키마는 아무것도 지키지 않는다. 긍정·변조 케이스는 `contract/schema/`에 두어 픽스처 루프(§4)가 돌게 한다(D124). 하드룰은 설명이 아니라 구조로 막는다(`additionalProperties: false`, `not`, `if/then`). "contract 부분집합"이라는 개념은 jQRadar에 없다.
 4. **Gradle 멀티모듈 골격**: `jqradar-core`, `jqradar-cli`, `jqradar-gradle-plugin`, `jqradar-ledger`, `jqradar-mcp`, `jqradar-remediation`(§4.1). 의존 버전은 `gradle/libs.versions.toml`에 major.minor.patch로 고정(§2.8 `environment`).
-5. **자체 ArchUnit 규칙**(우리 코드에만): `jqradar-core`가 `people` 정책 없이 `PersonIdent` 이름·이메일을 산출물로 내보내지 않는다; `scan`/`change` 경로에서 `BlameCommand` 호출 없음; `.jqradar/` 쓰기는 `jqradar-ledger`만; **측정·순위 경로에서 `double`·`float` 사용 금지**(D115 — 정확 유리수, √는 표시값에만 `BigDecimal`).
+5. **자체 ArchUnit 규칙**(우리 코드에만): `jqradar-core`가 `people` 정책 없이 `PersonIdent` 이름·이메일을 산출물로 내보내지 않는다; `scan`/`change` 경로에서 `BlameCommand` 호출 없음; `.jqradar/` 쓰기는 `jqradar-ledger`만; **측정·순위 경로에서 `double`·`float` 사용 금지**(D115 — 정확 유리수, √·`log₂` 같은 무리수는 표시값에만 `BigDecimal MathContext(34, HALF_EVEN)`, D182) — **라이브러리가 내는 `double`도 같은 금지**: ArchUnit `ArchitectureMetrics`의 `double` 반환 메서드(`getInstability`·`getAbstractness`·`getNormalizedDistanceFromMainSequence`·`getAverageComponentDependency`·`getRelative…`·`getNormalizedCumulative…`) 호출 금지가 규칙 4의 명시 조건이고, 반례 클래스가 `getInstability()`를 한 번 호출한다(D179 — 받는 것은 정수 Ca·Ce·간선·클래스 수·CCD뿐, 비율은 우리 산술).
 6. **P1a 사전 등록** → `docs/preregistration/p1a.md`: 기준선 넷(random / cx-only / chg-only / H), 개입 제외 규칙, `evaluation_cutoff`·180일 완전 관측 코호트, 부트스트랩 95% CI. 배터리 B 전에 바꾸지 않는다.
 7. **배터리 리포 확정** → `docs/battery.md`: 나이·크기로만 선정(§9). 이 리포는 S1 이후 내부자 데이터.
 
@@ -53,7 +53,7 @@ G0 전에는 **core 측정 코드를 쓰지 않는다.** 계약과 픽스처가 
 - Java 21, Gradle(Kotlin DSL), JUnit 5. Kotlin은 대상 언어이지 구현 언어가 아니다.
 - 모듈 경계: `core`는 빌드 도구·IDE·LLM 무지. `ledger`만 `.jqradar/`에 쓴다. `remediation`은 L2 샌드박스 안에서만 실행된다(§6.6).
 - 측정은 순수 함수로: 같은 `analysis_input_id` → 같은 출력. 시간은 `HEAD_TIME`(HEAD 커미터 시각)에서만 읽는다(§2.7). `System.currentTimeMillis()`는 `scanned_at` 외에 쓰지 않는다.
-- **산술**(§2.5, D115): 백분위·분위·임계 비교는 정확 유리수(`BigInteger` 분수 또는 유한 `BigDecimal`)로, 반올림 전 값으로 비교한다. 렌즈 순위는 `pct × pct`의 정확 비교로 내고 √는 표시값에만 `BigDecimal.sqrt(MathContext(34, HALF_EVEN))`. 직렬화는 렌즈 1자리·백분위 4자리 HALF_EVEN.
+- **산술**(§2.5, D115): 백분위·분위·임계 비교는 정확 유리수(`BigInteger` 분수 또는 유한 `BigDecimal`)로, 반올림 전 값으로 비교한다. 렌즈 순위의 지름길은 렌즈별이고(D169 — H·Dx는 `pct × pct` 정확 비교, F는 지시변수 먼저) √·`log₂`는 표시값에만 `BigDecimal MathContext(34, HALF_EVEN)`(D182). 직렬화는 렌즈 1자리·백분위 4자리 HALF_EVEN.
 - 캐시 키는 커밋이 아니라 **내용**(`content_id` + 엔진 버전)이다(§4.5).
 - 픽스처 테스트는 `contract/`를 파라미터화 테스트로 돈다. 실패 메시지는 어느 계약(§n)이 깨졌는지 말한다.
 - 렌더러(d3 인라인, 자립형 단일 HTML)는 JSON의 순수 함수. 네트워크 요청 0건(§7.1).

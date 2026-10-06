@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
+import io.jqradar.arch.violations.CallsArchUnitDoubleMetrics;
 import io.jqradar.arch.violations.TakesDoubleAtTheBoundary;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -202,6 +203,25 @@ class JqradarArchRulesTest {
                     .hasMessageContaining("hotspot(double, double)")
                     .hasMessageContaining("quantile(float)");
         }
+
+        /**
+         * D179 — 라이브러리가 내는 double. 시그니처·필드·박싱 셋은 이 클래스를 통과시킨다
+         * ({@code BigDecimal instability(ComponentDependencyMetrics, String)}). 호출을 조건으로
+         * 두지 않으면 규칙이 아무것도 잡지 않는다 — 우리가 그 메서드를 호출하지 않는 한.
+         */
+        @Test
+        @DisplayName("라이브러리의 double 반환 메서드 호출도 잡는다 — ArchUnit getInstability (D179)")
+        void catchesArchUnitDoubleMetricsCall() {
+            JavaClasses onlyLibraryCall = new ClassFileImporter()
+                    .importClasses(CallsArchUnitDoubleMetrics.class);
+
+            assertThatThrownBy(() -> JqradarArchRules
+                    .noBinaryFloatingPointOnMeasureOrRankPath(VIOLATIONS)
+                    .check(onlyLibraryCall))
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("getInstability")
+                    .hasMessageContaining("CallsArchUnitDoubleMetrics");
+        }
     }
 
     @Test
@@ -211,6 +231,6 @@ class JqradarArchRulesTest {
                 .anyMatch(c -> c.getPackageName().startsWith("io.jqradar.arch.violations")))
                 .as("io.jqradar.arch.violations는 test 소스셋에만 있어야 한다")
                 .isFalse();
-        assertThat(VIOLATION_EXAMPLES).as("반례 네 종 + package-info").isNotEmpty();
+        assertThat(VIOLATION_EXAMPLES).as("반례 다섯 종 + package-info").isNotEmpty();
     }
 }
