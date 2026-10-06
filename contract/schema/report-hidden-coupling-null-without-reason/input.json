@@ -1,0 +1,21 @@
+{
+  "case": "report-hidden-coupling-null-without-reason",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "if/then",
+  "contract_ref": "D176",
+  "what": "`static_dependency: null`인데 `reason` 없음 → 거부. 판정하지 않은 쌍과 '정적 의존 없음'이 구별되어야 §3.5의 정렬(false · true · null)이 사실을 말한다(D176).",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "hidden_couplings",
+        0,
+        "static_dependency"
+      ],
+      "value": null
+    }
+  ]
+}
