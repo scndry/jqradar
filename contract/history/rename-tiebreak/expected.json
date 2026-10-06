@@ -17,7 +17,7 @@
     "commits_in_window": 2,
     "merge_commits_excluded": 0,
     "authors_window_truncated": false,
-    "authors_window_days": 1,
+    "authors_window_days": 1.00,
     "commits_excluded_within_90d": 0
   },
   "commits": [
@@ -77,7 +77,7 @@
       "touched_by": [
         "f3f55f5d4"
       ],
-      "age_last_days": 1,
+      "age_last_days": 1.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -93,7 +93,7 @@
       "touched_by": [
         "91868cbda"
       ],
-      "age_last_days": 0,
+      "age_last_days": 0.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,

@@ -7,7 +7,7 @@
 - **앵커 = `HEAD_TIME`**(HEAD 커밋의 커미터 시각). 같은 HEAD를 **언제 재도 같은 값**이 나와야 한다 — `scanned_at`은 감사 메타데이터일 뿐 계산에 들어가지 않는다(D25).
 - **창 W** = `[HEAD_TIME − 12개월, HEAD_TIME]`의 **비머지** 커밋, 최신순 최대 2,000. 먼저 닥치는 상한을 적용하고 `bound_hit`에 적는다. **first-parent 한정이 아니다** — 머지되어 도달 가능한 브랜치 커밋도 세고 머지 커밋 자체만 뺀다.
 - **rename** tie-break = 유사도 → 경로 편집 거리 → 사전순. 앞 둘이 동률이면 `rename_ambiguous`.
-- **나이** = `HEAD_TIME − 마지막 비머지 커밋 시각`. 결정 불가·음수면 **null**(0이 아니다, D37).
+- **나이** = `HEAD_TIME − 마지막 비머지 커밋 시각`, **초/86400의 유리수**(D184) — 비교는 정확값, 인쇄는 2자리(D155-1 경과 시간 행). 결정 불가·음수면 **null**(0이 아니다, D37).
 - **blame 금지**(D18·D113). 예외는 캠페인 생성 1회뿐이다(§5.6·D57).
 - **파일 쌍**(§2.4·D134) — `shared` = 두 파일을 함께 만진 비머지 커밋 수, `tc = shared / min(chg_commits_a, chg_commits_b)`, 보고 기준 `shared ≥ 5 ∧ tc ≥ 0.5`. `static_dependency`는 **명세가 준다** — 그래프는 이 계약의 입력이 아니다(§2.2의 일이다).
 - **저자 사실**(§2.1·D135) — `distinct_authors_90d`(최근 90일) · `ownership_max_share`·`minor_contributor_share`(W 안). **익명 집계만 기록한다.** 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다 — 정체는 `expected.json`에 들어가지 않는다(D48).
@@ -44,6 +44,7 @@
 | [`shared-window-limited/`](shared-window-limited/) | **D164** — `shared`는 W 안. 같은 이력을 12개월·240개월 창으로 봐 `shared` 6 → 9, 두 창 모두 `tc ≤ 1`(불변식 인쇄). 근거는 일관성, 재현성이 아니다(D150) |
 | [`hidden-coupling-sort-order/`](hidden-coupling-sort-order/) | **D167·D176** — 정렬 키를 하나씩 밟는 쌍 다섯: (G,H) · (A,B) · (E,F) · (C,D) · (A,ATest). 정적 의존 있는 쌍은 `tc = 1`이어도 뒤, 동점은 `shared` 다음 `a`, 테스트-대상 쌍은 판정 없음(`null` + `reason`)이라 **맨 뒤** |
 | [`window-vs-first-parent/`](window-vs-first-parent/) | **D174** — W = {seed, b1, b2}(브랜치 포함, 머지 제외), first-parent = {m1, seed}. 다른 집합, 다른 질문 — 통일하면 한쪽이 틀린다. 후보 쪽 전이는 `ledger/`(G2b) |
+| [`age-boundary-180-days/`](age-boundary-180-days/) | **D184** — '일'은 초/86400 유리수, 비교는 정확값, 인쇄 2자리: 179일 23시간 → `179.96`·`≥ 180` 거짓, 180일 정각 → `180.00`·참, 12시간 → `0.50` |
 
 ## blame 검사는 값이 아니라 부재를 본다
 

@@ -22,7 +22,7 @@
     "commits_in_window": 63,
     "merge_commits_excluded": 0,
     "authors_window_truncated": false,
-    "authors_window_days": 12.939814814815,
+    "authors_window_days": 12.94,
     "commits_excluded_within_90d": 0
   },
   "commits": [
@@ -781,7 +781,7 @@
         "000ebef40",
         "136b99a07"
       ],
-      "age_last_days": 0,
+      "age_last_days": 0.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -806,7 +806,7 @@
         "000ebef40",
         "136b99a07"
       ],
-      "age_last_days": 7.027777777778,
+      "age_last_days": 7.03,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -827,7 +827,7 @@
         "2fab6b2b0",
         "6ef5115e1"
       ],
-      "age_last_days": 2.314814814815,
+      "age_last_days": 2.31,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -848,7 +848,7 @@
         "2fab6b2b0",
         "6ef5115e1"
       ],
-      "age_last_days": 2.314814814815,
+      "age_last_days": 2.31,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -873,7 +873,7 @@
         "c597066be",
         "29a211fd4"
       ],
-      "age_last_days": 4.712962962963,
+      "age_last_days": 4.71,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -898,7 +898,7 @@
         "c597066be",
         "29a211fd4"
       ],
-      "age_last_days": 3.555555555556,
+      "age_last_days": 3.56,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -928,7 +928,7 @@
         "b02120676",
         "1cd2be147"
       ],
-      "age_last_days": 11.574074074074,
+      "age_last_days": 11.57,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -958,7 +958,7 @@
         "b02120676",
         "1cd2be147"
       ],
-      "age_last_days": 10.416666666667,
+      "age_last_days": 10.42,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -975,7 +975,7 @@
         "d4b283bc4",
         "9897e372b"
       ],
-      "age_last_days": 1.324074074074,
+      "age_last_days": 1.32,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -992,7 +992,7 @@
         "d4b283bc4",
         "9897e372b"
       ],
-      "age_last_days": 1.324074074074,
+      "age_last_days": 1.32,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -1013,7 +1013,7 @@
         "8a8b57b14",
         "ad165de46"
       ],
-      "age_last_days": 0,
+      "age_last_days": 0.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -1148,18 +1148,7 @@
     }
   ],
   "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
-  "non_terminating": {
-    "/window_applied/authors_window_days": "2795/216",
-    "/files/src/B.java/age_last_days": "253/36",
-    "/files/src/C.java/age_last_days": "125/54",
-    "/files/src/D.java/age_last_days": "125/54",
-    "/files/src/E.java/age_last_days": "509/108",
-    "/files/src/F.java/age_last_days": "32/9",
-    "/files/src/G.java/age_last_days": "625/54",
-    "/files/src/H.java/age_last_days": "125/12",
-    "/files/src/I.java/age_last_days": "143/108",
-    "/files/src/J.java/age_last_days": "143/108"
-  },
+  "non_terminating": {},
   "_fixture": {
     "generated_by": "contract/history/compute.py",
     "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
