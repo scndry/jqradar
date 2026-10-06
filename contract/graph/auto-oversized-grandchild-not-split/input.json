@@ -1,0 +1,64 @@
+{
+  "case": "auto-oversized-grandchild-not-split",
+  "contract_refs": [
+    "§2.2",
+    "D130",
+    "D177"
+  ],
+  "what_this_pins": "`auto`의 추가 분할은 **한 번**이다(D177). 루트 `com.acme` 아래 `core`가 8/10(80% > 60%)이라 한 단계 쪼개져 `core.order`·`core.billing`이 되는데, 그 안에서 `core.order`가 6/8(75% > 60%)이어도 **손자는 다시 보지 않는다** — `core.order.a`·`core.order.b`로 갈리지 않는다. 그래서 N = 4(`core.order`·`core.billing`·`web`·`cli`)이고, 재귀였다면 N = 5다. N은 ACD·RACD·NCCD의 분모이자 `zone`·`cycle_id`의 경계라 유일해야 한다(O-6). 60%의 분모는 그 루트의 전체 클래스 수(D130).",
+  "component": {
+    "strategy": "auto",
+    "split_share": "0.6"
+  },
+  "classes": [
+    {
+      "name": "com.acme.core.order.a.A1",
+      "package": "com.acme.core.order.a"
+    },
+    {
+      "name": "com.acme.core.order.a.A2",
+      "package": "com.acme.core.order.a"
+    },
+    {
+      "name": "com.acme.core.order.a.A3",
+      "package": "com.acme.core.order.a"
+    },
+    {
+      "name": "com.acme.core.order.a.A4",
+      "package": "com.acme.core.order.a"
+    },
+    {
+      "name": "com.acme.core.order.a.A5",
+      "package": "com.acme.core.order.a"
+    },
+    {
+      "name": "com.acme.core.order.b.B1",
+      "package": "com.acme.core.order.b",
+      "depends_on": [
+        "com.acme.core.order.a.A1"
+      ]
+    },
+    {
+      "name": "com.acme.core.billing.C1",
+      "package": "com.acme.core.billing",
+      "depends_on": [
+        "com.acme.core.order.a.A1"
+      ]
+    },
+    {
+      "name": "com.acme.core.billing.C2",
+      "package": "com.acme.core.billing"
+    },
+    {
+      "name": "com.acme.web.D",
+      "package": "com.acme.web",
+      "depends_on": [
+        "com.acme.core.order.a.A1"
+      ]
+    },
+    {
+      "name": "com.acme.cli.E",
+      "package": "com.acme.cli"
+    }
+  ]
+}

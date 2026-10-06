@@ -22,6 +22,7 @@
 | [`auto-single-child-descends/`](auto-single-child-descends/) | `auto` 2/4 — 자식이 하나면 한 칸 내려간다 |
 | [`auto-oversized-child-splits/`](auto-oversized-child-splits/) | `auto` 3/4 — **전체 클래스 수**의 60%를 넘는 자식은 추가 분할(D130) |
 | [`auto-multiple-roots/`](auto-multiple-roots/) | `auto` 4/4 — 루트가 여럿이면 루트별로 |
+| [`auto-oversized-grandchild-not-split/`](auto-oversized-grandchild-not-split/) | **D177** — 추가 분할은 **한 번**. 손자가 75%여도 다시 쪼개지 않아 N = 4(재귀면 5) |
 | [`component-cycle/`](component-cycle/) | Tarjan SCC. 새 SCC는 게이트에서 1개라도 FAIL이다(§5.3) |
 | [`nccd-cross-check/`](nccd-cross-check/) | §2.3 본문의 검산 — N=41, CCD=512 → 185.48 / 12.49 / 0.3046 / **2.76** |
 | [`deep-enterprise-packages/`](deep-enterprise-packages/) | **P8의 합성 리포**(§9) — 깊은 기업형 패키지에서 `auto`가 업무 영역을 내는가 |
