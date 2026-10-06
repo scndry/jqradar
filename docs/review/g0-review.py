@@ -436,6 +436,10 @@ def make_record(reviewer: str) -> Path:
 #
 # 닫힘: **기록에 `닫힘 — D<n>`이 적힌 것만.** `prd.md`를 읽어 추측하지 않는다.
 # 표시가 없으면 열린 것이다.
+#
+# 밖 key에도 닫힘 표시가 붙을 수 있다(D191 — S3-24·O3-9). D152는 "세지 않고 버리지도 않는다"이고
+# D153의 닫힘은 기록의 표시라 **수에 닿지 않는다** — 그래서 범위 밖은 열림/닫힘을 **갈라** 세되
+# 어느 쪽도 범위 안의 수에 더하지 않는다. G3 목록의 상태가 보이는 자리이지 G0 #1의 수가 아니다.
 
 KEY_TABLE_HEAD = "| # | 종합 발견 | 병합한 개별 |"
 UNATTACHED_HEAD = "| 개별 | 주장 | 절 집합 | 범위 |"
@@ -610,7 +614,11 @@ def count_keys(records_dir: Path = RECORDS) -> int:
     print(f"  범위 안 `dedupe_key`  총 {len(inside)}")
     print(f"    닫힘  {len(closed)}" + (f" — {', '.join(sorted({d for k in closed for d in k['closed'].split('·')}, key=lambda x: int(x[1:])))}" if closed else ""))
     print(f"    열림  {len(openk)}")
-    print(f"  범위 밖 (G3 목록으로) {len([k for k in keys if k['scope'] == '밖'])}")
+    outside = [k for k in keys if k["scope"] == "밖"]
+    out_closed = [k for k in outside if k["closed"]]
+    print(f"  범위 밖 (G3 목록으로) 총 {len(outside)} — 닫힘 {len(out_closed)}"
+          + (f"({', '.join(sorted({d for k in out_closed for d in k['closed'].split('·')}, key=lambda x: int(x[1:])))})" if out_closed else "")
+          + f" · 열림 {len(outside) - len(out_closed)} — 안의 수에 더하지 않는다(D152·D153)")
     print()
     print("  **닫힘 표시는 기록에서만 읽는다** — `닫힘 — D<n>`이 적힌 key만 닫힌 것으로 센다.")
     print("  `prd.md`를 읽어 추측하지 않는다. 표시가 없으면 열린 것이다.")
@@ -632,7 +640,8 @@ def count_selftest() -> list[tuple[str, bool, str]]:
 
     계산기가 통과만 시키면 "열린 발견 0"이 검사 없이 참이 된다 — 그래서 **세는 쪽과
     세지 않는 쪽을 둘 다** 시험한다: 닫힘/열림을 뒤집지 않는가, 걸친 것을 밖이라
-    하지 않는가(D152), 출처 없는 것을 세지 않는가, 쪼개진 것을 둘로 세지 않는가.
+    하지 않는가(D152), 출처 없는 것을 세지 않는가, 쪼개진 것을 둘로 세지 않는가,
+    밖 key의 닫힘을 안으로 세지 않는가(D191 — 밖은 열림/닫힘을 갈라 세되 안에 더하지 않는다).
     """
     import json as _json
     out = []
@@ -646,12 +655,18 @@ def count_selftest() -> list[tuple[str, bool, str]]:
         got = collect_keys(case)
         inside = [k for k in got["keys"] if k["scope"] == "안"]
         closed = [k for k in inside if k["closed"]]
+        outside = [k for k in got["keys"] if k["scope"] == "밖"]
+        out_closed = [k for k in outside if k["closed"]]
         kinds = sorted({p[0] for p in got["problems"]})
+        # 밖은 기대에 없으면 0이어야 한다 — 밖 key가 있는 반례는 열림/닫힘을 둘 다 적는다(D191).
         ok = (len(inside) == exp["inside"] and len(closed) == exp["closed"]
               and len(inside) - len(closed) == exp["open"]
+              and len(outside) == exp.get("outside", 0)
+              and len(out_closed) == exp.get("outside_closed", 0)
               and kinds == sorted(exp["problems"]))
         why = re.sub(r"^# 합성 종합 — ", "", md.read_text(encoding="utf-8").split("\n")[1])
-        detail = f"안{len(inside)} 닫{len(closed)} 열{len(inside)-len(closed)} {kinds or ''}"
+        detail = (f"안{len(inside)} 닫{len(closed)} 열{len(inside)-len(closed)} "
+                  f"밖{len(outside)} 밖닫{len(out_closed)} {kinds or ''}")
         out.append((f"{case.name:<30} {why}", ok, detail))
     return out
 
