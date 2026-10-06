@@ -1,0 +1,10 @@
+{
+  "case": "scale-accept-validate",
+  "generated_by": "contract/schema/compute.py",
+  "check": "scale_lint",
+  "kind": "positive",
+  "contract_ref": "D155·D185",
+  "what": "§7 `validate` 블록의 유리수 필드가 표 D155-1의 스케일을 지킨다 — 린트는 산출물 8종 전부를 본다(D185). v3.10.1 전까지 report만 봐서 `validate`의 `0.91`이 조용했다(§0-40 실측).",
+  "verdict": "accept",
+  "violations": []
+}

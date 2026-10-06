@@ -1,0 +1,18 @@
+{
+  "case": "scale-coverage-two-decimals",
+  "generated_by": "contract/schema/compute.py",
+  "check": "scale_lint",
+  "kind": "hard_rule",
+  "contract_ref": "D185",
+  "what": "`changed_line_coverage`는 비율 4자리(D185) — `0.91`은 린트가 report만 보던 때 조용히 통과하던 값이다.",
+  "mechanism": "원문 린트(스키마 아님)",
+  "verdict": "reject",
+  "violations": [
+    {
+      "path": "/tests/changed_line_coverage",
+      "literal": "0.91",
+      "allowed_scale": 4,
+      "actual_scale": 2
+    }
+  ]
+}

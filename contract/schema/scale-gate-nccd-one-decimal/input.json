@@ -1,0 +1,15 @@
+{
+  "case": "scale-gate-nccd-one-decimal",
+  "check": "scale_lint",
+  "kind": "hard_rule",
+  "base": "prd:§7:gate",
+  "mechanism": "원문 린트(스키마 아님)",
+  "contract_ref": "D185",
+  "what": "`gate`의 `nccd: [base, head]`는 Lakos 2자리(소문자 이름 그대로 표에, D185) — 배열 원소의 이름은 배열의 키다.",
+  "text_patch": [
+    {
+      "find": "\"nccd\": [2.76, 2.71]",
+      "replace": "\"nccd\": [2.8, 2.71]"
+    }
+  ]
+}
