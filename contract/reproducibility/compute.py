@@ -180,8 +180,34 @@ def analysis_input_id(shared: dict, environment: dict, files: list[tuple[str, st
         # 무엇이었나도 재현의 일부). `parameters`와 별도인 이유는 B.6 — 조직이 적는 자리가 다르다.
         "people": shared.get("people", DEFAULT_PEOPLE),
         "percentile_method": PERCENTILE_METHOD,
+        # D186 — 세 종류에 자리 없던 값들이 (i)로: 정규 인코딩, 분할 기준, history_backend 전체.
+        # 창 파라미터(`window.months`·`window.max_commits`)는 `parameters` 안에 있다(입력이 그렇게 준다).
+        "canonical_encoding": CANONICAL_ENCODING,
     }
+    assert "window.months" in spec["parameters"], "D186 — 창 파라미터는 parameters에 있어야 한다"
+    assert "split_share_basis" in spec["component"], "D186 — component.split_share_basis는 id 입력이다"
     return sha256(spec), spec
+
+
+def id_from_reproduce(reproduce: dict, files: list[tuple[str, str]], history: dict) -> str:
+    """§2.8·D111 — **§7 모양의 `reproduce` 블록**과 리포(트리·head)만으로 id를 다시 만든다.
+
+    reproduce에 값으로 있는 것은 값을 쓰고, 해시로만 있는 것(소스 파일 목록·창 안 커밋 목록)은 §2.8대로
+    리포에서 재생성한다. 세 종류 어디에도 자리가 없는 값이 생기면 이 함수가 그것을 읽을 수 없어 id가
+    갈린다 — 3차 T8이 그런 값을 넷 찾았고 D186이 자리를 정했다. 그래서 이 케이스가 먼저 드러낸다."""
+    shared = {
+        "schema_version": reproduce["schema_version"],
+        "contract_version": reproduce["contract_version"],
+        "core_tool_version": reproduce["tool_version"],
+        "history_backend": reproduce["history_backend"],
+        "component": {k: reproduce["component"][k] for k in ("strategy", "split_share_basis")}
+                     | {"algorithm_version": reproduce["algorithm_versions"]["component_strategy"]},
+        "algorithm_versions": {k: v for k, v in reproduce["algorithm_versions"].items() if k != "component_strategy"},
+        "parameters": reproduce["parameters"],
+        "people": reproduce["people"],
+    }
+    aid, _ = analysis_input_id(shared, reproduce["environment"], files, history)
+    return aid
 
 
 def run_repo_variants(case_dir: Path, inp: dict) -> dict:
@@ -366,6 +392,7 @@ def run_byte_identity(case_dir: Path, inp: dict) -> dict:
                 "scanned_at": canonical_time(machine["scanned_at_unix"]),         # [x]
                 "algorithm_versions": shared["algorithm_versions"],               # [id]
                 "window_anchor": spec["window_anchor"],                           # [id]
+                "canonical_encoding": CANONICAL_ENCODING,                         # [id] (D186)
                 "head": history["head"],                                          # [fn]
                 "repository_state_id": rsid,                                      # [fn]
                 "analysis_input_id": aid,                                         # [fn]
@@ -377,7 +404,9 @@ def run_byte_identity(case_dir: Path, inp: dict) -> dict:
                     "commit_list_sha256": spec["commit_list_sha256"],             # [id]
                     "history_complete": True, "graft_boundary_shas": [],          # [fn]
                 },
-                "component": shared["component"],                                 # [id]
+                "component": {"strategy": shared["component"]["strategy"],
+                              "split_share_basis": shared["component"]["split_share_basis"],
+                              "algorithm_version": shared["component"]["algorithm_version"]},   # [id]
                 "parameters": shared["parameters"],                               # [id]
                 "percentile_method": PERCENTILE_METHOD,                           # [id]
                 "canonical_encoding": CANONICAL_ENCODING,                         # [id]
@@ -677,6 +706,47 @@ def run_people_variants(case_dir: Path, inp: dict) -> dict:
     }
 
 
+def run_recompute_from_reproduce(case_dir: Path, inp: dict) -> dict:
+    """§2.8·D111·D186 — reproduce만으로 id 재계산. 단언 둘: 같은 블록에서 같은 id, 블록의 id 입력 하나를
+    바꾸면(창 12 → 24개월, 커밋 목록은 그대로) id가 **갈린다** — 창 파라미터가 [fn] 자리에 있던 v3.10.0까지는
+    그 변경이 id에 닿지 않았다(O3-6)."""
+    tree = case_dir / inp["repo"]["tree"]
+    files = tree_files(tree)
+    with tempfile.TemporaryDirectory() as tmp:
+        history = build_history(tree, inp["repo"], Path(tmp) / "repo")
+    shared, env = inp["shared_inputs"], inp["environment"]
+    aid, spec = analysis_input_id(shared, env, files, history)
+    # 한 번 스캔한 결과의 reproduce 블록(§7 모양)을 만든다 — 이것만 들고 다시 계산한다.
+    reproduce = {
+        "tool_version": shared["core_tool_version"], "schema_version": shared["schema_version"],
+        "contract_version": shared["contract_version"], "scanned_at": canonical_time(inp["scanned_at_unix"]),
+        "algorithm_versions": {"component_strategy": shared["component"]["algorithm_version"], **shared["algorithm_versions"]},
+        "window_anchor": spec["window_anchor"], "head": history["head"],
+        "repository_state_id": repository_state_id(files), "analysis_input_id": aid,
+        "canonical_encoding": CANONICAL_ENCODING, "environment": env,
+        "history_backend": shared["history_backend"],
+        "window_applied": {"commits_in_window": len(history["commit_shas"]), "commit_list_sha256": spec["commit_list_sha256"],
+                           "history_complete": True, "graft_boundary_shas": []},
+        "component": {"strategy": shared["component"]["strategy"], "split_share_basis": shared["component"]["split_share_basis"], "count": 1},
+        "parameters": shared["parameters"], "percentile_method": PERCENTILE_METHOD,
+        "people": shared.get("people", DEFAULT_PEOPLE),
+    }
+    recomputed = id_from_reproduce(reproduce, files, history)
+    mutated = json.loads(json.dumps(reproduce)); mutated["parameters"]["window.months"] = 24
+    recomputed_mutated = id_from_reproduce(mutated, files, history)
+    return {
+        "case": inp["case"], "generated_by": GENERATED_BY, "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"], "canonical_encoding": CANONICAL_ENCODING,
+        "printed_analysis_input_id": aid,
+        "recomputed_from_reproduce": recomputed,
+        "recomputed_after_window_months_24": recomputed_mutated,
+        "assertions": {
+            "recompute_matches_printed": recomputed == aid,
+            "window_parameter_reaches_id": recomputed_mutated != aid,
+        },
+    }
+
+
 def run_case(case_dir: Path) -> dict:
     inp = json.loads((case_dir / "input.json").read_text(encoding="utf-8"))
     if "canonical_vectors" in inp:
@@ -689,6 +759,8 @@ def run_case(case_dir: Path) -> dict:
         return run_time_notations(inp)
     if "people_variants" in inp:
         return run_people_variants(case_dir, inp)
+    if inp.get("recompute_from_reproduce"):
+        return run_recompute_from_reproduce(case_dir, inp)
     if "measure_projections" in inp:
         return run_parameter_projection(case_dir, inp)
     tree = case_dir / inp["repo"]["tree"]

@@ -46,7 +46,8 @@
     },
     "component": {
       "strategy": "auto",
-      "algorithm_version": "auto-1"
+      "algorithm_version": "auto-1",
+      "split_share_basis": "class_count"
     },
     "algorithm_versions": {
       "measures": "1",
@@ -55,6 +56,8 @@
       "cpd_aggregation": "1"
     },
     "parameters": {
+      "window.months": 12,
+      "window.max_commits": 2000,
       "cpd.minimum_tokens": 100,
       "percentile.min_population": 20,
       "frozen.min_days": 180,

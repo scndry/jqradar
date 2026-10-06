@@ -1,0 +1,18 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "reproducibility.analysis_input_id — 창 파라미터·history_backend·canonical_encoding·split_share_basis가 id 입력 (D186)",
+    "old": "id 스펙에 `canonical_encoding`·`component.split_share_basis`가 없고 `parameters`에 `window.*`가 없었다",
+    "new": "`parameters.window.months/max_commits`·`component.split_share_basis`·`canonical_encoding`이 id 스펙에 들어간다(D186 — §2.8 (i) 목록 정정)",
+    "note": "id 값이 바뀐다. 3차 T8(S3-13·F3-3·O3-6)이 reproduce의 세 종류에 자리 없는 값 넷을 지목했고 D186이 전부 (i)로 올렸다 — 계산기 스펙이 따라왔고 이력이 있는 여섯 + 시각 표기 골격의 id가 움직였다. head·repository_state_id·단언 불변. 입력 일곱에 `window.months: 12`·`window.max_commits: 2000`·`split_share_basis: class_count`를 더했다(§7 기본값). 새 케이스 `recompute-id-from-reproduce`가 §7 모양의 블록만으로 같은 id를 다시 만들고, 창 12 → 24개월이 id에 닿음을 단언한다 — v3.10.0까지는 [fn] 자리라 닿지 않았다(O3-6).",
+    "fixtures": [
+      "reproducibility/same-tree-different-pmd",
+      "reproducibility/unreachable-commits-do-not-leak",
+      "reproducibility/byte-identity-comparison-target",
+      "reproducibility/parameter-change-cache-projection",
+      "reproducibility/attribution-toggle-changes-id",
+      "reproducibility/team-mapping-edit-cache-projection",
+      "reproducibility/time-notation-canonical"
+    ]
+  }
+}

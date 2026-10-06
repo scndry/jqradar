@@ -15,7 +15,7 @@
     "reproduce.classes_reproduction_inputs"
   ],
   "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-  "analysis_input_id": "sha256:2cfda9c3b17e3589fc5f3d050dd58ed4f775f0c83d4e1cda96f1abddf18cb004",
+  "analysis_input_id": "sha256:3a7953699ed3df94b735d5d5e300df148be33320e53b3158a44dc6a2b261ac75",
   "comparison_target": {
     "schema": "jqradar/3",
     "reproduce": {
@@ -32,9 +32,10 @@
         "type": "head_committer_time",
         "timestamp": "2026-01-03T03:04:05Z"
       },
+      "canonical_encoding": "RFC8785-JCS",
       "head": "04c5de269bd939509087a13312869a28d540f773",
       "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-      "analysis_input_id": "sha256:2cfda9c3b17e3589fc5f3d050dd58ed4f775f0c83d4e1cda96f1abddf18cb004",
+      "analysis_input_id": "sha256:3a7953699ed3df94b735d5d5e300df148be33320e53b3158a44dc6a2b261ac75",
       "environment": {
         "pmd": "7.16.0",
         "archunit": "1.5.0",
@@ -52,9 +53,12 @@
       },
       "component": {
         "strategy": "auto",
+        "split_share_basis": "class_count",
         "algorithm_version": "auto-1"
       },
       "parameters": {
+        "window.months": 12,
+        "window.max_commits": 2000,
         "cpd.minimum_tokens": 100,
         "percentile.min_population": 20,
         "frozen.min_days": 180,
@@ -78,8 +82,7 @@
           "rounding": "HALF_EVEN",
           "scales": "D155-1"
         }
-      },
-      "canonical_encoding": "RFC8785-JCS"
+      }
     },
     "tree": {
       "file_count": 2,
@@ -108,8 +111,8 @@
         "annotation_processors": [],
         "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
       },
-      "output_sha256": "sha256:b2b15f085e7fe09ef5ba1820ab145f300584634965dc613b69ce61a79a3fe2cc",
-      "comparison_target_sha256": "sha256:6b7c202bb79df74a448b1f9ae8c981b3c6d6880be84d85e5f22052b734bb37aa"
+      "output_sha256": "sha256:266a14b722405d3d31bda08836bbf088b73030c7c583415413e8f7980388f2db",
+      "comparison_target_sha256": "sha256:001d822f890f920731bb9beebbe8a89f95e2ab0355a916e9e0192c117d3529b6"
     },
     "b": {
       "scanned_at": "2026-09-08T09:30:00Z",
@@ -123,8 +126,8 @@
         "annotation_processors": [],
         "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
       },
-      "output_sha256": "sha256:1012cea4dbea8d6af98f0d7a5e19edfe70b7cf27103d57cb0ec1f0168831d7d4",
-      "comparison_target_sha256": "sha256:6b7c202bb79df74a448b1f9ae8c981b3c6d6880be84d85e5f22052b734bb37aa"
+      "output_sha256": "sha256:805da4dfc2ecb33592e4f70a340bc529929949d618286a84eb58d1b6122fb66e",
+      "comparison_target_sha256": "sha256:001d822f890f920731bb9beebbe8a89f95e2ab0355a916e9e0192c117d3529b6"
     }
   },
   "fourth_kind_mutation": {
