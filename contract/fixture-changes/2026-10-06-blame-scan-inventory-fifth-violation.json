@@ -1,0 +1,10 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "history.blame-forbidden-on-scan-change — files_seen·files_skipped_as_sanctioned (리포 자기 스캔의 파일 목록)",
+    "old": "files_seen 9 — 반례 네 종",
+    "new": "files_seen 10 — 반례 다섯 종(`CallsArchUnitDoubleMetrics.java`, D179)",
+    "note": "판정(`verdict: accept`)·위반 0·bite_check·false_positive_check는 전부 불변이다. 이 케이스는 리포 자신의 Java 소스를 훑는 자기 스캔이라 파일 목록을 기록하는데, D179가 '반례 클래스가 `getInstability()`를 한 번 호출한다'를 요구해 `io/jqradar/arch/violations/`(검사에서 빼는 자리)에 파일이 하나 늘었고 그 목록이 움직였다. 분류는 contract_change로 둔다 — 늘어난 파일이 계약(D179)이 요구한 것이기 때문이다. 다만 §2.9의 세 분류(library_behavior_change·contract_change·bug_fix)에 '자기 스캔의 대상이 바뀜'이 없다는 것은 적어 둔다 — 소스 파일이 늘 때마다 이 expected가 움직인다면 목록을 기록하는 것이 맞는지(수만 기록할지)는 소유자가 볼 자리다.",
+    "fixtures": ["history/blame-forbidden-on-scan-change"]
+  }
+}
