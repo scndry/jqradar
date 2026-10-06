@@ -1,0 +1,12 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "history.hidden_couplings[].reason — 쌍의 사유는 그래프 밖 파일의 이유에서 계산, 동률이면 outside_bytecode_scope (D190)",
+    "old": "`static_dependency: null`인 쌍의 `reason`은 언제나 `outside_bytecode_scope`였다(D176 — 테스트-대상 쌍 하나)",
+    "new": "쌍의 사유는 그 파일이 그래프에 없는 이유(`class_graph_absent`)에서 온다 — (A,M)은 `no_bytecode`, (P,PTest)는 둘 다 밖·사유 다름 → 동률 규칙으로 `outside_bytecode_scope`(D190). 쌍에 `graph_absent`가 함께 인쇄된다",
+    "note": "기존 다섯 쌍의 값·순서 불변. 새 커밋 열둘(A+M ×6, P+PTest ×6)을 HEAD 앞에 끼워 HEAD 커밋의 시각(앵커)·기존 파일의 나이가 움직이지 않는다(commits_in_window 63 → 75; 커밋 SHA는 체인이 바뀌어 전부 달라진다 — 값이 아니라 식별자). 계산기는 이제 null 쌍에 그래프 밖 파일이 없거나 그래프 밖 파일이 든 쌍에 boolean을 주면 멈춘다 — 후자가 D176이 막은 오류 그 자체다.",
+    "fixtures": [
+      "history/hidden-coupling-sort-order"
+    ]
+  }
+}

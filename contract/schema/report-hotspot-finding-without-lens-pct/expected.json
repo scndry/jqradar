@@ -1,0 +1,15 @@
+{
+  "case": "report-hotspot-finding-without-lens-pct",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D191·D171",
+  "what": "파일 렌즈 finding(`fnd:h-order-service`)에서 `lens_pct`·`interpretation`을 빼면 거부(D191의 다른 쪽 — 렌즈 finding에는 **있어야** 한다). 렌즈가 null인 파일 finding도 `lens_pct: null`로 필드는 있다(D171) — 없는 것과 null은 다르다(D162).",
+  "mechanism": "if/then(kind별)",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/findings/0",
+    "/findings/0"
+  ]
+}

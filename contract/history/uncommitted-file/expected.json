@@ -1,0 +1,109 @@
+{
+  "case": "uncommitted-file",
+  "contract_refs": [
+    "§2.1",
+    "§2.5",
+    "§2.9",
+    "D189",
+    "D188"
+  ],
+  "what_this_pins": "**미커밋 신규 파일의 나이는 null + `uncommitted`다**(D189) — `age_unknown`이 아니다. `src/New.java`는 작업트리에만 있고 어느 커밋에도 없다: 마지막 비머지 커밋이 없으므로 `HEAD_TIME − ?`를 셀 수 없다. 이름이 다른 이유는 구제가 다르기 때문이다 — `uncommitted`는 \"커밋하라\", `age_unknown`은 \"shallow를 풀라\"(D148), `rename_ancestry_lost`는 도구의 한계. `age_unknown`으로 접으면 `history_complete`(D148)가 shallow만 설명하고 이 null은 다시 이름 없는 null이 된다(3차 T2(b) — 구현이 이름을 골랐던 자리: 이 계산기의 옛 기본값이 `age_unknown`이었다). 이름은 §2.5 사전에서 온다(D188). F도 null이 된다(§3.3). `chg_commits`는 0 — W 안에 커밋이 없는 것과 커밋이 아예 없는 것을 `age_reason`이 가른다.",
+  "shallow_depth": null,
+  "window_anchor": {
+    "type": "head_committer_time",
+    "timestamp": "2026-08-02T00:00:00+00:00"
+  },
+  "head": "1c1a22153",
+  "window_applied": {
+    "months": 12,
+    "max_commits": 2000,
+    "bound_hit": "none",
+    "commits_in_window": 2,
+    "merge_commits_excluded": 0,
+    "authors_window_truncated": false,
+    "authors_window_days": 1.00,
+    "commits_excluded_within_90d": 0
+  },
+  "commits": [
+    {
+      "sha": "1c1a22153",
+      "at": "2026-08-02T00:00:00+00:00",
+      "subject": "add B",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "5dbbbec83",
+      "at": "2026-08-01T00:00:00+00:00",
+      "subject": "add A",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java"
+      ],
+      "in_window": true
+    }
+  ],
+  "median_files_per_commit": 1,
+  "commit_granularity": "fine",
+  "renames": [],
+  "files": {
+    "src/A.java": {
+      "chg_commits": 1,
+      "chg_days": 1,
+      "churn": 1,
+      "touched_by": [
+        "5dbbbec83"
+      ],
+      "age_last_days": 1.00,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    },
+    "src/B.java": {
+      "chg_commits": 1,
+      "chg_days": 1,
+      "churn": 1,
+      "touched_by": [
+        "1c1a22153"
+      ],
+      "age_last_days": 0.00,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    },
+    "src/New.java": {
+      "chg_commits": 0,
+      "chg_days": 0,
+      "churn": 0,
+      "touched_by": [],
+      "age_last_days": null,
+      "age_reason": "uncommitted",
+      "age_basis": "no_commit",
+      "distinct_authors_90d": 0,
+      "contributor_count": 0,
+      "ownership_max_share": null,
+      "minor_contributor_share": null
+    }
+  },
+  "pairs": [],
+  "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

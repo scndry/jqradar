@@ -1,0 +1,90 @@
+{
+  "case": "accept-report-invalid-metadata-f",
+  "check": "schema",
+  "kind": "positive",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "contract_ref": "D188·D189·§2.1",
+  "what": "나이가 음수인 파일(§2.1 `invalid_metadata`)의 정상 모양 — `age_last_days: null`, `percentile_population.age_last_days.all.reason: invalid_metadata`, F null, `lens_percentiles.F.reason: invalid_metadata`가 **통과**한다(D188 — `invalid_metadata`가 처음으로 열거에 든 자리, 3차 T2(a)). 이 긍정이 없으면 사전 통합은 검사되지 않는다 — §7 예시의 나이는 둘 다 값이라 첫 커밋이 초록이었다. F finding(`fnd:f-order-policy`)은 렌즈가 null이라 뺀다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "files",
+        1,
+        "measures",
+        "age_last_days"
+      ],
+      "value": null
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        1,
+        "percentiles",
+        "age_last_days"
+      ],
+      "value": {
+        "all": null
+      }
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        1,
+        "percentile_population",
+        "age_last_days"
+      ],
+      "value": {
+        "all": {
+          "n_ranked": 338,
+          "n_population": 340,
+          "reason": "invalid_metadata"
+        }
+      }
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        1,
+        "lenses",
+        "F"
+      ],
+      "value": null
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        1,
+        "lenses",
+        "composite_note"
+      ],
+      "value": "H,Dx null — not in active/dx population; F null — age invalid_metadata"
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        1,
+        "lens_percentiles",
+        "F"
+      ],
+      "value": {
+        "pct": null,
+        "population": "all",
+        "reason": "invalid_metadata"
+      }
+    },
+    {
+      "op": "remove",
+      "path": [
+        "findings",
+        2
+      ]
+    }
+  ]
+}

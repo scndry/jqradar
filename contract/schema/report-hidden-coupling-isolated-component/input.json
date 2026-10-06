@@ -1,0 +1,30 @@
+{
+  "case": "report-hidden-coupling-isolated-component",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "allOf($defs.reason + 자리별 enum)",
+  "contract_ref": "D188·D190",
+  "what": "`hidden_couplings[].reason`에 컴포넌트의 이름 `isolated_component`가 오면 거부(D188). 쌍의 자리는 `outside_bytecode_scope`(D176)·`no_bytecode`(D190) 둘 — 그래프 밖인 **파일**의 이유이지 컴포넌트의 이유가 아니다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "hidden_couplings",
+        0,
+        "static_dependency"
+      ],
+      "value": null
+    },
+    {
+      "op": "set",
+      "path": [
+        "hidden_couplings",
+        0,
+        "reason"
+      ],
+      "value": "isolated_component"
+    }
+  ]
+}

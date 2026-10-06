@@ -1,0 +1,12 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "schema.report — `reason`의 사전이 `$defs.reason` 한 곳 + 자리별 부분집합 (D188)",
+    "old": "`report-unknown-reason`의 `rejected_at`이 한 번 — 성분의 enum(다섯)이 사전 밖 이름을 거부했다",
+    "new": "같은 경로가 두 번 — `$defs.reason`(열 이름)이 한 번, 자리(`percentile_population` 성분별 부분집합)가 한 번 거부한다",
+    "note": "변조의 판정(reject)은 그대로이고 거부한 자리가 하나에서 둘이 됐다 — 사전이 한 곳에 서고 자리마다 §2.5 표의 셋째 열이 부분집합으로 걸린 결과다(3차 T2(d): enum 셋이 같은 키 아래 갈라져 있었다). 설명 문장도 '다섯 값'에서 '사전 표의 열 이름'으로. 새 긍정 둘(`accept-report-invalid-metadata-f`·`accept-report-no-bytecode-pair`)과 변조 다섯은 새 케이스라 이 레코드의 대상이 아니다.",
+    "fixtures": [
+      "schema/report-unknown-reason"
+    ]
+  }
+}

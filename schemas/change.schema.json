@@ -270,7 +270,7 @@
       "description": "§5.7. 원장 상태는 저장되지 않고 파생 ⊕ 사건으로 계산되므로(D55) 여기 실리는 상태도 **그 시점의 파생값**이다.",
       "required": [
         "id",
-        "anchor_class",
+        "kind",
         "status_before",
         "delta",
         "claimed_by_this_pr"
@@ -280,13 +280,23 @@
           "type": "string",
           "description": "finding 정체성(§5.5 표, D70)."
         },
+        "kind": {
+          "enum": [
+            "hotspot",
+            "duplication_exposure",
+            "frozen_core",
+            "component_cycle",
+            "hidden_coupling"
+          ],
+          "description": "report의 finding과 같은 열거(§5.7·D191). `anchor_class`가 있어야 하는지(파일 렌즈 finding)·없어야 하는지(순환·Hidden Coupling)를 가르는 열쇠 — 이 열쇠가 없어 D191이 report에만 걸려 있었다(§0-41 보정)."
+        },
         "anchor_class": {
           "enum": [
             "high",
             "medium",
             "low"
           ],
-          "description": "§5.5 — 앵커 시점 렌즈 백분위(`≥0.90` high, `≥0.75` medium)로 **얼린** 분류. finding당 불변이고 저장되는 결정 산출물이다(D56). **판결이 아니라 착수 순서**이며(B.2), 얼리는 이유는 개선이 보이게 하기 위해서다 — 움직이는 백분위로는 최악을 고쳐도 다음 10%가 올라와 이길 수 없다."
+          "description": "§5.5 — 앵커 시점 렌즈 백분위(`≥0.90` high, `≥0.75` medium)로 **얼린** 분류. finding당 불변이고 저장되는 결정 산출물이다(D56). **판결이 아니라 착수 순서**이며(B.2), 얼리는 이유는 개선이 보이게 하기 위해서다 — 움직이는 백분위로는 최악을 고쳐도 다음 10%가 올라와 이길 수 없다. **파일 렌즈 finding에만 있다**(D191) — 순환·Hidden Coupling finding에는 필드로 없다."
         },
         "status_before": {
           "$ref": "#/$defs/ledgerState"
@@ -309,7 +319,39 @@
           "description": "§5.7 — **필수**(D117). 이 PR이 그 finding의 사건 파일을 실었는가는 파생 가능한 사실이고, 선택으로 두면 전이 귀속(§5.5, D100)과 어긋난다."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "hotspot",
+                  "duplication_exposure",
+                  "frozen_core"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "anchor_class"
+            ],
+            "description": "파일 렌즈 finding에는 얼린 분류가 있다(§5.5·D191)."
+          },
+          "else": {
+            "not": {
+              "required": [
+                "anchor_class"
+              ]
+            },
+            "description": "렌즈 없는 finding(순환·Hidden Coupling)에는 `anchor_class`가 **필드로 없다**(D191) — \"해당 없음\"은 null도 reason도 아니다(D162). report의 finding과 같은 if/then(§0-41 보정)."
+          }
+        }
+      ]
     },
     "ledgerState": {
       "enum": [

@@ -1,0 +1,48 @@
+{
+  "case": "uncommitted-file",
+  "contract_refs": [
+    "§2.1",
+    "§2.5",
+    "§2.9",
+    "D189",
+    "D188"
+  ],
+  "what_this_pins": "**미커밋 신규 파일의 나이는 null + `uncommitted`다**(D189) — `age_unknown`이 아니다. `src/New.java`는 작업트리에만 있고 어느 커밋에도 없다: 마지막 비머지 커밋이 없으므로 `HEAD_TIME − ?`를 셀 수 없다. 이름이 다른 이유는 구제가 다르기 때문이다 — `uncommitted`는 \"커밋하라\", `age_unknown`은 \"shallow를 풀라\"(D148), `rename_ancestry_lost`는 도구의 한계. `age_unknown`으로 접으면 `history_complete`(D148)가 shallow만 설명하고 이 null은 다시 이름 없는 null이 된다(3차 T2(b) — 구현이 이름을 골랐던 자리: 이 계산기의 옛 기본값이 `age_unknown`이었다). 이름은 §2.5 사전에서 온다(D188). F도 null이 된다(§3.3). `chg_commits`는 0 — W 안에 커밋이 없는 것과 커밋이 아예 없는 것을 `age_reason`이 가른다.",
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-08-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "c1",
+        "at_seconds": 0,
+        "message": "add A",
+        "write": {
+          "src/A.java": "class A {}\n"
+        }
+      },
+      {
+        "id": "c2",
+        "at_seconds": 86400,
+        "message": "add B",
+        "write": {
+          "src/B.java": "class B {}\n"
+        }
+      }
+    ]
+  },
+  "uncommitted_files": {
+    "src/New.java": "class New {}\n"
+  },
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "measure_files": [
+    "src/A.java",
+    "src/B.java",
+    "src/New.java"
+  ]
+}

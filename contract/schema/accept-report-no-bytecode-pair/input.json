@@ -1,0 +1,29 @@
+{
+  "case": "accept-report-no-bytecode-pair",
+  "check": "schema",
+  "kind": "positive",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "contract_ref": "D190·D176",
+  "what": "적격이지만 클래스가 없는 파일(`module-info.java`·컴파일 제외, D170)이 든 쌍의 정상 모양 — `static_dependency: null` + `reason: no_bytecode`가 통과한다(D190). D176의 `outside_bytecode_scope`와 **다른 이유**이고 둘 다 쌍의 자리다(§2.5 표 셋째 열).",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "hidden_couplings",
+        0,
+        "static_dependency"
+      ],
+      "value": null
+    },
+    {
+      "op": "set",
+      "path": [
+        "hidden_couplings",
+        0,
+        "reason"
+      ],
+      "value": "no_bytecode"
+    }
+  ]
+}

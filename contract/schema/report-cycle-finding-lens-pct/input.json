@@ -1,0 +1,30 @@
+{
+  "case": "report-cycle-finding-lens-pct",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "if/then(kind별)",
+  "contract_ref": "D191·D162",
+  "what": "순환 finding(`fnd:cyc-1`)에 `lens_pct`·`interpretation`을 넣으면 거부(D191). 둘 다 finding 객체의 정당한 필드라 닫힌 객체로는 못 잡는다 — `kind`별 if/then이 있어야 한다: 파일 렌즈 finding(H·Dx·F)이면 required, 아니면 금지. \"해당 없음\"은 null도 reason도 아니고 필드 부재다(D162·D191). `no_lens` 같은 상수 값도 이 길로 거부된다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "findings",
+        3,
+        "lens_pct"
+      ],
+      "value": 0.5
+    },
+    {
+      "op": "set",
+      "path": [
+        "findings",
+        3,
+        "interpretation"
+      ],
+      "value": "context"
+    }
+  ]
+}

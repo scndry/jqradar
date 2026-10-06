@@ -41,6 +41,7 @@
   "touched_legacy_findings": [
     {
       "id": "fnd:dx:dup:3f9a…:120@…/OrderService.java",
+      "kind": "duplication_exposure",
       "anchor_class": "high",
       "status_before": "open",
       "delta": {
