@@ -49,27 +49,42 @@ PRD_BLOCKS = ["report", "gate", "validate", "fixture_change", "campaign", "event
 # 스케일 표 `D155-1`(§2.5) — **필드 이름**으로 매긴다. 표에 없는 유리수 필드는 위반이다.
 # 스케일은 고정이다: 자릿수가 많아도, 적어도(후행 0을 떼도) 위반이다 — "바이트 동일"은 파싱된
 # 수가 아니라 직렬화된 텍스트에 대한 주장이라(§2.5) 0.38과 0.3800은 다른 바이트다.
+# D185 — 표는 산출물 **8종 전부**의 유리수 필드를 들고 린트도 §7 블록 전부를 본다.
+# 정수 행의 뜻은 "정수여야 하는 이름"이다: 정수 리터럴은 표와 무관하게 통과하되, 정수 행의 이름에
+# 소수가 오면 위반이고(decimal_in_integer_field), 스케일이 있는 행의 이름에 정수 리터럴이 오면
+# 후행 0을 뗀 것이라 위반이다(integer_in_scaled_field — "0.38이 아니라 0.3800").
 SCALES_VERSION = "D155-1"
-KIND_SCALE = {"integer": 0, "ratio": 4, "lens": 1, "lakos": 2}
+KIND_SCALE = {"integer": 0, "ratio": 4, "lens": 1, "lakos": 2, "elapsed_days": 2}
 FIELD_KIND = {
     **{f: "integer" for f in (
         "cx", "loc", "file_tokens", "chg_commits", "chg_days", "churn", "fan_in", "twins",
         "active_twins", "shared", "union_dup_tokens", "self_dup_tokens", "Ca", "Ce", "CCD",
-        "components", "n_ranked", "n_population", "valid_n", "unknown_n", "age_last_days",
-        "debt_age_days",
-        "change_exposure_90d", "authors_window_days", "distinct_authors_90d", "team_count")},
+        "components", "n_ranked", "n_population", "valid_n", "unknown_n",
+        "change_exposure_90d", "distinct_authors_90d", "team_count", "teams_folded",
+        "authors_unmapped")},
+    # D184 — '일'은 초/86400의 유리수, 표시 2자리(0.01일 = 14분).
+    **{f: "elapsed_days" for f in ("age_last_days", "authors_window_days", "debt_age_days")},
     **{f: "ratio" for f in (
         "pct", "lens_pct", "dup_extent", "active_twin_ratio", "tc", "ownership_max_share",
-        "minor_contributor_share", "I", "A", "D", "RACD")},
+        "minor_contributor_share", "I", "A", "D", "RACD",
+        "delta", "changed_line_coverage")},                  # gate·validate (D185)
     **{f: "lens" for f in ("H", "Dx", "F", "composite", "priority")},
-    **{f: "lakos" for f in ("ACD", "CCD_balanced", "NCCD")},
+    **{f: "lakos" for f in ("ACD", "CCD_balanced", "NCCD", "nccd")},   # gate의 [base, head]는 소문자 그대로 (D185)
 }
 SUMMARY_KEYS = ("median", "iqr", "p90", "max")
+# 요약 통계 행에 이름으로 든 것 — `median_files_per_commit`은 짝수면 .5라 2자리 (D185)
+SUMMARY_NAMED = {"median_files_per_commit": 2,
+                 "p90_all": 2}   # evidence의 P90(age_last_days) — 경과 시간의 요약, §0-40 보정
 
 
 def scale_for(path: list, parent: dict | None = None) -> int | None:
     """경로의 유리수 필드에 배정된 스케일. 표에 없으면 None."""
     leaf = str(path[-1])
+    if leaf.isdigit() and len(path) >= 2:
+        # 배열 원소 — 이름은 배열의 키다(`gate`의 `nccd: [base, head]`, D185).
+        return scale_for(path[:-1], parent)
+    if leaf in SUMMARY_NAMED:
+        return SUMMARY_NAMED[leaf]
     if leaf == "value" and isinstance(parent, dict) and "measure" in parent:
         # 증거의 `value`는 그 측정의 값이다 — 스케일도 그 측정의 것(표 적용, 확장 아님).
         kind = FIELD_KIND.get(str(parent["measure"]))
@@ -78,7 +93,8 @@ def scale_for(path: list, parent: dict | None = None) -> int | None:
         # 요약 통계는 대상 측정에 따른다(D155). `cx.java`처럼 언어 접미어가 붙을 수 있다.
         measure = str(path[-2]).split(".")[0]
         kind = FIELD_KIND.get(measure)
-        return {"integer": 2, "ratio": 4, "lens": 1}.get(kind)
+        # 경과 시간(일)의 요약도 2자리 — 대상 자체가 2자리 유리수다(D184).
+        return {"integer": 2, "ratio": 4, "lens": 1, "elapsed_days": 2}.get(kind)
     if len(path) >= 2 and str(path[-2]) == "percentiles":
         return 4
     if len(path) >= 3 and str(path[-3]) == "percentiles":
@@ -205,7 +221,13 @@ def scale_violations(text: str) -> list[dict]:
         elif isinstance(node, list):
             for i, v in enumerate(node):
                 walk(v, path + [i], parent)
-        elif type(node) is _Dec:                       # 소수 리터럴만. 문자열은 보지 않는다
+        elif type(node) is _Int:
+            # D155·D185 — 스케일이 있는 행의 이름에 정수 리터럴이면 후행 0을 뗀 것이다(90 ≠ 90.00).
+            scale = scale_for(path, parent)
+            if scale:
+                found.append({"path": "/" + "/".join(map(str, path)), "literal": node,
+                              "problem": "integer_in_scaled_field", "allowed_scale": scale})
+        elif type(node) is _Dec:                       # 소수 리터럴. 문자열은 보지 않는다
             where = "/" + "/".join(map(str, path))
             got = decimals(node)
             scale = scale_for(path, parent)

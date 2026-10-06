@@ -22,7 +22,7 @@
         "commits_in_window": 12,
         "merge_commits_excluded": 0,
         "authors_window_truncated": false,
-        "authors_window_days": 2.439814814815,
+        "authors_window_days": 2.44,
         "commits_excluded_within_90d": 0
       },
       "commits": [
@@ -219,7 +219,7 @@
             "f4ea975f4",
             "98f89790d"
           ],
-          "age_last_days": 1.240740740741,
+          "age_last_days": 1.24,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
           "ownership_max_share": 1,
@@ -244,7 +244,7 @@
             "f4ea975f4",
             "98f89790d"
           ],
-          "age_last_days": 0,
+          "age_last_days": 0.00,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
           "ownership_max_share": 1,
@@ -297,7 +297,7 @@
         "commits_in_window": 15,
         "merge_commits_excluded": 0,
         "authors_window_truncated": false,
-        "authors_window_days": 90,
+        "authors_window_days": 90.00,
         "commits_excluded_within_90d": 0
       },
       "commits": [
@@ -497,7 +497,7 @@
             "a28e77d0a",
             "0209b7f58"
           ],
-          "age_last_days": 1.240740740741,
+          "age_last_days": 1.24,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
           "ownership_max_share": 1,
@@ -525,7 +525,7 @@
             "a28e77d0a",
             "0209b7f58"
           ],
-          "age_last_days": 0,
+          "age_last_days": 0.00,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
           "ownership_max_share": 1,
@@ -567,9 +567,6 @@
     }
   },
   "non_terminating": {
-    "/variants/window_12m/window_applied/authors_window_days": "527/216",
-    "/variants/window_12m/files/src/A.java/age_last_days": "67/54",
-    "/variants/window_240m/files/src/A.java/age_last_days": "67/54",
     "/variants/window_240m/pairs/0/tc": "9/11",
     "/variants/window_240m/hidden_couplings/0/tc": "9/11"
   },

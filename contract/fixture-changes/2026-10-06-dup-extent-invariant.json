@@ -1,0 +1,10 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "cpd — invariants.dup_extent_at_most_one (D187)",
+    "old": "`dup_extent`의 분자·분모가 같은 스트림인지 계약이 말하지 않았고 케이스는 불변식을 인쇄하지 않았다",
+    "new": "토큰을 세는 모든 수는 정규화 후 스트림의 것(D187) — 모든 케이스가 `invariants.dup_extent_at_most_one: true`를 인쇄하고, 입력이 `union > file_tokens`면 계산기가 멈춘다",
+    "note": "값은 바뀌지 않는다 — 여섯 케이스에 `invariants` 키 하나가 더해진다. 3차 쌍 9(토크나이저)를 셋이 '모순 없음'으로 적으면서 기억에 기댔다고 스스로 적어 사실상 아무도 못 본 자리; v3.10.1이 정규화 후 스트림으로 정했고 `dup_extent ≤ 1`이 그 결정의 불변식이다. 반례(한 파일의 file_tokens를 union보다 작게)로 계산기가 멈추는 것을 확인했다.",
+    "fixtures": ["cpd/overlap-merge", "cpd/unordered-pair", "cpd/self-duplication", "cpd/threshold-boundary", "cpd/four-occurrences-one-cluster", "cpd/mixed-cluster"]
+  }
+}

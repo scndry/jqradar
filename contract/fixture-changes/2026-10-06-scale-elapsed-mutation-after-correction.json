@@ -1,0 +1,10 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "schema.scale-elapsed-days-as-integer — violations 목록",
+    "old": "위반 8건 — 자기 위반(`authors_window_days: 90`) 하나 + §7 예시 자체의 경과 시간 정수 리터럴(`age_last_days` 6·1250, evidence 1250, spread) 일곱",
+    "new": "위반 1건 — 자기 위반만",
+    "note": "verdict는 reject 그대로. 이 변조 케이스는 §7 예시가 `age_last_days`를 정수로 인쇄하던 때 만들어져 기반 문서의 위반까지 함께 실었다. §0-40 보정이 예시를 2자리(`6.00`·`1250.00`·`900.00`·`953.00`)로 고치자 변조 자신의 위반만 남았다 — 기반이 계약을 따라오면서 변조의 목록이 줄어든 것이고, 그 줄어듦이 보정이 정확히 그 일곱을 고쳤다는 증거다.",
+    "fixtures": ["schema/scale-elapsed-days-as-integer"]
+  }
+}

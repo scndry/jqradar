@@ -1,0 +1,29 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "history — '일' 필드의 인쇄(`age_last_days`·`authors_window_days`) + blame 자기 스캔의 파일 목록 → 수",
+    "old": "'일'은 유리수를 12자리까지 인쇄(`7.027777777778`·`0.125`); blame 케이스가 훑은/뺀 파일 **목록**을 기록",
+    "new": "'일'은 초/86400의 유리수이고 인쇄는 **2자리** HALF_EVEN 후행 0 유지(`7.03`·`0.12`·`0.00`, D184·D155-1 경과 시간 행); blame 케이스는 **수**만(`files_seen`·`files_scanned`·`files_skipped_as_sanctioned`)",
+    "note": "값은 바뀌지 않는다 — 비교는 정확 유리수 그대로이고 인쇄만 2자리로(D184). `0.125`는 HALF_EVEN으로 `0.12`. 12자리 인쇄는 어느 스케일도 아니라 D155 아래서 둘 수 없었다(소유자 정정, §0-40). blame 자기 스캔의 목록 → 수는 소유자 지시(PR #49 뒤): 부재 검사가 증명하는 것은 '훑은 파일 중 blame 호출 0건'이지 '훑은 파일이 이 열 개'가 아니다 — 소스가 늘 때마다 expected가 움직이던 것이 반례가 늘 때만 움직이게 된다. 새 케이스 `age-boundary-180-days`가 179.96(거짓)·180.00(참)·0.50을 고정한다.",
+    "fixtures": [
+      "history/anchor-fixed",
+      "history/author-facts-minor-threshold",
+      "history/authors-window-truncated-by-count",
+      "history/blame-forbidden-on-scan-change",
+      "history/coarse-granularity",
+      "history/hidden-coupling-sort-order",
+      "history/merge-commits-excluded",
+      "history/negative-age-invalid-metadata",
+      "history/pair-report-threshold",
+      "history/rename-ambiguous",
+      "history/rename-tiebreak",
+      "history/shallow-clone-age-unknown",
+      "history/shared-window-limited",
+      "history/tc-squash-vs-merge",
+      "history/team-folding-k-threshold",
+      "history/window-bound-count",
+      "history/window-bound-time",
+      "history/window-vs-first-parent"
+    ]
+  }
+}

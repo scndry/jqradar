@@ -1,0 +1,18 @@
+{
+  "case": "scale-elapsed-days-as-integer",
+  "generated_by": "contract/schema/compute.py",
+  "check": "scale_lint",
+  "kind": "hard_rule",
+  "contract_ref": "D184·D185",
+  "what": "`authors_window_days`는 경과 시간(일) 2자리(D184) — 정수 리터럴 `90`은 후행 0을 뗀 것이라 위반이다(`integer_in_scaled_field`). '정수 리터럴은 표와 무관하게 통과'는 표에 없는 이름의 말이다(D185).",
+  "mechanism": "원문 린트(스키마 아님)",
+  "verdict": "reject",
+  "violations": [
+    {
+      "path": "/reproduce/window_applied/authors_window_days",
+      "literal": "90",
+      "problem": "integer_in_scaled_field",
+      "allowed_scale": 2
+    }
+  ]
+}

@@ -144,26 +144,63 @@
         "parameters",
         "percentile_method",
         "algorithm_versions",
-        "classes_id"
+        "classes_id",
+        "canonical_encoding"
       ],
       "properties": {
         "people": {
           "type": "object",
           "description": "저작 정책 — 정책이지만 산출물을 바꾸므로 **id 입력**이다(§2.8, D160). `parameters` 안이 아닌 이유는 B.6 — 조직이 적는 자리가 다르다. `off`에서도 인쇄한다: 모드가 무엇이었나도 재현의 일부다.",
-          "required": ["attribution", "team_mapping_sha256"],
+          "required": [
+            "attribution",
+            "team_mapping_sha256"
+          ],
           "properties": {
-            "attribution": {"enum": ["off", "team", "individual"], "description": "§2.7·D11. 기본 off."},
+            "attribution": {
+              "enum": [
+                "off",
+                "team",
+                "individual"
+              ],
+              "description": "§2.7·D11. 기본 off."
+            },
             "team_mapping_sha256": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "pattern": "^sha256:",
               "description": "조직 제공 팀 매핑 파일의 해시(D160). 정체가 아니다 — 파일 하나의 해시. `off`면 `null`, 아니면 `sha256:` 접두(D128대로 접두만)."
             }
           },
           "allOf": [
             {
-              "if": {"properties": {"attribution": {"const": "off"}}, "required": ["attribution"]},
-              "then": {"properties": {"team_mapping_sha256": {"const": null}}, "description": "off에는 매핑이 없다 — 해시가 있으면 어느 모드였는지 `reproduce`가 두 말을 한다(D160)."},
-              "else": {"properties": {"team_mapping_sha256": {"type": "string"}}, "description": "team·individual은 매핑이 있어야 한다(§2.7)."}
+              "if": {
+                "properties": {
+                  "attribution": {
+                    "const": "off"
+                  }
+                },
+                "required": [
+                  "attribution"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "team_mapping_sha256": {
+                    "const": null
+                  }
+                },
+                "description": "off에는 매핑이 없다 — 해시가 있으면 어느 모드였는지 `reproduce`가 두 말을 한다(D160)."
+              },
+              "else": {
+                "properties": {
+                  "team_mapping_sha256": {
+                    "type": "string"
+                  }
+                },
+                "description": "team·individual은 매핑이 있어야 한다(§2.7)."
+              }
             }
           ],
           "additionalProperties": false
@@ -226,7 +263,7 @@
         },
         "environment": {
           "type": "object",
-          "description": "분석 도구 버전(§2.8). major.minor.patch. `analysis_input_id` 입력 — 빠지면 PMD 7.16과 7.17이 같은 캐시 키를 만든다.",
+          "description": "측정 엔진 버전(§2.8) — pmd·archunit·jgit. major.minor.patch. `analysis_input_id` 입력. native git은 측정 엔진이 아니라 이력 백엔드라 `history_backend`에(D186).",
           "required": [
             "pmd",
             "archunit",
@@ -241,13 +278,6 @@
             },
             "jgit": {
               "type": "string"
-            },
-            "git": {
-              "type": [
-                "string",
-                "null"
-              ],
-              "description": "네이티브 백엔드를 쓸 때만(§4.5, D17). JGit 단독이면 null."
             }
           },
           "additionalProperties": false
@@ -285,9 +315,10 @@
         },
         "history_backend": {
           "type": "object",
-          "description": "이력 백엔드(§4.5, D17). 기본 JGit 단독. 네이티브는 옵트인이고 백엔드가 다른 두 실행 사이의 델타·원장 전이는 거부한다.",
+          "description": "이력 백엔드(§4.5, D17) — **전체가 id 입력**(D186): `name`과 `git_version`(JGit 단독이면 null). git 버전의 정본은 여기다 — `environment.git`은 없다.",
           "required": [
-            "name"
+            "name",
+            "git_version"
           ],
           "properties": {
             "name": {
@@ -307,10 +338,8 @@
         },
         "window_applied": {
           "type": "object",
-          "description": "창 W의 적용 결과(§2.7). 12개월 ∧ 2,000커밋 중 먼저 닥치는 상한.",
+          "description": "창 W의 적용 **결과**(§2.7) — 창 파라미터(`window.months`·`window.max_commits`)는 `parameters`에 있다(D186). 전부 id 입력의 결정적 함수이거나 id 입력의 해시다.",
           "required": [
-            "months",
-            "max_commits",
             "bound_hit",
             "commits_in_window",
             "commit_list_sha256",
@@ -323,32 +352,46 @@
           "allOf": [
             {
               "if": {
-                "properties": { "history_complete": { "const": true } },
-                "required": ["history_complete"]
+                "properties": {
+                  "history_complete": {
+                    "const": true
+                  }
+                },
+                "required": [
+                  "history_complete"
+                ]
               },
               "then": {
-                "properties": { "graft_boundary_shas": { "maxItems": 0 } },
+                "properties": {
+                  "graft_boundary_shas": {
+                    "maxItems": 0
+                  }
+                },
                 "description": "이력이 완전하면 graft 경계가 없다(§2.1, D148). 두 필드는 같은 사실의 두 면이라 따로 참일 수 없다 — 각각만 보면 `history_complete: true`인데 경계가 있다고 적은 산출물이 통과한다."
               }
             },
             {
               "if": {
-                "properties": { "history_complete": { "const": false } },
-                "required": ["history_complete"]
+                "properties": {
+                  "history_complete": {
+                    "const": false
+                  }
+                },
+                "required": [
+                  "history_complete"
+                ]
               },
               "then": {
-                "properties": { "graft_boundary_shas": { "minItems": 1 } },
+                "properties": {
+                  "graft_boundary_shas": {
+                    "minItems": 1
+                  }
+                },
                 "description": "이력이 불완전하면 graft 경계가 최소 하나 있다(§2.1, D148). 경계를 인쇄하지 않으면 어디서 이력이 끊겼는지 `reproduce`로 알 수 없고, 감지 실패는 `null`이 아니라 그럴듯한 틀린 수로 나타난다(§12)."
               }
             }
           ],
           "properties": {
-            "months": {
-              "type": "integer"
-            },
-            "max_commits": {
-              "type": "integer"
-            },
             "bound_hit": {
               "enum": [
                 "time",
@@ -378,7 +421,10 @@
             },
             "graft_boundary_shas": {
               "type": "array",
-              "items": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+              "items": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              },
               "uniqueItems": true,
               "description": "graft 경계 커밋의 SHA 목록(§2.1, D148). 진단 필드이고 id 입력이 아니다. 완전한 클론에서는 빈 배열."
             },
@@ -390,7 +436,7 @@
               "type": "number",
               "minimum": 0,
               "maximum": 90,
-              "description": "90일 지표가 실제로 본 일수 = `min(90, HEAD_TIME − 창의 가장 오래된 커밋 시각)`(§2.7·D137). 이름이 `90d`인데 실제로 1.6일을 본 경우를 아는 자리다. 0에서 자른다 — 커미터 시각이 뒤죽박죽이면(§2.1 `invalid_metadata`) HEAD가 자기 조상보다 이를 수 있고 그때 음수 일수는 아무 뜻이 없다."
+              "description": "90일 지표가 실제로 본 일수 = `max(0, min(90, HEAD_TIME − 창의 가장 오래된 커밋 시각))`(§2.7·D137) — **유리수 일**(초/86400), 표시 2자리(D184). 이름이 `90d`인데 실제로 1.60일을 본 경우를 아는 자리다. 0에서 자른다."
             }
           },
           "additionalProperties": false
@@ -427,12 +473,13 @@
           "description": "컴포넌트 전략의 결정 결과(§2.2, D15). 인쇄해서 재현 가능하게 한다.",
           "required": [
             "strategy",
+            "split_share_basis",
             "count"
           ],
           "properties": {
             "strategy": {
               "type": "string",
-              "description": "`module` / `auto` / `depth:<n>`(§2.2)."
+              "description": "`module` / `auto` / `depth:<n>`(§2.2) — id 입력."
             },
             "resolved_root": {
               "type": "string",
@@ -440,6 +487,10 @@
             },
             "count": {
               "type": "integer"
+            },
+            "split_share_basis": {
+              "const": "class_count",
+              "description": "`auto` 분할의 기준(§2.2, D130) — id 입력(D186)."
             }
           },
           "additionalProperties": false
@@ -448,22 +499,77 @@
           "type": "object",
           "description": "모든 분석 파라미터(§2.8, §4.3). `scan`은 무설정이라 이 값들은 코드 기본값이고 전부 인쇄된다 — 설정 파일이 아니라 인쇄가 재현성의 근거다. 타입은 D156: 정수는 JSON 정수, 분수는 십진 문자열, 이름·열거 값은 문자열. 집합은 프로필이 늘릴 수 있어 닫지 않는다.",
           "properties": {
-            "cpd.minimum_tokens": { "type": "integer", "minimum": 1 },
-            "percentile.min_population": { "type": "integer", "minimum": 1 },
-            "frozen.min_days": { "type": "integer", "minimum": 0 },
-            "rename.similarity": { "type": "integer", "minimum": 0, "maximum": 100 },
-            "hotspot.change_unit": { "type": "string" },
-            "profile": { "type": "string" },
-            "verify.min_changed_line_coverage": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$", "description": "분수 파라미터는 십진 문자열 — 인쇄 = 해시 입력(D156). JSON 숫자로 인쇄하면 이진 부동소수점을 거쳐 해시 입력과 갈린다." },
+            "cpd.minimum_tokens": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "percentile.min_population": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "frozen.min_days": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "rename.similarity": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "hotspot.change_unit": {
+              "type": "string"
+            },
+            "profile": {
+              "type": "string"
+            },
+            "verify.min_changed_line_coverage": {
+              "type": "string",
+              "pattern": "^[0-9]+\\.[0-9]+$",
+              "description": "분수 파라미터는 십진 문자열 — 인쇄 = 해시 입력(D156). JSON 숫자로 인쇄하면 이진 부동소수점을 거쳐 해시 입력과 갈린다."
+            },
             "weights": {
               "type": "object",
               "description": "렌즈 가중(§3.6). 셋뿐이다.",
-              "required": ["H", "Dx", "F"],
-              "properties": { "H": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$", "description": "분수 파라미터는 십진 문자열 — 인쇄 = 해시 입력(D156). JSON 숫자로 인쇄하면 이진 부동소수점을 거쳐 해시 입력과 갈린다." }, "Dx": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$", "description": "분수 파라미터는 십진 문자열 — 인쇄 = 해시 입력(D156). JSON 숫자로 인쇄하면 이진 부동소수점을 거쳐 해시 입력과 갈린다." }, "F": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$", "description": "분수 파라미터는 십진 문자열 — 인쇄 = 해시 입력(D156). JSON 숫자로 인쇄하면 이진 부동소수점을 거쳐 해시 입력과 갈린다." } },
+              "required": [
+                "H",
+                "Dx",
+                "F"
+              ],
+              "properties": {
+                "H": {
+                  "type": "string",
+                  "pattern": "^[0-9]+\\.[0-9]+$",
+                  "description": "분수 파라미터는 십진 문자열 — 인쇄 = 해시 입력(D156). JSON 숫자로 인쇄하면 이진 부동소수점을 거쳐 해시 입력과 갈린다."
+                },
+                "Dx": {
+                  "type": "string",
+                  "pattern": "^[0-9]+\\.[0-9]+$",
+                  "description": "분수 파라미터는 십진 문자열 — 인쇄 = 해시 입력(D156). JSON 숫자로 인쇄하면 이진 부동소수점을 거쳐 해시 입력과 갈린다."
+                },
+                "F": {
+                  "type": "string",
+                  "pattern": "^[0-9]+\\.[0-9]+$",
+                  "description": "분수 파라미터는 십진 문자열 — 인쇄 = 해시 입력(D156). JSON 숫자로 인쇄하면 이진 부동소수점을 거쳐 해시 입력과 갈린다."
+                }
+              },
               "additionalProperties": false
+            },
+            "window.months": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "창 W의 길이(개월, §2.7 기본 12) — 분석 파라미터이므로 id 입력이고 여기에 인쇄된다(D186). `window_applied`에는 결과만."
+            },
+            "window.max_commits": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "창 W의 커밋 수 상한(§2.7 기본 2,000) — id 입력(D186)."
             }
           },
-          "additionalProperties": true
+          "additionalProperties": true,
+          "required": [
+            "window.max_commits",
+            "window.months"
+          ]
         },
         "percentile_method": {
           "type": "object",
@@ -494,16 +600,33 @@
             "output": {
               "type": "object",
               "description": "출력 산술·스케일의 선언(§2.5, D155). 스케일 표의 버전이 여기 인쇄되어 표가 바뀌면 id가 바뀐다 — `contract_version`만으로는 너무 굵다.",
-              "required": ["irrational", "rounding", "scales"],
+              "required": [
+                "irrational",
+                "rounding",
+                "scales"
+              ],
               "properties": {
-                "irrational": { "type": "string", "description": "이 계약이 쓰는 **모든** 무리수 연산(√·log₂)의 방법·정밀도 — `BigDecimal MathContext(34, HALF_EVEN)`, 표시값에만(D115·D121·D182). 함수 목록은 `reproduce`가 아니라 계약(D182)이 갖는다 — 목록 필드는 표류한다. 옛 키 `sqrt`는 거부된다(`additionalProperties: false`)." },
-                "rounding": { "const": "HALF_EVEN" },
-                "scales": { "type": "string", "pattern": "^D155-[0-9]+$", "description": "스케일 표의 버전(§2.5 표 `D155-1`). 표에 없는 유리수 필드는 스케일 린트가 거부한다." }
+                "irrational": {
+                  "type": "string",
+                  "description": "이 계약이 쓰는 **모든** 무리수 연산(√·log₂)의 방법·정밀도 — `BigDecimal MathContext(34, HALF_EVEN)`, 표시값에만(D115·D121·D182). 함수 목록은 `reproduce`가 아니라 계약(D182)이 갖는다 — 목록 필드는 표류한다. 옛 키 `sqrt`는 거부된다(`additionalProperties: false`)."
+                },
+                "rounding": {
+                  "const": "HALF_EVEN"
+                },
+                "scales": {
+                  "type": "string",
+                  "pattern": "^D155-[0-9]+$",
+                  "description": "스케일 표의 버전(§2.5 표 `D155-1`). 표에 없는 유리수 필드는 스케일 린트가 거부한다."
+                }
               },
               "additionalProperties": false
             }
           },
           "additionalProperties": false
+        },
+        "canonical_encoding": {
+          "const": "RFC8785-JCS",
+          "description": "`analysis_input_id`의 정규 인코딩(§2.8, D138) — id 입력(D186). 인코딩이 바뀌면 같은 입력에서 다른 바이트·다른 id다."
         }
       },
       "additionalProperties": false
@@ -929,7 +1052,7 @@
             "number",
             "null"
           ],
-          "description": "`HEAD_TIME − 마지막 비머지 커밋 커미터 시각`(§2.1, §2.7). 결정 불가·음수면 null — **0이 아니다**(D37). null이면 F도 null(§3.3)."
+          "description": "`HEAD_TIME − 마지막 비머지 커밋 커미터 시각`(§2.1, §2.7) — **유리수 일**(초/86400, D184), 표시 2자리. 비교(`≥ 180`·`> P90`)는 반올림 전 정확값. 결정 불가·음수면 null — **0이 아니다**(D37). null이면 F도 null(§3.3)."
         },
         "distinct_authors_90d": {
           "type": [
@@ -1450,6 +1573,14 @@
               "reason"
             ],
             "description": "판정하지 않았으면 왜인지가 있어야 한다(D176) — 없으면 '정적 의존 없음'과 구별되지 않는다."
+          },
+          "else": {
+            "not": {
+              "required": [
+                "reason"
+              ]
+            },
+            "description": "판정했는데(boolean) 판정하지 않은 이유가 있는 것은 모순이다 — 소유자 probe(2026-10-06)가 찾은 역방향 구멍."
           }
         }
       ]

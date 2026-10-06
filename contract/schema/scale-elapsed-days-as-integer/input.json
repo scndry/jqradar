@@ -1,0 +1,15 @@
+{
+  "case": "scale-elapsed-days-as-integer",
+  "check": "scale_lint",
+  "kind": "hard_rule",
+  "base": "prd:§7:report",
+  "mechanism": "원문 린트(스키마 아님)",
+  "contract_ref": "D184·D185",
+  "what": "`authors_window_days`는 경과 시간(일) 2자리(D184) — 정수 리터럴 `90`은 후행 0을 뗀 것이라 위반이다(`integer_in_scaled_field`). '정수 리터럴은 표와 무관하게 통과'는 표에 없는 이름의 말이다(D185).",
+  "text_patch": [
+    {
+      "find": "\"authors_window_days\": 90.00",
+      "replace": "\"authors_window_days\": 90"
+    }
+  ]
+}

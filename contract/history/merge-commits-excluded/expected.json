@@ -18,7 +18,7 @@
     "commits_in_window": 3,
     "merge_commits_excluded": 1,
     "authors_window_truncated": false,
-    "authors_window_days": 0.125,
+    "authors_window_days": 0.12,
     "commits_excluded_within_90d": 0
   },
   "commits": [
@@ -77,7 +77,7 @@
         "dd250449a",
         "567f3927e"
       ],
-      "age_last_days": 0.083333333333,
+      "age_last_days": 0.08,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -93,7 +93,7 @@
       "touched_by": [
         "ba01025f8"
       ],
-      "age_last_days": 0.041666666667,
+      "age_last_days": 0.04,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -105,10 +105,7 @@
   },
   "pairs": [],
   "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
-  "non_terminating": {
-    "/files/src/A.java/age_last_days": "1/12",
-    "/files/src/B.java/age_last_days": "1/24"
-  },
+  "non_terminating": {},
   "_fixture": {
     "generated_by": "contract/history/compute.py",
     "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",

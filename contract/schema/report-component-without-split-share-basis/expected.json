@@ -1,0 +1,14 @@
+{
+  "case": "report-component-without-split-share-basis",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D186·D130",
+  "what": "`component.split_share_basis`가 없으면 거부 — D130이 인쇄를 요구했고 D186이 id 입력으로 올렸다. 분할 기준이 바뀌면 N이 바뀌고 N은 §2.3의 분모다.",
+  "mechanism": "required(id 입력)",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/reproduce/component"
+  ]
+}

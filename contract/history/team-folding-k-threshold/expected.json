@@ -21,7 +21,7 @@
     "commits_in_window": 17,
     "merge_commits_excluded": 0,
     "authors_window_truncated": false,
-    "authors_window_days": 6.018518518519,
+    "authors_window_days": 6.02,
     "commits_excluded_within_90d": 0
   },
   "commits": [
@@ -226,7 +226,7 @@
         "cb3cad46f",
         "9aebc5813"
       ],
-      "age_last_days": 5.935185185185,
+      "age_last_days": 5.94,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,
@@ -256,7 +256,7 @@
         "dcc5a3ac0",
         "fbcdfe0f1"
       ],
-      "age_last_days": 3.662037037037,
+      "age_last_days": 3.66,
       "distinct_authors_90d": 2,
       "contributor_count": 2,
       "ownership_max_share": 0.666666666667,
@@ -290,7 +290,7 @@
         "7e24469cb",
         "dcd0ea52a"
       ],
-      "age_last_days": 1.305555555556,
+      "age_last_days": 1.31,
       "distinct_authors_90d": 2,
       "contributor_count": 2,
       "ownership_max_share": 0.6,
@@ -317,7 +317,7 @@
         "f6816c88c",
         "b7995d79e"
       ],
-      "age_last_days": 0,
+      "age_last_days": 0.00,
       "distinct_authors_90d": 3,
       "contributor_count": 3,
       "ownership_max_share": 0.333333333333,
@@ -340,13 +340,9 @@
   "pairs": [],
   "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
   "non_terminating": {
-    "/window_applied/authors_window_days": "325/54",
-    "/files/src/OnlyBilling.java/age_last_days": "641/108",
-    "/files/src/PaymentsAndBilling.java/age_last_days": "791/216",
     "/files/src/PaymentsAndBilling.java/ownership_max_share": "2/3",
     "/files/src/PaymentsAndBilling.java/contribution_shares_sorted/0": "2/3",
     "/files/src/PaymentsAndBilling.java/contribution_shares_sorted/1": "1/3",
-    "/files/src/OnlyPayments.java/age_last_days": "47/36",
     "/files/src/PlatformBoundary.java/ownership_max_share": "1/3",
     "/files/src/PlatformBoundary.java/contribution_shares_sorted/0": "1/3",
     "/files/src/PlatformBoundary.java/contribution_shares_sorted/1": "1/3",

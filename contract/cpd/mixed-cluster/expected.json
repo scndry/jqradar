@@ -107,6 +107,9 @@
       "pair_dup_tokens": 200
     }
   ],
+  "invariants": {
+    "dup_extent_at_most_one": true
+  },
   "non_terminating": {},
   "_fixture": {
     "generated_by": "contract/cpd/compute.py",

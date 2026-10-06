@@ -20,7 +20,7 @@
     "commits_in_window": 41,
     "merge_commits_excluded": 0,
     "authors_window_truncated": false,
-    "authors_window_days": 5.902777777778,
+    "authors_window_days": 5.90,
     "commits_excluded_within_90d": 0
   },
   "commits": [
@@ -506,7 +506,7 @@
         "108c342d1",
         "d7fdd3f80"
       ],
-      "age_last_days": 3.472222222222,
+      "age_last_days": 3.47,
       "distinct_authors_90d": 3,
       "contributor_count": 3,
       "ownership_max_share": 0.9,
@@ -544,7 +544,7 @@
         "efb6958e9",
         "7485615db"
       ],
-      "age_last_days": 0,
+      "age_last_days": 0.00,
       "distinct_authors_90d": 3,
       "contributor_count": 3,
       "ownership_max_share": 0.904761904762,
@@ -559,8 +559,6 @@
   "pairs": [],
   "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
   "non_terminating": {
-    "/window_applied/authors_window_days": "425/72",
-    "/files/src/Boundary20.java/age_last_days": "125/36",
     "/files/src/Boundary21.java/ownership_max_share": "19/21",
     "/files/src/Boundary21.java/minor_contributor_share": "2/21",
     "/files/src/Boundary21.java/contribution_shares_sorted/0": "19/21",

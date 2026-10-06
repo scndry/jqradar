@@ -1,0 +1,70 @@
+{
+  "case": "recompute-id-from-reproduce",
+  "contract_refs": [
+    "§2.8",
+    "§2.9",
+    "D111",
+    "D186",
+    "D158"
+  ],
+  "what_this_pins": "**`reproduce`만으로 id 재계산**(D111) — §7 모양의 `reproduce` 블록과 리포(트리·head)만 들고 `analysis_input_id`를 다시 만들어 인쇄된 값과 같음을 단언한다. 값으로 있는 것은 값을 쓰고 해시로만 있는 것(소스 목록·창 안 커밋 목록)은 §2.8대로 리포에서 재생성한다. 그리고 블록의 id 입력 하나를 바꾸면 — 창 12 → 24개월, 커밋 목록은 그대로 — id가 **갈린다**(`window_parameter_reaches_id`): v3.10.0까지 창 파라미터는 `window_applied`([fn] 자리)에 있어 이 변경이 id에 닿지 않았다(3차 O3-6 — 같은 id인데 `window_applied.months`가 12 대 24). D186이 창 파라미터·`history_backend` 전체·`canonical_encoding`·`split_share_basis`를 (i)로 올렸고, 세 종류에 자리 없는 값이 다시 생기면 이 케이스의 재계산이 그 값을 읽지 못해 먼저 드러낸다.",
+  "recompute_from_reproduce": true,
+  "scanned_at_unix": 1788793200,
+  "repo": {
+    "tree": "tree/",
+    "history": [
+      {
+        "message": "seed: order domain",
+        "paths": [
+          "src/main/java/com/example/order/OrderPolicy.java"
+        ]
+      },
+      {
+        "message": "feat: order total",
+        "paths": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      }
+    ],
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-01-02T03:04:05+00:00",
+    "step_seconds": 86400
+  },
+  "environment": {
+    "pmd": "7.16.0",
+    "archunit": "1.5.0",
+    "jgit": "7.3.0"
+  },
+  "shared_inputs": {
+    "schema_version": "jqradar/3",
+    "contract_version": "2026-09-11",
+    "core_tool_version": "3.7.8",
+    "history_backend": {
+      "name": "jgit",
+      "git_version": null
+    },
+    "component": {
+      "strategy": "auto",
+      "algorithm_version": "auto-1",
+      "split_share_basis": "class_count"
+    },
+    "algorithm_versions": {
+      "measures": "1",
+      "percentile": "1",
+      "succession": "1",
+      "cpd_aggregation": "1"
+    },
+    "parameters": {
+      "window.months": 12,
+      "window.max_commits": 2000,
+      "cpd.minimum_tokens": 100,
+      "percentile.min_population": 20,
+      "frozen.min_days": 180,
+      "rename.similarity": 60,
+      "hotspot.change_unit": "chg_commits"
+    }
+  }
+}

@@ -93,6 +93,9 @@
       "pair_dup_tokens": 150
     }
   ],
+  "invariants": {
+    "dup_extent_at_most_one": true
+  },
   "non_terminating": {
     "/files/A.java/dup_extent": "3/104",
     "/files/B.java/dup_extent": "2/33"

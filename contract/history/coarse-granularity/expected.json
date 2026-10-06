@@ -18,7 +18,7 @@
     "commits_in_window": 3,
     "merge_commits_excluded": 0,
     "authors_window_truncated": false,
-    "authors_window_days": 2,
+    "authors_window_days": 2.00,
     "commits_excluded_within_90d": 0
   },
   "commits": [
@@ -141,7 +141,7 @@
         "ef5ee8612",
         "e0c167f06"
       ],
-      "age_last_days": 0,
+      "age_last_days": 0.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
       "ownership_max_share": 1,

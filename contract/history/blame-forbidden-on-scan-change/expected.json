@@ -23,20 +23,7 @@
   "comment_handling": "주석은 스캔 전에 제거한다. 문자열 리터럴은 남긴다.",
   "files_seen": 10,
   "files_scanned": 2,
-  "files_skipped_as_sanctioned": [
-    "jqradar-core/src/test/java/io/jqradar/arch/violations/BlamesOnEveryScan.java",
-    "jqradar-core/src/test/java/io/jqradar/arch/violations/CallsArchUnitDoubleMetrics.java",
-    "jqradar-core/src/test/java/io/jqradar/arch/violations/LeaksAuthorIdentity.java",
-    "jqradar-core/src/test/java/io/jqradar/arch/violations/RanksWithBinaryFloatingPoint.java",
-    "jqradar-core/src/test/java/io/jqradar/arch/violations/TakesDoubleAtTheBoundary.java",
-    "jqradar-core/src/test/java/io/jqradar/arch/violations/WritesToLedgerDirectory.java",
-    "jqradar-core/src/test/java/io/jqradar/arch/violations/package-info.java",
-    "jqradar-ledger/src/main/java/io/jqradar/ledger/LedgerPaths.java"
-  ],
-  "scanned_paths": [
-    "jqradar-core/src/test/java/io/jqradar/arch/JqradarArchRules.java",
-    "jqradar-core/src/test/java/io/jqradar/arch/JqradarArchRulesTest.java"
-  ],
+  "files_skipped_as_sanctioned": 8,
   "violations": [],
   "bite_check": [
     {

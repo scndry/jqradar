@@ -33,6 +33,8 @@
         "timestamp": null
       },
       "parameters": {
+        "window.months": 12,
+        "window.max_commits": 2000,
         "cpd.minimum_tokens": 100,
         "percentile.min_population": 20,
         "frozen.min_days": 180,

@@ -252,6 +252,12 @@ def shallow_clone(source: Path, depth: int, target: Path) -> Path:
     return target
 
 
+def days_display(days: Fraction):
+    """D184·D155-1 — 경과 시간(일)의 인쇄는 2자리 HALF_EVEN, 후행 0 유지(`90.00`). 값 자체는 유리수다."""
+    from decimal import Decimal
+    return exact.round_half_even(Decimal(days.numerator) / Decimal(days.denominator), 2)
+
+
 def build_expected(inp: dict, workdir: Path) -> dict:
     spec = inp["repo"]
     build_repo(spec, workdir)
@@ -330,7 +336,12 @@ def build_expected(inp: dict, workdir: Path) -> dict:
                 entry["age_last_days"] = None
                 entry["age_reason"] = "invalid_metadata"
             else:
-                entry["age_last_days"] = Fraction(int(delta), SECONDS_PER_DAY)
+                # D184 — '일' = 초/86400의 정확 유리수. 비교(≥ 180·> P90)는 이 값으로, 인쇄는 2자리(D155-1 경과 시간 행).
+                exact_days = Fraction(int(delta), SECONDS_PER_DAY)
+                entry["age_last_days"] = days_display(exact_days)
+                if inp.get("age_boundary"):
+                    # §3.3의 지시변수 둘째 항을 **정확값**으로 — 179일 23시간은 ≥ 180이 아니다.
+                    entry["age_at_least_180_exact"] = exact_days >= 180
         else:
             # §2.1 — 결정 불가(shallow clone·미커밋 신규·rename 조상 복구 실패)면 null.
             # "오래되지 않았다"와 "나이를 모른다"는 다른 상태다(D37). F도 null이 된다(§3.3).
@@ -434,9 +445,9 @@ def build_expected(inp: dict, workdir: Path) -> dict:
     if selected:
         oldest = datetime.fromisoformat(selected[-1]["committer_time"])
         span = Fraction(int((head_time - oldest).total_seconds()), SECONDS_PER_DAY)
-        authors_window_days = min(Fraction(90), max(Fraction(0), span))
+        authors_window_days = days_display(min(Fraction(90), max(Fraction(0), span)))
     else:
-        authors_window_days = Fraction(0)
+        authors_window_days = days_display(Fraction(0))
 
     # **절단은 "창이 90일보다 짧다"가 아니라 "상한이 90일 구간을 잘랐다"다.**
     # 10일 된 리포의 `distinct_authors_90d`는 90일을 못 봤지만 **볼 것이 없었다** —
@@ -714,10 +725,12 @@ def check_no_blame(inp: dict) -> dict:
                                      + " — blame 리터럴과 연접할 때만",
         },
         "comment_handling": "주석은 스캔 전에 제거한다. 문자열 리터럴은 남긴다.",
+        # 부재 검사가 증명하는 것은 "훑은 파일 중 blame 호출이 0건"이지 "훑은 파일이 이 열 개"가 아니다.
+        # 목록을 기록하면 소스가 늘 때마다 expected가 움직인다(2026-10-06 — 반례 다섯째 종). 수만 남긴다;
+        # 어느 파일인지는 `sanctioned_prefixes`와 리포 트리가 말한다.
         "files_seen": len(seen),
         "files_scanned": len(scanned),
-        "files_skipped_as_sanctioned": skipped,
-        "scanned_paths": scanned,
+        "files_skipped_as_sanctioned": len(skipped),
         "violations": hits,
         "bite_check": bite,
         "false_positive_check": false_positives,

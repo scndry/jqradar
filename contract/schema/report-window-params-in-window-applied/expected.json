@@ -1,0 +1,14 @@
+{
+  "case": "report-window-params-in-window-applied",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D186",
+  "what": "창 파라미터 `months`·`max_commits`가 `window_applied`(결과, [fn])에 있으면 거부 — 이름부터 분석 파라미터라 `parameters`(id 입력)에 있어야 한다(D186). 옛 자리(v3.10.0까지 §7이 그렇게 인쇄했다)가 새 스키마를 통과하면 이행이 안 된 것이다.",
+  "mechanism": "additionalProperties:false",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/reproduce/window_applied"
+  ]
+}

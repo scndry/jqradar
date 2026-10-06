@@ -1,0 +1,14 @@
+{
+  "case": "report-hidden-coupling-reason-on-boolean",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D176",
+  "what": "`static_dependency: false`인데 `reason: outside_bytecode_scope`가 있으면 거부 — 판정했는데 판정하지 않은 이유가 있는 것은 모순이다. D176 PR(#43)이 null → reason만 걸고 역은 안 걸어 소유자 probe가 찾은 구멍; D180에서는 처음부터 막았고 여기서 같은 모양으로.",
+  "mechanism": "if/then",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/hidden_couplings/0"
+  ]
+}

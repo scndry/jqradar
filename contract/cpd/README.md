@@ -31,3 +31,5 @@
 ```sh
 python3 contract/cpd/compute.py --check
 ```
+
+**토큰을 세는 모든 수는 정규화 후 스트림의 것이다**(D187) — `file_tokens`도, `union`·`pair`·`self`도, §5.2의 `min_tokens` 비교도. 그래서 `dup_extent = union / file_tokens ≤ 1`이 불변식이고 모든 케이스가 `invariants.dup_extent_at_most_one`을 인쇄한다; 입력이 `union > file_tokens`면 분모가 다른 스트림이라는 뜻이라 계산기가 멈춘다. 토크나이저 실측(실제 소스 → PMD)은 G1의 **확인** 픽스처이지 이 결정의 전제가 아니다.
