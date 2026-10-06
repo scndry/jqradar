@@ -15,7 +15,7 @@
     "reproduce.classes_reproduction_inputs"
   ],
   "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-  "analysis_input_id": "sha256:c86744cddaf2b071907f0015934ffbf3615bd15c92798d8d2626b6f9b8b6dd27",
+  "analysis_input_id": "sha256:2cfda9c3b17e3589fc5f3d050dd58ed4f775f0c83d4e1cda96f1abddf18cb004",
   "comparison_target": {
     "schema": "jqradar/3",
     "reproduce": {
@@ -34,7 +34,7 @@
       },
       "head": "04c5de269bd939509087a13312869a28d540f773",
       "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-      "analysis_input_id": "sha256:c86744cddaf2b071907f0015934ffbf3615bd15c92798d8d2626b6f9b8b6dd27",
+      "analysis_input_id": "sha256:2cfda9c3b17e3589fc5f3d050dd58ed4f775f0c83d4e1cda96f1abddf18cb004",
       "environment": {
         "pmd": "7.16.0",
         "archunit": "1.5.0",
@@ -68,6 +68,17 @@
           "F": "0.2"
         }
       },
+      "percentile_method": {
+        "rank": "average",
+        "formula": "(rank_avg-1)/(N-1)",
+        "quantile": "type7-linear",
+        "arithmetic": "exact-rational",
+        "output": {
+          "irrational": "BigDecimal MathContext(34, HALF_EVEN)",
+          "rounding": "HALF_EVEN",
+          "scales": "D155-1"
+        }
+      },
       "canonical_encoding": "RFC8785-JCS"
     },
     "tree": {
@@ -97,8 +108,8 @@
         "annotation_processors": [],
         "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
       },
-      "output_sha256": "sha256:4fb770d77e973bcd8d61a397dbeaf1975cada977ca952f33ca9bf0217cee236e",
-      "comparison_target_sha256": "sha256:1530462e33fab4523a7108ead11dd24d529a37a36ba0321982c68682a68925ce"
+      "output_sha256": "sha256:b2b15f085e7fe09ef5ba1820ab145f300584634965dc613b69ce61a79a3fe2cc",
+      "comparison_target_sha256": "sha256:6b7c202bb79df74a448b1f9ae8c981b3c6d6880be84d85e5f22052b734bb37aa"
     },
     "b": {
       "scanned_at": "2026-09-08T09:30:00Z",
@@ -112,8 +123,8 @@
         "annotation_processors": [],
         "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
       },
-      "output_sha256": "sha256:7cff2376274529f4b8cbef507d54ae8d6d69a336a53fca85871cded472cd1f95",
-      "comparison_target_sha256": "sha256:1530462e33fab4523a7108ead11dd24d529a37a36ba0321982c68682a68925ce"
+      "output_sha256": "sha256:1012cea4dbea8d6af98f0d7a5e19edfe70b7cf27103d57cb0ec1f0168831d7d4",
+      "comparison_target_sha256": "sha256:6b7c202bb79df74a448b1f9ae8c981b3c6d6880be84d85e5f22052b734bb37aa"
     }
   },
   "fourth_kind_mutation": {

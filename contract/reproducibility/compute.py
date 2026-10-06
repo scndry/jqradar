@@ -140,6 +140,14 @@ def build_history(tree: Path, spec: dict, workdir: Path) -> dict:
 
 
 DEFAULT_PEOPLE = {"attribution": "off", "team_mapping_sha256": None}
+# §2.5·§2.8 — `percentile_method`는 [id]다. 이 스펙은 v3.10.0 전까지 그것을 **빠뜨리고 있었다**
+# (3차 T8과 같은 자리 — reproduce 세 종류에 자리 없는 값). D182가 `output`의 키를 바꾸면서
+# 넣었고, 그래서 기존 케이스 전부의 id가 움직였다(fixture_change 2026-10-06).
+PERCENTILE_METHOD = {
+    "rank": "average", "formula": "(rank_avg-1)/(N-1)", "quantile": "type7-linear",
+    "arithmetic": "exact-rational",
+    "output": {"irrational": "BigDecimal MathContext(34, HALF_EVEN)", "rounding": "HALF_EVEN", "scales": "D155-1"},
+}
 K_THRESHOLD = 3  # §2.7·D161 — 팀 집계의 k 하한. 익명 집계에는 걸지 않는다(D162).
 
 
@@ -171,6 +179,7 @@ def analysis_input_id(shared: dict, environment: dict, files: list[tuple[str, st
         # D160 — 저작 정책은 산출물을 바꾸므로 id 입력이다. off에서도 들어간다(모드가
         # 무엇이었나도 재현의 일부). `parameters`와 별도인 이유는 B.6 — 조직이 적는 자리가 다르다.
         "people": shared.get("people", DEFAULT_PEOPLE),
+        "percentile_method": PERCENTILE_METHOD,
     }
     return sha256(spec), spec
 
@@ -370,6 +379,7 @@ def run_byte_identity(case_dir: Path, inp: dict) -> dict:
                 },
                 "component": shared["component"],                                 # [id]
                 "parameters": shared["parameters"],                               # [id]
+                "percentile_method": PERCENTILE_METHOD,                           # [id]
                 "canonical_encoding": CANONICAL_ENCODING,                         # [id]
             },
             "tree": {"file_count": len(files),
