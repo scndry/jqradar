@@ -45,6 +45,9 @@ if [ "$section" = all ] || [ "$section" = landing ]; then
   # 반례를 먼저 돌린다 — 반례가 깨진 검사는 통과만 시킨다(D131).
   run "결정 착지 — 자기 반례" sh ci/check-decision-landing.sh --selftest
   run "결정 착지 — prd.md"    sh ci/check-decision-landing.sh prd.md
+  # D158·D186 — §7 reproduce 블록의 모든 줄에 종류 표시. 반례 먼저.
+  run "reproduce 종류 표시 — 자기 반례" sh ci/check-reproduce-kinds.sh --selftest
+  run "reproduce 종류 표시 — prd.md"    sh ci/check-reproduce-kinds.sh prd.md
 fi
 
 if [ "$section" = all ] || [ "$section" = review-entry ]; then
