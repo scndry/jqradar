@@ -1,0 +1,11 @@
+{
+  "case": "accept-change-cycle-touched-finding",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "positive",
+  "contract_ref": "D191·§5.7",
+  "what": "순환 finding이 `touched_legacy_findings[]`에 드는 정상 모양 — `kind: component_cycle`, `anchor_class` **없음**이 통과한다(D191·§5.7, §0-41 보정). 보정 전에는 `anchor_class`가 모든 항목에 required라 이 문서가 거부됐다 — 그 거부가 PRD 공백 1의 실물이었다.",
+  "schema": "change.schema.json",
+  "verdict": "accept",
+  "rejected_at": []
+}

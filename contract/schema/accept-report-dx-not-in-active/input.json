@@ -1,0 +1,65 @@
+{
+  "case": "accept-report-dx-not-in-active",
+  "check": "schema",
+  "kind": "positive",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "contract_ref": "D188·§2.5",
+  "what": "active가 아닌데 `twins ≥ 1`인 파일의 Dx 사유 — `lens_percentiles.Dx.reason: not_in_active`가 통과한다(§2.5 표 셋째 열, §0-41 보정). `dx = active ∩ twins ≥ 1`이라 active가 아니면 Dx도 이 사유이고 `no_twins`는 거짓이다. 보정 전 표는 H에만 두어 이 문서가 거부됐다(PRD 공백 2의 실물 — 커밋된 케이스가 아니라 PR의 임시 검사에서 확인된 것이라 fixture_change 대상이 아니다).",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "files",
+        1,
+        "measures",
+        "twins"
+      ],
+      "value": 1
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        1,
+        "lens_percentiles",
+        "Dx"
+      ],
+      "value": {
+        "pct": null,
+        "population": "dx",
+        "reason": "not_in_active"
+      }
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        1,
+        "percentile_population",
+        "union_dup_tokens"
+      ],
+      "value": {
+        "dx": {
+          "n_ranked": 37,
+          "reason": "not_in_active"
+        }
+      }
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        1,
+        "percentile_population",
+        "active_twin_ratio"
+      ],
+      "value": {
+        "dx": {
+          "n_ranked": 37,
+          "reason": "not_in_active"
+        }
+      }
+    }
+  ]
+}

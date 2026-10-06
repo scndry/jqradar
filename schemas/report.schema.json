@@ -1356,6 +1356,7 @@
                   "properties": {
                     "reason": {
                       "enum": [
+                        "not_in_active",
                         "no_twins",
                         "insufficient_population"
                       ]
@@ -1363,7 +1364,7 @@
                   }
                 }
               ],
-              "description": "Dx의 자리(§2.5 표 셋째 열): `no_twins`·`insufficient_population`."
+              "description": "Dx의 자리(§2.5 표 셋째 열): `not_in_active`(`dx = active ∩ twins ≥ 1`이라 active가 아니면 Dx도 이 사유 — §0-41 보정)·`no_twins`·`insufficient_population`."
             },
             "F": {
               "allOf": [

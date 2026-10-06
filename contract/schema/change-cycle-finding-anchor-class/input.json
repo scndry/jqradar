@@ -1,0 +1,21 @@
+{
+  "case": "change-cycle-finding-anchor-class",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "change.schema.json",
+  "base": "file:base/change.json",
+  "mechanism": "if/then(kind별)",
+  "contract_ref": "D191·§5.7",
+  "what": "순환 finding(`kind: component_cycle`)에 `anchor_class`가 있으면 거부(D191) — 렌즈 백분위가 없는 finding에 얼린 분류가 있을 수 없다. `anchor_class`는 정당한 필드라 닫힌 객체로는 못 잡고 `kind`별 if/then이어야 한다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "touched_legacy_findings",
+        0,
+        "kind"
+      ],
+      "value": "component_cycle"
+    }
+  ]
+}

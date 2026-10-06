@@ -1,0 +1,20 @@
+{
+  "case": "change-lens-finding-without-anchor-class",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "change.schema.json",
+  "base": "file:base/change.json",
+  "mechanism": "if/then(kind별)",
+  "contract_ref": "D191·D56",
+  "what": "파일 렌즈 finding(`kind: duplication_exposure`)에서 `anchor_class`를 빼면 거부(D191의 다른 쪽, §5.5 — 앵커 시점에 얼린 분류는 파일 렌즈 finding의 결정 산출물이다, D56). 보정 전에는 전역 required가 잡았고, 지금은 if/then의 then이 잡는다 — 모양이 바뀌어도 이 거부는 유지된다.",
+  "patch": [
+    {
+      "op": "remove",
+      "path": [
+        "touched_legacy_findings",
+        0,
+        "anchor_class"
+      ]
+    }
+  ]
+}

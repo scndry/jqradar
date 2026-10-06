@@ -1,0 +1,20 @@
+{
+  "case": "change-touched-finding-without-kind",
+  "check": "schema",
+  "kind": "structural",
+  "schema": "change.schema.json",
+  "base": "file:base/change.json",
+  "mechanism": "required",
+  "contract_ref": "§5.7·D191",
+  "what": "`touched_legacy_findings[]` 항목에 `kind`가 없으면 거부(§5.7, §0-41 보정) — `kind`는 `anchor_class`의 있고 없음을 가르는 열쇠라 없으면 D191을 걸 수 없다.",
+  "patch": [
+    {
+      "op": "remove",
+      "path": [
+        "touched_legacy_findings",
+        0,
+        "kind"
+      ]
+    }
+  ]
+}
