@@ -834,6 +834,41 @@ def check_identity_absence(inp: dict) -> dict:
         passed.append({"name": sample["name"], "why": sample["why"],
                        "hits": len(hits), "passed": not hits})
 
+    # D195 — "산출물 어디에도"는 **`build/jqradar/`의 캐시 디렉터리까지**다. 캐시 키는 저장되는 값이라
+    # 저자 집합을 키에 두면 "해시도 저장하지 않는다"(§2.7, D48)가 캐시에서 깨진다. 명세의 캐시 항목을 임시
+    # `build/jqradar/`에 실제 파일로 쓰고 디렉터리를 통째로 훑는다 — 저자 해시는 `{"$author_hash": "<id>"}`
+    # 자리표시자로 적고 여기서만 계산한다(금지 문자열을 입력 파일에도 두지 않는다).
+    cache_check = None
+    if inp.get("cache_directory"):
+        emails = {k: a["email"] for k, a in inp["authors"].items()}
+
+        def materialize(node):
+            if isinstance(node, dict):
+                if set(node) == {"$author_hash"}:
+                    return hashlib.sha256(emails[node["$author_hash"]].encode()).hexdigest()
+                return {k: materialize(v) for k, v in node.items()}
+            if isinstance(node, list):
+                return [materialize(v) for v in node]
+            return node
+
+        def scan_dir(sample: dict) -> int:
+            with tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp) / "build" / "jqradar"
+                for rel, content in sample["files"].items():
+                    target = root / rel
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_text(json.dumps(materialize(content), ensure_ascii=False), encoding="utf-8")
+                blob = "\n".join(f.read_text(encoding="utf-8") for f in sorted(root.rglob("*")) if f.is_file())
+            return len(scan_for_identity(blob, forbidden))
+
+        c_caught = [{"name": x["name"], "why": x["why"], "files": len(x["files"]), "caught": scan_dir(x) > 0}
+                    for x in inp["cache_directory"]["must_be_caught"]]
+        c_passed = [{"name": x["name"], "why": x["why"], "files": len(x["files"]), "passed": scan_dir(x) == 0}
+                    for x in inp["cache_directory"]["must_not_be_caught"]]
+        cache_check = {"scanned_root": "build/jqradar/", "bite_check": c_caught, "false_positive_check": c_passed}
+        caught = caught + [{"name": "cache:" + c["name"], "caught": c["caught"]} for c in c_caught]
+        passed = passed + [{"name": "cache:" + c["name"], "passed": c["passed"]} for c in c_passed]
+
     missed = [c["name"] for c in caught if not c["caught"]]
     wrong = [f["name"] for f in passed if not f["passed"]]
     return {
@@ -841,6 +876,7 @@ def check_identity_absence(inp: dict) -> dict:
         "contract_refs": inp["contract_refs"],
         "what_this_pins": inp["what_this_pins"],
         "check": "identity_absence",
+        **({"cache_directory": cache_check} if cache_check else {}),
         "method": "provenance — 알고 있는 저자 식별자의 해시(sha256·sha1·md5 × 전체·접두 8·12·16자)가 "
                   "산출물에 없음을 본다. 모양으로 가르지 않는다(둘 다 64 hex).",
         "forbidden_string_count": sum(len(v) for v in forbidden.values()),

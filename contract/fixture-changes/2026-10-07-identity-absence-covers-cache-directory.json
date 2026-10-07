@@ -1,0 +1,12 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "history.identity_absence — 부재 검사의 범위가 build/jqradar/ 캐시 디렉터리까지 (D195)",
+    "old": "산출물 문서만 훑었다 — 캐시 디렉터리는 검사의 바깥이었다(S3-14)",
+    "new": "`cache_directory` 블록: 캐시 항목을 실제 `build/jqradar/`에 쓰고 통째로 훑는다 — 키에 저자 집합을 넣은 항목 둘은 `must_be_caught`, D195의 키와 층 1 키는 `must_not_be_caught`",
+    "note": "기존 bite_check·false_positive_check 넷은 불변이고 `cache_directory` 결과가 더해진다. 저자 해시는 입력에 `{\"$author_hash\": id}` 자리표시자로만 있고 계산기가 메모리에서 만든다 — 금지 문자열을 입력 파일에도 두지 않는다(D48).",
+    "fixtures": [
+      "history/identity-absent-when-attribution-off"
+    ]
+  }
+}
