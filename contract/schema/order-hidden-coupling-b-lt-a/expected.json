@@ -9,20 +9,6 @@
   "verdict": "reject",
   "violations": [
     {
-      "path": "/duplicate_clusters/0/occurrences",
-      "index": 1,
-      "array": "occurrences",
-      "kind": "not_sorted_by_D202_1",
-      "previous": [
-        "…/OrderService.java",
-        "1200"
-      ],
-      "this": [
-        "…/OldOrderService.java",
-        "4010"
-      ]
-    },
-    {
       "path": "/hidden_couplings/0",
       "array": "hidden_couplings",
       "kind": "pair_not_ordered_a_lt_b",

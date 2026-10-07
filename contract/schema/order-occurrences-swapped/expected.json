@@ -1,0 +1,26 @@
+{
+  "case": "order-occurrences-swapped",
+  "generated_by": "contract/schema/compute.py",
+  "check": "order_lint",
+  "kind": "hard_rule",
+  "contract_ref": "D202",
+  "what": "`duplicate_clusters[0].occurrences`의 두 원소를 바꾸면 거부 — `(path, start_token) asc`(D202-1). 중첩 배열도 같은 규칙이다(F3-8).",
+  "mechanism": "순서 린트(파싱 후, 스키마 아님)",
+  "verdict": "reject",
+  "violations": [
+    {
+      "path": "/duplicate_clusters/0/occurrences",
+      "index": 1,
+      "array": "occurrences",
+      "kind": "not_sorted_by_D202_1",
+      "previous": [
+        "…/OrderService.java",
+        "1200"
+      ],
+      "this": [
+        "…/OldOrderService.java",
+        "4010"
+      ]
+    }
+  ]
+}

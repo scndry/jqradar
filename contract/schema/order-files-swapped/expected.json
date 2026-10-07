@@ -19,20 +19,6 @@
       "this": [
         "src/main/java/…/order/OrderPolicy.java"
       ]
-    },
-    {
-      "path": "/duplicate_clusters/0/occurrences",
-      "index": 1,
-      "array": "occurrences",
-      "kind": "not_sorted_by_D202_1",
-      "previous": [
-        "…/OrderService.java",
-        "1200"
-      ],
-      "this": [
-        "…/OldOrderService.java",
-        "4010"
-      ]
     }
   ]
 }
