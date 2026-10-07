@@ -216,6 +216,11 @@ DEFAULT_BYTECODE_SCOPE = {"class_roots": ["build/classes/java/main", "build/clas
                           "test_classes_included": False, "generated_excluded": True,
                           "external_included_in_metrics": False}
 BYTECODE_SCOPE_ID_FIELDS = tuple(DEFAULT_BYTECODE_SCOPE)
+# §2.8 (i)·§7 — `source_scope`(D210): 소스 쪽 범위 정의 넷, 전부 [id]. bytecode_scope·last_commit_map과 달리 **계약이 새로 넣은**
+# 입력이다(계산기의 구멍이 아니다 — §0-47). 그래서 이번 id 이동은 contract_change다. §7 기본값.
+DEFAULT_SOURCE_SCOPE = {"origin": "build", "main_roots": ["src/main/java", "src/main/kotlin"],
+                        "test_roots": ["src/test/java", "src/test/kotlin"], "generated_roots": ["build/generated/sources"]}
+SOURCE_SCOPE_FIELDS = ("origin", "main_roots", "test_roots", "generated_roots")
 
 
 def team_mapping_sha256(text: str | None) -> str | None:
@@ -256,6 +261,7 @@ def analysis_input_id(shared: dict, environment: dict, files: list[tuple[str, st
         "canonical_encoding": CANONICAL_ENCODING,
         "bytecode_scope": {k: shared.get("bytecode_scope", DEFAULT_BYTECODE_SCOPE)[k]
                            for k in BYTECODE_SCOPE_ID_FIELDS},
+        "source_scope": {k: shared.get("source_scope", DEFAULT_SOURCE_SCOPE)[k] for k in SOURCE_SCOPE_FIELDS},
     }
     assert "window.months" in spec["parameters"], "D186 — 창 파라미터는 parameters에 있어야 한다"
     assert "split_share_basis" in spec["component"], "D186 — component.split_share_basis는 id 입력이다"
@@ -280,6 +286,7 @@ def id_from_reproduce(reproduce: dict, files: list[tuple[str, str]], history: di
         "people": reproduce["people"],
         # §7의 `bytecode_scope`는 [id](범위 정의)와 [fn](`external_edges`)이 섞여 있다 — 범위 정의만 읽는다.
         "bytecode_scope": {k: reproduce["bytecode_scope"][k] for k in BYTECODE_SCOPE_ID_FIELDS},
+        "source_scope": {k: reproduce["source_scope"][k] for k in SOURCE_SCOPE_FIELDS},
     }
     history = {**history, "last_commit_map_sha256": reproduce["window_applied"]["last_commit_map_sha256"]}
     aid, _ = analysis_input_id(shared, reproduce["environment"], files, history)
@@ -493,6 +500,7 @@ def run_byte_identity(case_dir: Path, inp: dict) -> dict:
                 "parameters": shared["parameters"],                               # [id]
                 "percentile_method": PERCENTILE_METHOD,                           # [id]
                 "canonical_encoding": CANONICAL_ENCODING,                         # [id]
+                "source_scope": spec["source_scope"],                             # [id] (D210)
             },
             "tree": {"file_count": len(printed),
                      "files": [{"path": p, "content_id": c} for p, c in printed]},  # [id]
@@ -831,7 +839,8 @@ def run_recompute_from_reproduce(case_dir: Path, inp: dict) -> dict:
         "component": {"strategy": shared["component"]["strategy"], "split_share_basis": shared["component"]["split_share_basis"], "count": 1},
         "parameters": shared["parameters"], "percentile_method": PERCENTILE_METHOD,
         "people": shared.get("people", DEFAULT_PEOPLE),
-        "bytecode_scope": {**spec["bytecode_scope"], "external_edges": 0},   # [id] 범위 정의 + [fn] 집계
+        "bytecode_scope": {**spec["bytecode_scope"], "external_edges": 0, "unmapped_classes": 0},   # [id] 범위 정의 + [fn] 집계
+        "source_scope": spec["source_scope"],                                                    # [id] (D210)
     }
     recomputed = id_from_reproduce(reproduce, files, history)
     mutated = json.loads(json.dumps(reproduce)); mutated["parameters"]["window.months"] = 24
@@ -1284,6 +1293,8 @@ I_TO_SPEC = {
     "component.strategy": "component", "component.split_share_basis": "component",
     "canonical_encoding": "canonical_encoding", "parameters": "parameters",
     "percentile_method": "percentile_method", "bytecode_scope": "bytecode_scope", "people": "people",
+    "source_scope": "source_scope",                                       # D210 — 필드 넷은 블록 안
+    "origin": "source_scope", "main_roots": "source_scope", "test_roots": "source_scope", "generated_roots": "source_scope",
 }
 
 
@@ -1314,6 +1325,56 @@ def selftest() -> int:
     return 1 if bad else 0
 
 
+
+# ── D210·D212 — 같은 트리·다른 origin → 다른 id ∧ repository_state_id 같음 ─────────────────────────
+
+def eligible_files(files: list[tuple[str, str]], scope: dict) -> list[tuple[str, str]]:
+    """§2.1·D210 — 적격 목록: main_roots 아래 .java/.kt 중 test_roots·generated_roots 유래를 뺀 것(@Generated 판별은 이 픽스처 밖)."""
+    def under(p, roots): return any(p == r or p.startswith(r.rstrip("/") + "/") for r in roots)
+    return [(p, c) for p, c in files
+            if p.endswith((".java", ".kt")) and under(p, scope["main_roots"])
+            and not under(p, scope["test_roots"]) and not under(p, scope["generated_roots"])]
+
+
+def run_source_scope_variants(case_dir: Path, inp: dict) -> dict:
+    tree = case_dir / inp["repo"]["tree"]
+    files = tree_files(tree)
+    with tempfile.TemporaryDirectory() as tmp:
+        history = build_history(tree, inp["repo"], Path(tmp) / "repo")
+    shared, env = inp["shared_inputs"], inp["environment"]
+    rsid = repository_state_id(files)
+    variants = {}
+    for name, scope in inp["source_scope_variants"].items():
+        elig = eligible_files(files, scope)
+        aid, spec = analysis_input_id({**shared, "source_scope": scope}, env, elig, history)
+        variants[name] = {"source_scope": scope, "eligible": [p for p, _ in elig], "eligible_count": len(elig),
+                          "repository_state_id": rsid, "analysis_input_id": aid}
+    a, b = list(variants)[:2]   # build · convention — 셋째(cli)는 적격 목록이 다른 변이
+    # 변조: source_scope를 id에서 빼면 범위가 달라 적격 목록이 같을 때 같은 id가 난다 — D87 위반(범위가 입력인데 결과에 영향 없음).
+    same_list = variants[a]["eligible"] == variants[b]["eligible"]
+    spec_a = analysis_input_id({**shared, "source_scope": variants[a]["source_scope"]}, env, eligible_files(files, variants[a]["source_scope"]), history)[1]
+    spec_b = analysis_input_id({**shared, "source_scope": variants[b]["source_scope"]}, env, eligible_files(files, variants[b]["source_scope"]), history)[1]
+    without = {k: v for k, v in spec_a.items() if k != "source_scope"}, {k: v for k, v in spec_b.items() if k != "source_scope"}
+    return {
+        "case": inp["case"], "generated_by": GENERATED_BY, "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"], "canonical_encoding": CANONICAL_ENCODING,
+        "tree": [p for p, _ in files], "variants": variants,
+        "mutation_scope_outside_id": {"same_eligible_list": same_list, "ids_collide_without_scope": sha256(without[0]) == sha256(without[1])},
+        "assertions": {
+            "repository_state_id_equal": variants[a]["repository_state_id"] == variants[b]["repository_state_id"],
+            "analysis_input_id_differs": variants[a]["analysis_input_id"] != variants[b]["analysis_input_id"],
+            # build·convention은 이 트리에서 적격 목록이 **같다** — 그래도 id가 다른 것이 요지(범위 자체가 입력). cli만 목록이 다르다.
+            "eligible_lists_equal_for_build_and_convention": variants[a]["eligible"] == variants[b]["eligible"],
+            "cli_override_changes_eligible_list": any(v["eligible"] != variants[a]["eligible"] for n, v in variants.items() if v["source_scope"]["origin"] == "cli"),
+            "third_source_set_is_outside_in_convention": all(
+                not p.startswith("src/integrationTest/") for p in variants[b]["eligible"]) if variants[b]["source_scope"]["origin"] == "convention" else True,
+            "scope_itself_reaches_id": (
+                analysis_input_id({**shared, "source_scope": variants[a]["source_scope"]}, env, eligible_files(files, variants[a]["source_scope"]), history)[0]
+                != analysis_input_id({**shared, "source_scope": {**variants[a]["source_scope"], "origin": "cli"}}, env, eligible_files(files, variants[a]["source_scope"]), history)[0]),
+        },
+    }
+
+
 def run_case(case_dir: Path) -> dict:
     inp = json.loads((case_dir / "input.json").read_text(encoding="utf-8"))
     if "canonical_vectors" in inp:
@@ -1338,6 +1399,8 @@ def run_case(case_dir: Path) -> dict:
         return run_transition_cache(case_dir, inp)
     if "clone_depths" in inp:
         return run_clone_depths(case_dir, inp)
+    if "source_scope_variants" in inp:
+        return run_source_scope_variants(case_dir, inp)
     tree = case_dir / inp["repo"]["tree"]
     files = tree_files(tree)
     rsid = repository_state_id(files)

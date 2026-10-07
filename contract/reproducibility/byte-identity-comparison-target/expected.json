@@ -16,7 +16,7 @@
     "reproduce.classes_reproduction_inputs"
   ],
   "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-  "analysis_input_id": "sha256:beefa18bfad9345bdb5f553855a14f6179a987cb2ed1e0869f10433c8a49cdf1",
+  "analysis_input_id": "sha256:c787aad017dc8544afd133488e4e64d23b5624561de3b22eaa7cdf8a41626e18",
   "comparison_target": {
     "schema": "jqradar/3",
     "reproduce": {
@@ -36,7 +36,7 @@
       "canonical_encoding": "RFC8785-JCS",
       "head": "04c5de269bd939509087a13312869a28d540f773",
       "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-      "analysis_input_id": "sha256:beefa18bfad9345bdb5f553855a14f6179a987cb2ed1e0869f10433c8a49cdf1",
+      "analysis_input_id": "sha256:c787aad017dc8544afd133488e4e64d23b5624561de3b22eaa7cdf8a41626e18",
       "environment": {
         "pmd": "7.16.0",
         "archunit": "1.5.0",
@@ -84,6 +84,20 @@
           "rounding": "HALF_EVEN",
           "scales": "D155-1"
         }
+      },
+      "source_scope": {
+        "origin": "build",
+        "main_roots": [
+          "src/main/java",
+          "src/main/kotlin"
+        ],
+        "test_roots": [
+          "src/test/java",
+          "src/test/kotlin"
+        ],
+        "generated_roots": [
+          "build/generated/sources"
+        ]
       }
     },
     "tree": {
@@ -113,8 +127,8 @@
         "annotation_processors": [],
         "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
       },
-      "output_sha256": "sha256:5118a72b19f76bf765778c51ff05689e2ae3520fd4a1e5889dd0319edb45c8cd",
-      "comparison_target_sha256": "sha256:966eb9cb8a1ff4ce9276b9e91468869f37db4af6ca15e748c2cd341f3cab2528"
+      "output_sha256": "sha256:9440a50e920f3e974f30cbdbeb896c83f7793b81250477b3aef936d26ac09d1f",
+      "comparison_target_sha256": "sha256:ee6e24fbbddd46180b7f72c158c25db04658842c6380efb2b61f4723cdb31465"
     },
     "b": {
       "scanned_at": "2026-09-08T09:30:00Z",
@@ -128,8 +142,8 @@
         "annotation_processors": [],
         "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
       },
-      "output_sha256": "sha256:cfcc21f54a36993becbd673cd438c6990d6efee56fc90e0c945bb870df02165e",
-      "comparison_target_sha256": "sha256:966eb9cb8a1ff4ce9276b9e91468869f37db4af6ca15e748c2cd341f3cab2528"
+      "output_sha256": "sha256:6e276e8a31eb570386def78b66bf9baa1ad51b86ceb2276b2a112e43a393c35d",
+      "comparison_target_sha256": "sha256:ee6e24fbbddd46180b7f72c158c25db04658842c6380efb2b61f4723cdb31465"
     }
   },
   "fourth_kind_mutation": {
