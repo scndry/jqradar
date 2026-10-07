@@ -1,0 +1,48 @@
+{
+  "case": "accept-validate-cycle-context-changed",
+  "check": "schema",
+  "kind": "positive",
+  "schema": "validate.schema.json",
+  "base": "prd:§7:validate",
+  "contract_ref": "D196·D175",
+  "what": "순환 finding의 검증에서 BASE·HEAD의 컴포넌트 식별자 집합이 다를 때의 정상 모양 — `component_identifiers_equal: false`, `verdict: not_validated`, `not_validated_reasons: [context_changed]`가 통과한다(D196). 첫째 절('해당 SCC 소멸')은 클래스 집합 계보로 계산되어 기록되고(`before: 3, after: 0`) 둘째 절이 판정 불가라 verdict를 내지 않는다. §7 예시는 Dx finding이라 `equal: true` — 이 긍정이 없으면 `context_changed` 사유가 스키마에 있는지 스위트가 모른다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "metric_validation",
+        "target_improvement"
+      ],
+      "value": {
+        "rule": "cycle",
+        "metric": "scc_membership",
+        "target_pairs": [],
+        "resolved_pairs": [],
+        "before": 3,
+        "after": 0,
+        "accepted": false,
+        "components": [
+          41,
+          43
+        ],
+        "component_identifiers_equal": false
+      }
+    },
+    {
+      "op": "set",
+      "path": [
+        "verdict"
+      ],
+      "value": "not_validated"
+    },
+    {
+      "op": "set",
+      "path": [
+        "not_validated_reasons"
+      ],
+      "value": [
+        "context_changed"
+      ]
+    }
+  ]
+}
