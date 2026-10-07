@@ -9,6 +9,6 @@
   "schema": "report.schema.json",
   "verdict": "reject",
   "rejected_at": [
-    "/files/1/lens_percentiles/H"
+    "/files/0/lens_percentiles/H"
   ]
 }

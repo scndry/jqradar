@@ -9,7 +9,7 @@
   "schema": "report.schema.json",
   "verdict": "reject",
   "rejected_at": [
-    "/files/1/percentile_population/chg_commits/active/reason",
-    "/files/1/percentile_population/chg_commits/active/reason"
+    "/files/0/percentile_population/chg_commits/active/reason",
+    "/files/0/percentile_population/chg_commits/active/reason"
   ]
 }

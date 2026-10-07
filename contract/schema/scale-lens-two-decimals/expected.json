@@ -9,7 +9,7 @@
   "verdict": "reject",
   "violations": [
     {
-      "path": "/files/0/lenses/H",
+      "path": "/files/1/lenses/H",
       "literal": "95.63",
       "allowed_scale": 1,
       "actual_scale": 2

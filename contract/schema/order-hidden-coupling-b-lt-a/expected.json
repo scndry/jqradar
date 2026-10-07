@@ -1,0 +1,33 @@
+{
+  "case": "order-hidden-coupling-b-lt-a",
+  "generated_by": "contract/schema/compute.py",
+  "check": "order_lint",
+  "kind": "hard_rule",
+  "contract_ref": "D202",
+  "what": "`hidden_couplings[0]`의 (a, b)를 뒤집으면 거부 — a < b(D202·O3-17). 방향이 자유면 같은 쌍이 (X, Y)로도 (Y, X)로도 인쇄되어 바이트와 정렬 위치가 함께 갈린다. §7이 v3.10.4까지 이 모양이었다.",
+  "mechanism": "순서 린트(파싱 후, 스키마 아님)",
+  "verdict": "reject",
+  "violations": [
+    {
+      "path": "/duplicate_clusters/0/occurrences",
+      "index": 1,
+      "array": "occurrences",
+      "kind": "not_sorted_by_D202_1",
+      "previous": [
+        "…/OrderService.java",
+        "1200"
+      ],
+      "this": [
+        "…/OldOrderService.java",
+        "4010"
+      ]
+    },
+    {
+      "path": "/hidden_couplings/0",
+      "array": "hidden_couplings",
+      "kind": "pair_not_ordered_a_lt_b",
+      "a": "…/OrderService.java",
+      "b": "…/InvoiceMapper.java"
+    }
+  ]
+}

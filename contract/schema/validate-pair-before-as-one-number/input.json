@@ -1,0 +1,21 @@
+{
+  "case": "validate-pair-before-as-one-number",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "validate.schema.json",
+  "base": "prd:§7:validate",
+  "mechanism": "if/then(metric별)",
+  "contract_ref": "D199",
+  "what": "`metric: duplication_pair`인데 `before: 240`(한 수)이면 거부(D199) — 쌍 측정의 전후는 `{a, b}`다. 접기는 의견이고, 지우면 합격의 증거가 없어진다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "metric_validation",
+        "target_improvement",
+        "before"
+      ],
+      "value": 240
+    }
+  ]
+}

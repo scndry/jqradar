@@ -1,0 +1,16 @@
+{
+  "case": "report-pair-one-number",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D199",
+  "what": "`duplication_pairs[]`에 옛 한 수 `pair_dup_tokens`만 있으면 거부(D199) — 쌍 측정은 두 수다. 하나로 접으면 접기가 의견이고(B.2), 사전순 앞쪽 하나는 개명이 수를 바꾼다.",
+  "mechanism": "additionalProperties:false + required",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/duplication_pairs/0",
+    "/duplication_pairs/0",
+    "/duplication_pairs/0"
+  ]
+}

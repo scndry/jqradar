@@ -1,0 +1,24 @@
+{
+  "case": "report-pair-one-number",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "additionalProperties:false + required",
+  "contract_ref": "D199",
+  "what": "`duplication_pairs[]`에 옛 한 수 `pair_dup_tokens`만 있으면 거부(D199) — 쌍 측정은 두 수다. 하나로 접으면 접기가 의견이고(B.2), 사전순 앞쪽 하나는 개명이 수를 바꾼다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "duplication_pairs",
+        0
+      ],
+      "value": {
+        "a": "…/OldOrderService.java",
+        "b": "…/OrderService.java",
+        "pair_dup_tokens": 240
+      }
+    }
+  ]
+}

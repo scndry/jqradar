@@ -1,0 +1,14 @@
+{
+  "case": "validate-duplication-with-old-metric",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D199",
+  "what": "`rule: duplication`인데 `metric: pair_dup_tokens`(옛 한 수의 이름)이면 거부(D199) — 중복 합격 함수가 읽는 측정은 `duplication_pair`다.",
+  "mechanism": "if/then(rule별)",
+  "schema": "validate.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/metric_validation/target_improvement/metric"
+  ]
+}

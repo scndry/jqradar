@@ -1,0 +1,21 @@
+{
+  "case": "order-occurrences-swapped",
+  "check": "order_lint",
+  "kind": "hard_rule",
+  "base": "prd:§7:report",
+  "mechanism": "순서 린트(파싱 후, 스키마 아님)",
+  "contract_ref": "D202",
+  "what": "`duplicate_clusters[0].occurrences`의 두 원소를 바꾸면 거부 — `(path, start_token) asc`(D202-1). 중첩 배열도 같은 규칙이다(F3-8).",
+  "patch": [
+    {
+      "op": "swap",
+      "path": [
+        "duplicate_clusters",
+        0,
+        "occurrences"
+      ],
+      "i": 0,
+      "j": 1
+    }
+  ]
+}

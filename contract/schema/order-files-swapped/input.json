@@ -1,0 +1,19 @@
+{
+  "case": "order-files-swapped",
+  "check": "order_lint",
+  "kind": "hard_rule",
+  "base": "prd:§7:report",
+  "mechanism": "순서 린트(파싱 후, 스키마 아님)",
+  "contract_ref": "D202",
+  "what": "`files`의 두 원소를 바꾸면(값 불변, 자리만) 거부 — `path asc`(D202-1). JSON Schema는 원소 사이의 순서를 말하지 못하므로 파싱 후 린트다. §7의 `files`가 v3.10.4까지 이 순서(OrderService → OrderPolicy)였다.",
+  "patch": [
+    {
+      "op": "swap",
+      "path": [
+        "files"
+      ],
+      "i": 0,
+      "j": 1
+    }
+  ]
+}

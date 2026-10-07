@@ -1,0 +1,38 @@
+{
+  "case": "order-files-swapped",
+  "generated_by": "contract/schema/compute.py",
+  "check": "order_lint",
+  "kind": "hard_rule",
+  "contract_ref": "D202",
+  "what": "`files`의 두 원소를 바꾸면(값 불변, 자리만) 거부 — `path asc`(D202-1). JSON Schema는 원소 사이의 순서를 말하지 못하므로 파싱 후 린트다. §7의 `files`가 v3.10.4까지 이 순서(OrderService → OrderPolicy)였다.",
+  "mechanism": "순서 린트(파싱 후, 스키마 아님)",
+  "verdict": "reject",
+  "violations": [
+    {
+      "path": "/files",
+      "index": 1,
+      "array": "files",
+      "kind": "not_sorted_by_D202_1",
+      "previous": [
+        "src/main/java/…/order/OrderService.java"
+      ],
+      "this": [
+        "src/main/java/…/order/OrderPolicy.java"
+      ]
+    },
+    {
+      "path": "/duplicate_clusters/0/occurrences",
+      "index": 1,
+      "array": "occurrences",
+      "kind": "not_sorted_by_D202_1",
+      "previous": [
+        "…/OrderService.java",
+        "1200"
+      ],
+      "this": [
+        "…/OldOrderService.java",
+        "4010"
+      ]
+    }
+  ]
+}

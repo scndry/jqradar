@@ -179,6 +179,10 @@ def apply_patch(doc, patch: list[dict]):
             node[path[-1]] = step["value"]
         elif step["op"] == "remove":
             del node[path[-1]]
+        elif step["op"] == "swap":
+            # 배열의 두 원소를 바꾼다 — 순서 린트의 변조용(D202). 값은 하나도 안 바뀌고 자리만 바뀐다.
+            arr = node[path[-1]]
+            arr[step["i"]], arr[step["j"]] = arr[step["j"]], arr[step["i"]]
         else:
             raise ValueError(f"알 수 없는 op: {step['op']}")
     return doc
@@ -250,6 +254,86 @@ def scale_violations(text: str) -> list[dict]:
 # 케이스 실행
 # --------------------------------------------------------------------------
 
+# ── 배열 순서 린트 (D202, 표 `D202-1`) ──────────────────────────────────────────────────
+#
+# 산출물의 모든 배열은 정해진 키로 정렬된다 — 배열은 순서가 바이트라(D154) 키가 없으면 두 머신이 다른
+# 바이트를 낸다. JSON Schema는 원소 사이의 순서를 말하지 못하므로 **파싱 후 린트**다(스케일 린트와
+# 같은 자리, 다른 축: 스케일은 원문 텍스트, 순서는 파싱된 배열). 문자열 비교는 유니코드 코드 포인트 순
+# = UTF-8 바이트 사전순(§2.8 — 경로는 git 트리 바이트, 정규화 없음). Python의 `str` 비교가 그것이다.
+# `gate.json`의 `checks`는 프로필 선언 순서(조직의 것, B.6)라 보지 않는다.
+FINDING_KIND_ORDER = ("hotspot", "duplication_exposure", "frozen_core", "component_cycle", "hidden_coupling")
+_SD_ORDER = {False: 0, True: 1, None: 2}
+
+
+def _order_key(name: str, item):
+    """표 `D202-1`의 키. 반환값끼리 비교해 오름차순이어야 한다. `tc desc`·`priority desc`는 음수로."""
+    if name in ("files",):
+        return (item["path"],)
+    if name == "findings":
+        return (FINDING_KIND_ORDER.index(item["kind"]), -_num(item.get("priority")),
+                item.get("file", item.get("path", "")), item["id"])
+    if name in ("duplicate_clusters", "components", "cycles"):
+        return (item["id"],)
+    if name == "occurrences":
+        return (item["path"], item["start_token"])
+    if name == "duplication_pairs":
+        return (item["a"], item["b"])
+    if name == "hidden_couplings":
+        return (_SD_ORDER[item.get("static_dependency")], -_num(item["tc"]), -item["shared"], item["a"], item["b"])
+    if name == "break_candidates":
+        return (item["from"], item["to"])
+    if name == "items":
+        return (item.get("file", item.get("path_head", "")),)
+    if name == "teams":
+        return (item["team"],)
+    return None
+
+
+def _num(x):
+    from fractions import Fraction as _F
+    return _F(0) if x is None else _F(str(x))
+
+
+ORDERED_ARRAYS = ("files", "findings", "duplicate_clusters", "components", "cycles", "occurrences",
+                  "duplication_pairs", "hidden_couplings", "break_candidates", "items", "teams", "members")
+PAIR_ARRAYS = ("duplication_pairs", "hidden_couplings")
+
+
+def order_violations(document) -> list[dict]:
+    out = []
+
+    def walk(node, path):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                walk(v, path + [k])
+        elif isinstance(node, list):
+            name = path[-1] if path else None
+            # 표의 이름이 같아도 원소가 객체가 아니면 다른 배열이다 — `gate.json`의 `components: [41, 43]`(수 둘),
+            # `campaign.json`의 `scope.components`(문자열). 객체 배열만 표의 키로 본다; `members`는 문자열 배열이다.
+            is_rule_array = bool(node) and (
+                (name == "members" and all(isinstance(x, str) for x in node))
+                or (name != "members" and all(isinstance(x, dict) for x in node)))
+            if name in ORDERED_ARRAYS and is_rule_array:
+                if name == "members":
+                    keys = [(m,) for m in node]
+                else:
+                    keys = [_order_key(name, it) for it in node]
+                for i in range(1, len(keys)):
+                    if keys[i - 1] is not None and keys[i] is not None and keys[i - 1] > keys[i]:
+                        out.append({"path": "/" + "/".join(map(str, path)), "index": i, "array": name,
+                                    "kind": "not_sorted_by_D202_1", "previous": list(map(str, keys[i - 1])), "this": list(map(str, keys[i]))})
+                if name in PAIR_ARRAYS:
+                    for i, it in enumerate(node):
+                        if not (it["a"] < it["b"]):
+                            out.append({"path": "/" + "/".join(map(str, path + [i])), "array": name,
+                                        "kind": "pair_not_ordered_a_lt_b", "a": it["a"], "b": it["b"]})
+            for i, v in enumerate(node):
+                walk(v, path + [i])
+
+    walk(document, [])
+    return out
+
+
 def run_case(inp: dict, blocks: dict[str, str], validator_cls) -> dict:
     check = inp["check"]
     out = {
@@ -275,6 +359,15 @@ def run_case(inp: dict, blocks: dict[str, str], validator_cls) -> dict:
 
     if check == "scale_lint":
         violations = scale_violations(text)
+        out["verdict"] = "reject" if violations else "accept"
+        out["violations"] = violations
+        return out
+
+    if check == "order_lint":
+        document = json.loads(text)
+        if inp.get("patch"):
+            document = apply_patch(document, inp["patch"])
+        violations = order_violations(document)
         out["verdict"] = "reject" if violations else "accept"
         out["violations"] = violations
         return out
