@@ -10,7 +10,7 @@
   "violations": [
     {
       "path": "/findings/0/lens_pct",
-      "literal": "0.92891",
+      "literal": "0.92751",
       "allowed_scale": 4,
       "actual_scale": 5
     }

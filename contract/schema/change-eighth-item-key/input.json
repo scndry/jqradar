@@ -1,0 +1,25 @@
+{
+  "case": "change-eighth-item-key",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "change.schema.json",
+  "base": "file:base/change.json",
+  "mechanism": "additionalProperties:false",
+  "contract_ref": "D209·D120",
+  "what": "`items`에 여덟째 이름을 넣으면 거부 — 일곱 키로 닫힌다(D209: 이름 없는 항목은 계약이 아니다; 여섯 → 일곱은 이름으로 넣은 것이지 수를 연 것이 아니다).",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "items",
+        "smell_count_total"
+      ],
+      "value": {
+        "value_base": 1,
+        "value_head": 1,
+        "delta": 0,
+        "evidence": []
+      }
+    }
+  ]
+}

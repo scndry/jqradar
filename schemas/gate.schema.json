@@ -87,6 +87,25 @@
             },
             "description": "D98·D175 — `context_changed`는 **컴포넌트 그래프를 비교하는 두 규칙**(`nccd_increase`·`new_component_cycle`)의 것이다. 컴포넌트 식별자 집합이 바뀌면(§5.3 표 아래 판정 기준 — N이 아니다) 두 그래프의 비교가 정의되지 않으므로 WARN/FAIL 대신 이 값을 내서 N 변화와 의존 악화를 섞지 않는다. exit에는 0으로 기여한다(판정이 아니다). 다른 규칙이 이 결과를 쓰면 '판정을 피하는 탈출구'가 되므로 거부한다."
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "rule": {
+                "const": "new_p1_smell"
+              }
+            },
+            "required": [
+              "rule"
+            ]
+          },
+          "then": {
+            "required": [
+              "files_examined",
+              "files_unmeasured"
+            ],
+            "description": "D208 — 새 P1 행은 본 수·못 본 수를 적는다. 없으면 Kotlin 전용 PR의 PASS가 '새 P1 없음'인지 '아무것도 못 봄'인지 읽을 수 없다(O3-28)."
+          }
         }
       ],
       "properties": {
@@ -171,6 +190,16 @@
           "minItems": 2,
           "maxItems": 2,
           "description": "`[base, head]` NCCD(§2.3, §5.3)."
+        },
+        "files_examined": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "`new_p1_smell` 행 — 변경 파일 중 `smells`가 null이 아니어서 **본** 파일 수(D208). 입력은 `change.json.items.smell_delta`(D209)."
+        },
+        "files_unmeasured": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "`new_p1_smell` 행 — `smells`가 null이라(Kotlin, D207) **못 본** 파일 수(D208). Kotlin 전용 변경은 `examined: 0`이고 PASS가 정직하다 — 빈 것이 가려지지 않게 두 수를 적는다; Java → Kotlin 변환은 여기 세고 'P1 사라짐'으로 세지 않는다."
         }
       },
       "additionalProperties": false

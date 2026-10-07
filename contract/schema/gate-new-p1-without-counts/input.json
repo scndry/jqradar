@@ -1,0 +1,28 @@
+{
+  "case": "gate-new-p1-without-counts",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "gate.schema.json",
+  "base": "prd:§7:gate",
+  "mechanism": "if/then(rule별 required)",
+  "contract_ref": "D208·D207",
+  "what": "`new_p1_smell` 행에 `files_examined`·`files_unmeasured`가 없으면 거부(D208) — 없으면 Kotlin 전용 PR의 PASS가 '새 P1 없음'인지 '아무것도 못 봄'인지 읽을 수 없다(O3-28 — 빈 것이 PASS로 가려지던 자리). §7이 v3.10.6까지 이 모양이었다.",
+  "patch": [
+    {
+      "op": "remove",
+      "path": [
+        "checks",
+        4,
+        "files_examined"
+      ]
+    },
+    {
+      "op": "remove",
+      "path": [
+        "checks",
+        4,
+        "files_unmeasured"
+      ]
+    }
+  ]
+}

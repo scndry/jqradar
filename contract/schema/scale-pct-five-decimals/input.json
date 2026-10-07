@@ -8,8 +8,8 @@
   "what": "백분위는 소수 4자리다",
   "text_patch": [
     {
-      "find": "\"lens_pct\": 0.9289",
-      "replace": "\"lens_pct\": 0.92891"
+      "find": "\"lens_pct\": 0.9275",
+      "replace": "\"lens_pct\": 0.92751"
     }
   ]
 }

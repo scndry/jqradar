@@ -1,0 +1,11 @@
+{
+  "case": "accept-report-kotlin-file",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "positive",
+  "contract_ref": "D207·D206·D188",
+  "what": "Kotlin 파일의 정상 모양 — `cx`·`loc`·`smells` null + `reason: unsupported_language`(성분 `cx`·렌즈 H·F), Dx는 `no_twins`, 이력·그래프 값은 그대로(D207·D12). 경로 `src/main/kotlin/…`은 `src/main/java/…` 뒤라 `files`의 `path asc`(D202)도 지킨다. §7 예시에는 Kotlin 파일이 없어 첫 커밋이 초록이었다 — 이 긍정이 없으면 `unsupported_language`가 사전에 있는지 스위트가 모른다.",
+  "schema": "report.schema.json",
+  "verdict": "accept",
+  "rejected_at": []
+}

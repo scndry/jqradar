@@ -35,7 +35,17 @@
           "tokens": 120
         }
       ]
-    }
+    },
+    "smell_delta": [
+      {
+        "file": "f:order-service",
+        "p1": [
+          0,
+          0
+        ],
+        "unmeasured": false
+      }
+    ]
   },
   "declared_ai_assistance": "unknown",
   "touched_legacy_findings": [
