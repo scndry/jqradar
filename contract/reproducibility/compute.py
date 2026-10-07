@@ -392,9 +392,14 @@ def run_byte_identity(case_dir: Path, inp: dict) -> dict:
     rsid = repository_state_id(files)
     excluded = inp["excluded_fields"]
 
-    def report_for(machine: dict) -> dict:
+    def report_for(machine: dict, file_order: list | None = None, sort_arrays: bool = True) -> dict:
         # G0에는 측정 코드가 없다 — 산출물은 reproduce 블록과 그 결정적 함수들로 이뤄진
         # 최소 리포트다. 필드는 세 종류뿐(D158): [id] · [fn] · [x].
+        # D202 — 배열은 순서가 바이트라 삽입 순서가 아니라 표 D202-1의 키(`files: path asc`)로 정렬해 인쇄한다.
+        # 비교는 코드 포인트 순 = UTF-8 바이트 순(§2.8 — 경로는 git 트리 바이트, 정규화 없음).
+        printed = list(file_order if file_order is not None else files)
+        if sort_arrays:
+            printed = sorted(printed, key=lambda pc: pc[0])
         return {
             "schema": shared["schema_version"],
             "reproduce": {
@@ -423,11 +428,24 @@ def run_byte_identity(case_dir: Path, inp: dict) -> dict:
                 "percentile_method": PERCENTILE_METHOD,                           # [id]
                 "canonical_encoding": CANONICAL_ENCODING,                         # [id]
             },
-            "tree": {"file_count": len(files),
-                     "files": [{"path": p, "content_id": c} for p, c in files]},  # [id]
+            "tree": {"file_count": len(printed),
+                     "files": [{"path": p, "content_id": c} for p, c in printed]},  # [id]
         }
 
     reports = {name: report_for(m) for name, m in inp["machines"].items()}
+    # D202 — 같은 입력을 **섞은 삽입 순서**로 넣어도 같은 바이트: 정렬 규칙이 있을 때만 성립하고, 없으면(변조)
+    # 두 머신이 같은 트리를 다른 순서로 인쇄한다(F3-8·O3-8 — 같은 구현을 두 번 돌리면 못 보는 구멍).
+    shuffled = list(reversed(files))
+    insertion = None
+    if len(files) >= 2 and inp.get("shuffled_insertion", True):
+        first = inp["machines"][next(iter(inp["machines"]))]
+        sorted_a = canonical(comparison_target(report_for(first, files), excluded))
+        sorted_b = canonical(comparison_target(report_for(first, shuffled), excluded))
+        raw_a = canonical(comparison_target(report_for(first, files, sort_arrays=False), excluded))
+        raw_b = canonical(comparison_target(report_for(first, shuffled, sort_arrays=False), excluded))
+        insertion = {"orders": {"natural": [p for p, _ in files], "shuffled": [p for p, _ in shuffled]},
+                     "same_bytes_when_sorted_by_D202_1": sorted_a == sorted_b,
+                     "mutation_without_sort_rule": {"bytes_differ": raw_a != raw_b}}
     names = list(reports)
     ra, rb = reports[names[0]], reports[names[1]]
     ta, tb = (comparison_target(r, excluded) for r in (ra, rb))
@@ -468,8 +486,11 @@ def run_byte_identity(case_dir: Path, inp: dict) -> dict:
         "comparison_target": ta,
         "machines": machines,
         "fourth_kind_mutation": {"field": mut["field"], "caught": mutation_caught},
+        **({"shuffled_insertion": insertion} if insertion else {}),
         "assertions": {
             "comparison_targets_byte_identical": tgt_a == tgt_b,
+            **({"shuffled_insertion_same_bytes": insertion["same_bytes_when_sorted_by_D202_1"],
+                "without_sort_rule_bytes_differ": insertion["mutation_without_sort_rule"]["bytes_differ"]} if insertion else {}),
             "full_outputs_differ": full_a != full_b,
             "scanned_at_differs":
                 ra["reproduce"]["scanned_at"] != rb["reproduce"]["scanned_at"],
