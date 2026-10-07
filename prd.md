@@ -564,6 +564,8 @@ PR #11·#10·#12가 계약 → 구현 → 기록 순서로 머지되고 main pus
 
 **이 판이 하지 않은 것.** 닫힘 표시, 스키마·픽스처·린트, 나머지 묶음 넷. G0 #1은 통과가 아니다.
 
+**보정(2026-10-07, 같은 판 안).** 순서 린트가 서자 §7에서 둘을 잡았다 — 표 `D202-1`을 적은 판이 자기 예시에서 그 표를 어기고 있었다: `report.json` `duplicate_clusters[0].occurrences`가 `…/OrderService.java`(1200)를 `…/OldOrderService.java`(4010) 앞에 두었는데 `(path, start_token) asc`로는 `Old…` < `Ord…`라 OldOrderService가 먼저다; `people.json` `files[0].teams`가 `payments`를 `other` 앞에 두었는데 `team asc`로는 `other`가 먼저다. 둘 다 값 불변·자리만이고 구현 세션은 코드에서 채우지 않고 멈췄다(§0-29·§0-40·§0-41과 같은 처리, 판 번호 유지). "움직이는 것"은 넷이 아니라 **여섯**이다 — 위 넷에 이 둘. 린트가 서기 전에는 아무도 보지 못한 자리라, "초록은 이행의 증거가 아니다"의 실물이 이 판 안에서 나왔다.
+
 **문서 규칙(v3.7.2)** — 본문(§1–§12)에는 계약·근거·결정만 쓴다. "언제 뭘 고쳤다"는 판 이력은 §0에만 남긴다 — 본문의 편집 메모는 읽는 사람이 아니라 쓰는 사람을 위한 것이었다. 문장 단위 "(vX.Y)" 태그는 본문(§1–§9, §11–§12)에서 제거했다 — 변경점은 §0와 git diff가 갖는다. §10 결정 기록의 판 표기는 기록의 일부(언제 결정·개정됐나)라 유지한다.
 
 **문서 규칙 2 — 본문은 언제나 자기 완결이어야 한다.** "이전 판과 같음"·"vX §n 그대로"·"나머지는 vY"라는 참조를 본문에 쓰지 않는다. 그것은 다음 재작성에서 내용이 사라지는 가장 확실한 경로였다 — §4·§8·§10 D1–D23·§6.5 전제조건·§9 P3–P6와 매트릭스·§7 예시가 그렇게 사라졌고, 참조가 가리키던 판은 이미 없었다. 줄이려면 본문을 줄이고, 옮기려면 옮긴 자리를 §n으로 가리킨다. 이전 판을 가리키는 문장이 본문에 있으면 리뷰에서 반려한다.
@@ -1232,8 +1234,8 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
       "arch_context": { "I": 0.3800, "A": 0.0000, "D": 0.6200, "zone": "stable-concrete", "cycle_id": "cyc-1" } }
   ],
   "duplicate_clusters": [ { "id": "dup:<token_hash>:120", "tokens": 120,
-      "occurrences": [ {"path":"…/OrderService.java","start_token":1200,"end_token":1320,"start_line":45,"end_line":82},
-                       {"path":"…/OldOrderService.java","start_token":4010,"end_token":4130,"start_line":210,"end_line":247} ],
+      "occurrences": [ {"path":"…/OldOrderService.java","start_token":4010,"end_token":4130,"start_line":210,"end_line":247},   // (path, start_token) asc — Old… < Ord…(D202)
+                       {"path":"…/OrderService.java","start_token":1200,"end_token":1320,"start_line":45,"end_line":82} ],
       "identical_under": ["tokens"], "mechanical_fix_candidate": true } ],
   "duplication_pairs": [ { "a": "…/OldOrderService.java", "b": "…/OrderService.java", "a_dup_tokens": 240, "b_dup_tokens": 240 } ],   // 두 수(D199) — 동일 복사라 양쪽 240; 한쪽이 0이면 다른 쪽도 0(D200)
   "hidden_couplings": [ { "a": "…/InvoiceMapper.java", "b": "…/OrderService.java", "shared": 9, "chg_commits_a": 18, "chg_commits_b": 12, "tc": 0.7500, "static_dependency": false } ],   // a < b(D202); chg_commits_a/b는 분모 — tc = 9/min(18, 12) = 0.75(D201). static_dependency는 nullable — 그래프 밖 파일이 든 쌍은 null + reason(D176). 이 예시에는 test pair가 없다
@@ -1331,7 +1333,7 @@ LLM에 전달하는 것과 출력 제약은 §6.6.
   "team_mapping_sha256": "sha256:…", "k_threshold": 3,
   "files": [
     { "path": "order/OrderService.java",
-      "teams": [ {"team": "payments", "commits": 11}, {"team": "other", "commits": 2, "folded_from": 1} ],   // 3인 미만 팀은 other로 접힘(D161)
+      "teams": [ {"team": "other", "commits": 2, "folded_from": 1}, {"team": "payments", "commits": 11} ],   // team asc — other < payments(D202); 3인 미만 팀은 other로 접힘(D161)
       "team_count": 2, "teams_folded": 1,
       "authors": null, "authors_unmapped": null } ],                   // individual일 때만: authors = [{author_id, commits}], authors_unmapped = 매핑에 없어 "unmapped"로 접힌 저자 수(D163). author_id는 매핑 파일의 키다 — git 이름·이메일이 아니다. 조직이 켠 것이고 개인 순위 표면은 만들지 않는다(§11)
   "note": "이 파일은 build/ 산출물이다. .jqradar/에 커밋되지 않는다(D48)." }
