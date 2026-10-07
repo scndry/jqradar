@@ -1,0 +1,19 @@
+{
+  "case": "change-items-without-smell-delta",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "change.schema.json",
+  "base": "file:base/change.json",
+  "mechanism": "required(키 고정)",
+  "contract_ref": "D209·D120",
+  "what": "`items`에서 `smell_delta`를 빼면 거부 — 일곱 키 중 `remediation_effect`만 선택이고 여섯은 필수(D209·D120 '키 고정'). 추가 금지(`additionalProperties: false`)만 있고 누락 금지가 없어 v3.10.9 전까지 통과하던 문서(소유자 probe 2026-10-07): 게이트가 읽는 입력이 없는데 통과하면 D209가 반만 선다.",
+  "patch": [
+    {
+      "op": "remove",
+      "path": [
+        "items",
+        "smell_delta"
+      ]
+    }
+  ]
+}

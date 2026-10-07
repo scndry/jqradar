@@ -1,0 +1,10 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "schema.change — anchor_class 열거에서 low 삭제, 변조 change-unknown-anchor-class를 low로 재조준 (D213)",
+    "old": "변조가 `critical`(열거 밖의 아무 이름)을 넣어 거부를 확인했다 — `low`는 열거 안이라 통과했다",
+    "new": "변조가 `low`를 넣어 거부된다 — v3.10.8까지 통과하던 값이 거부되는 것이 D213이 닫혔다는 증거(O3-25의 모양). 판정(reject)·거부 경로 불변, `kind`는 structural → hard_rule(열거가 계약)",
+    "note": "선정 규칙(`lens_pct ≥ 0.75`)을 적지 않았기 때문에 어디서도 도달할 수 없는 값이 enum에 살아 있었다 — F3-15의 Dx 쪽 짝을 묻다가 나온 1-b. 열거는 `high`·`medium`·null(렌즈 백분위가 null인 파일 finding, D191).",
+    "fixtures": ["schema/change-unknown-anchor-class"]
+  }
+}

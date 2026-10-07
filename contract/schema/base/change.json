@@ -45,7 +45,30 @@
         ],
         "unmeasured": false
       }
-    ]
+    ],
+    "change_concentration": {
+      "value_base": 1,
+      "value_head": 1,
+      "delta": 0,
+      "evidence": [
+        {
+          "file": "f:order-service",
+          "in_base_top_decile": true
+        }
+      ]
+    },
+    "dependency_direction": {
+      "value_base": 131,
+      "value_head": 131,
+      "delta": 0,
+      "evidence": []
+    },
+    "fragile_area_exposure": {
+      "value_base": 0,
+      "value_head": 0,
+      "delta": 0,
+      "evidence": []
+    }
   },
   "declared_ai_assistance": "unknown",
   "touched_legacy_findings": [

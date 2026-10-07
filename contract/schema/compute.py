@@ -63,7 +63,8 @@ FIELD_KIND = {
         "change_exposure_90d", "distinct_authors_90d", "team_count", "teams_folded",
         "authors_unmapped",
         "files_examined", "files_unmeasured",      # gate new_p1_smell 행의 본 수·못 본 수 (D208)
-        "unmapped_classes")},                       # bytecode_scope 진단값 (D211)
+        "unmapped_classes",                         # bytecode_scope 진단값 (D211)
+        "eligible_n")},                             # gate 핫스팟 행의 자격 집합 수 (D215)
     # D184 — '일'은 초/86400의 유리수, 표시 2자리(0.01일 = 14분).
     **{f: "elapsed_days" for f in ("age_last_days", "authors_window_days", "debt_age_days")},
     **{f: "ratio" for f in (

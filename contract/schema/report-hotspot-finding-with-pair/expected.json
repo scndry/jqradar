@@ -1,0 +1,15 @@
+{
+  "case": "report-hotspot-finding-with-pair",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D213·D191",
+  "what": "hotspot finding에 `pair`를 넣으면 거부(D213) — 쌍은 Hidden Coupling finding의 정체(§5.5)이고 파일 렌즈 finding의 정체는 파일 + 렌즈다. `pair`는 정당한 필드라 닫힌 객체로는 못 잡고 kind별 if/then이어야 한다.",
+  "mechanism": "if/then(kind별)",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/findings/0",
+    "/findings/0"
+  ]
+}
