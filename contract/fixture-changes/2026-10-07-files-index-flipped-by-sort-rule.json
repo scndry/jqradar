@@ -1,0 +1,29 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "schema.report — §7 `files`가 `path asc`로 정렬(D202)되어 OrderPolicy [0]·OrderService [1]; 케이스 패치의 인덱스를 뒤집어 같은 파일을 가리킨다",
+    "old": "패치가 `files/0` = OrderService, `files/1` = OrderPolicy를 가리켰다",
+    "new": "같은 파일을 가리키도록 인덱스 0 ↔ 1 — `rejected_at`의 `/files/<i>/…`가 전부 움직인다. 값은 하나도 안 바뀐다",
+    "note": "§0-44가 예고한 파급. 인덱스를 두고 `rejected_at`만 받아들이면 `accept-report-dx-not-in-active`가 active 파일(OrderService)에 `not_in_active`를 놓는 등 케이스의 뜻이 바뀐다 — 그래서 인덱스를 뒤집었다.",
+    "fixtures": [
+      "schema/accept-report-dx-not-in-active",
+      "schema/accept-report-invalid-metadata-f",
+      "schema/accept-report-isolated-component",
+      "schema/report-arch-context-not-in-active",
+      "schema/report-arch-context-null-without-reason",
+      "schema/report-arch-context-reason-on-value",
+      "schema/report-fan-in-null-without-reason",
+      "schema/report-file-author",
+      "schema/report-judgment-in-composite-note",
+      "schema/report-lens-pct-null-without-reason",
+      "schema/report-lens-pct-without-denominator",
+      "schema/report-lens-percentile-bare-null",
+      "schema/report-lens-percentiles-composite",
+      "schema/report-percentile-flat-number",
+      "schema/report-percentile-out-of-range",
+      "schema/report-team-count-when-off",
+      "schema/report-team-count-without-teams-folded",
+      "schema/report-unknown-reason"
+    ]
+  }
+}

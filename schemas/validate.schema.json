@@ -219,7 +219,8 @@
               "description": "§6.3.3 발견 종류별 합격 함수."
             },
             "metric": {
-              "type": "string"
+              "type": "string",
+              "description": "합격 함수가 읽는 측정의 이름(§6.3). 중복은 **`duplication_pair`** — 쌍 측정은 두 수라(D199) `before`/`after`가 `{a, b}` 객체다. 순환·복잡도의 이름은 §6.3이 정한다."
             },
             "target_pairs": {
               "type": "array",
@@ -236,10 +237,56 @@
               "description": "실제로 `pair_dup_tokens = 0`이 된 쌍(§6.3). 합격은 `target_pairs` **전부**를 요구한다."
             },
             "before": {
-              "type": "number"
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "a",
+                    "b"
+                  ],
+                  "properties": {
+                    "a": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "b": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ],
+              "description": "원값(§6.3). `duplication_pair`면 `{a, b}` 두 수 — 합격의 **증거**라 지우지 않고(240 → 0은 사람이 읽는 사실) 접지도 않는다(D199)."
             },
             "after": {
-              "type": "number"
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "a",
+                    "b"
+                  ],
+                  "properties": {
+                    "a": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "b": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ],
+              "description": "원값(§6.3). `duplication_pair`면 `{a, b}` — 합격은 둘 다 0(D200의 불변식으로 한쪽 0이면 다른 쪽도 0, 동치)."
             },
             "accepted": {
               "type": "boolean",
@@ -278,6 +325,83 @@
                   "component_identifiers_equal"
                 ],
                 "description": "순환 finding의 검증은 비교의 전제(식별자 집합이 같은가)를 값으로 남긴다(D196) — 없으면 '새 SCC 없음'을 정의되지 않은 비교로 판정한 것인지 알 수 없다."
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "metric": {
+                    "const": "duplication_pair"
+                  }
+                },
+                "required": [
+                  "metric"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "before": {
+                    "type": "object",
+                    "required": [
+                      "a",
+                      "b"
+                    ],
+                    "properties": {
+                      "a": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "b": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "after": {
+                    "type": "object",
+                    "required": [
+                      "a",
+                      "b"
+                    ],
+                    "properties": {
+                      "a": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "b": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "before",
+                  "after"
+                ],
+                "description": "D199 — 쌍 측정의 전후는 두 수 `{a, b}`다. 하나의 수(접기)는 거부."
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "rule": {
+                    "const": "duplication"
+                  }
+                },
+                "required": [
+                  "rule"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "metric": {
+                    "const": "duplication_pair"
+                  }
+                },
+                "description": "D199 — 중복 합격 함수가 읽는 측정은 `duplication_pair`다(옛 이름 `pair_dup_tokens`는 한 수라 거부)."
               }
             }
           ]

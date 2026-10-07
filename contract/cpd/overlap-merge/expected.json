@@ -90,11 +90,14 @@
     {
       "a": "A.java",
       "b": "B.java",
-      "pair_dup_tokens": 150
+      "a_dup_tokens": 150,
+      "b_dup_tokens": 200
     }
   ],
   "invariants": {
-    "dup_extent_at_most_one": true
+    "dup_extent_at_most_one": true,
+    "pair_sides_both_positive_or_both_zero": true,
+    "twins_symmetric": true
   },
   "non_terminating": {
     "/files/A.java/dup_extent": "3/104",

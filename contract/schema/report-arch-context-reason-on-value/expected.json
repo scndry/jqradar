@@ -9,6 +9,6 @@
   "schema": "report.schema.json",
   "verdict": "reject",
   "rejected_at": [
-    "/files/0/arch_context"
+    "/files/1/arch_context"
   ]
 }

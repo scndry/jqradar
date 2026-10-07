@@ -1,0 +1,12 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "reproducibility.byte_identity — 섞은 삽입 순서 → 같은 바이트 (D202)",
+    "old": "같은 구현을 두 번 돌려 비교 대상의 바이트 동일만 단언했다 — 배열 순서의 구멍(F3-8·O3-8)을 볼 수 없었다",
+    "new": "`shuffled_insertion` 블록과 단언 둘: `files`를 거꾸로 넣어도 `path asc`로 같은 바이트, 정렬 규칙을 빼면(변조) 바이트가 다르다. 기존 단언·id 불변",
+    "note": "D202-1의 첫 행(`files: path asc`)이 재현성 쪽에서 무는 자리.",
+    "fixtures": [
+      "reproducibility/byte-identity-comparison-target"
+    ]
+  }
+}

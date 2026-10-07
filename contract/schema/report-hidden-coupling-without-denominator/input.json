@@ -1,0 +1,28 @@
+{
+  "case": "report-hidden-coupling-without-denominator",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "required",
+  "contract_ref": "D201",
+  "what": "`hidden_couplings[]` 행에 `chg_commits_a/b`가 없으면 거부(D201) — test pair의 분모는 `files[]`에 없어 행에 실어야 JSON만으로 `tc`를 다시 계산한다(B.4). §3.5가 요구하던 것을 스키마가 v3.10.4까지 실을 수 없었다(S3-10).",
+  "patch": [
+    {
+      "op": "remove",
+      "path": [
+        "hidden_couplings",
+        0,
+        "chg_commits_a"
+      ]
+    },
+    {
+      "op": "remove",
+      "path": [
+        "hidden_couplings",
+        0,
+        "chg_commits_b"
+      ]
+    }
+  ]
+}

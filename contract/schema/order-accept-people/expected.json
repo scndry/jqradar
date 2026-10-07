@@ -1,0 +1,10 @@
+{
+  "case": "order-accept-people",
+  "generated_by": "contract/schema/compute.py",
+  "check": "order_lint",
+  "kind": "positive",
+  "contract_ref": "D202",
+  "what": "§7 people의 모든 배열이 표 `D202-1`의 키로 정렬돼 있고 쌍은 a < b다(D202) — 긍정이 없으면 린트가 §7을 보는지 스위트가 모른다. 배열은 순서가 바이트다(D154).",
+  "verdict": "accept",
+  "violations": []
+}

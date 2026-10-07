@@ -1,0 +1,19 @@
+{
+  "case": "order-findings-kind-order",
+  "check": "order_lint",
+  "kind": "hard_rule",
+  "base": "prd:§7:report",
+  "mechanism": "순서 린트(파싱 후, 스키마 아님)",
+  "contract_ref": "D202",
+  "what": "`findings`의 Dx finding을 H 앞에 두면 거부 — `kind`의 고정 순서(hotspot · duplication_exposure · frozen_core · component_cycle · hidden_coupling) 뒤에 §3.7의 tie-break(D202-1). §7 예시의 순서가 이것이고 §3.7의 `priority desc`는 kind 안의 순서다(O3-8).",
+  "patch": [
+    {
+      "op": "swap",
+      "path": [
+        "findings"
+      ],
+      "i": 0,
+      "j": 1
+    }
+  ]
+}

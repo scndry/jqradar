@@ -12,7 +12,7 @@
       "op": "set",
       "path": [
         "files",
-        0,
+        1,
         "arch_context",
         "I"
       ],
@@ -22,7 +22,7 @@
       "op": "set",
       "path": [
         "files",
-        0,
+        1,
         "arch_context",
         "D"
       ],
@@ -32,7 +32,7 @@
       "op": "set",
       "path": [
         "files",
-        0,
+        1,
         "arch_context",
         "zone"
       ],
@@ -42,11 +42,12 @@
       "op": "set",
       "path": [
         "files",
-        0,
+        1,
         "arch_context",
         "reason"
       ],
       "value": "not_in_active"
     }
-  ]
+  ],
+  "$files_index_note": "v3.10.5(D202)에서 §7 `files`가 `path asc`로 정렬되어 OrderPolicy가 [0], OrderService가 [1]이 됐다 — 이 패치의 인덱스를 뒤집어 같은 파일을 가리킨다(값 불변, fixture_change 2026-10-07)."
 }

@@ -1,0 +1,10 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "schema.order_lint — §7 보정(occurrences·teams 정렬, D202-1) 뒤 변조 셋의 위반 목록이 3 → 1로 준다",
+    "old": "기반 예시(§7)가 정렬되지 않은 채 생성된 expected — 변조의 위반 하나에 기반의 둘(`occurrences`·`teams`)이 섞여 셋이었다",
+    "new": "보정 뒤 기반의 둘이 빠져 각 변조의 **자기 위반 하나**만 남는다 — `order-files-swapped`(files)·`order-findings-kind-order`(findings)·`order-hidden-coupling-b-lt-a`(쌍 방향)",
+    "note": "#50의 `scale-elapsed-days-as-integer`(8 → 1)와 같은 모양 — 줄어듦이 '보정이 정확히 그 둘을 고쳤다'는 증거다. 긍정 셋(`order-accept-report`·`order-accept-people`·`order-occurrences-swapped`)은 보정 뒤 처음 쓰인 expected라 이 레코드의 대상이 아니다. 판정(reject) 불변.",
+    "fixtures": ["schema/order-files-swapped", "schema/order-findings-kind-order", "schema/order-hidden-coupling-b-lt-a"]
+  }
+}
