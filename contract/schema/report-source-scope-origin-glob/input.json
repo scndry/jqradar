@@ -1,0 +1,21 @@
+{
+  "case": "report-source-scope-origin-glob",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "enum(어휘가 계약)",
+  "contract_ref": "D212",
+  "what": "`source_scope.origin: glob`은 거부(D212) — 출처는 셋(`build`·`cli`·`convention`)뿐이고 `src/*/{java,kotlin}` 글롭은 S3-20이 지목한 '다른 규칙'이라 이름이 없다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "reproduce",
+        "source_scope",
+        "origin"
+      ],
+      "value": "glob"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "case": "accept-report-source-scope-convention",
+  "check": "schema",
+  "kind": "positive",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "contract_ref": "D212",
+  "what": "`origin: convention`의 정상 모양 — `src/main/java`·`src/main/kotlin`만 main, `generated_roots: []`가 통과한다(D212). §7 예시는 `build`라 이 긍정이 없으면 convention 가지가 검사되지 않는다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "reproduce",
+        "source_scope"
+      ],
+      "value": {
+        "origin": "convention",
+        "main_roots": [
+          "src/main/java",
+          "src/main/kotlin"
+        ],
+        "test_roots": [
+          "src/test/java",
+          "src/test/kotlin"
+        ],
+        "generated_roots": []
+      }
+    }
+  ]
+}
