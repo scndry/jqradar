@@ -1,0 +1,14 @@
+{
+  "case": "gate-context-changed-on-one-row-only",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D198·D175",
+  "what": "`nccd_increase`가 `context_changed`(41 → 43)인데 `new_component_cycle`이 `PASS`이면 거부(D198) — 식별자 집합이 다르다는 것은 두 행에 같은 사실이라 함께 움직인다(§5.3 한 곳의 기준, D175). §7 예시가 v3.10.3까지 정확히 이 모양이었고 스키마가 통과시켰다(O3-25) — 그래서 교차 제약이 필요하다.",
+  "mechanism": "if/then(contains — 교차 제약)",
+  "schema": "gate.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/checks"
+  ]
+}

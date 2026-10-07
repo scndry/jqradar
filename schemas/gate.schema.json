@@ -176,5 +176,107 @@
       "additionalProperties": false
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "checks": {
+            "contains": {
+              "properties": {
+                "rule": {
+                  "const": "nccd_increase"
+                },
+                "result": {
+                  "const": "context_changed"
+                }
+              },
+              "required": [
+                "rule",
+                "result"
+              ]
+            }
+          }
+        },
+        "required": [
+          "checks"
+        ]
+      },
+      "then": {
+        "properties": {
+          "checks": {
+            "not": {
+              "contains": {
+                "properties": {
+                  "rule": {
+                    "const": "new_component_cycle"
+                  },
+                  "result": {
+                    "not": {
+                      "const": "context_changed"
+                    }
+                  }
+                },
+                "required": [
+                  "rule",
+                  "result"
+                ]
+              }
+            }
+          }
+        },
+        "description": "D175·D198 — `nccd_increase`가 `context_changed`이면 `new_component_cycle`도 `context_changed`다(둘 다 §5.3 한 곳의 기준 — 컴포넌트 식별자 집합 — 을 가리킨다). 한쪽만 `context_changed`인 gate.json은 같은 BASE·HEAD에 두 말을 하는 것이다(O3-25 — §7 예시가 v3.10.3까지 그 모양이었다). 조직 프로필이 한 규칙을 빼면 그 행이 없어 걸리지 않는다(B.6)."
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "checks": {
+            "contains": {
+              "properties": {
+                "rule": {
+                  "const": "new_component_cycle"
+                },
+                "result": {
+                  "const": "context_changed"
+                }
+              },
+              "required": [
+                "rule",
+                "result"
+              ]
+            }
+          }
+        },
+        "required": [
+          "checks"
+        ]
+      },
+      "then": {
+        "properties": {
+          "checks": {
+            "not": {
+              "contains": {
+                "properties": {
+                  "rule": {
+                    "const": "nccd_increase"
+                  },
+                  "result": {
+                    "not": {
+                      "const": "context_changed"
+                    }
+                  }
+                },
+                "required": [
+                  "rule",
+                  "result"
+                ]
+              }
+            }
+          }
+        },
+        "description": "D175·D198 — `new_component_cycle`가 `context_changed`이면 `nccd_increase`도 `context_changed`다(둘 다 §5.3 한 곳의 기준 — 컴포넌트 식별자 집합 — 을 가리킨다). 한쪽만 `context_changed`인 gate.json은 같은 BASE·HEAD에 두 말을 하는 것이다(O3-25 — §7 예시가 v3.10.3까지 그 모양이었다). 조직 프로필이 한 규칙을 빼면 그 행이 없어 걸리지 않는다(B.6)."
+      }
+    }
+  ]
 }

@@ -3,8 +3,8 @@
   "generated_by": "contract/schema/compute.py",
   "check": "schema",
   "kind": "positive",
-  "contract_ref": "D175",
-  "what": "`new_component_cycle`이 `context_changed`를 낸다 — 컴포넌트 식별자 집합이 바뀌어 '새 SCC'가 정의되지 않는 비교일 때(D175). D98의 NCCD 처리와 같은 값이고 exit 기여 0. §7 예시는 PASS라 첫 커밋이 초록이었다 — 이 긍정이 없으면 스키마가 옛 계약(NCCD 전용)을 강제해도 스위트가 모른다.",
+  "contract_ref": "D175·D198",
+  "what": "`new_component_cycle`이 `context_changed`를 낸다 — 컴포넌트 식별자 집합이 바뀌어 '새 SCC'가 정의되지 않는 비교일 때(D175). v3.9.6에서 §7 예시는 PASS라 첫 커밋이 초록이었고 이 긍정이 그 자리를 채웠다; v3.10.4가 §7의 SCC 행을 `context_changed`로 고쳐(D198, O3-25) 이제 `accept-gate`와 같은 문서다 — 패치가 값을 바꾸지 않지만 역사로 남긴다.",
   "schema": "gate.schema.json",
   "verdict": "accept",
   "rejected_at": []
