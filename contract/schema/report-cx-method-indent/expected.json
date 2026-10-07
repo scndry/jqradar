@@ -1,0 +1,14 @@
+{
+  "case": "report-cx-method-indent",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D207·B.1",
+  "what": "`cx_method: indent`는 거부(D207) — 들여쓰기 복잡도는 어느 D도 세운 적이 없는 본문 문장이었고, 그것을 재려면 파서이고 토크나이저라 넷째 엔진이다(B.1). enum은 `cyclo` 하나이고 문은 열려 있다(증인이 생기면 값이 생긴다).",
+  "mechanism": "enum(어휘가 계약)",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/files/1/measures/cx_method"
+  ]
+}

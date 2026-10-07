@@ -32,7 +32,7 @@
     },
     "items": {
       "type": "object",
-      "description": "§5.1의 델타 항목 — **여섯 키로 닫힌다**(D120). `check` 규칙과 렌더러 B1–B5가 이 이름을 참조하므로 이름 없는 항목은 계약이 아니다. 각 항목은 `{value_base, value_head, delta, evidence[]}`를 갖고 **판정 단어는 없다** — 판정은 `check`(정책)와 사람이 한다(B.2, D47). 여섯이 모두 필수는 아니다: `remediation_effect`는 수정 브랜치에만 있다(§5.1).",
+      "description": "§5.1의 델타 항목 — **일곱 키로 닫힌다**(D209 — ~~D120~~의 여섯에 `smell_delta`; '이름 없는 항목은 계약이 아니다'는 그대로이고 여섯이라는 수가 결이 아니었다). `check` 규칙과 렌더러 B1–B5가 이 이름을 참조하므로 이름 없는 항목은 계약이 아니다. 각 항목은 `{value_base, value_head, delta, evidence[]}`를 갖고 **판정 단어는 없다** — 판정은 `check`(정책)와 사람이 한다(B.2, D47). 일곱이 모두 필수는 아니다: `remediation_effect`는 수정 브랜치에만 있다(§5.1).",
       "additionalProperties": false,
       "properties": {
         "complexity_delta": {
@@ -58,6 +58,74 @@
         "remediation_effect": {
           "$ref": "#/$defs/changeItem",
           "description": "리팩터링이 위험을 줄였나 — 수정 브랜치라면 `validate.json` 연결(§5.1, §6.3)."
+        },
+        "smell_delta": {
+          "type": "array",
+          "description": "새 P1이 생겼나 — **§5.3 새 P1 행의 입력**(D209; 입력 없는 게이트 규칙은 계약이 아니다 — O3-29). 변경 파일별 `{file, p1: [base, head], unmeasured}`. `unmeasured`는 어느 쪽이든 `smells`가 null인 파일(Kotlin, D207)이고 그 칸의 `p1`은 null — 게이트의 `files_examined`·`files_unmeasured`가 여기서 파생된다(D208).",
+          "items": {
+            "type": "object",
+            "required": [
+              "file",
+              "p1",
+              "unmeasured"
+            ],
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "p1": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                "description": "`[base, head]` — null은 그 쪽에서 `smells`가 null(재지 않음)이다. 0은 '쟀는데 없다'."
+              },
+              "unmeasured": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "unmeasured": {
+                      "const": false
+                    }
+                  },
+                  "required": [
+                    "unmeasured"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "p1": {
+                      "items": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "description": "D209 — 쟀으면 양쪽이 수다."
+                },
+                "else": {
+                  "properties": {
+                    "p1": {
+                      "contains": {
+                        "type": "null"
+                      }
+                    }
+                  },
+                  "description": "D209 — 못 쟀으면 적어도 한쪽이 null이다(둘 다 값인데 unmeasured면 '잴 수 없게 됨'을 지어낸 것)."
+                }
+              }
+            ]
+          }
         }
       }
     },

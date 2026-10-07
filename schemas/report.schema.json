@@ -948,18 +948,20 @@
             "number",
             "null"
           ],
-          "description": "파일 내 메서드 CYCLO 합(§2.1, PMD). Kotlin은 들여쓰기 복잡도."
+          "description": "파일 내 메서드 CYCLO 합(§2.1, PMD — `cx_method: cyclo`). **Kotlin은 `null`**, `reason: unsupported_language`(D207 — PMD가 Kotlin 메트릭을 내는 날 `cyclo`로 들어온다; 들여쓰기 복잡도는 넷째 엔진이라 가지 않는다, B.1)."
         },
         "cx_method": {
           "enum": [
-            "cyclo",
-            "indent"
+            "cyclo"
           ],
-          "description": "§2.1. Kotlin은 `indent`이고 백분위는 언어별 모집단(D12)."
+          "description": "§2.1. 지금은 `cyclo` 하나 — `indent`는 D207이 지웠다(들여쓰기 측정은 파서이고 토크나이저라 넷째 엔진). 문은 열려 있다: 증인이 생기면 값이 생긴다."
         },
         "loc": {
-          "type": "number",
-          "description": "NCSS(§2.1, PMD)."
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "NCSS(§2.1, PMD). **Kotlin은 `null`**(D207 — 0이 아니다; §7.1 A1의 원 크기는 고정)."
         },
         "file_tokens": {
           "type": "number",
@@ -970,7 +972,7 @@
             "object",
             "null"
           ],
-          "description": "quickstart 참조 룰셋 발견(§2.1). **점수 밖, 가중 없음**(D4). Kotlin은 null(0이 아니다, §4.4).",
+          "description": "quickstart 참조 룰셋 발견(§2.1). **점수 밖, 가중 없음**(D4). **Kotlin은 `null`**(0이 아니다 — §4.4·D207; 게이트의 새 P1 행은 null인 파일을 보지 않고 못 본 수를 적는다, D208).",
           "properties": {
             "p1": {
               "type": "integer"
@@ -1130,7 +1132,7 @@
         },
         "n_population": {
           "type": "integer",
-          "description": "모집단 크기. **`n_ranked`와 다를 때만** 적는다(D122)."
+          "description": "모집단 크기. **`n_ranked`와 다를 때만** 적는다(D122) — §7의 H는 194/212: Kotlin 18개의 H가 null이라(언어 하위 모집단 < 20, D206) 랭킹 집합이 모집단보다 작다."
         },
         "reason": {
           "$ref": "#/$defs/reason",
@@ -1295,6 +1297,33 @@
                 ]
               },
               "description": "성분 `fan_in`의 자리(§2.5 표 셋째 열, D170·D188): 소속 사유 셋 + `no_bytecode`."
+            },
+            "cx": {
+              "type": "object",
+              "minProperties": 1,
+              "propertyNames": {
+                "$ref": "#/$defs/populationName"
+              },
+              "additionalProperties": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/populationEntry"
+                  },
+                  {
+                    "properties": {
+                      "reason": {
+                        "enum": [
+                          "not_in_active",
+                          "no_twins",
+                          "insufficient_population",
+                          "unsupported_language"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              },
+              "description": "성분 `cx`의 자리(§2.5 표 셋째 열, D207·D188): 소속 사유 셋 + `unsupported_language`(Kotlin)."
             }
           }
         },
@@ -1339,13 +1368,14 @@
                     "reason": {
                       "enum": [
                         "not_in_active",
-                        "insufficient_population"
+                        "insufficient_population",
+                        "unsupported_language"
                       ]
                     }
                   }
                 }
               ],
-              "description": "H의 자리(§2.5 표 셋째 열): `not_in_active`·`insufficient_population`."
+              "description": "H의 자리(§2.5 표 셋째 열): `not_in_active`·`insufficient_population`(언어 하위 모집단 < 20 — 그 언어 파일의 H는 null, D206)·`unsupported_language`(Kotlin의 `cx`가 null, D207)."
             },
             "Dx": {
               "allOf": [
@@ -1380,13 +1410,14 @@
                         "invalid_metadata",
                         "uncommitted",
                         "rename_ancestry_lost",
-                        "no_bytecode"
+                        "no_bytecode",
+                        "unsupported_language"
                       ]
                     }
                   }
                 }
               ],
-              "description": "F의 자리(§2.5 표 셋째 열): `insufficient_population` + 나이 넷(`age_unknown`·`invalid_metadata`·`uncommitted`·`rename_ancestry_lost`) + `no_bytecode`."
+              "description": "F의 자리(§2.5 표 셋째 열): `insufficient_population` + 나이 넷(`age_unknown`·`invalid_metadata`·`uncommitted`·`rename_ancestry_lost`) + `no_bytecode`. + `unsupported_language`(Kotlin — `cx` null, D207)."
             }
           },
           "additionalProperties": false
@@ -1527,6 +1558,36 @@
               "percentile_population"
             ],
             "description": "`fan_in`이 null이면 그 이유(`no_bytecode`)가 `percentile_population.fan_in.<population>.reason`에 있어야 한다(D170) — 0으로 내려앉힌 것과 셀 수 없었던 것을 산출물이 갈라 말한다."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "lang": {
+                "const": "kotlin"
+              }
+            },
+            "required": [
+              "lang"
+            ]
+          },
+          "then": {
+            "properties": {
+              "measures": {
+                "properties": {
+                  "cx": {
+                    "const": null
+                  },
+                  "loc": {
+                    "const": null
+                  },
+                  "smells": {
+                    "const": null
+                  }
+                }
+              }
+            },
+            "description": "D207·D12 — Kotlin 파일의 `cx`·`loc`·`smells`는 미지원 `null`이다. 0은 '쟀는데 없다'이고 null은 '재지 않는다' — B.1의 증인이 Kotlin 메트릭을 내지 않는다(pmd-kotlin은 CPD 전용)."
           }
         }
       ]
@@ -1934,9 +1995,10 @@
         "rename_ancestry_lost",
         "no_bytecode",
         "outside_bytecode_scope",
-        "isolated_component"
+        "isolated_component",
+        "unsupported_language"
       ],
-      "description": "`reason`의 **사전 — §2.5의 표 한 곳**(D188). 모든 `reason` 키(성분·렌즈·`arch_context`·`component`·`hidden_couplings`)가 여기서 고르고, 자리마다 허용 부분집합은 표의 셋째 열 \"오는 자리\" 그대로다 — 이 사전에 없는 이름은 어느 자리에서도 거부되고, 사전에는 있되 그 자리에 없는 이름도 거부된다. `not_in_active`(파일이 `active`에 속하지 않음 — 성분·렌즈 H) · `no_twins`(`twins = 0` — 성분·렌즈 Dx) · `insufficient_population`(N < 20 — 성분·렌즈) · `age_unknown`(shallow, D148) · `invalid_metadata`(음수 나이, §2.1) · `uncommitted`(미커밋 신규 파일, D189) · `rename_ancestry_lost`(rename 조상 복구 실패, D189) — 넷은 성분 `age_last_days`·렌즈 F · `no_bytecode`(적격 소스인데 클래스가 `bytecode_scope`에 없음, D170 — 성분 `fan_in`·렌즈 F·쌍 D190; `arch_context`는 전체가 null이라 reason 자리가 없다) · `outside_bytecode_scope`(범위 밖 파일이 쌍에 듦, D176 — 쌍) · `isolated_component`(`Ca + Ce = 0`, D180 — `arch_context`·`component`의 I·D·zone). `rename_ambiguous`는 표기, `*_note`는 자유 텍스트, \"해당 없음\"은 필드 부재(D191) — 셋 다 사전 밖."
+      "description": "`reason`의 **사전 — §2.5의 표 한 곳**(D188). 모든 `reason` 키(성분·렌즈·`arch_context`·`component`·`hidden_couplings`)가 여기서 고르고, 자리마다 허용 부분집합은 표의 셋째 열 \"오는 자리\" 그대로다 — 이 사전에 없는 이름은 어느 자리에서도 거부되고, 사전에는 있되 그 자리에 없는 이름도 거부된다. `not_in_active`(파일이 `active`에 속하지 않음 — 성분·렌즈 H) · `no_twins`(`twins = 0` — 성분·렌즈 Dx) · `insufficient_population`(N < 20 — 성분·렌즈) · `age_unknown`(shallow, D148) · `invalid_metadata`(음수 나이, §2.1) · `uncommitted`(미커밋 신규 파일, D189) · `rename_ancestry_lost`(rename 조상 복구 실패, D189) — 넷은 성분 `age_last_days`·렌즈 F · `no_bytecode`(적격 소스인데 클래스가 `bytecode_scope`에 없음, D170 — 성분 `fan_in`·렌즈 F·쌍 D190; `arch_context`는 전체가 null이라 reason 자리가 없다) · `outside_bytecode_scope`(범위 밖 파일이 쌍에 듦, D176 — 쌍) · `isolated_component`(`Ca + Ce = 0`, D180 — `arch_context`·`component`의 I·D·zone). `rename_ambiguous`는 표기, `*_note`는 자유 텍스트, \"해당 없음\"은 필드 부재(D191) — 셋 다 사전 밖. `unsupported_language`(Kotlin의 `cx`·`loc`·`smells` — B.1의 증인이 재지 않는 것은 만들지 않는다, D207 — 성분(`cx`·`loc`·`smells`)·렌즈 H·F)."
     },
     "populationEntry": {
       "type": "object",

@@ -1,0 +1,124 @@
+{
+  "case": "accept-report-kotlin-file",
+  "check": "schema",
+  "kind": "positive",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "contract_ref": "D207·D206·D188",
+  "what": "Kotlin 파일의 정상 모양 — `cx`·`loc`·`smells` null + `reason: unsupported_language`(성분 `cx`·렌즈 H·F), Dx는 `no_twins`, 이력·그래프 값은 그대로(D207·D12). 경로 `src/main/kotlin/…`은 `src/main/java/…` 뒤라 `files`의 `path asc`(D202)도 지킨다. §7 예시에는 Kotlin 파일이 없어 첫 커밋이 초록이었다 — 이 긍정이 없으면 `unsupported_language`가 사전에 있는지 스위트가 모른다.",
+  "patch": [
+    {
+      "op": "append",
+      "path": [
+        "files"
+      ],
+      "value": {
+        "id": "f:order-mapper-kt",
+        "path": "src/main/kotlin/…/order/OrderMapper.kt",
+        "component": "….order",
+        "lang": "kotlin",
+        "measures": {
+          "cx": null,
+          "cx_method": "cyclo",
+          "loc": null,
+          "file_tokens": 900,
+          "smells": null,
+          "chg_commits": 2,
+          "chg_days": 2,
+          "churn": 40,
+          "union_dup_tokens": 0,
+          "dup_extent": 0.0,
+          "self_dup_tokens": 0,
+          "twins": 0,
+          "active_twins": 0,
+          "active_twin_ratio": null,
+          "fan_in": 3,
+          "age_last_days": 12.0
+        },
+        "percentiles": {
+          "cx": {
+            "active": null,
+            "all": null
+          },
+          "chg_commits": {
+            "active": 0.4
+          },
+          "fan_in": {
+            "all": 0.35
+          },
+          "union_dup_tokens": {
+            "dx": null
+          },
+          "active_twin_ratio": {
+            "dx": null
+          }
+        },
+        "percentile_population": {
+          "cx": {
+            "active": {
+              "lang": "kotlin",
+              "reason": "unsupported_language"
+            },
+            "all": {
+              "lang": "kotlin",
+              "reason": "unsupported_language"
+            }
+          },
+          "chg_commits": {
+            "active": {
+              "n_ranked": 212
+            }
+          },
+          "fan_in": {
+            "all": {
+              "n_ranked": 340
+            }
+          },
+          "union_dup_tokens": {
+            "dx": {
+              "n_ranked": 37,
+              "reason": "no_twins"
+            }
+          },
+          "active_twin_ratio": {
+            "dx": {
+              "n_ranked": 37,
+              "reason": "no_twins"
+            }
+          }
+        },
+        "lenses": {
+          "H": null,
+          "Dx": null,
+          "F": null,
+          "composite": null,
+          "composite_note": "H,F null — cx unsupported for kotlin; Dx null — no twins"
+        },
+        "lens_percentiles": {
+          "H": {
+            "pct": null,
+            "population": "active",
+            "reason": "unsupported_language"
+          },
+          "Dx": {
+            "pct": null,
+            "population": "dx",
+            "reason": "no_twins"
+          },
+          "F": {
+            "pct": null,
+            "population": "all",
+            "reason": "unsupported_language"
+          }
+        },
+        "arch_context": {
+          "I": 0.38,
+          "A": 0.0,
+          "D": 0.62,
+          "zone": "stable-concrete",
+          "cycle_id": "cyc-1"
+        }
+      }
+    }
+  ]
+}

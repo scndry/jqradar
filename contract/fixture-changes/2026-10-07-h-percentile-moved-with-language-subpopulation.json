@@ -1,0 +1,10 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "schema.scale_lint — §7의 H 백분위가 0.9289(197/212) → 0.9275(179/193)로 움직여 그 리터럴을 변조하던 케이스의 위반 리터럴이 바뀐다 (D206)",
+    "old": "`scale-pct-five-decimals`가 `\"lens_pct\": 0.9289`를 `0.92891`로 바꿔 5자리 위반을 냈다",
+    "new": "같은 변조가 `0.9275` → `0.92751`에 건다 — 판정(reject)·위반 종류 불변, 리터럴만",
+    "note": "O3-1: §7의 `active`에 Kotlin 18개(< 20)라 그 18개의 H가 null이고 H의 랭킹 집합은 194(Java)다 — 212는 다시 계산할 수 없는 n이었다(B.4). 소유자가 순위 180/194 → `179/193` HALF_EVEN = 0.9275로 다시 계산했다. 수가 움직인 §7 자리 셋(머리 문장·`lens_percentiles.H`·finding `lens_pct`) 중 변조가 붙어 있던 것은 이 하나다.",
+    "fixtures": ["schema/scale-pct-five-decimals"]
+  }
+}

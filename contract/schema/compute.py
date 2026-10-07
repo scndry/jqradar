@@ -61,7 +61,8 @@ FIELD_KIND = {
         "active_twins", "shared", "union_dup_tokens", "self_dup_tokens", "Ca", "Ce", "CCD",
         "components", "n_ranked", "n_population", "valid_n", "unknown_n",
         "change_exposure_90d", "distinct_authors_90d", "team_count", "teams_folded",
-        "authors_unmapped")},
+        "authors_unmapped",
+        "files_examined", "files_unmeasured")},   # gate new_p1_smell 행의 본 수·못 본 수 (D208)
     # D184 — '일'은 초/86400의 유리수, 표시 2자리(0.01일 = 14분).
     **{f: "elapsed_days" for f in ("age_last_days", "authors_window_days", "debt_age_days")},
     **{f: "ratio" for f in (
@@ -179,6 +180,9 @@ def apply_patch(doc, patch: list[dict]):
             node[path[-1]] = step["value"]
         elif step["op"] == "remove":
             del node[path[-1]]
+        elif step["op"] == "append":
+            # 배열 끝에 원소를 더한다 — 긍정 케이스가 §7에 없는 파일(Kotlin)을 두는 용도. 정렬 키(D202)는 호출자가 지킨다.
+            node[path[-1]].append(step["value"])
         elif step["op"] == "swap":
             # 배열의 두 원소를 바꾼다 — 순서 린트의 변조용(D202). 값은 하나도 안 바뀌고 자리만 바뀐다.
             arr = node[path[-1]]

@@ -1,0 +1,14 @@
+{
+  "case": "report-kotlin-cx-zero",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D207·B.1",
+  "what": "Kotlin 파일의 `cx: 0`은 거부(D207) — 0은 '쟀는데 없다'이고 null은 '재지 않는다'. B.1의 증인(PMD)이 Kotlin 메트릭을 내지 않으므로 값이 있으면 넷째 엔진이 쟀거나 0으로 내려앉힌 것이다(§4.4 — 0이 아님). `lang: kotlin`의 if/then.",
+  "mechanism": "if/then(lang별 const null)",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/files/2/measures/cx"
+  ]
+}

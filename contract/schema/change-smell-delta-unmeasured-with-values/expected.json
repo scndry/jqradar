@@ -1,0 +1,14 @@
+{
+  "case": "change-smell-delta-unmeasured-with-values",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D209·D208",
+  "what": "`smell_delta` 항목이 `p1: [3, 0]`(양쪽 값)인데 `unmeasured: true`면 거부(D209) — '잴 수 없게 됨'을 지어낸 것. 반대로 `unmeasured: false`인데 한쪽이 null이면 쟀다는 말이 거짓이다(else 가지). Java → Kotlin 변환은 `[3, null]`·`unmeasured: true`가 맞는 모양.",
+  "mechanism": "if/then(unmeasured별)",
+  "schema": "change.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/items/smell_delta/0/p1"
+  ]
+}
