@@ -1,0 +1,22 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "reproducibility.analysis_input_id — reproduce.source_scope(필드 넷)가 id 입력에 들어간다 (§2.8 (i)·D210)",
+    "old": "id 스펙에 소스 쪽 범위 정의가 없었다 — 그리고 §2.8에도 없었다",
+    "new": "`source_scope`(`origin`·`main_roots`·`test_roots`·`generated_roots`)가 id 스펙에 들고 `id_from_reproduce`가 §7 블록의 그것을 읽는다. 모든 id가 움직이고 head·repository_state_id·단언 불변",
+    "note": "**이번은 계산기의 구멍이 아니라 계약이 새로 넣은 입력이다** — 앞의 셋(`percentile_method` v3.10.0·`bytecode_scope` v3.10.3·`last_commit_map_sha256` v3.10.6)은 계약 목록에 있었는데 스펙에 없던 것이라 `bug_fix`였고, 이것은 v3.10.8이 §2.8 (i)에 새로 올린 이름이라 `contract_change`다(§0-47). §2.8 (i) ↔ 스펙 자기 반례가 첫 커밋에서 `source_scope → 표에 없다`로 붉었다 — 그 반례가 처음으로 실측된 자리. 새 케이스 `same-tree-different-origin`: build·convention은 적격 목록이 같아도 id가 다르다(범위 자체가 입력), cli 덮어쓰기는 목록을 바꾼다, 블록을 스펙에서 빼면 두 id가 충돌한다(D87 위반의 모양).",
+    "fixtures": [
+      "reproducibility/attribution-toggle-changes-id",
+      "reproducibility/byte-identity-comparison-target",
+      "reproducibility/deep-shallow-same-id",
+      "reproducibility/history-cache-key-is-a-projection",
+      "reproducibility/parameter-change-cache-projection",
+      "reproducibility/recompute-id-from-reproduce",
+      "reproducibility/same-tree-different-pmd",
+      "reproducibility/shallow-then-unshallow-no-false-hit",
+      "reproducibility/team-mapping-edit-cache-projection",
+      "reproducibility/transition-cache-hits-across-head",
+      "reproducibility/unreachable-commits-do-not-leak"
+    ]
+  }
+}

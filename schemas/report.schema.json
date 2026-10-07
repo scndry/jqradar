@@ -148,7 +148,8 @@
         "percentile_method",
         "algorithm_versions",
         "classes_id",
-        "canonical_encoding"
+        "canonical_encoding",
+        "source_scope"
       ],
       "properties": {
         "people": {
@@ -446,7 +447,7 @@
         },
         "bytecode_scope": {
           "type": "object",
-          "description": "그래프 전처리 범위(§2.2). 테스트·`@Generated`·서드파티·JDK 제외. 외부 타입 간선은 `external` 의사 노드로 접어 기록하되 지표에서는 제외한다.",
+          "description": "그래프 전처리 범위(§2.2). 테스트·서드파티·JDK 제외(클래스 루트의 일), 그리고 **소스 범위(`source_scope`)에서 배제된 소스 파일에 매핑되는 클래스 제외**(D211 — 세 `@Generated`의 retention은 SOURCE라 클래스에서 볼 수 있던 적이 없다; 매핑은 `SourceFile` → 패키지 + 최상위 타입 → 합성·람다·중첩은 바깥 타입으로, 계약 상수). 외부 타입 간선은 `external` 의사 노드로 접어 기록하되 지표에서는 제외한다.",
           "properties": {
             "class_roots": {
               "type": "array",
@@ -467,9 +468,87 @@
             },
             "external_included_in_metrics": {
               "const": false
+            },
+            "unmapped_classes": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "최상위 타입의 소스가 어느 선언된 루트에도 없는 클래스 수(D211 — 프로세서가 소스 없이 낸 클래스). 소스가 없으면 적격일 수 없으니 `bytecode_scope` 밖이고 여기 센다 — `external_edges`와 같은 자리의 진단값([fn]). '왜 그래프가 작은가'를 읽는 자리."
             }
           },
           "additionalProperties": false
+        },
+        "source_scope": {
+          "type": "object",
+          "required": [
+            "origin",
+            "main_roots",
+            "test_roots",
+            "generated_roots"
+          ],
+          "additionalProperties": false,
+          "description": "소스 쪽 범위 정의(D210) — `bytecode_scope`의 짝, 전부 [id]. 리포마다 변하는 것만 담는다: `@Generated` 셋·확장자 필터·매핑 규칙은 계약 상수라 인쇄하지 않고 `contract_version`이 덮는다(D186). 해시 없음 — 블록이 작아 통째로 인쇄된다. id 식의 '소스 파일 (path, content_id)'는 이 범위로 고른 **적격 목록**이다(§2.8).",
+          "properties": {
+            "origin": {
+              "enum": [
+                "build",
+                "cli",
+                "convention"
+              ],
+              "description": "누가 정했나(D212): `build` = 플러그인이 빌드 모델에서 읽음(정본), `cli` = 경로 플래그로 명시적으로 덮어씀(덮어쓴 값이 그대로 인쇄), `convention` = 폴백(`src/main/java`·`src/main/kotlin`만 main, `src/test/*`는 테스트, `generated_roots: []`). 다른 origin으로 재면 id가 다르고 그것이 맞다(D87)."
+            },
+            "main_roots": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "description": "빌드가 main 소스 세트로 선언한 루트들(리포 루트 상대 — D202의 경로)."
+            },
+            "test_roots": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "배제 — 테스트 소스 세트(쌍의 원소로는 든다, D201)."
+            },
+            "generated_roots": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "배제 — 빌드가 선언한 생성 소스 디렉터리. `convention`에서는 `[]`가 맞다 — 생성 디렉터리는 `src/main/*` 밖이라 애초에 `main_roots`에 없고, `src/main` 안에 체크인된 생성 코드는 `@Generated`가 소스에서 잡는다(D212)."
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "origin": {
+                    "const": "convention"
+                  }
+                },
+                "required": [
+                  "origin"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "generated_roots": {
+                    "maxItems": 0
+                  },
+                  "main_roots": {
+                    "items": {
+                      "enum": [
+                        "src/main/java",
+                        "src/main/kotlin"
+                      ]
+                    }
+                  }
+                },
+                "description": "D212 — convention은 생성 디렉터리를 모르는 것이 아니라 알 필요가 없다; main은 이름이 `main`인 두 루트뿐이다."
+              }
+            }
+          ]
         },
         "component": {
           "type": "object",

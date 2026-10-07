@@ -1,0 +1,14 @@
+{
+  "case": "report-source-scope-convention-with-generated-roots",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D212",
+  "what": "`origin: convention`인데 `generated_roots`가 비어 있지 않으면 거부(D212) — convention은 생성 디렉터리를 모르는 것이 아니라 알 필요가 없다: `build/generated/sources`는 `src/main/*` 밖이라 `main_roots`에 없고 `src/main` 안의 생성 코드는 `@Generated`가 소스에서 잡는다. 값이 있으면 convention이 아닌 것을 convention이라 적은 것이다.",
+  "mechanism": "if/then(origin별)",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/reproduce/source_scope/generated_roots"
+  ]
+}

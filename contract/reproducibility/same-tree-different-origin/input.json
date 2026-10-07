@@ -1,0 +1,137 @@
+{
+  "case": "same-tree-different-origin",
+  "contract_refs": [
+    "§2.8",
+    "§2.1",
+    "§4.1",
+    "§2.9",
+    "D210",
+    "D212",
+    "D87",
+    "D111"
+  ],
+  "what_this_pins": "**같은 트리를 다른 `origin`으로 재면 `source_scope`가 달라 `analysis_input_id`가 다르고 `repository_state_id`는 같다 — 그것이 맞다**(D210·D212, D87: 범위가 입력이다). 트리에 `src/main`·`src/test`·**`src/integrationTest`**가 있다. `build`(빌드가 integrationTest를 테스트 세트로 선언)와 `convention`(이름이 `main`인 루트만 main — `src/*` 글롭이 아니다; `src/integrationTest/*`는 main도 test도 아니라 범위 **밖**)에서 적격 목록은 둘 다 OrderService 하나로 **같다** — 그래도 id가 다르다: `source_scope` 자체가 id 입력이라서(변조 `mutation_scope_outside_id`: 블록을 스펙에서 빼면 두 id가 충돌한다 — 범위가 입력인데 결과에 영향 없는 D87 위반). 셋째 변이 `cli`는 `main_roots`에 `src/integrationTest/java`를 명시적으로 덮어써 적격 목록이 둘이 된다. `scope_itself_reaches_id`: `origin`만 `build` → `cli`로 바꿔도 id가 움직인다. **이번 id 이동은 계약이 새로 넣은 입력이라 `contract_change`다** — 앞의 셋(`percentile_method`·`bytecode_scope`·`last_commit_map_sha256`)은 계약에 있었는데 스펙에 없던 계산기의 구멍(`bug_fix`)이었다(§0-47).",
+  "repo": {
+    "tree": "tree/",
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-01-02T03:04:05+00:00",
+    "step_seconds": 86400,
+    "history": [
+      {
+        "message": "seed",
+        "paths": [
+          "src/main/java/com/example/order/OrderService.java",
+          "src/test/java/com/example/order/OrderServiceTest.java",
+          "src/integrationTest/java/com/example/order/OrderServiceIT.java"
+        ]
+      }
+    ],
+    "parameters": {
+      "window.months": 12,
+      "window.max_commits": 2000,
+      "cpd.minimum_tokens": 100,
+      "percentile.min_population": 20,
+      "frozen.min_days": 180,
+      "rename.similarity": 60,
+      "hotspot.change_unit": "chg_commits",
+      "verify.min_changed_line_coverage": "0.8",
+      "profile": "jqradar-default",
+      "weights": {
+        "H": "0.5",
+        "Dx": "0.3",
+        "F": "0.2"
+      }
+    }
+  },
+  "environment": {
+    "pmd": "7.16.0",
+    "archunit": "1.5.0",
+    "jgit": "7.3.0"
+  },
+  "shared_inputs": {
+    "schema_version": "jqradar/3",
+    "contract_version": "2026-09-21",
+    "core_tool_version": "3.9.0",
+    "history_backend": {
+      "name": "jgit",
+      "git_version": null
+    },
+    "component": {
+      "strategy": "auto",
+      "algorithm_version": "auto-1",
+      "split_share_basis": "class_count"
+    },
+    "algorithm_versions": {
+      "measures": "1",
+      "percentile": "1",
+      "succession": "1",
+      "cpd_aggregation": "1"
+    },
+    "parameters": {
+      "window.months": 12,
+      "window.max_commits": 2000,
+      "cpd.minimum_tokens": 100,
+      "percentile.min_population": 20,
+      "frozen.min_days": 180,
+      "rename.similarity": 60,
+      "hotspot.change_unit": "chg_commits",
+      "verify.min_changed_line_coverage": "0.8",
+      "profile": "jqradar-default",
+      "weights": {
+        "H": "0.5",
+        "Dx": "0.3",
+        "F": "0.2"
+      }
+    },
+    "bytecode_scope": {
+      "class_roots": [
+        "build/classes/java/main",
+        "build/classes/kotlin/main"
+      ],
+      "test_classes_included": false,
+      "generated_excluded": true,
+      "external_included_in_metrics": false
+    }
+  },
+  "source_scope_variants": {
+    "build": {
+      "origin": "build",
+      "main_roots": [
+        "src/main/java"
+      ],
+      "test_roots": [
+        "src/test/java",
+        "src/integrationTest/java"
+      ],
+      "generated_roots": [
+        "build/generated/sources"
+      ]
+    },
+    "convention": {
+      "origin": "convention",
+      "main_roots": [
+        "src/main/java",
+        "src/main/kotlin"
+      ],
+      "test_roots": [
+        "src/test/java",
+        "src/test/kotlin"
+      ],
+      "generated_roots": []
+    },
+    "cli": {
+      "origin": "cli",
+      "main_roots": [
+        "src/main/java",
+        "src/integrationTest/java"
+      ],
+      "test_roots": [
+        "src/test/java"
+      ],
+      "generated_roots": []
+    }
+  }
+}

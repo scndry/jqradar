@@ -1,0 +1,96 @@
+{
+  "case": "same-tree-different-origin",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.8",
+    "§2.1",
+    "§4.1",
+    "§2.9",
+    "D210",
+    "D212",
+    "D87",
+    "D111"
+  ],
+  "what_this_pins": "**같은 트리를 다른 `origin`으로 재면 `source_scope`가 달라 `analysis_input_id`가 다르고 `repository_state_id`는 같다 — 그것이 맞다**(D210·D212, D87: 범위가 입력이다). 트리에 `src/main`·`src/test`·**`src/integrationTest`**가 있다. `build`(빌드가 integrationTest를 테스트 세트로 선언)와 `convention`(이름이 `main`인 루트만 main — `src/*` 글롭이 아니다; `src/integrationTest/*`는 main도 test도 아니라 범위 **밖**)에서 적격 목록은 둘 다 OrderService 하나로 **같다** — 그래도 id가 다르다: `source_scope` 자체가 id 입력이라서(변조 `mutation_scope_outside_id`: 블록을 스펙에서 빼면 두 id가 충돌한다 — 범위가 입력인데 결과에 영향 없는 D87 위반). 셋째 변이 `cli`는 `main_roots`에 `src/integrationTest/java`를 명시적으로 덮어써 적격 목록이 둘이 된다. `scope_itself_reaches_id`: `origin`만 `build` → `cli`로 바꿔도 id가 움직인다. **이번 id 이동은 계약이 새로 넣은 입력이라 `contract_change`다** — 앞의 셋(`percentile_method`·`bytecode_scope`·`last_commit_map_sha256`)은 계약에 있었는데 스펙에 없던 계산기의 구멍(`bug_fix`)이었다(§0-47).",
+  "canonical_encoding": "RFC8785-JCS",
+  "tree": [
+    "src/integrationTest/java/com/example/order/OrderServiceIT.java",
+    "src/main/java/com/example/order/OrderService.java",
+    "src/test/java/com/example/order/OrderServiceTest.java"
+  ],
+  "variants": {
+    "build": {
+      "source_scope": {
+        "origin": "build",
+        "main_roots": [
+          "src/main/java"
+        ],
+        "test_roots": [
+          "src/test/java",
+          "src/integrationTest/java"
+        ],
+        "generated_roots": [
+          "build/generated/sources"
+        ]
+      },
+      "eligible": [
+        "src/main/java/com/example/order/OrderService.java"
+      ],
+      "eligible_count": 1,
+      "repository_state_id": "sha256:a48cc6a72788765b2bca74774df8ffb4e3049e1d0cfff35bc7553949034a0e5d",
+      "analysis_input_id": "sha256:edbb5d115836c96f244c71b5bb89ff5efc57de52d42506f4eaf558287622d2b9"
+    },
+    "convention": {
+      "source_scope": {
+        "origin": "convention",
+        "main_roots": [
+          "src/main/java",
+          "src/main/kotlin"
+        ],
+        "test_roots": [
+          "src/test/java",
+          "src/test/kotlin"
+        ],
+        "generated_roots": []
+      },
+      "eligible": [
+        "src/main/java/com/example/order/OrderService.java"
+      ],
+      "eligible_count": 1,
+      "repository_state_id": "sha256:a48cc6a72788765b2bca74774df8ffb4e3049e1d0cfff35bc7553949034a0e5d",
+      "analysis_input_id": "sha256:a7ec06b04ad29e5895335904362b9389c93b6c7844992d280fd805abeab8c2a7"
+    },
+    "cli": {
+      "source_scope": {
+        "origin": "cli",
+        "main_roots": [
+          "src/main/java",
+          "src/integrationTest/java"
+        ],
+        "test_roots": [
+          "src/test/java"
+        ],
+        "generated_roots": []
+      },
+      "eligible": [
+        "src/integrationTest/java/com/example/order/OrderServiceIT.java",
+        "src/main/java/com/example/order/OrderService.java"
+      ],
+      "eligible_count": 2,
+      "repository_state_id": "sha256:a48cc6a72788765b2bca74774df8ffb4e3049e1d0cfff35bc7553949034a0e5d",
+      "analysis_input_id": "sha256:1587c9260444e97775a61451dc72f88792e6bd6abc793a22e0bfa43c32d0e355"
+    }
+  },
+  "mutation_scope_outside_id": {
+    "same_eligible_list": true,
+    "ids_collide_without_scope": true
+  },
+  "assertions": {
+    "repository_state_id_equal": true,
+    "analysis_input_id_differs": true,
+    "eligible_lists_equal_for_build_and_convention": true,
+    "cli_override_changes_eligible_list": true,
+    "third_source_set_is_outside_in_convention": true,
+    "scope_itself_reaches_id": true
+  }
+}

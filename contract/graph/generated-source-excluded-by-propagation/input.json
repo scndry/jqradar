@@ -1,0 +1,79 @@
+{
+  "case": "generated-source-excluded-by-propagation",
+  "contract_refs": [
+    "§2.2",
+    "§2.1",
+    "§2.8",
+    "D211",
+    "D210",
+    "D170"
+  ],
+  "what_this_pins": "**클래스 쪽 배제는 소스 배제의 전파다**(D211). 세 `@Generated`의 retention은 SOURCE라 클래스 파일에 없다 — ArchUnit이 클래스에서 볼 수 있는 조건이 한 번도 아니었다. 그래서 입력은 소스 쪽 적격 목록(`source_scope.eligible_sources` — D210의 범위로 고른 것)이고, 클래스는 매핑된 소스가 적격이 아니면 그래프 밖이다. 경로는 `src/main`인데 `@Generated`가 붙은 `com.acme.app.gen.Mapper`(소스 `…/gen/Mapper.java`가 적격 목록에 없다)와 그 중첩 `Mapper$Impl`·람다 `Mapper$$Lambda$12`는 **바깥 최상위 타입으로 접혀** 함께 밖이다 — `Order`가 `Mapper`에 의존하지만 그 간선은 그래프에 없고 `Ca(gen) = 0`이 아니라 컴포넌트 `gen` 자체가 없다. 소스가 어느 루트에도 없는 `com.acme.app.proc.Generated$Table`(프로세서가 소스 없이 낸 클래스, `source_file` 없음·바깥 타입도 없음)은 적격일 수 없으니 밖이고 `unmapped_classes: 1`로 센다(진단값, [fn]). 남는 그래프는 `order`·`payment` 둘 — 생성 코드의 클래스가 Ca/Ce/CCD와 다른 클래스의 `fan_in`에 들던 것(S3-8)이 막힌다.",
+  "component": {
+    "strategy": "auto"
+  },
+  "source_scope": {
+    "eligible_sources": [
+      "src/main/java/com/acme/app/order/Order.java",
+      "src/main/java/com/acme/app/order/OrderRepo.java",
+      "src/main/java/com/acme/app/payment/Payment.java",
+      "src/main/java/com/acme/app/payment/Charge.java"
+    ]
+  },
+  "classes": [
+    {
+      "name": "com.acme.app.order.Order",
+      "package": "com.acme.app.order",
+      "source_file": "src/main/java/com/acme/app/order/Order.java",
+      "depends_on": [
+        "com.acme.app.payment.Payment",
+        "com.acme.app.gen.Mapper"
+      ]
+    },
+    {
+      "name": "com.acme.app.order.OrderRepo",
+      "package": "com.acme.app.order",
+      "source_file": "src/main/java/com/acme/app/order/OrderRepo.java"
+    },
+    {
+      "name": "com.acme.app.payment.Payment",
+      "package": "com.acme.app.payment",
+      "source_file": "src/main/java/com/acme/app/payment/Payment.java",
+      "depends_on": [
+        "com.acme.app.payment.Charge"
+      ]
+    },
+    {
+      "name": "com.acme.app.payment.Charge",
+      "package": "com.acme.app.payment",
+      "source_file": "src/main/java/com/acme/app/payment/Charge.java",
+      "abstract": true
+    },
+    {
+      "name": "com.acme.app.gen.Mapper",
+      "package": "com.acme.app.gen",
+      "source_file": "src/main/java/com/acme/app/gen/Mapper.java",
+      "depends_on": [
+        "com.acme.app.order.Order"
+      ]
+    },
+    {
+      "name": "com.acme.app.gen.Mapper$Impl",
+      "package": "com.acme.app.gen",
+      "depends_on": [
+        "com.acme.app.gen.Mapper"
+      ]
+    },
+    {
+      "name": "com.acme.app.gen.Mapper$$Lambda$12",
+      "package": "com.acme.app.gen"
+    },
+    {
+      "name": "com.acme.app.proc.Generated$Table",
+      "package": "com.acme.app.proc",
+      "depends_on": [
+        "com.acme.app.order.Order"
+      ]
+    }
+  ]
+}

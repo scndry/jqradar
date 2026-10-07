@@ -247,6 +247,29 @@ def build_expected(inp: dict) -> dict:
 
     if "classes" in inp:
         classes = inp["classes"]
+        # D211 — 클래스 쪽 배제는 소스 배제의 **전파**: 클래스는 매핑된 소스 파일이 적격이 아니면 bytecode_scope 밖이다.
+        # 매핑(계약 상수): 명세의 `source_file` → 없으면 **바깥 최상위 타입**의 소스(`Outer$Inner`·`Outer$1`·`Outer$$Lambda…`는
+        # Outer와 운명을 같이한다). 최상위 타입의 소스가 어느 선언된 루트에도 없으면 적격일 수 없으니 밖이고 `unmapped_classes`에 센다.
+        # 세 @Generated의 retention은 SOURCE라 클래스에서 볼 수 없다 — 그래서 소스 쪽 판별(eligible_sources)만이 입력이다.
+        if "source_scope" in inp:
+            eligible = set(inp["source_scope"]["eligible_sources"])
+            def outermost(name: str) -> str:
+                simple = name.rsplit(".", 1)[-1].split("$", 1)[0]
+                return name.rsplit(".", 1)[0] + "." + simple if "." in name else simple
+            source_of = {c["name"]: c["source_file"] for c in classes if c.get("source_file")}
+            kept, excluded, unmapped = [], [], []
+            for c in classes:
+                src = source_of.get(c["name"]) or source_of.get(outermost(c["name"]))
+                if src is None:
+                    unmapped.append(c["name"]); continue
+                if src not in eligible:
+                    excluded.append({"class": c["name"], "source_file": src, "mapped_via": "source_file" if c.get("source_file") else "outermost_type"}); continue
+                kept.append(c)
+            out["bytecode_scope"] = {"eligible_sources": sorted(eligible),
+                                     "excluded_classes": sorted(excluded, key=lambda e: e["class"]),
+                                     "unmapped_classes": len(unmapped), "unmapped": sorted(unmapped),
+                                     "classes_in_graph": sorted(c["name"] for c in kept)}
+            classes = kept
         packages = sorted({c["package"] for c in classes})
         weights = {p: sum(1 for c in classes if c["package"] == p) for p in packages}
         mapping, info = resolve_components(inp, packages, weights)
