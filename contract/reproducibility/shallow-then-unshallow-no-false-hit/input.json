@@ -1,0 +1,105 @@
+{
+  "case": "shallow-then-unshallow-no-false-hit",
+  "contract_refs": [
+    "§4.5",
+    "§2.8",
+    "§2.9",
+    "§2.1",
+    "D193",
+    "D148",
+    "D87"
+  ],
+  "what_this_pins": "**shallow 스캔 → `git fetch --unshallow` → 같은 캐시로 재스캔의 산출물이 새 full clone 스캔과 바이트 동일**하고, graft 경계 커밋의 층 1 항목이 **둘**(관측된 부모 없음/있음)이라 첫 항목이 재사용되지 않았음을 키로 보인다(D193). 네 커밋이 A·B·C·D를 차례로 더하고 `--depth 2`라 경계는 C를 더한 셋째 커밋이다. shallow 스캔에서 경계 커밋은 부모 없이 보여 A·B·C 전부를 \"추가\"한 것으로 층 1에 들어가고, D148대로 그 셋은 `age_unknown`·`history_complete: false`다. unshallow 뒤 같은 커밋이 부모를 갖고 관측되므로 키가 달라 **미스**가 나고 차분이 C 하나로 다시 계산된다 — 마지막 커밋 맵이 A→1·B→2·C→3·D→4로 fresh clone과 같다. 변조(관측된 부모를 키에서 뺌)에서는 경계 항목이 **적중**해 A·B의 마지막 커밋이 셋째 커밋이 되고 `history_complete: true`라 `age_unknown`도 붙지 않는다 — O3-5가 말한 \"D148이 감지로 막은 그럴듯한 틀린 수가 완전한 클론에서 캐시를 타고 돌아온다\"의 실물이고, 거짓 적중은 D87 위반의 한 모양이다. 절차(\"unshallow 때 캐시를 지워라\")가 아니라 키의 구조가 막는다(§0-42).",
+  "repo": {
+    "tree": "tree/",
+    "history": [
+      {
+        "message": "add A",
+        "paths": [
+          "src/A.java"
+        ]
+      },
+      {
+        "message": "add B",
+        "paths": [
+          "src/B.java"
+        ]
+      },
+      {
+        "message": "add C",
+        "paths": [
+          "src/C.java"
+        ]
+      },
+      {
+        "message": "add D",
+        "paths": [
+          "src/D.java"
+        ]
+      }
+    ],
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-01-02T03:04:05+00:00",
+    "step_seconds": 86400
+  },
+  "environment": {
+    "pmd": "7.16.0",
+    "archunit": "1.5.0",
+    "jgit": "7.3.0"
+  },
+  "shared_inputs": {
+    "schema_version": "jqradar/3",
+    "contract_version": "2026-09-21",
+    "core_tool_version": "3.9.0",
+    "history_backend": {
+      "name": "jgit",
+      "git_version": null
+    },
+    "component": {
+      "strategy": "auto",
+      "algorithm_version": "auto-1",
+      "split_share_basis": "class_count"
+    },
+    "algorithm_versions": {
+      "measures": "1",
+      "percentile": "1",
+      "succession": "1",
+      "cpd_aggregation": "1"
+    },
+    "parameters": {
+      "window.months": 12,
+      "window.max_commits": 2000,
+      "cpd.minimum_tokens": 100,
+      "percentile.min_population": 20,
+      "frozen.min_days": 180,
+      "rename.similarity": 60,
+      "hotspot.change_unit": "chg_commits",
+      "verify.min_changed_line_coverage": "0.8",
+      "profile": "jqradar-default",
+      "weights": {
+        "H": "0.5",
+        "Dx": "0.3",
+        "F": "0.2"
+      }
+    },
+    "bytecode_scope": {
+      "class_roots": [
+        "build/classes/java/main",
+        "build/classes/kotlin/main"
+      ],
+      "test_classes_included": false,
+      "generated_excluded": true,
+      "external_included_in_metrics": false
+    }
+  },
+  "shallow_depth": 2,
+  "layer1_projection": [
+    "commit",
+    "observed_parents",
+    "history_backend.name",
+    "history_backend.version"
+  ]
+}

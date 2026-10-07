@@ -16,7 +16,7 @@
       "head": "c8b36012ec023bbb4a70b2ff1f0e378477e3daee",
       "head_committer_time": "2026-02-01T00:00:00Z",
       "repository_state_id": "sha256:14b31d326c30a7e404ddd7178b962d2df444576d55a728d22a216fa0988fb094",
-      "analysis_input_id": "sha256:273da49c9096e34845287df3ad74b76712f44890e2278cdb249760caefd729e0"
+      "analysis_input_id": "sha256:18224bb3add8cbe2de421c63535abab1b9ac6407368fc8f30e21b012d53b7b5d"
     },
     "with_abandoned_branch": {
       "unreachable_commit_count": 1,
@@ -24,7 +24,7 @@
       "head": "c8b36012ec023bbb4a70b2ff1f0e378477e3daee",
       "head_committer_time": "2026-02-01T00:00:00Z",
       "repository_state_id": "sha256:14b31d326c30a7e404ddd7178b962d2df444576d55a728d22a216fa0988fb094",
-      "analysis_input_id": "sha256:273da49c9096e34845287df3ad74b76712f44890e2278cdb249760caefd729e0"
+      "analysis_input_id": "sha256:18224bb3add8cbe2de421c63535abab1b9ac6407368fc8f30e21b012d53b7b5d"
     }
   },
   "assertions": {

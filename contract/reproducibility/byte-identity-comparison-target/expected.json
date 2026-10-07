@@ -15,7 +15,7 @@
     "reproduce.classes_reproduction_inputs"
   ],
   "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-  "analysis_input_id": "sha256:3a7953699ed3df94b735d5d5e300df148be33320e53b3158a44dc6a2b261ac75",
+  "analysis_input_id": "sha256:941ca417326606dcc1a658eb965034ae9c855dd7459f6e35dd02ae91eddf339e",
   "comparison_target": {
     "schema": "jqradar/3",
     "reproduce": {
@@ -35,7 +35,7 @@
       "canonical_encoding": "RFC8785-JCS",
       "head": "04c5de269bd939509087a13312869a28d540f773",
       "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-      "analysis_input_id": "sha256:3a7953699ed3df94b735d5d5e300df148be33320e53b3158a44dc6a2b261ac75",
+      "analysis_input_id": "sha256:941ca417326606dcc1a658eb965034ae9c855dd7459f6e35dd02ae91eddf339e",
       "environment": {
         "pmd": "7.16.0",
         "archunit": "1.5.0",
@@ -111,8 +111,8 @@
         "annotation_processors": [],
         "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
       },
-      "output_sha256": "sha256:266a14b722405d3d31bda08836bbf088b73030c7c583415413e8f7980388f2db",
-      "comparison_target_sha256": "sha256:001d822f890f920731bb9beebbe8a89f95e2ab0355a916e9e0192c117d3529b6"
+      "output_sha256": "sha256:a317e4e061c9f5db9c7a90e0d6409c07e21dedb19795c0036e49793511a3e6e5",
+      "comparison_target_sha256": "sha256:d78049c98872543501517764affa4813fdbc0d93ad173d83f8f24442523b5d8d"
     },
     "b": {
       "scanned_at": "2026-09-08T09:30:00Z",
@@ -126,8 +126,8 @@
         "annotation_processors": [],
         "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
       },
-      "output_sha256": "sha256:805da4dfc2ecb33592e4f70a340bc529929949d618286a84eb58d1b6122fb66e",
-      "comparison_target_sha256": "sha256:001d822f890f920731bb9beebbe8a89f95e2ab0355a916e9e0192c117d3529b6"
+      "output_sha256": "sha256:3fbc2d515b53c2c0078fb90c10523f8123b08214c33be51458c3eedf3176c012",
+      "comparison_target_sha256": "sha256:d78049c98872543501517764affa4813fdbc0d93ad173d83f8f24442523b5d8d"
     }
   },
   "fourth_kind_mutation": {

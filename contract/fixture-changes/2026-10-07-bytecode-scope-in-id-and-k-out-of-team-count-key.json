@@ -1,0 +1,18 @@
+{
+  "fixture_change": {
+    "reason": "bug_fix",
+    "measure": "reproducibility.analysis_input_id — bytecode_scope 범위 정의가 id 스펙에 들어간다(§2.8 (i)·§7 [id]); measure_cache_key.team_count에서 k_threshold가 빠진다(D186·D195)",
+    "old": "id 스펙에 `bytecode_scope`가 없었다 — §2.8 (i)와 §7이 [id]로 적은 입력을 계산기가 빠뜨리고 있었다(percentile_method와 같은 종류). `team_count` 키에 `k_threshold`가 있었다",
+    "new": "`bytecode_scope`의 범위 정의 넷(`class_roots`·`test_classes_included`·`generated_excluded`·`external_included_in_metrics`)이 id 입력이고 `id_from_reproduce`가 §7의 `bytecode_scope`에서 범위 정의만 읽는다. `team_count` 키 = (`commit_list_sha256`, `people.attribution`, `team_mapping_sha256`) — k는 계약 상수라 키에 없다(D186·D195)",
+    "note": "D194의 전이 사영이 `bytecode_scope`를 넣으면서 '사영 ⊆ §2.8 스펙' 검사가 스펙의 구멍을 드러냈다 — 새 케이스 `transition-cache-hits-across-head`가 그 자리다. 모든 id가 움직이고 head·repository_state_id·단언은 불변. `team_count` 키의 `k_threshold` 제거는 D195의 키 교체(저자 집합 → commit_list_sha256은 이 픽스처가 이미 그렇게 두고 있었고, 주석과 k만 옛 문장이었다).",
+    "fixtures": [
+      "reproducibility/same-tree-different-pmd",
+      "reproducibility/unreachable-commits-do-not-leak",
+      "reproducibility/byte-identity-comparison-target",
+      "reproducibility/parameter-change-cache-projection",
+      "reproducibility/attribution-toggle-changes-id",
+      "reproducibility/team-mapping-edit-cache-projection",
+      "reproducibility/recompute-id-from-reproduce"
+    ]
+  }
+}

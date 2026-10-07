@@ -149,6 +149,14 @@ PERCENTILE_METHOD = {
     "output": {"irrational": "BigDecimal MathContext(34, HALF_EVEN)", "rounding": "HALF_EVEN", "scales": "D155-1"},
 }
 K_THRESHOLD = 3  # §2.7·D161 — 팀 집계의 k 하한. 익명 집계에는 걸지 않는다(D162).
+# §2.8 (i)·§7 — `bytecode_scope`의 **범위 정의**는 [id]다. 이 스펙은 v3.10.2까지 그것을 **빠뜨리고 있었다**
+# (`percentile_method`와 같은 종류의 구멍 — 계약 목록에 있는데 계산기에 없던 입력). D194가 전이 사영에
+# `bytecode_scope`를 넣으면서 "사영 ⊆ §2.8 스펙" 검사가 그것을 드러냈다. 기존 케이스 전부의 id가 움직인다.
+# `external_edges`는 [fn]이라 범위 정의가 아니다.
+DEFAULT_BYTECODE_SCOPE = {"class_roots": ["build/classes/java/main", "build/classes/kotlin/main"],
+                          "test_classes_included": False, "generated_excluded": True,
+                          "external_included_in_metrics": False}
+BYTECODE_SCOPE_ID_FIELDS = tuple(DEFAULT_BYTECODE_SCOPE)
 
 
 def team_mapping_sha256(text: str | None) -> str | None:
@@ -183,6 +191,8 @@ def analysis_input_id(shared: dict, environment: dict, files: list[tuple[str, st
         # D186 — 세 종류에 자리 없던 값들이 (i)로: 정규 인코딩, 분할 기준, history_backend 전체.
         # 창 파라미터(`window.months`·`window.max_commits`)는 `parameters` 안에 있다(입력이 그렇게 준다).
         "canonical_encoding": CANONICAL_ENCODING,
+        "bytecode_scope": {k: shared.get("bytecode_scope", DEFAULT_BYTECODE_SCOPE)[k]
+                           for k in BYTECODE_SCOPE_ID_FIELDS},
     }
     assert "window.months" in spec["parameters"], "D186 — 창 파라미터는 parameters에 있어야 한다"
     assert "split_share_basis" in spec["component"], "D186 — component.split_share_basis는 id 입력이다"
@@ -205,6 +215,8 @@ def id_from_reproduce(reproduce: dict, files: list[tuple[str, str]], history: di
         "algorithm_versions": {k: v for k, v in reproduce["algorithm_versions"].items() if k != "component_strategy"},
         "parameters": reproduce["parameters"],
         "people": reproduce["people"],
+        # §7의 `bytecode_scope`는 [id](범위 정의)와 [fn](`external_edges`)이 섞여 있다 — 범위 정의만 읽는다.
+        "bytecode_scope": {k: reproduce["bytecode_scope"][k] for k in BYTECODE_SCOPE_ID_FIELDS},
     }
     aid, _ = analysis_input_id(shared, reproduce["environment"], files, history)
     return aid
@@ -541,12 +553,13 @@ def measure_cache_key(projection: dict, files: dict[str, str], env: dict,
         "algorithm_versions": {a: algorithm_versions[a] for a in projection["algorithm_versions"]},
         "parameters": {p: parameters[p] for p in projection["parameters"]},
     }
-    # D160 — `team_count`의 키 = (창 안 커밋의 저자 집합, attribution, team_mapping_sha256,
-    # k 하한). 저자 집합은 창 안 커밋 목록의 함수이므로 이 픽스처는 `commit_list_sha256`을
-    # 그 자리에 둔다(합성 이력의 저자는 하나다) — 정체를 키에 두지 않는다.
+    # D195 — `team_count`(와 같은 종류의 저자 유래 측정)의 키 = (`commit_list_sha256`, attribution,
+    # team_mapping_sha256). **저자 집합이 아니다**: 캐시는 `build/jqradar/`에 저장되는 값이라 저자 집합을
+    # 키에 두면 "해시도 저장하지 않는다"(§2.7, D48)가 캐시에서 깨진다 — 저자는 창 안 커밋 SHA에서
+    # 재도출된다. k 하한은 계약 상수라 키에 없다(`contract_version`이 덮는다, D186) — v3.10.2까지
+    # 이 키에 `k_threshold`가 있었고 D195의 키 교체가 그것을 뺐다(fixture_change 2026-10-07).
     if projection.get("people"):
         key["people"] = {k: people[k] for k in projection["people"]}
-        key["k_threshold"] = K_THRESHOLD
     if projection.get("history"):
         key["history"] = {h: history[h] for h in projection["history"]}
     return sha256(key), key
@@ -730,6 +743,7 @@ def run_recompute_from_reproduce(case_dir: Path, inp: dict) -> dict:
         "component": {"strategy": shared["component"]["strategy"], "split_share_basis": shared["component"]["split_share_basis"], "count": 1},
         "parameters": shared["parameters"], "percentile_method": PERCENTILE_METHOD,
         "people": shared.get("people", DEFAULT_PEOPLE),
+        "bytecode_scope": {**spec["bytecode_scope"], "external_edges": 0},   # [id] 범위 정의 + [fn] 집계
     }
     recomputed = id_from_reproduce(reproduce, files, history)
     mutated = json.loads(json.dumps(reproduce)); mutated["parameters"]["window.months"] = 24
@@ -743,6 +757,383 @@ def run_recompute_from_reproduce(case_dir: Path, inp: dict) -> dict:
         "assertions": {
             "recompute_matches_printed": recomputed == aid,
             "window_parameter_reaches_id": recomputed_mutated != aid,
+        },
+    }
+
+
+
+# ── D193 — 이력 캐시 층 1의 키 = (커밋, 관측된 부모, 백엔드 이름 + 버전) ────────────────────────
+#
+# 층 1("커밋별 변경 경로 집합", rename 탐지 전)이 읽는 입력은 커밋 자신·관측된 부모·백엔드뿐이다.
+# `rename.similarity`는 읽지 않으므로 키에 없다 — D159의 "읽지 않는 파라미터는 키에 없다"는 양방향이다:
+# 키에 없는 것을 읽으면 거짓 적중, 읽지 않는 것이 키에 있으면 **헛미스**(파라미터 하나가 바뀌면
+# 캐시 전부가 죽는다 — (b) "큰 키"를 포기한 이유, §0-42).
+LAYER1_FIELDS = ("commit", "observed_parents", "history_backend.name", "history_backend.version")
+
+
+def backend_version(history_backend: dict, env: dict):
+    """D186·D193 — jgit이면 `environment.jgit`, native면 `history_backend.git_version`이 백엔드 버전의 정본."""
+    return env["jgit"] if history_backend["name"] == "jgit" else history_backend["git_version"]
+
+
+def layer1_key(projection: list[str], commit: str, parents: list[str],
+               history_backend: dict, env: dict, parameters: dict) -> str:
+    key = {}
+    for f in projection:
+        if f == "commit":
+            key["commit"] = commit
+        elif f == "observed_parents":
+            key["observed_parents"] = parents
+        elif f == "history_backend.name":
+            key["history_backend.name"] = history_backend["name"]
+        elif f == "history_backend.version":
+            key["history_backend.version"] = backend_version(history_backend, env)
+        elif f.startswith("parameters."):
+            key[f] = parameters[f[len("parameters."):]]
+        else:
+            raise KeyError(f"층 1 키에 둘 수 없는 입력: {f}")
+    return sha256(key)
+
+
+def layer1_projection_within_2_8(projection: list[str], parameters: dict) -> bool:
+    """어느 키에 있는 것은 §2.8에 있어야 한다(D159·D192). 커밋·관측된 부모·백엔드는 D193이 §2.8에 적은
+    층 1의 입력이고, 파라미터는 §2.8 `parameters`의 것이어야 한다."""
+    return all(f in LAYER1_FIELDS or (f.startswith("parameters.") and f[len("parameters."):] in parameters)
+               for f in projection)
+
+
+def observed_commits(workdir: Path) -> list[tuple[str, list[str]]]:
+    """HEAD에서 도달 가능한 커밋과 **관측된** 부모 — graft 경계는 부모 없이 보인다(D148·D193)."""
+    env = {**os.environ, "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null"}
+    raw = subprocess.run(["git", "-C", str(workdir), "log", "--format=%H %P"], env=env,
+                         check=True, capture_output=True, text=True).stdout
+    out = []
+    for line in raw.strip().splitlines():
+        parts = line.split()
+        out.append((parts[0], parts[1:]))
+    return out
+
+
+def run_history_cache_projection(case_dir: Path, inp: dict) -> dict:
+    """D193 — 같은 SHA에서 백엔드 토글(jgit → native, jgit 버전 변경) → 층 1 전부 미스;
+    `rename.similarity` 변경 → 전부 **적중**(층 1은 읽지 않는다)."""
+    tree = case_dir / inp["repo"]["tree"]
+    files = tree_files(tree)
+    with tempfile.TemporaryDirectory() as tmp:
+        history = build_history(tree, inp["repo"], Path(tmp) / "repo")
+        commits = observed_commits(Path(tmp) / "repo")
+    shared = inp["shared_inputs"]
+    projection = inp["layer1_projection"]
+    variants = inp["backend_variants"]
+    base_name = next(iter(variants))
+
+    def keys_for(history_backend, env, parameters):
+        return {sha: layer1_key(projection, sha, parents, history_backend, env, parameters)
+                for sha, parents in commits}
+
+    def aid_for(history_backend, env, parameters):
+        return analysis_input_id({**shared, "history_backend": history_backend, "parameters": parameters},
+                                 env, files, history)[0]
+
+    base = variants[base_name]
+    base_keys = keys_for(base["history_backend"], base["environment"], shared["parameters"])
+    base_aid = aid_for(base["history_backend"], base["environment"], shared["parameters"])
+    toggles = {}
+    for name, v in variants.items():
+        if name == base_name:
+            continue
+        k = keys_for(v["history_backend"], v["environment"], shared["parameters"])
+        toggles[name] = {
+            "history_backend": v["history_backend"], "backend_version": backend_version(v["history_backend"], v["environment"]),
+            "analysis_input_id": aid_for(v["history_backend"], v["environment"], shared["parameters"]),
+            "layer1_miss": sorted(sha[:9] for sha in k if k[sha] != base_keys[sha]),
+            "layer1_hit": sorted(sha[:9] for sha in k if k[sha] == base_keys[sha]),
+        }
+    pv = inp["parameter_variant"]
+    p_after = {**shared["parameters"], pv["name"]: pv["to"]}
+    k_param = keys_for(base["history_backend"], base["environment"], p_after)
+    param = {"name": pv["name"], "from": shared["parameters"][pv["name"]], "to": pv["to"],
+             "analysis_input_id": aid_for(base["history_backend"], base["environment"], p_after),
+             "layer1_miss": sorted(sha[:9] for sha in k_param if k_param[sha] != base_keys[sha]),
+             "layer1_hit": sorted(sha[:9] for sha in k_param if k_param[sha] == base_keys[sha])}
+
+    # 변조 1: 키에서 백엔드를 빼면 백엔드 토글이 거짓 적중한다 — jgit로 채운 캐시를 native가 적중(F3-4).
+    proj1 = [f for f in projection if not f.startswith("history_backend.")]
+    tgl = next(iter(toggles))
+    k1_base = {sha: layer1_key(proj1, sha, par, base["history_backend"], base["environment"], shared["parameters"]) for sha, par in commits}
+    k1_tgl = {sha: layer1_key(proj1, sha, par, variants[tgl]["history_backend"], variants[tgl]["environment"], shared["parameters"]) for sha, par in commits}
+    false_hit = all(k1_base[s] == k1_tgl[s] for s in k1_base)
+    # 변조 2: 읽지 않는 파라미터를 키에 넣으면 파라미터 하나가 캐시 전부를 죽인다 — 헛미스(큰 키, §0-42 포기한 것).
+    proj2 = projection + [f"parameters.{pv['name']}"]
+    k2_before = {sha: layer1_key(proj2, sha, par, base["history_backend"], base["environment"], shared["parameters"]) for sha, par in commits}
+    k2_after = {sha: layer1_key(proj2, sha, par, base["history_backend"], base["environment"], p_after) for sha, par in commits}
+    spurious_miss = all(k2_before[s] != k2_after[s] for s in k2_before)
+    # 변조 3: §2.8 밖의 입력은 부분집합 검사가 거부한다.
+    proj3 = projection + [inp["mutations"]["foreign_input"]]
+    foreign_rejected = not layer1_projection_within_2_8(proj3, shared["parameters"])
+
+    return {
+        "case": inp["case"], "generated_by": GENERATED_BY, "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"], "canonical_encoding": CANONICAL_ENCODING,
+        "layer1_projection": projection,
+        "commits": [{"sha": sha[:9], "observed_parents": [p[:9] for p in par]} for sha, par in commits],
+        "base": {"name": base_name, "history_backend": base["history_backend"],
+                 "backend_version": backend_version(base["history_backend"], base["environment"]),
+                 "analysis_input_id": base_aid,
+                 "layer1_keys": {sha[:9]: base_keys[sha] for sha in base_keys}},
+        "backend_toggles": toggles,
+        "parameter_variant": param,
+        "mutations": {
+            "projection_missing_backend": {"dropped": ["history_backend.name", "history_backend.version"],
+                                           "toggle": tgl, "false_hit_on_backend_toggle": false_hit},
+            "projection_with_unread_parameter": {"added": f"parameters.{pv['name']}", "spurious_miss": spurious_miss},
+            "projection_with_foreign_input": {"added": inp["mutations"]["foreign_input"], "rejected": foreign_rejected},
+        },
+        "assertions": {
+            "backend_toggle_changes_analysis_input_id": all(t["analysis_input_id"] != base_aid for t in toggles.values()),
+            "backend_toggle_misses_every_commit": all(not t["layer1_hit"] and len(t["layer1_miss"]) == len(commits) for t in toggles.values()),
+            "rename_similarity_changes_analysis_input_id": param["analysis_input_id"] != base_aid,
+            "rename_similarity_hits_every_commit": not param["layer1_miss"] and len(param["layer1_hit"]) == len(commits),
+            "projection_subset_of_2_8_inputs": layer1_projection_within_2_8(projection, shared["parameters"]),
+            "dropping_backend_from_key_yields_false_hit": false_hit,
+            "unread_parameter_in_key_yields_spurious_miss": spurious_miss,
+            "foreign_input_is_rejected": foreign_rejected,
+        },
+    }
+
+
+# ── D193·D148 — shallow → unshallow 재스캔: 관측된 부모가 키에 있어 거짓 적중이 구조로 막힌다 ────────
+#
+# O3-5의 시나리오 그대로: shallow 스캔이 graft 경계 커밋을 "모든 파일을 추가한 커밋"으로 층 1에 넣는다.
+# `git fetch --unshallow` 뒤 **같은 캐시**로 재스캔할 때 그 항목이 재사용되면 경계 전의 파일들이
+# 경계 커밋에서 "마지막으로 바뀐" 것이 되어 **그럴듯한 틀린 수**(D148)가 완전한 클론에서 돌아온다.
+# 관측된 부모가 키에 있으면 경계 커밋의 두 모습(부모 없음/있음)이 다른 키라 재사용되지 않는다.
+
+def _git(workdir: Path, *args: str) -> str:
+    env = {**os.environ, "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null", "TZ": "UTC"}
+    return subprocess.run(["git", "-C", str(workdir), *args], env=env, check=True,
+                          capture_output=True, text=True).stdout.strip()
+
+
+def scan_with_layer1_cache(workdir: Path, cache: dict, projection: list[str],
+                           shared: dict, env: dict, files: list[tuple[str, str]]) -> tuple[dict, dict]:
+    """합성 `scan` — 층 1 캐시를 거쳐 파일별 마지막 커밋 맵을 만든다. 돌려주는 산출물이 비교 대상이다."""
+    commits = observed_commits(workdir)
+    boundary = {l.strip() for l in (workdir / ".git" / "shallow").read_text().splitlines()} \
+        if (workdir / ".git" / "shallow").exists() else set()
+    log = {"hit": [], "miss": []}
+    paths_of = {}
+    for sha, parents in commits:
+        key = layer1_key(projection, sha, parents, shared["history_backend"], env, shared["parameters"])
+        if key in cache:
+            log["hit"].append(sha[:9])
+        else:
+            # 층 1의 값 — 그 커밋이 바꾼 경로 집합. graft 경계는 부모가 없어 트리 전체가 추가로 보인다.
+            changed = _git(workdir, "show", "--name-only", "--format=", sha).splitlines()
+            cache[key] = {"commit": sha, "observed_parents": parents, "paths": sorted(p for p in changed if p)}
+            log["miss"].append(sha[:9])
+        paths_of[sha] = cache[key]["paths"]
+    last = {}
+    for path, _ in files:
+        last[path] = None
+        for sha, _p in commits:            # 최신순
+            if path in paths_of[sha]:
+                # D148 — graft 경계에서 "생긴" 것으로 보이면 나이를 모른다.
+                last[path] = None if sha in boundary else sha
+                break
+    head_time = canonical_time(int(_git(workdir, "show", "-s", "--format=%ct", "HEAD")))
+    history = {"commit_shas": [sha for sha, _ in reversed(commits)], "head_committer_time": head_time}
+    aid, _ = analysis_input_id(shared, env, files, history)
+    artifact = {
+        "analysis_input_id": aid,
+        "repository_state_id": repository_state_id(files),
+        "history_complete": not boundary,
+        "graft_boundary_count": len(boundary),
+        "last_commit_map": {p: (v[:9] if v else None) for p, v in last.items()},
+        "age_reason": {p: "age_unknown" for p, v in last.items() if v is None},
+    }
+    return artifact, log
+
+
+def run_shallow_unshallow(case_dir: Path, inp: dict) -> dict:
+    tree = case_dir / inp["repo"]["tree"]
+    files = tree_files(tree)
+    shared, env, projection = inp["shared_inputs"], inp["environment"], inp["layer1_projection"]
+    depth = int(inp["shallow_depth"])
+    with tempfile.TemporaryDirectory() as tmp:
+        full = Path(tmp) / "full"
+        build_history(tree, inp["repo"], full)
+        shallow = Path(tmp) / "shallow"
+        _git(Path(tmp), "clone", "-q", "--depth", str(depth), "--no-local", f"file://{full}", str(shallow))
+        fresh = Path(tmp) / "fresh"
+        _git(Path(tmp), "clone", "-q", "--no-local", f"file://{full}", str(fresh))
+        boundary = sorted(l.strip() for l in (shallow / ".git" / "shallow").read_text().splitlines())
+
+        def scenario(proj):
+            cache = {}
+            a, log_a = scan_with_layer1_cache(shallow, cache, proj, shared, env, files)
+            return cache, a, log_a
+
+        # 올바른 키
+        cache, shallow_art, log_shallow = scenario(projection)
+        _git(shallow, "fetch", "-q", "--unshallow")
+        unshallow_art, log_unshallow = scan_with_layer1_cache(shallow, cache, projection, shared, env, files)
+        fresh_art, log_fresh = scan_with_layer1_cache(fresh, {}, projection, shared, env, files)
+        boundary_entries = [e for e in cache.values() if e["commit"] in boundary]
+
+        # 변조: 관측된 부모가 키에 없으면 — 같은 시나리오를 새 shallow clone에서 다시
+        shallow2 = Path(tmp) / "shallow2"
+        _git(Path(tmp), "clone", "-q", "--depth", str(depth), "--no-local", f"file://{full}", str(shallow2))
+        proj_bad = [f for f in projection if f != "observed_parents"]
+        cache_bad = {}
+        scan_with_layer1_cache(shallow2, cache_bad, proj_bad, shared, env, files)
+        _git(shallow2, "fetch", "-q", "--unshallow")
+        bad_art, log_bad = scan_with_layer1_cache(shallow2, cache_bad, proj_bad, shared, env, files)
+
+    same_bytes = render(unshallow_art) == render(fresh_art)
+    wrong_map = {p: {"false_hit": bad_art["last_commit_map"][p], "truth": fresh_art["last_commit_map"][p]}
+                 for p in fresh_art["last_commit_map"]
+                 if bad_art["last_commit_map"][p] != fresh_art["last_commit_map"][p]}
+    return {
+        "case": inp["case"], "generated_by": GENERATED_BY, "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"], "canonical_encoding": CANONICAL_ENCODING,
+        "shallow_depth": depth, "layer1_projection": projection,
+        "graft_boundary": [b[:9] for b in boundary],
+        "shallow_scan": {"artifact": shallow_art, "cache": log_shallow},
+        "unshallow_rescan_same_cache": {"artifact": unshallow_art, "cache": log_unshallow},
+        "fresh_full_clone_scan": {"artifact": fresh_art, "cache": log_fresh},
+        "boundary_layer1_entries": [{"commit": e["commit"][:9], "observed_parents": [p[:9] for p in e["observed_parents"]],
+                                     "paths": e["paths"]} for e in boundary_entries],
+        "mutation_without_observed_parents": {
+            "projection": proj_bad, "rescan_cache": log_bad,
+            "artifact_last_commit_map": bad_art["last_commit_map"],
+            "plausible_wrong_numbers": wrong_map,
+        },
+        "assertions": {
+            "shallow_scan_marks_boundary_files_age_unknown": bool(shallow_art["age_reason"]) and not shallow_art["history_complete"],
+            "unshallow_rescan_is_byte_identical_to_fresh_full_clone": same_bytes,
+            "boundary_commit_has_two_layer1_entries": len(boundary_entries) == 2 * len(boundary)
+                and len({tuple(e["observed_parents"]) for e in boundary_entries}) == 2 * len(boundary),
+            "boundary_entry_not_reused_after_unshallow": all(b[:9] in log_unshallow["miss"] for b in boundary),
+            "non_boundary_entries_reused_after_unshallow": any(log_unshallow["hit"]),
+            "projection_subset_of_2_8_inputs": layer1_projection_within_2_8(projection, shared["parameters"]),
+            "without_observed_parents_boundary_entry_is_reused": all(b[:9] in log_bad["hit"] for b in boundary),
+            "without_observed_parents_plausible_wrong_numbers_return": bool(wrong_map) and bad_art["history_complete"],
+        },
+    }
+
+
+# ── D194 — 전이 캐시 키 = (finding_id, commit, 전이 사영 해시) ──────────────────────────────────────
+
+def resolve_in_spec(spec: dict, field: str):
+    """점 경로를 §2.8 id 스펙(dict)에서 푼다. `parameters.*`는 파라미터 이름에 점이 있어 통째로 본다.
+    풀리지 않으면 §2.8 밖의 입력이다(KeyError)."""
+    if field.startswith("parameters."):
+        return spec["parameters"][field[len("parameters."):]]
+    node = spec
+    for part in field.split("."):
+        node = node[part]
+    return node
+
+
+def transition_projection_within_2_8(projection: list[str], spec: dict) -> bool:
+    try:
+        for f in projection:
+            resolve_in_spec(spec, f)
+        return True
+    except (KeyError, TypeError):
+        return False
+
+
+def transition_keys(projection: list[str], spec: dict, findings: list[dict]) -> dict:
+    proj_hash = sha256({f: resolve_in_spec(spec, f) for f in projection})
+    return {f"{fd['finding_id']}@{fd['commit'][:9]}":
+            sha256({"finding_id": fd["finding_id"], "commit": fd["commit"], "transition_projection": proj_hash})
+            for fd in findings}
+
+
+def run_transition_cache(case_dir: Path, inp: dict) -> dict:
+    tree = case_dir / inp["repo"]["tree"]
+    files = tree_files(tree)
+    shared, env, projection = inp["shared_inputs"], inp["environment"], inp["transition_projection"]
+    with tempfile.TemporaryDirectory() as tmp:
+        repo = Path(tmp) / "repo"
+        history = build_history(tree, inp["repo"], repo)
+        # 새 커밋 하나 — HEAD·앵커·창 안 커밋 목록이 바뀐다.
+        extra = inp["head_plus_one"]
+        (repo / extra["path"]).parent.mkdir(parents=True, exist_ok=True)
+        (repo / extra["path"]).write_text(extra["content"], encoding="utf-8")
+        when = (datetime.fromisoformat(inp["repo"]["base_time"])
+                + timedelta(seconds=inp["repo"]["step_seconds"] * (len(inp["repo"]["history"]) + 1))).isoformat()
+        env_git = {**os.environ, "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null",
+                   "GIT_AUTHOR_NAME": inp["repo"]["committer"]["name"], "GIT_AUTHOR_EMAIL": inp["repo"]["committer"]["email"],
+                   "GIT_COMMITTER_NAME": inp["repo"]["committer"]["name"], "GIT_COMMITTER_EMAIL": inp["repo"]["committer"]["email"],
+                   "GIT_AUTHOR_DATE": when, "GIT_COMMITTER_DATE": when}
+        subprocess.run(["git", "-C", str(repo), "add", "--", extra["path"]], env=env_git, check=True, capture_output=True)
+        subprocess.run(["git", "-C", str(repo), "commit", "-q", "-m", extra["message"]], env=env_git, check=True, capture_output=True)
+        new_head = _git(repo, "rev-parse", "HEAD")
+        history_plus = {"commit_shas": history["commit_shas"] + [new_head], "head": new_head,
+                        "head_committer_time": canonical_time(int(_git(repo, "show", "-s", "--format=%ct", "HEAD")))}
+        files_plus = tree_files(repo)
+    files_plus = [(p, c) for p, c in files_plus if not p.startswith(".git")]
+    findings = [{"finding_id": f["finding_id"], "commit": history["commit_shas"][f["commit_index"]]} for f in inp["findings"]]
+
+    aid0, spec0 = analysis_input_id(shared, env, files, history)
+    keys0 = transition_keys(projection, spec0, findings)
+    aid1, spec1 = analysis_input_id(shared, env, files_plus, history_plus)
+    keys1 = transition_keys(projection, spec1, findings)
+
+    bump = inp["variants"]["succession_bump"]
+    shared_b = json.loads(json.dumps(shared)); shared_b["algorithm_versions"]["succession"] = bump
+    aid2, spec2 = analysis_input_id(shared_b, env, files, history)
+    keys2 = transition_keys(projection, spec2, findings)
+
+    roots = inp["variants"]["class_roots"]
+    shared_c = json.loads(json.dumps(shared)); shared_c["bytecode_scope"]["class_roots"] = roots
+    aid3, spec3 = analysis_input_id(shared_c, env, files, history)
+    keys3 = transition_keys(projection, spec3, findings)
+
+    def diff(a, b):
+        return {"miss": sorted(k for k in a if a[k] != b[k]), "hit": sorted(k for k in a if a[k] == b[k])}
+
+    # 변조 1: 사영에서 bytecode_scope를 빼면 class_roots 변경이 거짓 적중한다(순환 finding의 그래프가 바뀌었는데).
+    proj1 = [f for f in projection if f != "bytecode_scope"]
+    fh = transition_keys(proj1, spec0, findings) == transition_keys(proj1, spec3, findings)
+    # 변조 2: 들지 말아야 할 것(창 안 커밋 목록)을 넣으면 새 커밋 하나가 전부를 죽인다 — 증분이 서지 않는다(S3-15).
+    proj2 = projection + ["commit_list_sha256"]
+    k2a, k2b = transition_keys(proj2, spec0, findings), transition_keys(proj2, spec1, findings)
+    spurious = all(k2a[k] != k2b[k] for k in k2a)
+    # 변조 3: §2.8 밖의 입력은 거부.
+    proj3 = projection + [inp["mutations"]["foreign_input"]]
+    foreign_rejected = not transition_projection_within_2_8(proj3, spec0)
+
+    return {
+        "case": inp["case"], "generated_by": GENERATED_BY, "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"], "canonical_encoding": CANONICAL_ENCODING,
+        "transition_projection": projection,
+        "findings": [{"finding_id": f["finding_id"], "commit": f["commit"][:9]} for f in findings],
+        "base": {"analysis_input_id": aid0, "transition_keys": keys0},
+        "head_plus_one": {"head": new_head[:9], "analysis_input_id": aid1, "cache": diff(keys0, keys1)},
+        "succession_bump": {"to": bump, "analysis_input_id": aid2, "cache": diff(keys0, keys2)},
+        "class_roots_change": {"to": roots, "analysis_input_id": aid3, "cache": diff(keys0, keys3)},
+        "mutations": {
+            "projection_missing_bytecode_scope": {"dropped": "bytecode_scope", "false_hit_on_class_roots_change": fh},
+            "projection_with_commit_list": {"added": "commit_list_sha256", "spurious_miss_on_new_commit": spurious},
+            "projection_with_foreign_input": {"added": inp["mutations"]["foreign_input"], "rejected": foreign_rejected},
+        },
+        "assertions": {
+            "new_commit_changes_analysis_input_id": aid1 != aid0,
+            "new_commit_hits_every_transition_key": not diff(keys0, keys1)["miss"] and len(keys0) >= 2,
+            "succession_bump_misses_every_transition_key": not diff(keys0, keys2)["hit"],
+            "class_roots_change_misses_every_transition_key": not diff(keys0, keys3)["hit"],
+            "projection_subset_of_2_8_inputs": transition_projection_within_2_8(projection, spec0),
+            # D194 "들지 않는 것" — 창·앵커·head·커밋 목록·people·canonical_encoding은 사영에 없다.
+            "projection_excludes_window_anchor_head_and_commit_list": not any(
+                f in projection for f in ("window_anchor", "commit_list_sha256", "head", "people", "canonical_encoding"))
+                and not any(f.startswith(("window", "parameters.window", "people.")) for f in projection),
+            "dropping_bytecode_scope_from_key_yields_false_hit": fh,
+            "commit_list_in_key_breaks_increment": spurious,
+            "foreign_input_is_rejected": foreign_rejected,
         },
     }
 
@@ -763,6 +1154,12 @@ def run_case(case_dir: Path) -> dict:
         return run_recompute_from_reproduce(case_dir, inp)
     if "measure_projections" in inp:
         return run_parameter_projection(case_dir, inp)
+    if "backend_variants" in inp:
+        return run_history_cache_projection(case_dir, inp)
+    if "shallow_depth" in inp:
+        return run_shallow_unshallow(case_dir, inp)
+    if "transition_projection" in inp:
+        return run_transition_cache(case_dir, inp)
     tree = case_dir / inp["repo"]["tree"]
     files = tree_files(tree)
     rsid = repository_state_id(files)
