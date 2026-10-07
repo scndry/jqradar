@@ -98,21 +98,40 @@ def build_expected(inp: dict) -> dict:
             "self_dup_tokens": span(selfd),
         }
 
-    # §2.6 — `pair_dup_tokens(A,B)` = 발생 집합이 A·B를 모두 포함하는 클러스터들의
-    # **A쪽** 구간 합집합(A = 경로 사전순 앞). 무순서 쌍이 한 값을 갖게 하는 규칙이다.
+    # §2.6·D199 — 쌍 측정은 **두 수**: `a_dup_tokens` = A·B를 모두 포함하는 클러스터들의 A쪽 구간 합집합,
+    # `b_dup_tokens` = 같은 클러스터들의 B쪽 합집합(a < b는 경로 비교 — 코드 포인트 순 = UTF-8 바이트 순, D202).
+    # 하나로 접지 않는다 — 혼합 클러스터에서 A쪽 200·B쪽 100처럼 두 수가 다르고, 사전순 앞쪽 하나만 내면
+    # 개명이 수를 바꾼다(v3.10.4까지 이 계산기가 그랬다 — `pair_dup_tokens` = A쪽).
     pairs = []
     for i, a in enumerate(paths):
         for b in paths[i + 1:]:
-            a_side = [(o["start_token"], o["end_token"])
-                      for c in clusters
-                      if a in c["files"] and b in c["files"]
-                      for o in c["occurrences"] if o["path"] == a]
-            if a_side:
-                pairs.append({"a": a, "b": b, "pair_dup_tokens": span(a_side)})
+            both = [c for c in clusters if a in c["files"] and b in c["files"]]
+            a_side = [(o["start_token"], o["end_token"]) for c in both for o in c["occurrences"] if o["path"] == a]
+            b_side = [(o["start_token"], o["end_token"]) for c in both for o in c["occurrences"] if o["path"] == b]
+            if not both:
+                continue
+            a_tokens, b_tokens = span(a_side), span(b_side)
+            # D200 — 쌍의 원소가 되는 클러스터는 양쪽에 ≥ minimum_tokens인 발생을 가지므로 한쪽이 0이면 다른 쪽도 0이다.
+            # 입력이 그것을 어기면(길이 0 발생 등) 정의 밖이라 조용히 한쪽 0을 내지 않고 멈춘다.
+            if (a_tokens == 0) != (b_tokens == 0):
+                raise SystemExit(f"{inp['case']}: ({a}, {b}) 한쪽만 0 — a {a_tokens} · b {b_tokens}: "
+                                 f"클러스터는 양쪽에 ≥ minimum_tokens인 발생을 갖는다(§2.6, D200)")
+            pairs.append({"a": a, "b": b, "a_dup_tokens": a_tokens, "b_dup_tokens": b_tokens})
 
+    # D200 — `twins(A)` = 쌍 측정이 0이 아닌 상대 파일 수, 어느 쪽 수든 같다.
     for path in paths:
         per_file[path]["twins"] = sum(
-            1 for p in pairs if (p["a"] == path or p["b"] == path))
+            1 for p in pairs if (p["a"] == path or p["b"] == path) and p["a_dup_tokens"] > 0)
+
+    bite = None
+    if inp.get("bite_one_sided"):
+        # D200의 검사가 무는지 — 한쪽 발생의 길이를 0으로 만든 입력에서 멈춰야 한다(공집합의 통과는 증거가 아니다, D131).
+        mutated = json.loads(json.dumps(inp)); mutated.pop("bite_one_sided")
+        mutated["clusters"][0]["occurrences"][-1]["end_token"] = mutated["clusters"][0]["occurrences"][-1]["start_token"]
+        try:
+            build_expected(mutated); bite = {"one_sided_input_rejected": False}
+        except SystemExit:
+            bite = {"one_sided_input_rejected": True}
 
     return {
         "case": inp["case"],
@@ -124,8 +143,17 @@ def build_expected(inp: dict) -> dict:
         "files": per_file,
         "duplication_pairs": pairs,
         # D187 — 분자·분모가 같은 정규화 후 스트림이라 dup_extent ≤ 1. 모든 케이스가 인쇄한다.
-        "invariants": {"dup_extent_at_most_one": all(
-            f["dup_extent"] is None or f["dup_extent"] <= 1 for f in per_file.values())},
+        "invariants": {
+            "dup_extent_at_most_one": all(
+                f["dup_extent"] is None or f["dup_extent"] <= 1 for f in per_file.values()),
+            # D200 — 두 불변식: 한쪽 > 0 ⇔ 다른 쪽 > 0, 그래서 twins는 대칭이다.
+            "pair_sides_both_positive_or_both_zero": all(
+                (p["a_dup_tokens"] > 0) == (p["b_dup_tokens"] > 0) for p in pairs),
+            "twins_symmetric": all(
+                (p["a"] in {q["a"] for q in pairs if q["b"] == p["b"]} | {q["b"] for q in pairs if q["a"] == p["b"]})
+                for p in pairs),
+            **(bite or {}),
+        },
     }
 
 

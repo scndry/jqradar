@@ -1,13 +1,13 @@
 {
-  "case": "mixed-cluster",
+  "case": "rename-swaps-sides",
   "contract_refs": [
     "§2.6",
-    "§2.1",
-    "D166",
+    "§2.8",
     "D199",
-    "D200"
+    "D200",
+    "D202"
   ],
-  "what_this_pins": "**혼합 클러스터**(A 2회·B 1회, 각 100토큰, 겹침 없음)의 값 넷 — §2.6·§2.9가 적은 그대로: `union_dup_tokens(A) = 200`, `pair_dup_tokens(A,B) = 200`(A쪽 두 구간 합집합), **`self_dup_tokens(A) = 0`**, `twins(A) = 1`. `self_dup_tokens`는 **발생이 한 파일에만 있는 클러스터**가 덮는 구간의 토큰 수라(§2.6이 정본, D166) A의 반복은 여기 들지 않는다 — 그 토큰은 `pair_dup_tokens`에 이미 있어 넣으면 두 번 셈이다. 분할: `union_dup_tokens` ⊇ 교차 파일 구간 ∪ 자기 중복 구간. §2.1의 옛 한 줄(\"같은 파일 안 반복 일치 토큰\")대로 읽으면 여기서 100이 나온다 — 교차 검토 R2-5가 지목한 두 값이고, 이 케이스가 하나로 고정한다. 자기 중복 클러스터가 따로 하나 있어(B에만, 120토큰) `self_dup_tokens(B) = 240`(두 발생 120씩)이 정의의 반대편을 보인다. **D199** — 쌍 측정은 두 수다: `a_dup_tokens(A,B) = 200`(A쪽 두 구간), `b_dup_tokens = 100`(B쪽 하나). 둘 다 > 0이라 `twins` 1·1(D200). 옛 한 수 200은 A쪽이었고 B쪽 100은 어디에도 없었다 — 그것이 쌍 10의 투영 대칭이다.",
+  "what_this_pins": "**개명은 두 수의 자리만 바꾸고 값을 바꾸지 않는다**(D199). `mixed-cluster`와 같은 클러스터인데 B를 `0B.java`로 개명해 경로 비교(코드 포인트 순, D202)가 뒤집혔다 — 쌍은 (`0B.java`, `A.java`)가 되고 `a_dup_tokens = 100`(0B쪽), `b_dup_tokens = 200`(A쪽). v3.10.4까지의 한 수 `pair_dup_tokens`(사전순 앞쪽)는 여기서 200 → 100으로 **움직였다** — 내용이 그대로인데 수가 바뀌고 D159의 키(`content_id` A·B)가 그것을 봉인하지 못했다(쌍 10의 투영 대칭). 두 수면 `{100, 200}`이 자리만 바꿔 `{200, 100}`과 같은 사실이다. `twins`는 1·1로 어느 쪽에서 봐도 같다(D200). `invariants.one_sided_input_rejected`는 계산기가 한쪽만 0인 입력(길이 0 발생)에서 멈추는지를 메모리에서 확인한 것이다.",
   "parameters": {
     "cpd.minimum_tokens": 100
   },
@@ -27,15 +27,15 @@
           "end_token": 600
         },
         {
-          "path": "B.java",
+          "path": "0B.java",
           "start_token": 300,
           "end_token": 400
         }
       ],
       "occurrence_count": 3,
       "files": [
-        "A.java",
-        "B.java"
+        "0B.java",
+        "A.java"
       ],
       "self_duplication": false
     },
@@ -44,43 +44,26 @@
       "tokens": 120,
       "occurrences": [
         {
-          "path": "B.java",
+          "path": "0B.java",
           "start_token": 800,
           "end_token": 920
         },
         {
-          "path": "B.java",
+          "path": "0B.java",
           "start_token": 1200,
           "end_token": 1320
         }
       ],
       "occurrence_count": 2,
       "files": [
-        "B.java"
+        "0B.java"
       ],
       "self_duplication": true
     }
   ],
   "rejected_clusters": [],
   "files": {
-    "A.java": {
-      "file_tokens": 4000,
-      "duplicated_ranges": [
-        [
-          100,
-          200
-        ],
-        [
-          500,
-          600
-        ]
-      ],
-      "union_dup_tokens": 200,
-      "dup_extent": 0.05,
-      "self_dup_tokens": 0,
-      "twins": 1
-    },
-    "B.java": {
+    "0B.java": {
       "file_tokens": 2000,
       "duplicated_ranges": [
         [
@@ -100,20 +83,38 @@
       "dup_extent": 0.17,
       "self_dup_tokens": 240,
       "twins": 1
+    },
+    "A.java": {
+      "file_tokens": 4000,
+      "duplicated_ranges": [
+        [
+          100,
+          200
+        ],
+        [
+          500,
+          600
+        ]
+      ],
+      "union_dup_tokens": 200,
+      "dup_extent": 0.05,
+      "self_dup_tokens": 0,
+      "twins": 1
     }
   },
   "duplication_pairs": [
     {
-      "a": "A.java",
-      "b": "B.java",
-      "a_dup_tokens": 200,
-      "b_dup_tokens": 100
+      "a": "0B.java",
+      "b": "A.java",
+      "a_dup_tokens": 100,
+      "b_dup_tokens": 200
     }
   ],
   "invariants": {
     "dup_extent_at_most_one": true,
     "pair_sides_both_positive_or_both_zero": true,
-    "twins_symmetric": true
+    "twins_symmetric": true,
+    "one_sided_input_rejected": true
   },
   "non_terminating": {},
   "_fixture": {

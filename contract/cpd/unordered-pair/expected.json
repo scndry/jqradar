@@ -64,11 +64,14 @@
     {
       "a": "Alpha.java",
       "b": "Zebra.java",
-      "pair_dup_tokens": 120
+      "a_dup_tokens": 120,
+      "b_dup_tokens": 120
     }
   ],
   "invariants": {
-    "dup_extent_at_most_one": true
+    "dup_extent_at_most_one": true,
+    "pair_sides_both_positive_or_both_zero": true,
+    "twins_symmetric": true
   },
   "non_terminating": {},
   "_fixture": {

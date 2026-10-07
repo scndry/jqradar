@@ -1,0 +1,17 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "cpd.duplication_pairs — 쌍 측정은 두 수 a_dup_tokens·b_dup_tokens (D199·D200)",
+    "old": "`pair_dup_tokens` 한 수 = A쪽(경로 사전순 앞) 합집합. `mixed-cluster`에서 200, B쪽 100은 어디에도 없었다",
+    "new": "`a_dup_tokens`·`b_dup_tokens` 두 수; 한쪽 0 ⇔ 다른 쪽 0(불변식 인쇄); `twins`는 두 수가 > 0인 상대 수. `unordered-pair`의 120은 `a_dup_tokens`, B쪽은 `b_dup_tokens`로 처음 인쇄된다",
+    "note": "쌍 10의 투영 대칭(3차 '볼 것'): 개명이 한 수를 바꾸는 것을 새 케이스 `rename-swaps-sides`가 값으로 보인다(100·200 ↔ 200·100). 기존 여섯의 A쪽 값은 불변이고 이름이 바뀌었다.",
+    "fixtures": [
+      "cpd/four-occurrences-one-cluster",
+      "cpd/mixed-cluster",
+      "cpd/overlap-merge",
+      "cpd/self-duplication",
+      "cpd/threshold-boundary",
+      "cpd/unordered-pair"
+    ]
+  }
+}
