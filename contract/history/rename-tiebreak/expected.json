@@ -69,6 +69,16 @@
       "rename_ambiguous": false
     }
   ],
+  "last_commit_map": {
+    "src/OrderService2.java": "f3f55f5d4",
+    "src/legacy/archive/OldOrderServiceBackup.java": "91868cbda"
+  },
+  "history_complete": true,
+  "graft_boundary_shas": [],
+  "walk": {
+    "frontier": [],
+    "files": {}
+  },
   "files": {
     "src/OrderService2.java": {
       "chg_commits": 1,
@@ -77,6 +87,8 @@
       "touched_by": [
         "f3f55f5d4"
       ],
+      "age_basis": "in_window",
+      "last_commit": "f3f55f5d4",
       "age_last_days": 1.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
@@ -93,6 +105,8 @@
       "touched_by": [
         "91868cbda"
       ],
+      "age_basis": "in_window",
+      "last_commit": "91868cbda",
       "age_last_days": 0.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,

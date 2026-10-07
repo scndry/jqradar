@@ -1,0 +1,83 @@
+{
+  "case": "deep-shallow-equals-full",
+  "contract_refs": [
+    "§2.1",
+    "§2.8",
+    "§4.5",
+    "§2.9",
+    "D204",
+    "D205",
+    "D148"
+  ],
+  "what_this_pins": "**깊은 shallow에서 걷기가 경계 전에 끝나면 `history_complete: true`·`graft_boundary_shas: []`·맵·나이가 full clone과 같다**(D204 — D148의 근거 '맵이 달라져 id가 갈린다'는 정확히 '닿았을 때'로 조건부). 여섯 커밋이 2년에 걸친다: `c1`·`c2`(C)·`c3`(C)은 창(12개월) 밖, `c4`(A·B)·`c5`(A)·`c6`(B)은 창 안. C의 마지막은 창 밖 `c3`라 걷기가 필요하다. `--depth 5`(깊은): 경계 = `c2`, 프런티어 `c3`에서 C의 접촉을 만나 멈춘다 — 경계에 닿지 않아 full과 **같다**. `--depth 3`(얕은): 경계 = `c4`, 프런티어가 없고(창 안 커밋 `c4`가 경계라 부모가 안 보인다) C는 접촉 전에 경계에 닿아 `age_unknown`·맵 null — A·B는 경계 위쪽 `c5`·`c6`이 접촉이라 값 그대로(D204의 범위: 닿은 파일만). `history_complete`가 '클론이 shallow인가'면 깊은 쪽이 false가 되어 같은 맵·같은 id에서 (ii)가 깨진다(O3-3).",
+  "runs": {
+    "full": {
+      "shallow_depth": null,
+      "history_complete": true,
+      "graft_boundary_shas": [],
+      "last_commit_map": {
+        "src/A.java": "b60f63ccc",
+        "src/B.java": "954853570",
+        "src/C.java": "eeb69f66c"
+      },
+      "commits_in_window": 3,
+      "ages": {
+        "src/A.java": 10.00,
+        "src/B.java": 0.00,
+        "src/C.java": 500.00
+      },
+      "reasons": {}
+    },
+    "deep": {
+      "shallow_depth": 5,
+      "history_complete": true,
+      "graft_boundary_shas": [],
+      "last_commit_map": {
+        "src/A.java": "b60f63ccc",
+        "src/B.java": "954853570",
+        "src/C.java": "eeb69f66c"
+      },
+      "commits_in_window": 3,
+      "ages": {
+        "src/A.java": 10.00,
+        "src/B.java": 0.00,
+        "src/C.java": 500.00
+      },
+      "reasons": {}
+    },
+    "shallow": {
+      "shallow_depth": 3,
+      "history_complete": false,
+      "graft_boundary_shas": [
+        "cdc2e7672"
+      ],
+      "last_commit_map": {
+        "src/A.java": "b60f63ccc",
+        "src/B.java": "954853570",
+        "src/C.java": null
+      },
+      "commits_in_window": 3,
+      "ages": {
+        "src/A.java": 10.00,
+        "src/B.java": 0.00,
+        "src/C.java": null
+      },
+      "reasons": {
+        "src/C.java": "age_unknown"
+      }
+    }
+  },
+  "assertions": {
+    "deep_shallow_equals_full": true,
+    "deep_shallow_same_window_commits": true,
+    "shallow_differs_from_full": true,
+    "shallow_unknown_only_where_boundary_reached": true
+  },
+  "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135).",
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

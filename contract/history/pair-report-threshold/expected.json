@@ -547,6 +547,20 @@
   "median_files_per_commit": 1,
   "commit_granularity": "fine",
   "renames": [],
+  "last_commit_map": {
+    "src/A.java": "c612a4733",
+    "src/B.java": "fa5ca5aa8",
+    "src/C.java": "413a9fed4",
+    "src/D.java": "412b61dbc",
+    "src/E.java": "2f4005e19",
+    "src/F.java": "cf2d5e5dd"
+  },
+  "history_complete": true,
+  "graft_boundary_shas": [],
+  "walk": {
+    "frontier": [],
+    "files": {}
+  },
   "files": {
     "src/A.java": {
       "chg_commits": 10,
@@ -564,6 +578,8 @@
         "659855eac",
         "84a173cac"
       ],
+      "age_basis": "in_window",
+      "last_commit": "c612a4733",
       "age_last_days": 8.19,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
@@ -589,6 +605,8 @@
         "659855eac",
         "84a173cac"
       ],
+      "age_basis": "in_window",
+      "last_commit": "fa5ca5aa8",
       "age_last_days": 7.03,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
@@ -612,6 +630,8 @@
         "9e5cbfdf8",
         "a633c8fd6"
       ],
+      "age_basis": "in_window",
+      "last_commit": "413a9fed4",
       "age_last_days": 4.75,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
@@ -635,6 +655,8 @@
         "9e5cbfdf8",
         "a633c8fd6"
       ],
+      "age_basis": "in_window",
+      "last_commit": "412b61dbc",
       "age_last_days": 3.60,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
@@ -662,6 +684,8 @@
         "95e9a2fba",
         "a37ee8090"
       ],
+      "age_basis": "in_window",
+      "last_commit": "2f4005e19",
       "age_last_days": 1.16,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
@@ -689,6 +713,8 @@
         "95e9a2fba",
         "a37ee8090"
       ],
+      "age_basis": "in_window",
+      "last_commit": "cf2d5e5dd",
       "age_last_days": 0.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,

@@ -33,6 +33,7 @@ from pathlib import Path
 CASE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(CASE_DIR.parent / "tools"))
 import exact  # noqa: E402
+import historywalk  # noqa: E402  — §4.5 걷기는 공용(reproducibility/와 같은 구현)
 
 GENERATED_BY = "contract/history/compute.py"
 SECONDS_PER_DAY = 86400
@@ -252,10 +253,50 @@ def shallow_clone(source: Path, depth: int, target: Path) -> Path:
     return target
 
 
+def by_sha_time(commits: list[dict], sha: str) -> str:
+    return next(c["committer_time"] for c in commits if c["sha"] == sha)
+
+
 def days_display(days: Fraction):
     """D184·D155-1 — 경과 시간(일)의 인쇄는 2자리 HALF_EVEN, 후행 0 유지(`90.00`). 값 자체는 유리수다."""
     from decimal import Decimal
     return exact.round_half_even(Decimal(days.numerator) / Decimal(days.denominator), 2)
+
+
+def build_expected_or_compare(inp: dict, workdir: Path) -> dict:
+    """`compare_depths`가 있으면 full·깊은 shallow·얕은 shallow를 **같은 합성 리포**에서 돌려 맵·id 재료·완전성을 나란히 둔다(D204)."""
+    if "compare_depths" not in inp:
+        return build_expected(inp, workdir)
+    runs = {}
+    for name, depth in [("full", None)] + list(inp["compare_depths"].items()):
+        sub = json.loads(json.dumps(inp)); sub.pop("compare_depths")
+        if depth is not None:
+            sub["shallow_depth"] = depth
+        sub_dir = workdir / f"run-{name}"
+        r = build_expected(sub, sub_dir)
+        runs[name] = {"shallow_depth": depth, "history_complete": r["history_complete"],
+                      "graft_boundary_shas": r["graft_boundary_shas"], "last_commit_map": r["last_commit_map"],
+                      "commits_in_window": r["window_applied"]["commits_in_window"],
+                      "ages": {p: f["age_last_days"] for p, f in r["files"].items()},
+                      "reasons": {p: f.get("age_reason") for p, f in r["files"].items() if f.get("age_reason")}}
+    full = runs["full"]
+    names = list(inp["compare_depths"])
+    deep, shallow = runs[names[0]], runs[names[1]]
+    return {
+        "case": inp["case"], "contract_refs": inp["contract_refs"], "what_this_pins": inp["what_this_pins"],
+        "runs": runs,
+        "assertions": {
+            "deep_shallow_equals_full": deep["last_commit_map"] == full["last_commit_map"] and deep["ages"] == full["ages"]
+                and deep["history_complete"] is True and deep["graft_boundary_shas"] == [] and full["history_complete"] is True,
+            "deep_shallow_same_window_commits": deep["commits_in_window"] == full["commits_in_window"],
+            "shallow_differs_from_full": shallow["last_commit_map"] != full["last_commit_map"] and shallow["history_complete"] is False
+                and len(shallow["graft_boundary_shas"]) >= 1,
+            "shallow_unknown_only_where_boundary_reached": all(
+                shallow["last_commit_map"][p] is None for p, r in shallow["reasons"].items() if r == "age_unknown")
+                and any(v is not None for v in shallow["ages"].values()),
+        },
+        "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135).",
+    }
 
 
 def build_expected(inp: dict, workdir: Path) -> dict:
@@ -264,7 +305,7 @@ def build_expected(inp: dict, workdir: Path) -> dict:
     scanned = workdir
     if inp.get("shallow_depth"):
         scanned = shallow_clone(workdir, int(inp["shallow_depth"]),
-                                workdir.parent / "shallow")
+                                workdir.parent / f"{workdir.name}-shallow")
     # D189 — 미커밋 신규 파일: 작업트리에만 있고 어느 커밋에도 없다. 명세가 주면 스캔 대상 트리에 쓴다.
     for rel, content in inp.get("uncommitted_files", {}).items():
         target = scanned / rel
@@ -316,6 +357,18 @@ def build_expected(inp: dict, workdir: Path) -> dict:
             path = rename_map[path]
         return path
 
+    # D203 — 창 밖 한정 걷기의 입력: 커밋 dict(관측된 부모·접촉 경로·머지·시각·경계)와 창의 프런티어.
+    # 창 안 = selected(비머지) ∪ 창의 가장 오래된 커밋 이후의 머지 커밋(제외됐지만 그 부모는 프런티어다).
+    by_sha = {c["sha"]: {"parents": c["parents"], "paths": [canonical(p) for p in c["paths"]], "is_merge": c["is_merge"],
+                         "committer_time": int(datetime.fromisoformat(c["committer_time"]).timestamp()),
+                         "is_boundary": c["is_shallow_boundary"]} for c in commits}
+    oldest_selected = (datetime.fromisoformat(selected[-1]["committer_time"]) if selected else head_time)
+    in_window = {c["sha"] for c in selected} | {
+        c["sha"] for c in commits if c["is_merge"] and datetime.fromisoformat(c["committer_time"]) >= oldest_selected}
+    walk_start = historywalk.frontier(by_sha, in_window)
+    walks: dict[str, dict] = {}
+    boundary_hit: set[str] = set()
+
     files: dict[str, dict] = {}
     for path in inp["measure_files"]:
         touching = [c for c in selected
@@ -333,7 +386,10 @@ def build_expected(inp: dict, workdir: Path) -> dict:
             entry["age_last_days"] = None
             entry["age_reason"] = "age_unknown"
             entry["age_basis"] = "shallow_boundary_commit"
+            boundary_hit.add(touching[0]["sha"])
         elif touching:
+            entry["age_basis"] = "in_window"
+            entry["last_commit"] = touching[0]["sha"][:9]
             last = datetime.fromisoformat(touching[0]["committer_time"])
             delta = (head_time - last).total_seconds()
             if delta < 0:
@@ -357,10 +413,29 @@ def build_expected(inp: dict, workdir: Path) -> dict:
             entry["age_reason"] = "uncommitted"
             entry["age_basis"] = "no_commit"
         else:
-            # §2.1 — 결정 불가(shallow clone·rename 조상 복구 실패)면 null.
-            # "오래되지 않았다"와 "나이를 모른다"는 다른 상태다(D37). F도 null이 된다(§3.3).
-            entry["age_last_days"] = None
-            entry["age_reason"] = inp.get("age_unknown_reason", "age_unknown")
+            # §4.5·D203 — 창 안에 커밋이 없는 파일: **프런티어에서 창 밖으로 걷는다**. v3.10.5까지 이 계산기는
+            # 여기서 걷지 않고 `age_unknown`을 냈다 — D149의 "§7의 1250" 케이스가 §2.9 행에만 있던 이유(§0-45).
+            w = historywalk.last_touch(by_sha, walk_start, path)
+            walks[path] = w
+            if w["sha"] is not None:
+                last = datetime.fromisoformat(by_sha_time(commits, w["sha"]))
+                delta = (head_time - last).total_seconds()
+                entry["age_basis"] = "frontier_walk"
+                entry["last_commit"] = w["sha"][:9]
+                if delta < 0:
+                    entry["age_last_days"] = None
+                    entry["age_reason"] = "invalid_metadata"
+                else:
+                    entry["age_last_days"] = days_display(Fraction(int(delta), SECONDS_PER_DAY))
+            elif w["touched_boundary"]:
+                # D204 — 어느 한 경로에서든 접촉 전에 경계에 닿았다: 지배되지 않는 집합이 불완전할 수 있다.
+                entry["age_last_days"] = None
+                entry["age_reason"] = "age_unknown"
+                entry["age_basis"] = "graft_boundary_reached"
+                boundary_hit |= {b for b in boundary}
+            else:
+                entry["age_last_days"] = None
+                entry["age_reason"] = inp.get("age_unknown_reason", "age_unknown")
         files[path] = entry
 
     # ------------------------------------------------------------------
@@ -563,6 +638,30 @@ def build_expected(inp: dict, workdir: Path) -> dict:
             entry["team_count"] = len(per_team)
             entry["teams_folded"] = len(folded)
 
+    # 변조(O3-4) — "창의 가장 오래된 커밋에서 뒤로"를 글자 그대로: 시작점 **하나**의 조상만 걷는다. 머지로 들어온
+    # 브랜치 접촉을 못 보고 더 오래된 커밋을 마지막으로 잡는다 — 그럴듯한 틀린 수(D148의 종류).
+    single_start = None
+    if inp.get("mutation_single_start") and selected:
+        start = [p for p in by_sha[selected[-1]["sha"]]["parents"]]
+        single_start = {}
+        for path, w in walks.items():
+            m = historywalk.last_touch(by_sha, start, path)
+            single_start[path] = {"sha": (m["sha"][:9] if m["sha"] else None),
+                                  "differs_from_frontier_walk": m["sha"] != w["sha"]}
+
+    shallow_invariants = None
+    if inp.get("shallow_depth"):
+        # D204·D205 — 경계에 닿은 파일은 null + age_unknown ∧ 맵 null; 경계 위쪽에서 접촉이 보인 파일은 값.
+        shallow_invariants = {
+            "boundary_files_unknown_with_null_map": all(
+                e["age_last_days"] is None and e.get("age_reason") == "age_unknown" and e.get("last_commit") is None
+                for e in files.values() if e.get("age_basis") in ("shallow_boundary_commit", "graft_boundary_reached")),
+            "above_boundary_files_have_values": any(
+                e["age_last_days"] is not None for e in files.values()),
+            "history_complete_iff_no_boundary_file": (not boundary_hit) == (
+                not any(e.get("age_basis") in ("shallow_boundary_commit", "graft_boundary_reached") for e in files.values())),
+        }
+
     return {
         "case": inp["case"],
         "contract_refs": inp["contract_refs"],
@@ -592,9 +691,20 @@ def build_expected(inp: dict, workdir: Path) -> dict:
         "median_files_per_commit": median_files,
         "commit_granularity": granularity,
         "renames": renames,
+        # D205 — 파일별 마지막 비머지 커밋 맵: 정하지 못한 셋은 null, invalid_metadata는 그 SHA. 사유는 맵이 아니라 파일의 reason.
+        "last_commit_map": {p: files[p].get("last_commit") for p in sorted(files)},
+        # D204 — history_complete = 걷기가 경계에 닿은 파일이 하나도 없는가; graft_boundary_shas = 닿은 경계만.
+        "history_complete": not boundary_hit,
+        "graft_boundary_shas": sorted(b[:9] for b in boundary_hit),
+        "walk": {"frontier": [f[:9] for f in walk_start],
+                 "files": {p: {"sha": (w["sha"][:9] if w["sha"] else None), "contacts": [c[:9] for c in w["contacts"]],
+                               "undominated": [c[:9] for c in w["undominated"]], "touched_boundary": w["touched_boundary"],
+                               "visited": w["visited"]} for p, w in sorted(walks.items())}},
         "files": files,
         "pairs": pairs,
         # 쌍이 있는 케이스만 인쇄한다 — 빈 배열을 열넷에 더하는 것은 계약이 아니라 잡음이다.
+        **({"mutation_single_start_walk": single_start} if single_start is not None else {}),
+        **({"shallow_invariants": shallow_invariants} if shallow_invariants is not None else {}),
         **({"hidden_couplings": hidden_couplings} if pairs else {}),
         **({"pair_population": {"excluded_from_pairs": sorted(excluded_from_pairs), "members": measured,
                                 "excluded_in_no_pair": not any(
@@ -994,7 +1104,7 @@ def main() -> int:
             # `ignore_cleanup_errors`는 Python 3.10+라 쓰지 않는다.
             tmp = tempfile.mkdtemp()
             try:
-                expected = build_expected(inp, Path(tmp) / "repo")
+                expected = build_expected_or_compare(inp, Path(tmp) / "repo")
             finally:
                 shutil.rmtree(tmp, ignore_errors=True)
         text = exact.finish(expected, GENERATED_BY)

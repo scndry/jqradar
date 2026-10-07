@@ -1,0 +1,207 @@
+{
+  "case": "frontier-walk-dag",
+  "contract_refs": [
+    "§4.5",
+    "§2.1",
+    "§2.7",
+    "§2.9",
+    "D203",
+    "D174",
+    "D148"
+  ],
+  "what_this_pins": "**O3-4의 DAG** — 창 경계 전에 갈라져 창 안 머지로 들어온 브랜치 커밋이 파일의 마지막이다(D203). `main`: `m0`(X·Y, −500일) → `m1`(Y, −450일) → `m2`(Y, −420일) → `w1`(Y, −100일, 창 안) → `M1`(F 브랜치 머지, −50일) → `M2`(G 브랜치 머지, −40일) → `w2`(Y, −10일, HEAD). 브랜치 `F1`(X, −470일)과 `G1`(X, −460일)은 `m0`에서 갈라졌고 둘 다 X를 만졌다. X의 접촉은 `m0`·`F1`·`G1` — `m0`은 둘의 조상이라 **지배되고**, `F1`·`G1`은 서로 조상이 아니라 토폴로지가 선후를 못 가른다 → §2.1의 시각 축으로 **`G1`**(−460일, 더 나중). 프런티어 = 창 안 커밋(`w1`·`M1`·`M2`·`w2`)의 창 밖 부모 = {`m2`, `F1`, `G1`}. **변조**(`mutation_single_start_walk`): \"창의 가장 오래된 커밋에서 뒤로\"를 글자 그대로 — 시작점 하나(`w1`의 부모 `m2`)의 조상만 걸으면 `main`만 보여 X의 마지막이 `m0`(−500일)이 된다 — 그럴듯한 틀린 수(D148의 종류). D174: 걷기는 W의 규칙(비머지·브랜치 포함·머지 제외)의 창 밖 연장이라 머지 `M1`·`M2`는 통과만 하고 접촉이 아니다.",
+  "shallow_depth": null,
+  "window_anchor": {
+    "type": "head_committer_time",
+    "timestamp": "2026-05-06T00:00:00+00:00"
+  },
+  "head": "569d54225",
+  "window_applied": {
+    "months": 12,
+    "max_commits": 2000,
+    "bound_hit": "time",
+    "commits_in_window": 2,
+    "merge_commits_excluded": 2,
+    "authors_window_truncated": false,
+    "authors_window_days": 90.00,
+    "commits_excluded_within_90d": 0
+  },
+  "commits": [
+    {
+      "sha": "569d54225",
+      "at": "2026-05-06T00:00:00+00:00",
+      "subject": "main: head Y",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Y.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "c802420d6",
+      "at": "2026-04-06T00:00:00+00:00",
+      "subject": "merge G",
+      "is_merge": true,
+      "shallow_boundary": false,
+      "paths": [],
+      "in_window": false
+    },
+    {
+      "sha": "32c9f3061",
+      "at": "2026-03-27T00:00:00+00:00",
+      "subject": "merge F",
+      "is_merge": true,
+      "shallow_boundary": false,
+      "paths": [],
+      "in_window": false
+    },
+    {
+      "sha": "d39010552",
+      "at": "2026-02-05T00:00:00+00:00",
+      "subject": "main: in-window Y",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Y.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "82e3b84d3",
+      "at": "2025-03-22T00:00:00+00:00",
+      "subject": "main: edit Y again",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Y.java"
+      ],
+      "in_window": false
+    },
+    {
+      "sha": "63f3b22da",
+      "at": "2025-02-20T00:00:00+00:00",
+      "subject": "main: edit Y",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/Y.java"
+      ],
+      "in_window": false
+    },
+    {
+      "sha": "5a86cef75",
+      "at": "2025-02-10T00:00:00+00:00",
+      "subject": "branch G: edit X",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/X.java"
+      ],
+      "in_window": false
+    },
+    {
+      "sha": "c530d7755",
+      "at": "2025-01-31T00:00:00+00:00",
+      "subject": "branch F: edit X",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/X.java"
+      ],
+      "in_window": false
+    },
+    {
+      "sha": "00de01b3d",
+      "at": "2025-01-01T00:00:00+00:00",
+      "subject": "seed X Y",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/X.java",
+        "src/Y.java"
+      ],
+      "in_window": false
+    }
+  ],
+  "median_files_per_commit": 1,
+  "commit_granularity": "fine",
+  "renames": [],
+  "last_commit_map": {
+    "src/X.java": "5a86cef75",
+    "src/Y.java": "569d54225"
+  },
+  "history_complete": true,
+  "graft_boundary_shas": [],
+  "walk": {
+    "frontier": [
+      "5a86cef75",
+      "82e3b84d3",
+      "c530d7755"
+    ],
+    "files": {
+      "src/X.java": {
+        "sha": "5a86cef75",
+        "contacts": [
+          "00de01b3d",
+          "5a86cef75",
+          "c530d7755"
+        ],
+        "undominated": [
+          "5a86cef75",
+          "c530d7755"
+        ],
+        "touched_boundary": false,
+        "visited": 5
+      }
+    }
+  },
+  "files": {
+    "src/X.java": {
+      "chg_commits": 0,
+      "chg_days": 0,
+      "churn": 0,
+      "touched_by": [],
+      "age_basis": "frontier_walk",
+      "last_commit": "5a86cef75",
+      "age_last_days": 450.00,
+      "distinct_authors_90d": 0,
+      "contributor_count": 0,
+      "ownership_max_share": null,
+      "minor_contributor_share": null
+    },
+    "src/Y.java": {
+      "chg_commits": 2,
+      "chg_days": 2,
+      "churn": 4,
+      "touched_by": [
+        "569d54225",
+        "d39010552"
+      ],
+      "age_basis": "in_window",
+      "last_commit": "569d54225",
+      "age_last_days": 0.00,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    }
+  },
+  "pairs": [],
+  "mutation_single_start_walk": {
+    "src/X.java": {
+      "sha": "00de01b3d",
+      "differs_from_frontier_walk": true
+    }
+  },
+  "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

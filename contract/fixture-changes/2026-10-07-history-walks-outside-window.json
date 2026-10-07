@@ -1,0 +1,31 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "history — 창 밖 한정 걷기(프런티어·지배되지 않는 접촉·시각 최대), last_commit_map·history_complete·graft_boundary_shas·walk 인쇄 (D203·D204·D205)",
+    "old": "계산기가 창 안 커밋에서만 접촉을 모았고 창 안에 없으면 `age_unknown` 기본값 — D149의 창 밖 복구 케이스가 §2.9 행에만 있었다(§0-45). 맵·완전성은 인쇄되지 않았다",
+    "new": "프런티어에서 W의 규칙을 창 밖으로 연장해 걷는다(`contract/tools/historywalk.py` — reproducibility/와 같은 구현). 모든 케이스가 `last_commit_map`(셋 null·invalid_metadata는 SHA)·`history_complete`·`graft_boundary_shas`·`walk`를 인쇄하고 파일에 `age_basis`·`last_commit`이 붙는다; shallow 케이스는 `shallow_invariants`",
+    "note": "기존 케이스의 값은 전부 불변 — 창 안에 커밋이 없는 파일이 없었다(걷기가 할 일이 없던 것이 곧 구멍이 안 보인 이유). 새 케이스 넷: `window-outside-last-commit-recovered`(§7의 1250 모양, 400.00), `frontier-walk-dag`(O3-4 — G1이 마지막, 시작점 하나 변조는 m0), `deep-shallow-equals-full`(깊이 5 = full, 깊이 3은 C만 null), `shallow-clone-age-unknown`의 불변식 셋.",
+    "fixtures": [
+      "history/age-boundary-180-days",
+      "history/anchor-fixed",
+      "history/author-facts-minor-threshold",
+      "history/authors-window-truncated-by-count",
+      "history/coarse-granularity",
+      "history/generated-test-stub-not-in-pairs",
+      "history/hidden-coupling-sort-order",
+      "history/merge-commits-excluded",
+      "history/negative-age-invalid-metadata",
+      "history/pair-report-threshold",
+      "history/rename-ambiguous",
+      "history/rename-tiebreak",
+      "history/shallow-clone-age-unknown",
+      "history/shared-window-limited",
+      "history/tc-squash-vs-merge",
+      "history/team-folding-k-threshold",
+      "history/uncommitted-file",
+      "history/window-bound-count",
+      "history/window-bound-time",
+      "history/window-vs-first-parent"
+    ]
+  }
+}
