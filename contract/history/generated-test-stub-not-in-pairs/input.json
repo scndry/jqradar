@@ -1,0 +1,61 @@
+{
+  "case": "generated-test-stub-not-in-pairs",
+  "contract_refs": [
+    "§2.4",
+    "§2.1",
+    "§3.5",
+    "§2.9",
+    "D201",
+    "D170"
+  ],
+  "what_this_pins": "**쌍의 파일 집합은 적격 main 소스 ∪ 테스트 소스 세트이고, 테스트 소스 세트에도 D170의 배제가 대칭으로 걸린다**(D201). `src/A.java`와 생성된 테스트 스텁 `src/test/AGeneratedTest.java`가 여섯 커밋에서 함께 바뀐다(`shared = 6`, `tc = 1`) — 배제가 없으면 (A, 스텁)이 `static_dependency: null`로 목록 맨 뒤에 남아 목록을 채운다. 배제가 있으면 스텁은 쌍의 원소가 아니라 `hidden_couplings`가 비고 `pair_population.excluded_in_no_pair`가 참이다. (A, B)는 `shared = 2`라 보고 기준 미달. 생성 소스는 사람이 만지지 않아 '함께 바뀜'이 신호가 아니다 — 빌드 스크립트·설정이 `tc ≈ 1`로 목록을 채우는 것과 같은 이유로 쌍의 원소가 아니다.",
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "static_dependency": {
+    "src/A.java|src/B.java": false
+  },
+  "class_graph_absent": {
+    "src/test/AGeneratedTest.java": "outside_bytecode_scope"
+  },
+  "excluded_from_pairs": [
+    "src/test/AGeneratedTest.java"
+  ],
+  "measure_files": [
+    "src/A.java",
+    "src/B.java",
+    "src/test/AGeneratedTest.java"
+  ],
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-03-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "ag",
+        "at_seconds": 0,
+        "repeat": 6,
+        "step_seconds": 3600,
+        "message": "touch A + generated stub",
+        "write": {
+          "src/A.java": "class A { int v{k}; }\n",
+          "src/test/AGeneratedTest.java": "@Generated class AGeneratedTest { int v{k}; }\n"
+        }
+      },
+      {
+        "id": "ab",
+        "at_seconds": 100000,
+        "repeat": 2,
+        "step_seconds": 3600,
+        "message": "touch A+B",
+        "write": {
+          "src/A.java": "class A { int w{k}; }\n",
+          "src/B.java": "class B { int v{k}; }\n"
+        }
+      }
+    ]
+  }
+}

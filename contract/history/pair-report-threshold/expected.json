@@ -745,6 +745,8 @@
       "a": "src/A.java",
       "b": "src/B.java",
       "shared": 5,
+      "chg_commits_a": 10,
+      "chg_commits_b": 10,
       "tc": 0.5,
       "static_dependency": false,
       "hidden_coupling": true

@@ -1,0 +1,225 @@
+{
+  "case": "generated-test-stub-not-in-pairs",
+  "contract_refs": [
+    "§2.4",
+    "§2.1",
+    "§3.5",
+    "§2.9",
+    "D201",
+    "D170"
+  ],
+  "what_this_pins": "**쌍의 파일 집합은 적격 main 소스 ∪ 테스트 소스 세트이고, 테스트 소스 세트에도 D170의 배제가 대칭으로 걸린다**(D201). `src/A.java`와 생성된 테스트 스텁 `src/test/AGeneratedTest.java`가 여섯 커밋에서 함께 바뀐다(`shared = 6`, `tc = 1`) — 배제가 없으면 (A, 스텁)이 `static_dependency: null`로 목록 맨 뒤에 남아 목록을 채운다. 배제가 있으면 스텁은 쌍의 원소가 아니라 `hidden_couplings`가 비고 `pair_population.excluded_in_no_pair`가 참이다. (A, B)는 `shared = 2`라 보고 기준 미달. 생성 소스는 사람이 만지지 않아 '함께 바뀜'이 신호가 아니다 — 빌드 스크립트·설정이 `tc ≈ 1`로 목록을 채우는 것과 같은 이유로 쌍의 원소가 아니다.",
+  "shallow_depth": null,
+  "window_anchor": {
+    "type": "head_committer_time",
+    "timestamp": "2026-03-02T04:46:40+00:00"
+  },
+  "head": "586335d37",
+  "window_applied": {
+    "months": 12,
+    "max_commits": 2000,
+    "bound_hit": "none",
+    "commits_in_window": 8,
+    "merge_commits_excluded": 0,
+    "authors_window_truncated": false,
+    "authors_window_days": 1.20,
+    "commits_excluded_within_90d": 0
+  },
+  "commits": [
+    {
+      "sha": "586335d37",
+      "at": "2026-03-02T04:46:40+00:00",
+      "subject": "touch A+B #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "ffcb6e9c5",
+      "at": "2026-03-02T03:46:40+00:00",
+      "subject": "touch A+B #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/B.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "541d1b94f",
+      "at": "2026-03-01T05:00:00+00:00",
+      "subject": "touch A + generated stub #6",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/test/AGeneratedTest.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "1c20c5e70",
+      "at": "2026-03-01T04:00:00+00:00",
+      "subject": "touch A + generated stub #5",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/test/AGeneratedTest.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "5b63ef0c5",
+      "at": "2026-03-01T03:00:00+00:00",
+      "subject": "touch A + generated stub #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/test/AGeneratedTest.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "e7e85787b",
+      "at": "2026-03-01T02:00:00+00:00",
+      "subject": "touch A + generated stub #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/test/AGeneratedTest.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "9170375be",
+      "at": "2026-03-01T01:00:00+00:00",
+      "subject": "touch A + generated stub #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/test/AGeneratedTest.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "3dbbdb6da",
+      "at": "2026-03-01T00:00:00+00:00",
+      "subject": "touch A + generated stub #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/A.java",
+        "src/test/AGeneratedTest.java"
+      ],
+      "in_window": true
+    }
+  ],
+  "median_files_per_commit": 2,
+  "commit_granularity": "fine",
+  "renames": [],
+  "files": {
+    "src/A.java": {
+      "chg_commits": 8,
+      "chg_days": 2,
+      "churn": 29,
+      "touched_by": [
+        "586335d37",
+        "ffcb6e9c5",
+        "541d1b94f",
+        "1c20c5e70",
+        "5b63ef0c5",
+        "e7e85787b",
+        "9170375be",
+        "3dbbdb6da"
+      ],
+      "age_last_days": 0.00,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    },
+    "src/B.java": {
+      "chg_commits": 2,
+      "chg_days": 1,
+      "churn": 7,
+      "touched_by": [
+        "586335d37",
+        "ffcb6e9c5"
+      ],
+      "age_last_days": 0.00,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    },
+    "src/test/AGeneratedTest.java": {
+      "chg_commits": 6,
+      "chg_days": 1,
+      "churn": 22,
+      "touched_by": [
+        "541d1b94f",
+        "1c20c5e70",
+        "5b63ef0c5",
+        "e7e85787b",
+        "9170375be",
+        "3dbbdb6da"
+      ],
+      "age_last_days": 0.99,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1,
+      "minor_contributor_share": 0,
+      "contribution_shares_sorted": [
+        1
+      ]
+    }
+  },
+  "pairs": [
+    {
+      "a": "src/A.java",
+      "b": "src/B.java",
+      "shared": 2,
+      "chg_commits_a": 8,
+      "chg_commits_b": 2,
+      "denominator": 2,
+      "tc": 1,
+      "reported": false,
+      "static_dependency": false,
+      "hidden_coupling": false,
+      "commit_granularity": "fine"
+    }
+  ],
+  "hidden_couplings": [],
+  "pair_population": {
+    "excluded_from_pairs": [
+      "src/test/AGeneratedTest.java"
+    ],
+    "members": [
+      "src/A.java",
+      "src/B.java"
+    ],
+    "excluded_in_no_pair": true
+  },
+  "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

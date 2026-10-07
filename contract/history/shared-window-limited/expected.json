@@ -274,6 +274,8 @@
           "a": "src/A.java",
           "b": "src/B.java",
           "shared": 6,
+          "chg_commits_a": 8,
+          "chg_commits_b": 10,
           "tc": 0.75,
           "static_dependency": false,
           "hidden_coupling": true
@@ -555,6 +557,8 @@
           "a": "src/A.java",
           "b": "src/B.java",
           "shared": 9,
+          "chg_commits_a": 11,
+          "chg_commits_b": 13,
           "tc": 0.818181818182,
           "static_dependency": false,
           "hidden_coupling": true

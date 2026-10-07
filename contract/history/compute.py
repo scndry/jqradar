@@ -379,7 +379,10 @@ def build_expected(inp: dict, workdir: Path) -> dict:
         if why not in ("outside_bytecode_scope", "no_bytecode"):
             raise ValueError(f"class_graph_absent[{path}]: §2.5 사전의 쌍 자리 이름이 아니다 — {why}")
     pairs = []
-    measured = list(files)
+    # D201 — 쌍은 적격 main 소스 ∪ 테스트 소스 세트의 쌍이고, 테스트 소스 세트에도 D170의 배제(생성 소스)가
+    # 대칭으로 걸린다. 명세의 `excluded_from_pairs`(생성된 테스트 스텁 등)는 측정 대상이어도 쌍의 원소가 아니다.
+    excluded_from_pairs = set(inp.get("excluded_from_pairs", []))
+    measured = [f for f in files if f not in excluded_from_pairs]
     for i, a in enumerate(measured):
         for b in measured[i + 1:]:
             lo, hi = sorted((a, b))
@@ -451,7 +454,9 @@ def build_expected(inp: dict, workdir: Path) -> dict:
     # static_dependency asc(false 먼저) · tc desc · shared desc · a asc · b asc, 비교는
     # 반올림 전 정확값(Fraction). 정렬은 인쇄되는 키이지 점수가 아니다(B.2).
     hidden_couplings = sorted(
-        ({"a": p["a"], "b": p["b"], "shared": p["shared"], "tc": p["tc"],
+        ({"a": p["a"], "b": p["b"], "shared": p["shared"],
+          # D201 — 분모를 행에 싣는다: 테스트 파일은 files[]에 없어 여기 없으면 tc를 JSON만으로 다시 계산할 수 없다(B.4).
+          "chg_commits_a": p["chg_commits_a"], "chg_commits_b": p["chg_commits_b"], "tc": p["tc"],
           "static_dependency": p["static_dependency"], "hidden_coupling": p["hidden_coupling"],
           **({"reason": p["reason"]} if "reason" in p else {})}
          for p in pairs if p["reported"]),
@@ -591,6 +596,10 @@ def build_expected(inp: dict, workdir: Path) -> dict:
         "pairs": pairs,
         # 쌍이 있는 케이스만 인쇄한다 — 빈 배열을 열넷에 더하는 것은 계약이 아니라 잡음이다.
         **({"hidden_couplings": hidden_couplings} if pairs else {}),
+        **({"pair_population": {"excluded_from_pairs": sorted(excluded_from_pairs), "members": measured,
+                                "excluded_in_no_pair": not any(
+                                    p["a"] in excluded_from_pairs or p["b"] in excluded_from_pairs for p in pairs)}}
+           if excluded_from_pairs else {}),
         **({"invariants": invariants} if invariants is not None else {}),
         **({"first_parent_view": first_parent_view} if first_parent_view is not None else {}),
         "authorship_note": ("저자 정체는 이 파일에 없다 — 익명 집계만 기록한다"
