@@ -199,6 +199,16 @@
       "median_files_per_commit": 1,
       "commit_granularity": "fine",
       "renames": [],
+      "last_commit_map": {
+        "src/A.java": "db2d463c3",
+        "src/B.java": "db2d463c3"
+      },
+      "history_complete": true,
+      "graft_boundary_shas": [],
+      "walk": {
+        "frontier": [],
+        "files": {}
+      },
       "files": {
         "src/A.java": {
           "chg_commits": 10,
@@ -216,6 +226,8 @@
             "d99c57861",
             "114c2accc"
           ],
+          "age_basis": "in_window",
+          "last_commit": "db2d463c3",
           "age_last_days": 0.00,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
@@ -241,6 +253,8 @@
             "d99c57861",
             "804d9a88f"
           ],
+          "age_basis": "in_window",
+          "last_commit": "db2d463c3",
           "age_last_days": 0.00,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
@@ -361,6 +375,16 @@
       "median_files_per_commit": 2,
       "commit_granularity": "fine",
       "renames": [],
+      "last_commit_map": {
+        "src/A.java": "fafa52fad",
+        "src/B.java": "fafa52fad"
+      },
+      "history_complete": true,
+      "graft_boundary_shas": [],
+      "walk": {
+        "frontier": [],
+        "files": {}
+      },
       "files": {
         "src/A.java": {
           "chg_commits": 5,
@@ -373,6 +397,8 @@
             "7d6cd9821",
             "2edf6e826"
           ],
+          "age_basis": "in_window",
+          "last_commit": "fafa52fad",
           "age_last_days": 0.00,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
@@ -393,6 +419,8 @@
             "7d6cd9821",
             "2edf6e826"
           ],
+          "age_basis": "in_window",
+          "last_commit": "fafa52fad",
           "age_last_days": 0.00,
           "distinct_authors_90d": 1,
           "contributor_count": 1,

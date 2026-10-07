@@ -1,0 +1,112 @@
+{
+  "case": "frontier-walk-dag",
+  "contract_refs": [
+    "§4.5",
+    "§2.1",
+    "§2.7",
+    "§2.9",
+    "D203",
+    "D174",
+    "D148"
+  ],
+  "what_this_pins": "**O3-4의 DAG** — 창 경계 전에 갈라져 창 안 머지로 들어온 브랜치 커밋이 파일의 마지막이다(D203). `main`: `m0`(X·Y, −500일) → `m1`(Y, −450일) → `m2`(Y, −420일) → `w1`(Y, −100일, 창 안) → `M1`(F 브랜치 머지, −50일) → `M2`(G 브랜치 머지, −40일) → `w2`(Y, −10일, HEAD). 브랜치 `F1`(X, −470일)과 `G1`(X, −460일)은 `m0`에서 갈라졌고 둘 다 X를 만졌다. X의 접촉은 `m0`·`F1`·`G1` — `m0`은 둘의 조상이라 **지배되고**, `F1`·`G1`은 서로 조상이 아니라 토폴로지가 선후를 못 가른다 → §2.1의 시각 축으로 **`G1`**(−460일, 더 나중). 프런티어 = 창 안 커밋(`w1`·`M1`·`M2`·`w2`)의 창 밖 부모 = {`m2`, `F1`, `G1`}. **변조**(`mutation_single_start_walk`): \"창의 가장 오래된 커밋에서 뒤로\"를 글자 그대로 — 시작점 하나(`w1`의 부모 `m2`)의 조상만 걸으면 `main`만 보여 X의 마지막이 `m0`(−500일)이 된다 — 그럴듯한 틀린 수(D148의 종류). D174: 걷기는 W의 규칙(비머지·브랜치 포함·머지 제외)의 창 밖 연장이라 머지 `M1`·`M2`는 통과만 하고 접촉이 아니다.",
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "measure_files": [
+    "src/X.java",
+    "src/Y.java"
+  ],
+  "mutation_single_start": true,
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2025-01-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "m0",
+        "at_seconds": 0,
+        "message": "seed X Y",
+        "write": {
+          "src/X.java": "class X {\n    // line 1\n    // line 2\n    // line 3\n    // line 4\n    // line 5\n    // line 6\n    // line 7\n    // line 8\n}\n",
+          "src/Y.java": "class Y {}\n"
+        }
+      },
+      {
+        "id": "F1",
+        "at_seconds": 2592000,
+        "message": "branch F: edit X",
+        "on": "m0",
+        "write": {
+          "src/X.java": "class X {\n    int f; // branch F\n    // line 2\n    // line 3\n    // line 4\n    // line 5\n    // line 6\n    // line 7\n    // line 8\n}\n"
+        }
+      },
+      {
+        "id": "G1",
+        "at_seconds": 3456000,
+        "message": "branch G: edit X",
+        "on": "m0",
+        "write": {
+          "src/X.java": "class X {\n    // line 1\n    // line 2\n    // line 3\n    // line 4\n    // line 5\n    // line 6\n    // line 7\n    int g; // branch G\n}\n"
+        }
+      },
+      {
+        "id": "m1",
+        "at_seconds": 4320000,
+        "message": "main: edit Y",
+        "on": "m0",
+        "write": {
+          "src/Y.java": "class Y { int a; }\n"
+        }
+      },
+      {
+        "id": "m2",
+        "at_seconds": 6912000,
+        "message": "main: edit Y again",
+        "on": "m1",
+        "write": {
+          "src/Y.java": "class Y { int a, b; }\n"
+        }
+      },
+      {
+        "id": "w1",
+        "at_seconds": 34560000,
+        "message": "main: in-window Y",
+        "on": "m2",
+        "write": {
+          "src/Y.java": "class Y { int a, b, c; }\n"
+        }
+      },
+      {
+        "id": "M1",
+        "at_seconds": 38880000,
+        "message": "merge F",
+        "merge_of": [
+          "w1",
+          "F1"
+        ]
+      },
+      {
+        "id": "M2",
+        "at_seconds": 39744000,
+        "message": "merge G",
+        "merge_of": [
+          "M1",
+          "G1"
+        ]
+      },
+      {
+        "id": "w2",
+        "at_seconds": 42336000,
+        "message": "main: head Y",
+        "on": "M2",
+        "write": {
+          "src/Y.java": "class Y { int a, b, c, d; }\n"
+        }
+      }
+    ]
+  }
+}

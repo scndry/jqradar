@@ -479,6 +479,16 @@
   "median_files_per_commit": 1,
   "commit_granularity": "fine",
   "renames": [],
+  "last_commit_map": {
+    "src/Boundary20.java": "54ea82623",
+    "src/Boundary21.java": "fb9a630c4"
+  },
+  "history_complete": true,
+  "graft_boundary_shas": [],
+  "walk": {
+    "frontier": [],
+    "files": {}
+  },
   "files": {
     "src/Boundary20.java": {
       "chg_commits": 20,
@@ -506,6 +516,8 @@
         "108c342d1",
         "d7fdd3f80"
       ],
+      "age_basis": "in_window",
+      "last_commit": "54ea82623",
       "age_last_days": 3.47,
       "distinct_authors_90d": 3,
       "contributor_count": 3,
@@ -544,6 +556,8 @@
         "efb6958e9",
         "7485615db"
       ],
+      "age_basis": "in_window",
+      "last_commit": "fb9a630c4",
       "age_last_days": 0.00,
       "distinct_authors_90d": 3,
       "contributor_count": 3,

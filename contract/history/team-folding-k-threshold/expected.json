@@ -216,6 +216,18 @@
   "median_files_per_commit": 1,
   "commit_granularity": "fine",
   "renames": [],
+  "last_commit_map": {
+    "src/OnlyBilling.java": "b7a36e866",
+    "src/OnlyPayments.java": "37aff106e",
+    "src/PaymentsAndBilling.java": "81b4b990e",
+    "src/PlatformBoundary.java": "c5cc6e0cc"
+  },
+  "history_complete": true,
+  "graft_boundary_shas": [],
+  "walk": {
+    "frontier": [],
+    "files": {}
+  },
   "files": {
     "src/OnlyBilling.java": {
       "chg_commits": 3,
@@ -226,6 +238,8 @@
         "cb3cad46f",
         "9aebc5813"
       ],
+      "age_basis": "in_window",
+      "last_commit": "b7a36e866",
       "age_last_days": 5.94,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
@@ -256,6 +270,8 @@
         "dcc5a3ac0",
         "fbcdfe0f1"
       ],
+      "age_basis": "in_window",
+      "last_commit": "81b4b990e",
       "age_last_days": 3.66,
       "distinct_authors_90d": 2,
       "contributor_count": 2,
@@ -290,6 +306,8 @@
         "7e24469cb",
         "dcd0ea52a"
       ],
+      "age_basis": "in_window",
+      "last_commit": "37aff106e",
       "age_last_days": 1.31,
       "distinct_authors_90d": 2,
       "contributor_count": 2,
@@ -317,6 +335,8 @@
         "f6816c88c",
         "b7995d79e"
       ],
+      "age_basis": "in_window",
+      "last_commit": "c5cc6e0cc",
       "age_last_days": 0.00,
       "distinct_authors_90d": 3,
       "contributor_count": 3,

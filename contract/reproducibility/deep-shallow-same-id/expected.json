@@ -1,0 +1,75 @@
+{
+  "case": "deep-shallow-same-id",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.8",
+    "§2.1",
+    "§4.5",
+    "§2.9",
+    "D204",
+    "D205",
+    "D148",
+    "D146"
+  ],
+  "what_this_pins": "**깊은 shallow clone과 full clone이 같은 `analysis_input_id`를 낸다 — 걷기가 graft 경계 전에 끝나면**(D204: `history_complete`는 걷기의 함수; D148의 근거 '맵이 달라져 id가 갈린다'는 정확히 '닿았을 때'로 조건부). 여섯 커밋이 2년에 걸친다 — `c1`(A·B)·`c2`(C)·`c3`(C)은 창(12개월) 밖, `c4`·`c5`·`c6`은 창 안. 세 클론 모두 트리가 같아 `repository_state_id`가 같고 창 안 목록도 같다(`c4`–`c6`). `--depth 5`(깊은): 경계 `c2`, 프런티어 `c3`에서 C의 접촉을 만나 멈춘다 — 맵·`history_complete: true`·`graft_boundary_shas: []`·**id가 full과 같다**. `--depth 3`(얕은): 경계 `c4`가 창 안이라 C는 접촉 전에 경계에 닿아 맵 값 `null`(D205 — 정하지 못한 것) → `last_commit_map_sha256`이 달라 **id가 다르다**; A·B는 경계 위쪽 접촉이라 값 그대로. 두 클론의 id가 다른 유일한 자리가 맵 해시다(`map_hash_is_the_only_id_difference_between_clones`). **이 케이스가 계산기의 구멍을 드러냈다**: `last_commit_map_sha256`은 §2.8 (i)·D146인데 id 스펙에 없었다 — `bytecode_scope`(v3.10.3)와 같은 종류, 셋째 사례. 스펙에 넣었고 기존 id가 전부 움직였다(fixture_change). `--selftest`가 (i)의 이름 열아홉을 스펙 키와 대조해 넷째를 막는다. 맵의 정규 형태(`last_commit_map_canonical`)에 `null`이 그대로 보인다 — 두 구현이 같은 shallow에서 같은 id를 내는 조건.",
+  "canonical_encoding": "RFC8785-JCS",
+  "runs": {
+    "full": {
+      "depth": null,
+      "analysis_input_id": "sha256:1679e7bb2b859fb04324744b68a2383bfd5283c0c8f957d816fa401abb7d3cf4",
+      "repository_state_id": "sha256:b3ff24446aecbfedb8fb70ab717b84d8e79eaa0ef9404e291da4d59ecf6362ca",
+      "commits_in_window": 3,
+      "history_complete": true,
+      "graft_boundary_shas": [],
+      "last_commit_map": {
+        "src/A.java": "b60f63ccc",
+        "src/B.java": "954853570",
+        "src/C.java": "eeb69f66c"
+      },
+      "last_commit_map_canonical": "{\"src/A.java\":\"b60f63ccc9a4484a29ed79e61fe6916399cee1c8\",\"src/B.java\":\"9548535704b13d9f1243fd681a57a5a5938f5ed8\",\"src/C.java\":\"eeb69f66c03875942f37f2eacaa27967bea4ad4c\"}",
+      "last_commit_map_sha256": "f4181314741333862702db7fdf604603e411613ca92edec48953256af658a825"
+    },
+    "deep": {
+      "depth": 5,
+      "analysis_input_id": "sha256:1679e7bb2b859fb04324744b68a2383bfd5283c0c8f957d816fa401abb7d3cf4",
+      "repository_state_id": "sha256:b3ff24446aecbfedb8fb70ab717b84d8e79eaa0ef9404e291da4d59ecf6362ca",
+      "commits_in_window": 3,
+      "history_complete": true,
+      "graft_boundary_shas": [],
+      "last_commit_map": {
+        "src/A.java": "b60f63ccc",
+        "src/B.java": "954853570",
+        "src/C.java": "eeb69f66c"
+      },
+      "last_commit_map_canonical": "{\"src/A.java\":\"b60f63ccc9a4484a29ed79e61fe6916399cee1c8\",\"src/B.java\":\"9548535704b13d9f1243fd681a57a5a5938f5ed8\",\"src/C.java\":\"eeb69f66c03875942f37f2eacaa27967bea4ad4c\"}",
+      "last_commit_map_sha256": "f4181314741333862702db7fdf604603e411613ca92edec48953256af658a825"
+    },
+    "shallow": {
+      "depth": 3,
+      "analysis_input_id": "sha256:c7fa1ddf56148e83e4fa4be7123529bb0be2f406a535f47c76190ab3f01a718f",
+      "repository_state_id": "sha256:b3ff24446aecbfedb8fb70ab717b84d8e79eaa0ef9404e291da4d59ecf6362ca",
+      "commits_in_window": 3,
+      "history_complete": false,
+      "graft_boundary_shas": [
+        "cdc2e7672"
+      ],
+      "last_commit_map": {
+        "src/A.java": "b60f63ccc",
+        "src/B.java": "954853570",
+        "src/C.java": null
+      },
+      "last_commit_map_canonical": "{\"src/A.java\":\"b60f63ccc9a4484a29ed79e61fe6916399cee1c8\",\"src/B.java\":\"9548535704b13d9f1243fd681a57a5a5938f5ed8\",\"src/C.java\":null}",
+      "last_commit_map_sha256": "562551933bcbec3dc454f81557d448869db35a3ed928f500c99582a4455944af"
+    }
+  },
+  "assertions": {
+    "repository_state_id_equal_in_all_clones": true,
+    "deep_shallow_same_id_as_full": true,
+    "deep_shallow_history_complete_true": true,
+    "deep_shallow_map_equals_full": true,
+    "shallow_id_differs_from_full": true,
+    "shallow_history_complete_false": true,
+    "shallow_map_null_where_boundary_reached": true,
+    "map_hash_is_the_only_id_difference_between_clones": true
+  }
+}

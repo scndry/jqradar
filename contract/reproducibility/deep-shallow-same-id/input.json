@@ -1,0 +1,159 @@
+{
+  "case": "deep-shallow-same-id",
+  "contract_refs": [
+    "§2.8",
+    "§2.1",
+    "§4.5",
+    "§2.9",
+    "D204",
+    "D205",
+    "D148",
+    "D146"
+  ],
+  "what_this_pins": "**깊은 shallow clone과 full clone이 같은 `analysis_input_id`를 낸다 — 걷기가 graft 경계 전에 끝나면**(D204: `history_complete`는 걷기의 함수; D148의 근거 '맵이 달라져 id가 갈린다'는 정확히 '닿았을 때'로 조건부). 여섯 커밋이 2년에 걸친다 — `c1`(A·B)·`c2`(C)·`c3`(C)은 창(12개월) 밖, `c4`·`c5`·`c6`은 창 안. 세 클론 모두 트리가 같아 `repository_state_id`가 같고 창 안 목록도 같다(`c4`–`c6`). `--depth 5`(깊은): 경계 `c2`, 프런티어 `c3`에서 C의 접촉을 만나 멈춘다 — 맵·`history_complete: true`·`graft_boundary_shas: []`·**id가 full과 같다**. `--depth 3`(얕은): 경계 `c4`가 창 안이라 C는 접촉 전에 경계에 닿아 맵 값 `null`(D205 — 정하지 못한 것) → `last_commit_map_sha256`이 달라 **id가 다르다**; A·B는 경계 위쪽 접촉이라 값 그대로. 두 클론의 id가 다른 유일한 자리가 맵 해시다(`map_hash_is_the_only_id_difference_between_clones`). **이 케이스가 계산기의 구멍을 드러냈다**: `last_commit_map_sha256`은 §2.8 (i)·D146인데 id 스펙에 없었다 — `bytecode_scope`(v3.10.3)와 같은 종류, 셋째 사례. 스펙에 넣었고 기존 id가 전부 움직였다(fixture_change). `--selftest`가 (i)의 이름 열아홉을 스펙 키와 대조해 넷째를 막는다. 맵의 정규 형태(`last_commit_map_canonical`)에 `null`이 그대로 보인다 — 두 구현이 같은 shallow에서 같은 id를 내는 조건.",
+  "repo": {
+    "tree": "tree/",
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2024-06-01T00:00:00+00:00",
+    "step_seconds": 86400,
+    "history": [
+      {
+        "message": "seed A B",
+        "paths": [
+          "src/A.java",
+          "src/B.java"
+        ],
+        "at_seconds": 0,
+        "write": {
+          "src/A.java": "class A {}\n",
+          "src/B.java": "class B {}\n"
+        }
+      },
+      {
+        "message": "add C",
+        "paths": [
+          "src/C.java"
+        ],
+        "at_seconds": 864000,
+        "write": {
+          "src/C.java": "class C {}\n"
+        }
+      },
+      {
+        "message": "edit C",
+        "paths": [
+          "src/C.java"
+        ],
+        "at_seconds": 1728000,
+        "write": {
+          "src/C.java": "class C { int c; }\n"
+        }
+      },
+      {
+        "message": "edit A B",
+        "paths": [
+          "src/A.java",
+          "src/B.java"
+        ],
+        "at_seconds": 43200000,
+        "write": {
+          "src/A.java": "class A { int a; }\n",
+          "src/B.java": "class B { int b; }\n"
+        }
+      },
+      {
+        "message": "edit A",
+        "paths": [
+          "src/A.java"
+        ],
+        "at_seconds": 44064000,
+        "write": {
+          "src/A.java": "class A { int a, a2; }\n"
+        }
+      },
+      {
+        "message": "edit B",
+        "paths": [
+          "src/B.java"
+        ],
+        "at_seconds": 44928000,
+        "write": {
+          "src/B.java": "class B { int b, b2; }\n"
+        }
+      }
+    ],
+    "parameters": {
+      "window.months": 12,
+      "window.max_commits": 2000,
+      "cpd.minimum_tokens": 100,
+      "percentile.min_population": 20,
+      "frozen.min_days": 180,
+      "rename.similarity": 60,
+      "hotspot.change_unit": "chg_commits",
+      "verify.min_changed_line_coverage": "0.8",
+      "profile": "jqradar-default",
+      "weights": {
+        "H": "0.5",
+        "Dx": "0.3",
+        "F": "0.2"
+      }
+    }
+  },
+  "environment": {
+    "pmd": "7.16.0",
+    "archunit": "1.5.0",
+    "jgit": "7.3.0"
+  },
+  "shared_inputs": {
+    "schema_version": "jqradar/3",
+    "contract_version": "2026-09-21",
+    "core_tool_version": "3.9.0",
+    "history_backend": {
+      "name": "jgit",
+      "git_version": null
+    },
+    "component": {
+      "strategy": "auto",
+      "algorithm_version": "auto-1",
+      "split_share_basis": "class_count"
+    },
+    "algorithm_versions": {
+      "measures": "1",
+      "percentile": "1",
+      "succession": "1",
+      "cpd_aggregation": "1"
+    },
+    "parameters": {
+      "window.months": 12,
+      "window.max_commits": 2000,
+      "cpd.minimum_tokens": 100,
+      "percentile.min_population": 20,
+      "frozen.min_days": 180,
+      "rename.similarity": 60,
+      "hotspot.change_unit": "chg_commits",
+      "verify.min_changed_line_coverage": "0.8",
+      "profile": "jqradar-default",
+      "weights": {
+        "H": "0.5",
+        "Dx": "0.3",
+        "F": "0.2"
+      }
+    },
+    "bytecode_scope": {
+      "class_roots": [
+        "build/classes/java/main",
+        "build/classes/kotlin/main"
+      ],
+      "test_classes_included": false,
+      "generated_excluded": true,
+      "external_included_in_metrics": false
+    }
+  },
+  "clone_depths": {
+    "deep": 5,
+    "shallow": 3
+  }
+}

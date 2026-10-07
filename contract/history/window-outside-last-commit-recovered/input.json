@@ -1,0 +1,48 @@
+{
+  "case": "window-outside-last-commit-recovered",
+  "contract_refs": [
+    "§4.5",
+    "§2.1",
+    "§3.3",
+    "§2.8",
+    "§2.9",
+    "D147",
+    "D149",
+    "D203",
+    "D205"
+  ],
+  "what_this_pins": "**창 안에 커밋이 없는 파일의 나이가 한정 걷기로 나온다**(D147·D203 — §7의 `1250.00`이 이 경로다). `src/Old.java`는 400일 전 커밋이 마지막이고 창(12개월)에는 `src/New.java`의 커밋만 있다. v3.10.5까지 이 계산기는 창 안 커밋에서만 접촉을 모아 Old의 나이를 `age_unknown`으로 냈다 — D149가 요구한 이 케이스가 §2.9 행에만 있었던 이유(§0-45). 걷기: 프런티어 = 창 안 커밋의 창 밖 부모(`seed`), 거기서 Old의 접촉 `seed`를 만나 멈춘다 — `age_last_days = 400.00`, 맵의 값은 그 SHA(D205), `history_complete: true`. `chg_commits`는 창 안만이라 0 — 창 안에 없는 것과 커밋이 없는 것을 `age_basis`가 가른다(`frontier_walk` / `no_commit`).",
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "measure_files": [
+    "src/Old.java",
+    "src/New.java"
+  ],
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2025-01-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "seed",
+        "at_seconds": 0,
+        "message": "add Old",
+        "write": {
+          "src/Old.java": "class Old {}\n"
+        }
+      },
+      {
+        "id": "head",
+        "at_seconds": 34560000,
+        "message": "add New",
+        "write": {
+          "src/New.java": "class New {}\n"
+        }
+      }
+    ]
+  }
+}

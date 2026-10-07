@@ -69,6 +69,16 @@
       "rename_ambiguous": true
     }
   ],
+  "last_commit_map": {
+    "src/Aaa.java": "443e1a882",
+    "src/Bbb.java": "1d0ca9b5d"
+  },
+  "history_complete": true,
+  "graft_boundary_shas": [],
+  "walk": {
+    "frontier": [],
+    "files": {}
+  },
   "files": {
     "src/Aaa.java": {
       "chg_commits": 1,
@@ -77,6 +87,8 @@
       "touched_by": [
         "443e1a882"
       ],
+      "age_basis": "in_window",
+      "last_commit": "443e1a882",
       "age_last_days": 1.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
@@ -93,6 +105,8 @@
       "touched_by": [
         "1d0ca9b5d"
       ],
+      "age_basis": "in_window",
+      "last_commit": "1d0ca9b5d",
       "age_last_days": 0.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,

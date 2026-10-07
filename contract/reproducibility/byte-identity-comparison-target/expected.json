@@ -16,7 +16,7 @@
     "reproduce.classes_reproduction_inputs"
   ],
   "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-  "analysis_input_id": "sha256:941ca417326606dcc1a658eb965034ae9c855dd7459f6e35dd02ae91eddf339e",
+  "analysis_input_id": "sha256:beefa18bfad9345bdb5f553855a14f6179a987cb2ed1e0869f10433c8a49cdf1",
   "comparison_target": {
     "schema": "jqradar/3",
     "reproduce": {
@@ -36,7 +36,7 @@
       "canonical_encoding": "RFC8785-JCS",
       "head": "04c5de269bd939509087a13312869a28d540f773",
       "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-      "analysis_input_id": "sha256:941ca417326606dcc1a658eb965034ae9c855dd7459f6e35dd02ae91eddf339e",
+      "analysis_input_id": "sha256:beefa18bfad9345bdb5f553855a14f6179a987cb2ed1e0869f10433c8a49cdf1",
       "environment": {
         "pmd": "7.16.0",
         "archunit": "1.5.0",
@@ -49,6 +49,7 @@
       "window_applied": {
         "commits_in_window": 2,
         "commit_list_sha256": "7cc62f9fa4addab200d9ae3409b3333037486a34f1d08ac05df6783f76bac4ee",
+        "last_commit_map_sha256": "3036b98a3243c67dcc8876cc6eec25f20b64354f800cd38de9595a8e86764799",
         "history_complete": true,
         "graft_boundary_shas": []
       },
@@ -112,8 +113,8 @@
         "annotation_processors": [],
         "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
       },
-      "output_sha256": "sha256:a317e4e061c9f5db9c7a90e0d6409c07e21dedb19795c0036e49793511a3e6e5",
-      "comparison_target_sha256": "sha256:d78049c98872543501517764affa4813fdbc0d93ad173d83f8f24442523b5d8d"
+      "output_sha256": "sha256:5118a72b19f76bf765778c51ff05689e2ae3520fd4a1e5889dd0319edb45c8cd",
+      "comparison_target_sha256": "sha256:966eb9cb8a1ff4ce9276b9e91468869f37db4af6ca15e748c2cd341f3cab2528"
     },
     "b": {
       "scanned_at": "2026-09-08T09:30:00Z",
@@ -127,8 +128,8 @@
         "annotation_processors": [],
         "dependency_lock": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
       },
-      "output_sha256": "sha256:3fbc2d515b53c2c0078fb90c10523f8123b08214c33be51458c3eedf3176c012",
-      "comparison_target_sha256": "sha256:d78049c98872543501517764affa4813fdbc0d93ad173d83f8f24442523b5d8d"
+      "output_sha256": "sha256:cfcc21f54a36993becbd673cd438c6990d6efee56fc90e0c945bb870df02165e",
+      "comparison_target_sha256": "sha256:966eb9cb8a1ff4ce9276b9e91468869f37db4af6ca15e748c2cd341f3cab2528"
     }
   },
   "fourth_kind_mutation": {

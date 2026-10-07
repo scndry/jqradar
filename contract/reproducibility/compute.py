@@ -29,7 +29,9 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 CASE_DIR = Path(__file__).resolve().parent
+PRD = CASE_DIR.parent.parent / "prd.md"
 sys.path.insert(0, str(CASE_DIR.parent / "tools"))
+import historywalk  # noqa: E402  — §4.5 걷기는 history/와 같은 구현(D205: 두 구현이 같은 shallow에서 같은 id)
 import jcs  # noqa: E402
 
 GENERATED_BY = "contract/reproducibility/compute.py"
@@ -103,9 +105,14 @@ def build_history(tree: Path, spec: dict, workdir: Path) -> dict:
     base = datetime.fromisoformat(spec["base_time"])
     shas = []
     for i, commit in enumerate(spec["history"]):
-        when = (base + timedelta(seconds=spec["step_seconds"] * i)).isoformat()
+        when = (base + timedelta(seconds=int(commit["at_seconds"]) if "at_seconds" in commit
+                                 else spec["step_seconds"] * i)).isoformat()
         env["GIT_AUTHOR_DATE"] = when
         env["GIT_COMMITTER_DATE"] = when
+        # 같은 경로를 다시 커밋하려면 내용이 바뀌어야 한다 — `write`가 그 경로의 내용을 준다(트리의 파일은 첫 커밋용).
+        for rel, content in commit.get("write", {}).items():
+            (workdir / rel).parent.mkdir(parents=True, exist_ok=True)
+            (workdir / rel).write_text(content, encoding="utf-8")
         for rel in commit["paths"]:
             git("add", "--", rel)
         git("commit", "-q", "-m", commit["message"])
@@ -134,9 +141,61 @@ def build_history(tree: Path, spec: dict, workdir: Path) -> dict:
         # `repository_state_id`가 달라져 케이스가 무의미해진다.
         git("clean", "-qfd")
 
-    head_time = canonical_time(int(git("show", "-s", "--format=%ct", "HEAD")))
-    return {"commit_shas": shas, "head": shas[-1], "head_committer_time": head_time,
-            "unreachable_commit_count": len(unreachable)}
+    facts = history_facts(workdir, [p for p, _ in tree_files(workdir) if not p.startswith(".git/")],
+                          spec.get("parameters", {"window.months": 12, "window.max_commits": 2000}))
+    return {**facts, "unreachable_commit_count": len(unreachable)}
+
+
+def git_commits(workdir: Path) -> list[dict]:
+    """HEAD에서 도달 가능한 커밋 — 관측된 부모·커미터 시각·바꾼 경로. graft 경계는 `.git/shallow`로 안다(D148)."""
+    env = {**os.environ, "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null", "TZ": "UTC"}
+    def git(*args):
+        return subprocess.run(["git", "-C", str(workdir), *args], env=env, check=True, capture_output=True, text=True).stdout
+    boundary = set()
+    marker = workdir / ".git" / "shallow"
+    if marker.exists():
+        boundary = {l.strip() for l in marker.read_text().splitlines() if l.strip()}
+    out = []
+    for line in git("log", "--format=%H%x00%P%x00%ct").strip().splitlines():
+        sha, parents, ct = line.split("\x00")
+        plist = parents.split() if parents else []
+        paths = [] if len(plist) >= 2 else [l for l in git("show", "--name-only", "--format=", sha).splitlines() if l]
+        out.append({"sha": sha, "parents": plist, "committer_time": int(ct), "is_merge": len(plist) >= 2,
+                    "paths": sorted(set(paths)), "is_boundary": sha in boundary})
+    return out
+
+
+def history_facts(workdir: Path, files: list[str], parameters: dict) -> dict:
+    """§2.7·§4.5·D203–D205 — 창 안 커밋 목록, HEAD 시각, **파일별 마지막 비머지 커밋 맵**(걷기 포함), 완전성.
+    맵의 값: 정하지 못한 셋은 null, 음수 나이(invalid_metadata)는 그 SHA — 맵은 마지막 커밋의 맵이지 나이의 맵이 아니다(D205)."""
+    commits = git_commits(workdir)
+    by_sha = {c["sha"]: c for c in commits}
+    head = commits[0]
+    months, max_commits = int(parameters["window.months"]), int(parameters["window.max_commits"])
+    earliest = head["committer_time"] - round(months * 30.4375) * 86400
+    non_merge = [c for c in commits if not c["is_merge"]]
+    selected = [c for c in non_merge if c["committer_time"] >= earliest][:max_commits]
+    oldest = selected[-1]["committer_time"] if selected else head["committer_time"]
+    in_window = {c["sha"] for c in selected} | {c["sha"] for c in commits if c["is_merge"] and c["committer_time"] >= oldest}
+    start = historywalk.frontier(by_sha, in_window)
+    last_map, boundary_hit = {}, set()
+    for path in sorted(files):
+        touching = [c for c in selected if path in c["paths"]]
+        if touching and touching[0]["is_boundary"]:
+            last_map[path] = None; boundary_hit.add(touching[0]["sha"]); continue
+        if touching:
+            last_map[path] = touching[0]["sha"]; continue
+        w = historywalk.last_touch(by_sha, start, path)
+        if w["sha"] is not None:
+            last_map[path] = w["sha"]
+        else:
+            last_map[path] = None
+            if w["touched_boundary"]:
+                boundary_hit |= {c["sha"] for c in commits if c["is_boundary"]}
+    return {"commit_shas": [c["sha"] for c in reversed(selected)], "head": head["sha"],
+            "head_committer_time": canonical_time(head["committer_time"]),
+            "last_commit_map": last_map, "history_complete": not boundary_hit,
+            "graft_boundary_shas": sorted(boundary_hit)}
 
 
 DEFAULT_PEOPLE = {"attribution": "off", "team_mapping_sha256": None}
@@ -183,6 +242,10 @@ def analysis_input_id(shared: dict, environment: dict, files: list[tuple[str, st
                           "timestamp": history["head_committer_time"]},
         "commit_list_sha256": hashlib.sha256(
             canonical(history["commit_shas"])).hexdigest(),
+        # D146·D205 — 파일별 마지막 비머지 커밋 맵의 해시. v3.10.5까지 이 스펙은 그것을 **빠뜨리고 있었다**(§2.8 (i)에 있는
+        # 이름 — `percentile_method`·`bytecode_scope`와 같은 종류, §0-45). `reproduce`에서 재계산할 때는 인쇄된 해시를 그대로 쓴다.
+        "last_commit_map_sha256": history.get("last_commit_map_sha256") or hashlib.sha256(
+            canonical(history["last_commit_map"])).hexdigest(),
         "parameters": shared["parameters"],
         # D160 — 저작 정책은 산출물을 바꾸므로 id 입력이다. off에서도 들어간다(모드가
         # 무엇이었나도 재현의 일부). `parameters`와 별도인 이유는 B.6 — 조직이 적는 자리가 다르다.
@@ -218,6 +281,7 @@ def id_from_reproduce(reproduce: dict, files: list[tuple[str, str]], history: di
         # §7의 `bytecode_scope`는 [id](범위 정의)와 [fn](`external_edges`)이 섞여 있다 — 범위 정의만 읽는다.
         "bytecode_scope": {k: reproduce["bytecode_scope"][k] for k in BYTECODE_SCOPE_ID_FIELDS},
     }
+    history = {**history, "last_commit_map_sha256": reproduce["window_applied"]["last_commit_map_sha256"]}
     aid, _ = analysis_input_id(shared, reproduce["environment"], files, history)
     return aid
 
@@ -419,7 +483,9 @@ def run_byte_identity(case_dir: Path, inp: dict) -> dict:
                 "window_applied": {
                     "commits_in_window": len(history["commit_shas"]),             # [fn]
                     "commit_list_sha256": spec["commit_list_sha256"],             # [id]
-                    "history_complete": True, "graft_boundary_shas": [],          # [fn]
+                    "last_commit_map_sha256": spec["last_commit_map_sha256"],     # [id] (D146·D205)
+                    "history_complete": history["history_complete"],              # [fn] (D204 — 걷기의 함수)
+                    "graft_boundary_shas": history["graft_boundary_shas"],        # [fn]
                 },
                 "component": {"strategy": shared["component"]["strategy"],
                               "split_share_basis": shared["component"]["split_share_basis"],
@@ -760,7 +826,8 @@ def run_recompute_from_reproduce(case_dir: Path, inp: dict) -> dict:
         "canonical_encoding": CANONICAL_ENCODING, "environment": env,
         "history_backend": shared["history_backend"],
         "window_applied": {"commits_in_window": len(history["commit_shas"]), "commit_list_sha256": spec["commit_list_sha256"],
-                           "history_complete": True, "graft_boundary_shas": []},
+                           "last_commit_map_sha256": spec["last_commit_map_sha256"],
+                           "history_complete": history["history_complete"], "graft_boundary_shas": history["graft_boundary_shas"]},
         "component": {"strategy": shared["component"]["strategy"], "split_share_basis": shared["component"]["split_share_basis"], "count": 1},
         "parameters": shared["parameters"], "percentile_method": PERCENTILE_METHOD,
         "people": shared.get("people", DEFAULT_PEOPLE),
@@ -963,7 +1030,8 @@ def scan_with_layer1_cache(workdir: Path, cache: dict, projection: list[str],
                 last[path] = None if sha in boundary else sha
                 break
     head_time = canonical_time(int(_git(workdir, "show", "-s", "--format=%ct", "HEAD")))
-    history = {"commit_shas": [sha for sha, _ in reversed(commits)], "head_committer_time": head_time}
+    history = {"commit_shas": [sha for sha, _ in reversed(commits)], "head_committer_time": head_time,
+               "last_commit_map": last}
     aid, _ = analysis_input_id(shared, env, files, history)
     artifact = {
         "analysis_input_id": aid,
@@ -1093,9 +1161,8 @@ def run_transition_cache(case_dir: Path, inp: dict) -> dict:
         subprocess.run(["git", "-C", str(repo), "add", "--", extra["path"]], env=env_git, check=True, capture_output=True)
         subprocess.run(["git", "-C", str(repo), "commit", "-q", "-m", extra["message"]], env=env_git, check=True, capture_output=True)
         new_head = _git(repo, "rev-parse", "HEAD")
-        history_plus = {"commit_shas": history["commit_shas"] + [new_head], "head": new_head,
-                        "head_committer_time": canonical_time(int(_git(repo, "show", "-s", "--format=%ct", "HEAD")))}
         files_plus = tree_files(repo)
+        history_plus = history_facts(repo, [p for p, _ in files_plus if not p.startswith(".git")], shared["parameters"])
     files_plus = [(p, c) for p, c in files_plus if not p.startswith(".git")]
     findings = [{"finding_id": f["finding_id"], "commit": history["commit_shas"][f["commit_index"]]} for f in inp["findings"]]
 
@@ -1159,6 +1226,94 @@ def run_transition_cache(case_dir: Path, inp: dict) -> dict:
     }
 
 
+
+# ── D204·D205 — 깊은 shallow vs full: 걷기가 경계 전에 끝나면 맵·완전성·id가 같다 ──────────────────────
+
+def run_clone_depths(case_dir: Path, inp: dict) -> dict:
+    tree = case_dir / inp["repo"]["tree"]
+    shared, env = inp["shared_inputs"], inp["environment"]
+    with tempfile.TemporaryDirectory() as tmp:
+        full = Path(tmp) / "full"
+        build_history(tree, inp["repo"], full)
+        runs = {}
+        for name, depth in [("full", None)] + list(inp["clone_depths"].items()):
+            wd = full if depth is None else Path(tmp) / name
+            if depth is not None:
+                _git(Path(tmp), "clone", "-q", "--depth", str(depth), "--no-local", f"file://{full}", str(wd))
+            files = [(p, c) for p, c in tree_files(wd) if not p.startswith(".git/")]
+            facts = history_facts(wd, [p for p, _ in files], shared["parameters"])
+            aid, spec = analysis_input_id(shared, env, files, facts)
+            runs[name] = {"depth": depth, "analysis_input_id": aid, "repository_state_id": repository_state_id(files),
+                          "commits_in_window": len(facts["commit_shas"]), "history_complete": facts["history_complete"],
+                          "graft_boundary_shas": [b[:9] for b in facts["graft_boundary_shas"]],
+                          "last_commit_map": {p: (v[:9] if v else None) for p, v in facts["last_commit_map"].items()},
+                          "last_commit_map_canonical": canonical(facts["last_commit_map"]).decode("utf-8")[:400],
+                          "last_commit_map_sha256": spec["last_commit_map_sha256"]}
+    names = list(inp["clone_depths"])
+    full_r, deep, shallow = runs["full"], runs[names[0]], runs[names[1]]
+    return {
+        "case": inp["case"], "generated_by": GENERATED_BY, "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"], "canonical_encoding": CANONICAL_ENCODING,
+        "runs": runs,
+        "assertions": {
+            "repository_state_id_equal_in_all_clones": len({r["repository_state_id"] for r in runs.values()}) == 1,
+            "deep_shallow_same_id_as_full": deep["analysis_input_id"] == full_r["analysis_input_id"],
+            "deep_shallow_history_complete_true": deep["history_complete"] is True and deep["graft_boundary_shas"] == [],
+            "deep_shallow_map_equals_full": deep["last_commit_map"] == full_r["last_commit_map"],
+            "shallow_id_differs_from_full": shallow["analysis_input_id"] != full_r["analysis_input_id"],
+            "shallow_history_complete_false": shallow["history_complete"] is False and len(shallow["graft_boundary_shas"]) >= 1,
+            "shallow_map_null_where_boundary_reached": any(v is None for v in shallow["last_commit_map"].values())
+                and all(v == full_r["last_commit_map"][p] for p, v in shallow["last_commit_map"].items() if v is not None),
+            "map_hash_is_the_only_id_difference_between_clones": (
+                shallow["commits_in_window"] == full_r["commits_in_window"]
+                and shallow["last_commit_map_sha256"] != full_r["last_commit_map_sha256"]),
+        },
+    }
+
+
+# ── §2.8 (i) ↔ id 스펙 — 자기 반례 ────────────────────────────────────────────────────────────────
+# 계약 목록에 있는데 계산기가 빠뜨린 입력이 두 번 났다(`percentile_method` v3.10.0, `bytecode_scope` v3.10.3) — 그리고
+# 이 판에서 셋째(`last_commit_map_sha256`). 이름을 글자로 대조해 넷째를 막는다. 표는 (i)의 이름 → 스펙 키.
+I_TO_SPEC = {
+    "tool_version": "core_tool_version", "schema_version": "schema_version", "contract_version": "contract_version",
+    "algorithm_versions": "algorithm_versions", "environment": "environment", "history_backend": "history_backend",
+    "name": "history_backend", "git_version": "history_backend",          # history_backend의 두 필드 — 전체가 id 입력(D186)
+    "window_anchor": "window_anchor", "head": "commit_list_sha256",           # head는 창 안 목록의 끝 — 목록 해시가 봉인
+    "repository_state_id": "source_files", "classes_id": "class_files",
+    "commit_list_sha256": "commit_list_sha256", "last_commit_map_sha256": "last_commit_map_sha256",
+    "component.strategy": "component", "component.split_share_basis": "component",
+    "canonical_encoding": "canonical_encoding", "parameters": "parameters",
+    "percentile_method": "percentile_method", "bytecode_scope": "bytecode_scope", "people": "people",
+}
+
+
+def selftest() -> int:
+    text = PRD.read_text(encoding="utf-8")
+    m = re.search(r"\(i\) \*\*id 입력\*\* — 위 목록의 값 또는 해시\((.*?)\), \(ii\)", text, re.S)
+    if not m:
+        print("  BAD  §2.8의 (i) 목록을 찾지 못했다"); return 1
+    names = re.findall(r"`([A-Za-z_.0-9]+)`", m.group(1))   # 이름에 숫자가 있다(`sha256`) — 첫 판의 정규식이 그 둘을 빠뜨렸다
+    # 스펙 키: 최소 입력으로 한 번 만든다
+    spec_keys = set(analysis_input_id(
+        {"schema_version": "x", "contract_version": "x", "core_tool_version": "x", "history_backend": {"name": "jgit", "git_version": None},
+         "component": {"strategy": "auto", "algorithm_version": "auto-1", "split_share_basis": "class_count"},
+         "algorithm_versions": {}, "parameters": {"window.months": 12, "window.max_commits": 2000}},
+        {}, [], {"commit_shas": [], "head_committer_time": canonical_time(0), "last_commit_map": {}})[1])
+    checks, bad = [], 0
+    for n in names:
+        key = I_TO_SPEC.get(n)
+        ok = key is not None and key in spec_keys
+        checks.append((f"(i) `{n}` → 스펙 `{key}`" if key else f"(i) `{n}` → 표에 없다", ok))
+        bad += 0 if ok else 1
+    unmapped = sorted(spec_keys - set(I_TO_SPEC.values()))
+    checks.append((f"스펙 키가 전부 (i)의 이름에 대응한다" + (f" — 대응 없음 {unmapped}" if unmapped else ""), not unmapped))
+    bad += 1 if unmapped else 0
+    for name, ok in checks:
+        print(f"  {'ok ' if ok else 'BAD'}  {name}")
+    print(f"  (i)의 이름 {len(names)} · 스펙 키 {len(spec_keys)}")
+    return 1 if bad else 0
+
+
 def run_case(case_dir: Path) -> dict:
     inp = json.loads((case_dir / "input.json").read_text(encoding="utf-8"))
     if "canonical_vectors" in inp:
@@ -1181,6 +1336,8 @@ def run_case(case_dir: Path) -> dict:
         return run_shallow_unshallow(case_dir, inp)
     if "transition_projection" in inp:
         return run_transition_cache(case_dir, inp)
+    if "clone_depths" in inp:
+        return run_clone_depths(case_dir, inp)
     tree = case_dir / inp["repo"]["tree"]
     files = tree_files(tree)
     rsid = repository_state_id(files)
@@ -1232,8 +1389,11 @@ def render(obj) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description="§2.8 재현성 정체성 계약")
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--selftest", action="store_true", help="§2.8 (i)의 이름이 id 스펙에 전부 있는가")
     ap.add_argument("cases", nargs="*")
     args = ap.parse_args()
+    if args.selftest:
+        return selftest()
 
     dirs = sorted(p.parent for p in CASE_DIR.glob("*/input.json"))
     if args.cases:

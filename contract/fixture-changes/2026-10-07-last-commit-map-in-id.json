@@ -1,0 +1,21 @@
+{
+  "fixture_change": {
+    "reason": "bug_fix",
+    "measure": "reproducibility.analysis_input_id — last_commit_map_sha256이 id 스펙에 들어간다 (§2.8 (i)·D146·D205)",
+    "old": "id 스펙에 파일별 마지막 비머지 커밋 맵의 해시가 없었다 — §2.8 (i)와 §7이 [id]로 적은 입력을 계산기가 빠뜨리고 있었다(`percentile_method`·`bytecode_scope`에 이은 셋째)",
+    "new": "`history_facts`(공용 걷기)가 맵·완전성을 읽고 스펙에 `last_commit_map_sha256`이 든다; `id_from_reproduce`는 §7 블록의 `window_applied.last_commit_map_sha256`을 읽는다. 모든 id가 움직이고 head·repository_state_id·단언 불변",
+    "note": "새 케이스 `deep-shallow-same-id`가 이 구멍을 드러냈다(맵이 id에 없으면 얕은 shallow도 full과 같은 id였다). `--selftest`(§2.8 (i)의 이름 21 ↔ 스펙 키)가 `ci/check-all.sh`에 들어가 넷째를 막는다 — 첫 판의 정규식이 숫자 든 이름 둘(`…_sha256`)을 빠뜨렸고 자기 반례가 그것을 잡았다.",
+    "fixtures": [
+      "reproducibility/attribution-toggle-changes-id",
+      "reproducibility/byte-identity-comparison-target",
+      "reproducibility/history-cache-key-is-a-projection",
+      "reproducibility/parameter-change-cache-projection",
+      "reproducibility/recompute-id-from-reproduce",
+      "reproducibility/same-tree-different-pmd",
+      "reproducibility/shallow-then-unshallow-no-false-hit",
+      "reproducibility/team-mapping-edit-cache-projection",
+      "reproducibility/transition-cache-hits-across-head",
+      "reproducibility/unreachable-commits-do-not-leak"
+    ]
+  }
+}
