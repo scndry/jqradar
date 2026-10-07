@@ -1,0 +1,113 @@
+{
+  "case": "history-cache-key-is-a-projection",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§4.5",
+    "§2.8",
+    "§2.9",
+    "D193",
+    "D192",
+    "D159",
+    "D186"
+  ],
+  "what_this_pins": "**이력 캐시 층 1의 키 = (커밋 SHA, 관측된 부모 SHA 목록, 백엔드 이름 + 백엔드 버전)**(D193) — 그 캐시가 읽는 §2.8 입력의 사영이다(D192). 같은 SHA에서 백엔드를 토글하면(jgit 7.3 → 7.4, jgit → native 2.45) 층 1이 **전부 미스**다 — §4.5가 \"같은 트리에서 다른 숫자\"라 한 그 백엔드가 키에 없으면 jgit로 채운 캐시를 native가 적중한다(F3-4). 백엔드 버전의 정본은 D186대로 jgit이면 `environment.jgit`, native면 `history_backend.git_version`. 반대로 `rename.similarity`(60 → 80)는 `analysis_input_id`를 바꾸지만 층 1은 **전부 적중**이다 — 층 1은 rename 탐지 전의 차분이라 그 파라미터를 읽지 않고, 읽지 않는 것은 키에 없다(D159). 변조 셋이 양방향을 문다: 키에서 백엔드를 빼면 토글이 거짓 적중(D87 위반), 읽지 않는 파라미터를 키에 넣으면 파라미터 하나가 캐시 전부를 죽이는 헛미스(§0-42가 포기한 '큰 키'), §2.8 밖 입력(`machine_hostname`)은 부분집합 검사가 거부.",
+  "canonical_encoding": "RFC8785-JCS",
+  "layer1_projection": [
+    "commit",
+    "observed_parents",
+    "history_backend.name",
+    "history_backend.version"
+  ],
+  "commits": [
+    {
+      "sha": "04c5de269",
+      "observed_parents": [
+        "2a058a7ad"
+      ]
+    },
+    {
+      "sha": "2a058a7ad",
+      "observed_parents": []
+    }
+  ],
+  "base": {
+    "name": "jgit_7_3",
+    "history_backend": {
+      "name": "jgit",
+      "git_version": null
+    },
+    "backend_version": "7.3.0",
+    "analysis_input_id": "sha256:941ca417326606dcc1a658eb965034ae9c855dd7459f6e35dd02ae91eddf339e",
+    "layer1_keys": {
+      "04c5de269": "sha256:f431bc2588609d03a07251fddbf98de1363e63ea5bf27c679feab5d6285a96ae",
+      "2a058a7ad": "sha256:3e7f9b333ff58adbd2ad581fbc0c5f0b27acab97a08580daf3508adf3d5d1266"
+    }
+  },
+  "backend_toggles": {
+    "jgit_7_4": {
+      "history_backend": {
+        "name": "jgit",
+        "git_version": null
+      },
+      "backend_version": "7.4.0",
+      "analysis_input_id": "sha256:4db1bfc89b38d2662efde1fa670df54eddbe18407a2c4cd8a0a3ab063d8b5142",
+      "layer1_miss": [
+        "04c5de269",
+        "2a058a7ad"
+      ],
+      "layer1_hit": []
+    },
+    "native_2_45": {
+      "history_backend": {
+        "name": "native",
+        "git_version": "2.45.0"
+      },
+      "backend_version": "2.45.0",
+      "analysis_input_id": "sha256:c6822ed12b859cd3373b303d7e105f92a37291a3cc765b4969dede62d9512656",
+      "layer1_miss": [
+        "04c5de269",
+        "2a058a7ad"
+      ],
+      "layer1_hit": []
+    }
+  },
+  "parameter_variant": {
+    "name": "rename.similarity",
+    "from": 60,
+    "to": 80,
+    "analysis_input_id": "sha256:272e1cf1e6cfb9627b22d8d348af14838c9e41e4c5b8f4ce1bc7a2e0c98fb8e6",
+    "layer1_miss": [],
+    "layer1_hit": [
+      "04c5de269",
+      "2a058a7ad"
+    ]
+  },
+  "mutations": {
+    "projection_missing_backend": {
+      "dropped": [
+        "history_backend.name",
+        "history_backend.version"
+      ],
+      "toggle": "jgit_7_4",
+      "false_hit_on_backend_toggle": true
+    },
+    "projection_with_unread_parameter": {
+      "added": "parameters.rename.similarity",
+      "spurious_miss": true
+    },
+    "projection_with_foreign_input": {
+      "added": "machine_hostname",
+      "rejected": true
+    }
+  },
+  "assertions": {
+    "backend_toggle_changes_analysis_input_id": true,
+    "backend_toggle_misses_every_commit": true,
+    "rename_similarity_changes_analysis_input_id": true,
+    "rename_similarity_hits_every_commit": true,
+    "projection_subset_of_2_8_inputs": true,
+    "dropping_backend_from_key_yields_false_hit": true,
+    "unread_parameter_in_key_yields_spurious_miss": true,
+    "foreign_input_is_rejected": true
+  }
+}

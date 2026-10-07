@@ -1,0 +1,129 @@
+{
+  "case": "transition-cache-hits-across-head",
+  "contract_refs": [
+    "§4.5",
+    "§5.5",
+    "§2.8",
+    "§2.9",
+    "§9",
+    "D194",
+    "D192",
+    "D159"
+  ],
+  "what_this_pins": "**전이 캐시 키 = (`finding_id`, `commit`, 전이 사영 해시)**(D194) — 셋째 칸이 `analysis_input_id` 통째가 아니다. 전이 사영 = C의 국소 재스캔이 **읽는** §2.8 입력(툴체인·엔진·`algorithm_versions`·`bytecode_scope` 범위 정의·컴포넌트 전략과 분할 기준·합격 함수가 읽는 파라미터 — 그 목록의 정본은 §5.5이고 여기 선언된 셋은 예시다). 새 커밋 하나는 `analysis_input_id`를 바꾸지만(앵커·커밋 목록·`head`) 전이 키는 **전부 적중**한다 — C의 전이는 C 주변의 국소 사실이라 HEAD가 바뀌어도 같다; `algorithm_versions.succession` 변경과 `bytecode_scope.class_roots` 변경은 **전부 미스**다(순환 finding의 전이는 C의 클래스 그래프를 다시 보고 그 그래프는 범위의 함수). 변조 셋: 사영에서 `bytecode_scope`를 빼면 범위 변경이 거짓 적중, 창 안 커밋 목록을 넣으면 새 커밋 하나가 전부를 죽여 `--at` 증분이 서지 않고(S3-15 — v3.10.2까지의 모양), §2.8 밖 입력은 거부. **이 케이스가 계산기의 구멍을 드러냈다**: `bytecode_scope`의 범위 정의는 §2.8 (i)와 §7의 [id]인데 id 스펙에 없었다 — 사영 ⊆ §2.8 스펙 검사가 그것을 잡아 스펙에 들어갔고 기존 케이스 전부의 id가 움직였다(fixture_change 2026-10-07).",
+  "repo": {
+    "tree": "tree/",
+    "history": [
+      {
+        "message": "seed: order domain",
+        "paths": [
+          "src/main/java/com/example/order/OrderPolicy.java"
+        ]
+      },
+      {
+        "message": "feat: order total",
+        "paths": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      }
+    ],
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-01-02T03:04:05+00:00",
+    "step_seconds": 86400
+  },
+  "environment": {
+    "pmd": "7.16.0",
+    "archunit": "1.5.0",
+    "jgit": "7.3.0"
+  },
+  "shared_inputs": {
+    "schema_version": "jqradar/3",
+    "contract_version": "2026-09-21",
+    "core_tool_version": "3.9.0",
+    "history_backend": {
+      "name": "jgit",
+      "git_version": null
+    },
+    "component": {
+      "strategy": "auto",
+      "algorithm_version": "auto-1",
+      "split_share_basis": "class_count"
+    },
+    "algorithm_versions": {
+      "measures": "1",
+      "percentile": "1",
+      "succession": "1",
+      "cpd_aggregation": "1"
+    },
+    "parameters": {
+      "window.months": 12,
+      "window.max_commits": 2000,
+      "cpd.minimum_tokens": 100,
+      "percentile.min_population": 20,
+      "frozen.min_days": 180,
+      "rename.similarity": 60,
+      "hotspot.change_unit": "chg_commits",
+      "verify.min_changed_line_coverage": "0.8",
+      "profile": "jqradar-default",
+      "weights": {
+        "H": "0.5",
+        "Dx": "0.3",
+        "F": "0.2"
+      }
+    },
+    "bytecode_scope": {
+      "class_roots": [
+        "build/classes/java/main",
+        "build/classes/kotlin/main"
+      ],
+      "test_classes_included": false,
+      "generated_excluded": true,
+      "external_included_in_metrics": false
+    }
+  },
+  "transition_projection": [
+    "schema_version",
+    "contract_version",
+    "core_tool_version",
+    "environment.pmd",
+    "environment.archunit",
+    "environment.jgit",
+    "algorithm_versions.succession",
+    "algorithm_versions.measures",
+    "algorithm_versions.cpd_aggregation",
+    "component.strategy",
+    "component.split_share_basis",
+    "component.algorithm_version",
+    "bytecode_scope",
+    "parameters.cpd.minimum_tokens",
+    "parameters.rename.similarity",
+    "parameters.percentile.min_population"
+  ],
+  "findings": [
+    {
+      "finding_id": "fnd:dx:dup:3f9a:120@src/main/java/com/example/order/OrderService.java",
+      "commit_index": 1
+    },
+    {
+      "finding_id": "fnd:cyc:sha256:0a1b",
+      "commit_index": 0
+    }
+  ],
+  "head_plus_one": {
+    "path": "src/main/java/com/example/order/OrderMapper.java",
+    "content": "package com.example.order;\n\nclass OrderMapper {}\n",
+    "message": "feat: order mapper"
+  },
+  "variants": {
+    "succession_bump": "2",
+    "class_roots": [
+      "build/classes/java/main"
+    ]
+  },
+  "mutations": {
+    "foreign_input": "machine_hostname"
+  }
+}

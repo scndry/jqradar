@@ -6,9 +6,12 @@
     "D48",
     "D108",
     "D131",
-    "D135"
+    "D135",
+    "§4.5",
+    "§2.9",
+    "D195"
   ],
-  "what_this_pins": "`people.attribution=off`에서 저자 정체가 **산출물에 없다**(§2.7). 이것은 값을 대조하는 것이 아니라 **부재**를 보는 검사이므로 `must_be_caught`와 `must_not_be_caught`를 함께 둔다(D131).\n\n**모양으로 가르지 않는다 — 출처로 가른다**(D135). 산출물에는 `sha256:`이 정당하게 가득하다: `repository_state_id`·`analysis_input_id`·`classes_id`·중복 클러스터의 토큰 해시. 저자 이메일의 sha256과 이것들은 **둘 다 64 hex라 문자열 모양으로 가를 방법이 없다.** 대신 합성 리포의 저자 식별자를 우리가 정했으므로 그 값들의 해시(sha256·sha1·md5 × 전체·접두 8·12·16자)를 미리 계산해 **그 특정 문자열이 산출물에 없음**을 본다. 무해한 해시를 무해하다고 증명할 필요 없이 유해한 해시의 부재를 증명하면 된다.\n\n접두도 보는 이유: 12자만 실어도 재식별에 충분하다. §2.7이 '해시도 저장하지 않는다(재식별 가능)'고 적은 자리다.\n\n금지 문자열 자체는 expected.json에 적지 않는다 — 적으면 그것이 정체의 사본이다. 개수와 판정만 기록한다.",
+  "what_this_pins": "`people.attribution=off`에서 저자 정체가 **산출물에 없다**(§2.7). 이것은 값을 대조하는 것이 아니라 **부재**를 보는 검사이므로 `must_be_caught`와 `must_not_be_caught`를 함께 둔다(D131).\n\n**모양으로 가르지 않는다 — 출처로 가른다**(D135). 산출물에는 `sha256:`이 정당하게 가득하다: `repository_state_id`·`analysis_input_id`·`classes_id`·중복 클러스터의 토큰 해시. 저자 이메일의 sha256과 이것들은 **둘 다 64 hex라 문자열 모양으로 가를 방법이 없다.** 대신 합성 리포의 저자 식별자를 우리가 정했으므로 그 값들의 해시(sha256·sha1·md5 × 전체·접두 8·12·16자)를 미리 계산해 **그 특정 문자열이 산출물에 없음**을 본다. 무해한 해시를 무해하다고 증명할 필요 없이 유해한 해시의 부재를 증명하면 된다.\n\n접두도 보는 이유: 12자만 실어도 재식별에 충분하다. §2.7이 '해시도 저장하지 않는다(재식별 가능)'고 적은 자리다.\n\n금지 문자열 자체는 expected.json에 적지 않는다 — 적으면 그것이 정체의 사본이다. 개수와 판정만 기록한다. **D195 — \"산출물 어디에도\"는 `build/jqradar/`의 캐시 디렉터리까지다.** 캐시 키는 저장되는 값이라 저자 집합을 키에 두면 D48이 캐시에서 깨진다. 캐시 항목을 실제 디렉터리에 쓰고 통째로 훑는다 — 키에 저자 집합(이메일의 sha256)을 넣은 항목은 `must_be_caught`, D195의 키(`commit_list_sha256` + `people.attribution` + `team_mapping_sha256`)와 층 1 키(커밋·관측된 부모·백엔드)는 `must_not_be_caught`다.",
   "check": "identity_absence",
   "authors": {
     "a": {
@@ -152,5 +155,89 @@
         ]
       }
     }
-  ]
+  ],
+  "cache_directory": {
+    "must_be_caught": [
+      {
+        "name": "measure-cache의 team_count 키에 창 안 커밋의 저자 집합(이메일 sha256)",
+        "why": "v3.10.2까지 §4.5 셋째 예가 적었던 키 그대로다(S3-14). 키는 `build/jqradar/`에 저장되는 값이라 이것이 곧 저자 해시의 저장이다(D48·D195)",
+        "files": {
+          "measure-cache/team_count/k1.json": {
+            "key": {
+              "authors": [
+                {
+                  "$author_hash": "a"
+                },
+                {
+                  "$author_hash": "b"
+                }
+              ],
+              "people": {
+                "attribution": "team",
+                "team_mapping_sha256": "sha256:0f1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c4b5a69788796a5b4c3d2e1f0"
+              }
+            },
+            "value": {
+              "team_count": 2
+            }
+          }
+        }
+      },
+      {
+        "name": "history-cache 항목에 커미터 이메일의 sha256",
+        "why": "층 1의 값(변경 경로 집합)에 저자가 딸려 들어오면 같은 구멍이다 — 층 1은 저자를 읽지 않는다(D193)",
+        "files": {
+          "history-cache/01.json": {
+            "commit": "5129352d5c0f4e0f2b1a3c4d5e6f708192a3b4c5",
+            "observed_parents": [],
+            "paths": [
+              "src/A.java"
+            ],
+            "committer": {
+              "$author_hash": "c"
+            }
+          }
+        }
+      }
+    ],
+    "must_not_be_caught": [
+      {
+        "name": "D195의 team_count 키 — commit_list_sha256 + attribution + team_mapping_sha256",
+        "why": "저자는 창 안 커밋 SHA에서 재도출되므로 같은 정보를 저자 없이 가진다. 64 hex가 둘 있지만 출처가 커밋 목록과 매핑 파일이다",
+        "files": {
+          "measure-cache/team_count/k2.json": {
+            "key": {
+              "history": {
+                "commit_list_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "people": {
+                "attribution": "team",
+                "team_mapping_sha256": "sha256:0f1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c4b5a69788796a5b4c3d2e1f0"
+              }
+            },
+            "value": {
+              "team_count": 2
+            }
+          }
+        }
+      },
+      {
+        "name": "층 1 키 — 커밋·관측된 부모·백엔드 이름과 버전(D193)",
+        "why": "커밋 SHA는 정체가 아니다(D108). 층 1은 저자를 읽지 않는다",
+        "files": {
+          "history-cache/02.json": {
+            "commit": "5129352d5c0f4e0f2b1a3c4d5e6f708192a3b4c5",
+            "observed_parents": [
+              "9dc1942230a1b2c3d4e5f60718293a4b5c6d7e8f"
+            ],
+            "history_backend.name": "jgit",
+            "history_backend.version": "7.3.0",
+            "paths": [
+              "src/C.java"
+            ]
+          }
+        }
+      }
+    ]
+  }
 }

@@ -1,0 +1,163 @@
+{
+  "case": "shallow-then-unshallow-no-false-hit",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§4.5",
+    "§2.8",
+    "§2.9",
+    "§2.1",
+    "D193",
+    "D148",
+    "D87"
+  ],
+  "what_this_pins": "**shallow 스캔 → `git fetch --unshallow` → 같은 캐시로 재스캔의 산출물이 새 full clone 스캔과 바이트 동일**하고, graft 경계 커밋의 층 1 항목이 **둘**(관측된 부모 없음/있음)이라 첫 항목이 재사용되지 않았음을 키로 보인다(D193). 네 커밋이 A·B·C·D를 차례로 더하고 `--depth 2`라 경계는 C를 더한 셋째 커밋이다. shallow 스캔에서 경계 커밋은 부모 없이 보여 A·B·C 전부를 \"추가\"한 것으로 층 1에 들어가고, D148대로 그 셋은 `age_unknown`·`history_complete: false`다. unshallow 뒤 같은 커밋이 부모를 갖고 관측되므로 키가 달라 **미스**가 나고 차분이 C 하나로 다시 계산된다 — 마지막 커밋 맵이 A→1·B→2·C→3·D→4로 fresh clone과 같다. 변조(관측된 부모를 키에서 뺌)에서는 경계 항목이 **적중**해 A·B의 마지막 커밋이 셋째 커밋이 되고 `history_complete: true`라 `age_unknown`도 붙지 않는다 — O3-5가 말한 \"D148이 감지로 막은 그럴듯한 틀린 수가 완전한 클론에서 캐시를 타고 돌아온다\"의 실물이고, 거짓 적중은 D87 위반의 한 모양이다. 절차(\"unshallow 때 캐시를 지워라\")가 아니라 키의 구조가 막는다(§0-42).",
+  "canonical_encoding": "RFC8785-JCS",
+  "shallow_depth": 2,
+  "layer1_projection": [
+    "commit",
+    "observed_parents",
+    "history_backend.name",
+    "history_backend.version"
+  ],
+  "graft_boundary": [
+    "5129352d5"
+  ],
+  "shallow_scan": {
+    "artifact": {
+      "analysis_input_id": "sha256:de798cb704dc968ce1c595aade57db7de214dc32fd31e14b44486362f828cd3f",
+      "repository_state_id": "sha256:fb9d7ec1e90217540232a227311116ad09a6a446e07dc0ea239d434e346c2a9c",
+      "history_complete": false,
+      "graft_boundary_count": 1,
+      "last_commit_map": {
+        "src/A.java": null,
+        "src/B.java": null,
+        "src/C.java": null,
+        "src/D.java": "0dcf7cae8"
+      },
+      "age_reason": {
+        "src/A.java": "age_unknown",
+        "src/B.java": "age_unknown",
+        "src/C.java": "age_unknown"
+      }
+    },
+    "cache": {
+      "hit": [],
+      "miss": [
+        "0dcf7cae8",
+        "5129352d5"
+      ]
+    }
+  },
+  "unshallow_rescan_same_cache": {
+    "artifact": {
+      "analysis_input_id": "sha256:c48a08618d7ea9d055492bf4581aa02b7b5b8dcd5e67b5208f0670dcb3b0bcc4",
+      "repository_state_id": "sha256:fb9d7ec1e90217540232a227311116ad09a6a446e07dc0ea239d434e346c2a9c",
+      "history_complete": true,
+      "graft_boundary_count": 0,
+      "last_commit_map": {
+        "src/A.java": "1b3e0e932",
+        "src/B.java": "9dc194223",
+        "src/C.java": "5129352d5",
+        "src/D.java": "0dcf7cae8"
+      },
+      "age_reason": {}
+    },
+    "cache": {
+      "hit": [
+        "0dcf7cae8"
+      ],
+      "miss": [
+        "5129352d5",
+        "9dc194223",
+        "1b3e0e932"
+      ]
+    }
+  },
+  "fresh_full_clone_scan": {
+    "artifact": {
+      "analysis_input_id": "sha256:c48a08618d7ea9d055492bf4581aa02b7b5b8dcd5e67b5208f0670dcb3b0bcc4",
+      "repository_state_id": "sha256:fb9d7ec1e90217540232a227311116ad09a6a446e07dc0ea239d434e346c2a9c",
+      "history_complete": true,
+      "graft_boundary_count": 0,
+      "last_commit_map": {
+        "src/A.java": "1b3e0e932",
+        "src/B.java": "9dc194223",
+        "src/C.java": "5129352d5",
+        "src/D.java": "0dcf7cae8"
+      },
+      "age_reason": {}
+    },
+    "cache": {
+      "hit": [],
+      "miss": [
+        "0dcf7cae8",
+        "5129352d5",
+        "9dc194223",
+        "1b3e0e932"
+      ]
+    }
+  },
+  "boundary_layer1_entries": [
+    {
+      "commit": "5129352d5",
+      "observed_parents": [],
+      "paths": [
+        "src/A.java",
+        "src/B.java",
+        "src/C.java"
+      ]
+    },
+    {
+      "commit": "5129352d5",
+      "observed_parents": [
+        "9dc194223"
+      ],
+      "paths": [
+        "src/C.java"
+      ]
+    }
+  ],
+  "mutation_without_observed_parents": {
+    "projection": [
+      "commit",
+      "history_backend.name",
+      "history_backend.version"
+    ],
+    "rescan_cache": {
+      "hit": [
+        "0dcf7cae8",
+        "5129352d5"
+      ],
+      "miss": [
+        "9dc194223",
+        "1b3e0e932"
+      ]
+    },
+    "artifact_last_commit_map": {
+      "src/A.java": "5129352d5",
+      "src/B.java": "5129352d5",
+      "src/C.java": "5129352d5",
+      "src/D.java": "0dcf7cae8"
+    },
+    "plausible_wrong_numbers": {
+      "src/A.java": {
+        "false_hit": "5129352d5",
+        "truth": "1b3e0e932"
+      },
+      "src/B.java": {
+        "false_hit": "5129352d5",
+        "truth": "9dc194223"
+      }
+    }
+  },
+  "assertions": {
+    "shallow_scan_marks_boundary_files_age_unknown": true,
+    "unshallow_rescan_is_byte_identical_to_fresh_full_clone": true,
+    "boundary_commit_has_two_layer1_entries": true,
+    "boundary_entry_not_reused_after_unshallow": true,
+    "non_boundary_entries_reused_after_unshallow": true,
+    "projection_subset_of_2_8_inputs": true,
+    "without_observed_parents_boundary_entry_is_reused": true,
+    "without_observed_parents_plausible_wrong_numbers_return": true
+  }
+}

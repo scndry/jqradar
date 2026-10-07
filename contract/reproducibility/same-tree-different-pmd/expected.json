@@ -39,7 +39,7 @@
         "jgit": "7.3.0"
       },
       "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-      "analysis_input_id": "sha256:5a36dfc10e055582a7bcbd69a7de06c3c30d0e2adda383051c8230935eb25cd6"
+      "analysis_input_id": "sha256:fceb18598dd3d24af7116ddd0983cfbed782d12f8d40d36fef3b2d6a99201b50"
     },
     "b": {
       "environment": {
@@ -48,7 +48,7 @@
         "jgit": "7.3.0"
       },
       "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-      "analysis_input_id": "sha256:8811e3c43be888d2476461aa90ce60885a51fffcf4f94fdd0dce9beca1190f01"
+      "analysis_input_id": "sha256:fee64723c8e792c0637f399ebb57d12176281cc9ac1c32bca5e31f8368bec532"
     }
   },
   "assertions": {
