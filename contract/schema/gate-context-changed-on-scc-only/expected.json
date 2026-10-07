@@ -1,0 +1,14 @@
+{
+  "case": "gate-context-changed-on-scc-only",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D198·D175",
+  "what": "`new_component_cycle`이 `context_changed`인데 `nccd_increase`가 `WARN`이면 거부(D198) — 역방향. SCC 행이 비교를 정의하지 못했는데 NCCD 행이 같은 두 그래프를 비교해 판정했다면 한쪽이 틀렸다.",
+  "mechanism": "if/then(contains — 교차 제약)",
+  "schema": "gate.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/checks"
+  ]
+}

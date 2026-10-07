@@ -1,0 +1,15 @@
+{
+  "case": "validate-validated-with-context-changed",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D196·D98",
+  "what": "`component_identifiers_equal: false`인데 `verdict: validated`이면 거부(D196) — 식별자 집합이 다르면 '새 SCC 없음'이 정의되지 않은 비교라 verdict를 낼 수 없다. 판정하지 않은 것을 합격으로 치면 D98의 가드가 검증 경로에서 뚫린다. §6.3의 두 절(이 finding의 소멸 / 그래프 전체의 새 SCC)이 같은 파일에서 모순으로 읽히지 않게 하는 자리.",
+  "mechanism": "if/then",
+  "schema": "validate.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/not_validated_reasons",
+    "/verdict"
+  ]
+}
