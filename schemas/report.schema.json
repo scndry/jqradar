@@ -344,14 +344,15 @@
           "type": "object",
           "description": "창 W의 적용 **결과**(§2.7) — 창 파라미터(`window.months`·`window.max_commits`)는 `parameters`에 있다(D186). 전부 id 입력의 결정적 함수이거나 id 입력의 해시다.",
           "required": [
-            "bound_hit",
-            "commits_in_window",
-            "commit_list_sha256",
-            "last_commit_map_sha256",
-            "authors_window_truncated",
             "authors_window_days",
+            "authors_window_truncated",
+            "bound_hit",
+            "commit_list_sha256",
+            "commits_in_window",
+            "graft_boundary_shas",
             "history_complete",
-            "graft_boundary_shas"
+            "last_commit_map_sha256",
+            "merge_commits_excluded"
           ],
           "allOf": [
             {
@@ -447,7 +448,7 @@
         },
         "bytecode_scope": {
           "type": "object",
-          "description": "그래프 전처리 범위(§2.2). 테스트·서드파티·JDK 제외(클래스 루트의 일), 그리고 **소스 범위(`source_scope`)에서 배제된 소스 파일에 매핑되는 클래스 제외**(D211 — 세 `@Generated`의 retention은 SOURCE라 클래스에서 볼 수 있던 적이 없다; 매핑은 `SourceFile` → 패키지 + 최상위 타입 → 합성·람다·중첩은 바깥 타입으로, 계약 상수). 외부 타입 간선은 `external` 의사 노드로 접어 기록하되 지표에서는 제외한다.",
+          "description": "그래프 전처리 범위(§2.2). 테스트·서드파티·JDK 제외(클래스 루트의 일), 그리고 **소스 범위(`source_scope`)에서 배제된 소스 파일에 매핑되는 클래스 제외**(D211 — 세 `@Generated`의 retention은 SOURCE라 클래스에서 볼 수 있던 적이 없다; 매핑은 `SourceFile` → 패키지 + 최상위 타입 → 합성·람다·중첩은 바깥 타입으로, 계약 상수). 외부 타입 간선은 `external` 의사 노드로 접어 기록하되 지표에서는 제외한다. **여섯 필드 전부 필수** — '인쇄한다'고 한 필드가 없어도 통과하면 `reproduce`만으로 재계산(D111)이 그 필드에서 조용히 깨진다(소유자 probe 2026-10-07 — 추가 금지만 있고 누락 금지가 없던 자리).",
           "properties": {
             "class_roots": {
               "type": "array",
@@ -475,7 +476,15 @@
               "description": "최상위 타입의 소스가 어느 선언된 루트에도 없는 클래스 수(D211 — 프로세서가 소스 없이 낸 클래스). 소스가 없으면 적격일 수 없으니 `bytecode_scope` 밖이고 여기 센다 — `external_edges`와 같은 자리의 진단값([fn]). '왜 그래프가 작은가'를 읽는 자리."
             }
           },
-          "additionalProperties": false
+          "additionalProperties": false,
+          "required": [
+            "class_roots",
+            "test_classes_included",
+            "generated_excluded",
+            "external_edges",
+            "unmapped_classes",
+            "external_included_in_metrics"
+          ]
         },
         "source_scope": {
           "type": "object",
@@ -1896,7 +1905,7 @@
     },
     "finding": {
       "type": "object",
-      "description": "발견 하나(§3.7, D22). 산출물은 점수가 아니라 `priority · interpretation · confidence · evidence`다(B.2).",
+      "description": "발견 하나(§3.7, D22). 산출물은 점수가 아니라 `priority · interpretation · confidence · evidence`다(B.2). **선정**(D213): 파일 렌즈는 `lens_pct ≥ 0.75`인 (파일, 렌즈)마다, 순환은 SCC마다, Hidden Coupling은 `static_dependency: false`인 보고 쌍마다 — `context`·null은 finding이 아니되 랭킹에는 남는다.",
       "required": [
         "id",
         "kind",
@@ -2004,6 +2013,23 @@
             },
             "additionalProperties": false
           }
+        },
+        "pair": {
+          "type": "object",
+          "required": [
+            "a",
+            "b"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "a": {
+              "type": "string"
+            },
+            "b": {
+              "type": "string"
+            }
+          },
+          "description": "Hidden Coupling finding의 정체(§5.5 '정렬된 파일 쌍', a < b — D202). `hidden_couplings[]`의 행과 같은 쌍이고 `evidence: [{ref}]`가 그 행을 가리킨다(D213). 파일 렌즈·순환 finding에는 없다."
         }
       },
       "additionalProperties": false,
@@ -2030,7 +2056,12 @@
               "lens_pct",
               "interpretation"
             ],
-            "description": "파일 렌즈 finding(H·Dx·F)에는 렌즈·파일·`lens_pct`·`interpretation`이 있다(§3.7·D191). `lens_pct`가 null이면 `interpretation`도 null이고 이유는 그 파일의 `lens_percentiles.<lens>.reason`에 있다(D171)."
+            "not": {
+              "required": [
+                "pair"
+              ]
+            },
+            "description": "파일 렌즈 finding(H·Dx·F)에는 렌즈·파일·`lens_pct`·`interpretation`이 있다(§3.7·D191) — 선정은 `lens_pct ≥ 0.75`(D213). `pair`는 없다."
           },
           "else": {
             "not": {
@@ -2047,7 +2078,33 @@
                 }
               ]
             },
-            "description": "렌즈 없는 finding(순환·Hidden Coupling)에는 `lens_pct`·`interpretation`이 **필드로 없다**(D191) — `anchor_class`(§5.5)도 같고, 이 객체는 닫혀 있어 그 이름 자체가 거부된다. \"해당 없음\"은 null도 `reason`도 아니다(D162의 `team_count`와 같은 처리). `no_lens` 같은 상수 값은 정보가 없다."
+            "description": "렌즈 없는 finding(순환·Hidden Coupling)에는 `lens_pct`·`interpretation`이 **필드로 없다**(D191) — `anchor_class`(§5.5)도 같고, 이 객체는 닫혀 있어 그 이름 자체가 거부된다. \"해당 없음\"은 null도 `reason`도 아니다(D162의 `team_count`와 같은 처리)."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "hidden_coupling"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "pair"
+            ],
+            "description": "D213 — Hidden Coupling finding은 `static_dependency: false`인 보고 쌍마다 하나이고 그 쌍이 정체다(§5.5)."
+          },
+          "else": {
+            "not": {
+              "required": [
+                "pair"
+              ]
+            },
+            "description": "D213 — 쌍은 Hidden Coupling finding에만 있다."
           }
         }
       ]

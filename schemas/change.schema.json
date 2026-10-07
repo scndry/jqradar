@@ -32,7 +32,7 @@
     },
     "items": {
       "type": "object",
-      "description": "§5.1의 델타 항목 — **일곱 키로 닫힌다**(D209 — ~~D120~~의 여섯에 `smell_delta`; '이름 없는 항목은 계약이 아니다'는 그대로이고 여섯이라는 수가 결이 아니었다). `check` 규칙과 렌더러 B1–B5가 이 이름을 참조하므로 이름 없는 항목은 계약이 아니다. 각 항목은 `{value_base, value_head, delta, evidence[]}`를 갖고 **판정 단어는 없다** — 판정은 `check`(정책)와 사람이 한다(B.2, D47). 일곱이 모두 필수는 아니다: `remediation_effect`는 수정 브랜치에만 있다(§5.1).",
+      "description": "§5.1의 델타 항목 — **일곱 키로 닫힌다**(D209 — ~~D120~~의 여섯에 `smell_delta`; '이름 없는 항목은 계약이 아니다'는 그대로이고 여섯이라는 수가 결이 아니었다). `check` 규칙과 렌더러 B1–B5가 이 이름을 참조하므로 이름 없는 항목은 계약이 아니다. 각 항목은 `{value_base, value_head, delta, evidence[]}`를 갖고 **판정 단어는 없다** — 판정은 `check`(정책)와 사람이 한다(B.2, D47). 일곱이 모두 필수는 아니다: `remediation_effect`는 수정 브랜치에만 있다(§5.1). **여섯은 필수**(`remediation_effect`만 수정 브랜치에 한정) — 추가 금지만 있고 누락 금지가 없어 `smell_delta`를 빼도 통과하던 자리(소유자 probe 2026-10-07): 게이트가 읽는 입력이 없는 문서가 통과하면 D209가 반만 선다.",
       "additionalProperties": false,
       "properties": {
         "complexity_delta": {
@@ -127,7 +127,15 @@
             ]
           }
         }
-      }
+      },
+      "required": [
+        "complexity_delta",
+        "change_concentration",
+        "new_duplication",
+        "dependency_direction",
+        "fragile_area_exposure",
+        "smell_delta"
+      ]
     },
     "declared_ai_assistance": {
       "enum": [
@@ -362,9 +370,9 @@
           "enum": [
             "high",
             "medium",
-            "low"
+            null
           ],
-          "description": "§5.5 — 앵커 시점 렌즈 백분위(`≥0.90` high, `≥0.75` medium)로 **얼린** 분류. finding당 불변이고 저장되는 결정 산출물이다(D56). **판결이 아니라 착수 순서**이며(B.2), 얼리는 이유는 개선이 보이게 하기 위해서다 — 움직이는 백분위로는 최악을 고쳐도 다음 10%가 올라와 이길 수 없다. **파일 렌즈 finding에만 있다**(D191) — 순환·Hidden Coupling finding에는 필드로 없다."
+          "description": "§5.5 — 앵커 시점 렌즈 백분위(`≥0.90` high, `≥0.75` medium)로 **얼린** 분류. finding당 불변이고 저장되는 결정 산출물이다(D56). **판결이 아니라 착수 순서**이며(B.2), 얼리는 이유는 개선이 보이게 하기 위해서다. **`low`는 없다**(D213 — finding은 선정 시점에 `lens_pct ≥ 0.75`라 medium 이상이고, reanchor도 재선정이라 어디서도 도달할 수 없는 값이었다: 선정 규칙을 적지 않았기 때문에 죽은 어휘가 살아 있었다). 렌즈 백분위가 null인 파일 finding은 null + 같은 `reason`(§2.5 사전). **파일 렌즈 finding에만 있다**(D191)."
         },
         "status_before": {
           "$ref": "#/$defs/ledgerState"
