@@ -42,7 +42,7 @@
     }
   ],
   "base": {
-    "analysis_input_id": "sha256:941ca417326606dcc1a658eb965034ae9c855dd7459f6e35dd02ae91eddf339e",
+    "analysis_input_id": "sha256:beefa18bfad9345bdb5f553855a14f6179a987cb2ed1e0869f10433c8a49cdf1",
     "transition_keys": {
       "fnd:dx:dup:3f9a:120@src/main/java/com/example/order/OrderService.java@04c5de269": "sha256:307079c2b07c2a6ebe5a07e6c4ae4b39952f845bdb7292cf2d4d655dae8aaf11",
       "fnd:cyc:sha256:0a1b@2a058a7ad": "sha256:946a9a709be68e78e9965ec91652908124ad1e0d91ab0e9b5d6301f87686970c"
@@ -50,7 +50,7 @@
   },
   "head_plus_one": {
     "head": "fbc725864",
-    "analysis_input_id": "sha256:357301d09de4f097faf5d649cd1df446ae252b066ec696263030e226049a66c5",
+    "analysis_input_id": "sha256:9b68f2f3743236b20e6e49694c6a0daa767917230d87434f93e84b5c33b16557",
     "cache": {
       "miss": [],
       "hit": [
@@ -61,7 +61,7 @@
   },
   "succession_bump": {
     "to": "2",
-    "analysis_input_id": "sha256:388997008b51ff176e79776c901ff61f6773d1d357eb75ac3b2c5a32b1ae6772",
+    "analysis_input_id": "sha256:870c02579e93d5e7825b60dd8e8bd32e0597cd06f6c6416c4c2c7cf43b3a6c26",
     "cache": {
       "miss": [
         "fnd:cyc:sha256:0a1b@2a058a7ad",
@@ -74,7 +74,7 @@
     "to": [
       "build/classes/java/main"
     ],
-    "analysis_input_id": "sha256:da6fba1713d324151d0196d6e12711b00b09ed8ce0734bd12fbee444e0d05c4a",
+    "analysis_input_id": "sha256:6b42b85883edfb622934cf60fc4ef58b3242333ff8bc200ff6e84473d0b49a60",
     "cache": {
       "miss": [
         "fnd:cyc:sha256:0a1b@2a058a7ad",

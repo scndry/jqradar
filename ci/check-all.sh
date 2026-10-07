@@ -47,6 +47,7 @@ if [ "$section" = all ] || [ "$section" = landing ]; then
   run "결정 착지 — prd.md"    sh ci/check-decision-landing.sh prd.md
   # D158·D186 — §7 reproduce 블록의 모든 줄에 종류 표시. 반례 먼저.
   run "reproduce 종류 표시 — 자기 반례" sh ci/check-reproduce-kinds.sh --selftest
+  run "§2.8 (i) ↔ id 스펙 — 자기 반례" "$PY" contract/reproducibility/compute.py --selftest
   run "reproduce 종류 표시 — prd.md"    sh ci/check-reproduce-kinds.sh prd.md
 fi
 

@@ -24,7 +24,7 @@
   ],
   "shallow_scan": {
     "artifact": {
-      "analysis_input_id": "sha256:de798cb704dc968ce1c595aade57db7de214dc32fd31e14b44486362f828cd3f",
+      "analysis_input_id": "sha256:16bea879ccadc68f841b48bb6c2d00a4f44d360a3b142a6eaa324adfaf13d477",
       "repository_state_id": "sha256:fb9d7ec1e90217540232a227311116ad09a6a446e07dc0ea239d434e346c2a9c",
       "history_complete": false,
       "graft_boundary_count": 1,
@@ -50,7 +50,7 @@
   },
   "unshallow_rescan_same_cache": {
     "artifact": {
-      "analysis_input_id": "sha256:c48a08618d7ea9d055492bf4581aa02b7b5b8dcd5e67b5208f0670dcb3b0bcc4",
+      "analysis_input_id": "sha256:2f764373de895f06c60149b3319f620a103f4c8b6d2062768abe6c6f86400a2d",
       "repository_state_id": "sha256:fb9d7ec1e90217540232a227311116ad09a6a446e07dc0ea239d434e346c2a9c",
       "history_complete": true,
       "graft_boundary_count": 0,
@@ -75,7 +75,7 @@
   },
   "fresh_full_clone_scan": {
     "artifact": {
-      "analysis_input_id": "sha256:c48a08618d7ea9d055492bf4581aa02b7b5b8dcd5e67b5208f0670dcb3b0bcc4",
+      "analysis_input_id": "sha256:2f764373de895f06c60149b3319f620a103f4c8b6d2062768abe6c6f86400a2d",
       "repository_state_id": "sha256:fb9d7ec1e90217540232a227311116ad09a6a446e07dc0ea239d434e346c2a9c",
       "history_complete": true,
       "graft_boundary_count": 0,

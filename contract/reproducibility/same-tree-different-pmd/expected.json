@@ -29,6 +29,12 @@
     ],
     "head": "04c5de269bd939509087a13312869a28d540f773",
     "head_committer_time": "2026-01-03T03:04:05Z",
+    "last_commit_map": {
+      "src/main/java/com/example/order/OrderPolicy.java": "2a058a7ad3612992c0013e256a87bbef635ef45e",
+      "src/main/java/com/example/order/OrderService.java": "04c5de269bd939509087a13312869a28d540f773"
+    },
+    "history_complete": true,
+    "graft_boundary_shas": [],
     "unreachable_commit_count": 0
   },
   "runs": {
@@ -39,7 +45,7 @@
         "jgit": "7.3.0"
       },
       "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-      "analysis_input_id": "sha256:fceb18598dd3d24af7116ddd0983cfbed782d12f8d40d36fef3b2d6a99201b50"
+      "analysis_input_id": "sha256:fe46d78f63aef2ac3a25260508c54b45d5bd3a60df15d4bd131c7e73a3a1bf6a"
     },
     "b": {
       "environment": {
@@ -48,7 +54,7 @@
         "jgit": "7.3.0"
       },
       "repository_state_id": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
-      "analysis_input_id": "sha256:fee64723c8e792c0637f399ebb57d12176281cc9ac1c32bca5e31f8368bec532"
+      "analysis_input_id": "sha256:9a4f635b8e08cdd841a5b8515b9cff7ffcdfd428f80cda91904fa84bd0ec5f90"
     }
   },
   "assertions": {
