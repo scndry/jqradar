@@ -335,7 +335,8 @@ def input_hash() -> str:
 def section_text(number: str) -> str:
     """`### 2.5 …` 또는 `## 4. …`부터 다음 같은 급 이상의 제목 전까지. 없으면 크게 실패한다 — prd.md가 절을 옮겼다는 뜻이다."""
     lines = PRD.read_text(encoding="utf-8").splitlines()
-    pat_sub = re.compile(rf"^### {re.escape(number)}\b")
+    # 절 번호 뒤는 공백이나 줄 끝 — `\\b`는 "2.5.1"(점 뒤)과 "2.5분포"(한글)를 잘못 가른다.
+    pat_sub = re.compile(rf"^### {re.escape(number)}(?=\s|$)")
     pat_top = re.compile(rf"^## {re.escape(number.split('.')[0])}\.\s")
     start = next((i for i, l in enumerate(lines) if pat_sub.match(l)), None)
     level = 3
@@ -502,7 +503,8 @@ REVIEWER_FILE_RE = re.compile(r"리뷰어-(\d+)\.md$")
 MODEL_FILE_RE = re.compile(r"\d{4}-\d\d-\d\d-([a-z]+)\.md$")
 # 기록이 스스로 적는 접두어 — 파일명 추론보다 우선한다.
 PREFIX_DECL_RE = re.compile(r"^- key 접두어:\s*([A-Z][A-Z0-9_]*)\s*$", re.M)
-FINDING_HEAD_RE = re.compile(r"^### 발견 (\d+)\b")
+# 번호 뒤에 숫자만 아니면 된다 — `\\b`는 "### 발견 12번"처럼 한글이 붙으면 발견을 못 읽었다(같은 함정).
+FINDING_HEAD_RE = re.compile(r"^### 발견 (\d+)(?!\d)")
 
 
 def read_individuals(records_dir: Path) -> dict:
