@@ -1,0 +1,43 @@
+{
+  "case": "state-id-untracked-file-same-id",
+  "contract_refs": [
+    "§2.8",
+    "§6.3",
+    "§2.9",
+    "D223",
+    "D87"
+  ],
+  "what_this_pins": "**한쪽 머신에만 미추적 파일이 있어도 `repository_state_id`는 같다**(D223) — 집합은 HEAD 트리의 경로라 샌드박스의 `build/classes/…/OrderService.class`·jacoco 산출물·편집기 임시 파일은 밖이다. 변조(`all_worktree` — 작업트리의 모든 파일): 미추적 파일이 들어가 id가 달라진다 — 검증 트리 id가 어느 커밋의 id와도 같을 수 없던 자리(F3-16).",
+  "repo": {
+    "tree": "tree/",
+    "history": [
+      {
+        "message": "seed: order domain",
+        "paths": [
+          "src/main/java/com/example/order/OrderPolicy.java"
+        ]
+      },
+      {
+        "message": "feat: order total",
+        "paths": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      }
+    ],
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-01-02T03:04:05+00:00",
+    "step_seconds": 86400
+  },
+  "state_id_variant": {
+    "write_untracked": {
+      "build/classes/java/main/com/example/order/OrderService.class": "Êþº¾ fixture bytes\n",
+      "build/jacoco/test.exec": "jacoco fixture\n",
+      "notes.tmp": "scratch\n"
+    },
+    "expect": "same",
+    "mutation": "all_worktree"
+  }
+}

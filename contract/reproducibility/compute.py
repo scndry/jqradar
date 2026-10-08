@@ -1375,6 +1375,91 @@ def run_source_scope_variants(case_dir: Path, inp: dict) -> dict:
     }
 
 
+
+# ── §2.8·D223 — repository_state_id의 집합 = HEAD 트리의 경로 × 작업트리 내용 − .jqradar/ ──────────────
+#
+# 경로 집합은 HEAD의 git 트리(추적 파일), 내용은 작업트리 바이트. 그래서 검증 샌드박스의 build/·jacoco(미추적)는
+# 밖이고 사건 파일(.jqradar/ — 자기 검증 결과를 담는다)도 밖이라 검증 트리·머지 트리·앵커가 같은 집합에서 계산된다.
+# 내용까지 커밋 블롭으로 하면 더러운 작업트리를 스캔해도 깨끗한 HEAD와 같은 id를 인쇄한다 — "무엇을 스캔했나"의 거짓.
+
+def _git_commit(workdir: Path, message: str, when_unix: int) -> None:
+    env = {**os.environ, "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null",
+           "GIT_AUTHOR_NAME": "fixture", "GIT_AUTHOR_EMAIL": "fixture@example.invalid",
+           "GIT_COMMITTER_NAME": "fixture", "GIT_COMMITTER_EMAIL": "fixture@example.invalid",
+           "GIT_AUTHOR_DATE": f"@{when_unix} +0000", "GIT_COMMITTER_DATE": f"@{when_unix} +0000"}
+    subprocess.run(["git", "-C", str(workdir), "add", "-A"], env=env, check=True, capture_output=True)
+    subprocess.run(["git", "-C", str(workdir), "commit", "-q", "-m", message], env=env, check=True, capture_output=True)
+
+
+def state_id_d223(workdir: Path) -> tuple[str, list[str]]:
+    """D223 — HEAD 트리의 경로 중 작업트리에 있는 것, 내용은 작업트리 바이트, `.jqradar/` 제외."""
+    paths = [l for l in _git(workdir, "ls-tree", "-r", "--name-only", "HEAD").splitlines() if l]
+    kept = sorted(pp for pp in paths if not pp.startswith(".jqradar/") and (workdir / pp).is_file())
+    return repository_state_id([(pp, content_id((workdir / pp).read_bytes())) for pp in kept]), kept
+
+
+def state_id_all_worktree(workdir: Path) -> str:
+    """변조 1 — '작업트리의 모든 파일'(미추적·무시 포함): 샌드박스의 build/가 들어간다(F3-16)."""
+    files = sorted((q.relative_to(workdir).as_posix(), content_id(q.read_bytes()))
+                   for q in workdir.rglob("*") if q.is_file() and ".git" not in q.relative_to(workdir).parts)
+    return repository_state_id(files)
+
+
+def state_id_with_jqradar(workdir: Path) -> str:
+    """변조 2 — `.jqradar/`를 빼지 않는다: 사건 파일이 자기 검증 결과를 담아 검증 뒤 바뀐다(O3-20)."""
+    paths = [l for l in _git(workdir, "ls-tree", "-r", "--name-only", "HEAD").splitlines() if l]
+    return repository_state_id(sorted((pp, content_id((workdir / pp).read_bytes())) for pp in paths if (workdir / pp).is_file()))
+
+
+def state_id_commit_blobs(workdir: Path) -> str:
+    """변조 3 — 내용까지 커밋 블롭으로: 더러운 작업트리를 깨끗한 HEAD로 인쇄한다(D223이 포기한 길)."""
+    rows = []
+    for l in _git(workdir, "ls-tree", "-r", "HEAD").splitlines():
+        meta, path = l.split("\t", 1)
+        if not path.startswith(".jqradar/"):
+            rows.append((path, meta.split()[2]))
+    return repository_state_id(sorted(rows))
+
+
+def run_state_id_file_set(case_dir: Path, inp: dict) -> dict:
+    tree = case_dir / inp["repo"]["tree"]
+    v = inp["state_id_variant"]
+    with tempfile.TemporaryDirectory() as tmp:
+        wd = Path(tmp) / "repo"
+        build_history(tree, inp["repo"], wd)
+        before, kept_before = state_id_d223(wd)
+        clean_equals_commit_tree = before == state_id_commit_blobs(wd)
+        b_all, b_jq, b_blob = state_id_all_worktree(wd), state_id_with_jqradar(wd), state_id_commit_blobs(wd)
+        for rel, content in v.get("write_untracked", {}).items():
+            (wd / rel).parent.mkdir(parents=True, exist_ok=True); (wd / rel).write_text(content, encoding="utf-8")
+        for step in v.get("commit_steps", []):
+            for rel, content in step["write"].items():
+                (wd / rel).parent.mkdir(parents=True, exist_ok=True); (wd / rel).write_text(content, encoding="utf-8")
+            _git_commit(wd, step["message"], int(step["at_unix"]))
+            if step.get("snapshot_as_before"):
+                before, kept_before = state_id_d223(wd)
+                b_all, b_jq, b_blob = state_id_all_worktree(wd), state_id_with_jqradar(wd), state_id_commit_blobs(wd)
+        for rel, content in v.get("modify_tracked", {}).items():
+            (wd / rel).write_text(content, encoding="utf-8")
+        after, kept_after = state_id_d223(wd)
+        a_all, a_jq, a_blob = state_id_all_worktree(wd), state_id_with_jqradar(wd), state_id_commit_blobs(wd)
+    expect_same = v["expect"] == "same"
+    mut = v["mutation"]
+    mut_before, mut_after = {"all_worktree": (b_all, a_all), "with_jqradar": (b_jq, a_jq), "commit_blobs": (b_blob, a_blob)}[mut]
+    return {
+        "case": inp["case"], "generated_by": GENERATED_BY, "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"], "canonical_encoding": CANONICAL_ENCODING,
+        "paths_in_id": {"before": kept_before, "after": kept_after},
+        "repository_state_id": {"before": before, "after": after},
+        "mutation": {"rule": mut, "before": mut_before, "after": mut_after},
+        "assertions": {
+            "clean_checkout_equals_commit_tree": clean_equals_commit_tree,
+            ("same_repository_state_id" if expect_same else "different_repository_state_id"): (before == after) == expect_same,
+            "mutation_gives_the_opposite": (mut_before == mut_after) != expect_same,
+        },
+    }
+
+
 def run_case(case_dir: Path) -> dict:
     inp = json.loads((case_dir / "input.json").read_text(encoding="utf-8"))
     if "canonical_vectors" in inp:
@@ -1401,6 +1486,8 @@ def run_case(case_dir: Path) -> dict:
         return run_clone_depths(case_dir, inp)
     if "source_scope_variants" in inp:
         return run_source_scope_variants(case_dir, inp)
+    if "state_id_variant" in inp:
+        return run_state_id_file_set(case_dir, inp)
     tree = case_dir / inp["repo"]["tree"]
     files = tree_files(tree)
     rsid = repository_state_id(files)

@@ -1,0 +1,14 @@
+{
+  "case": "change-hidden-coupling-touched-finding",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D227·§5.5",
+  "what": "`touched_legacy_findings[]`에 `kind: hidden_coupling`이 오면 거부(D227) — Hidden Coupling은 지도 finding(D213)이지 원장 finding이 아니다: 합격 함수의 원값이 없고 `shared`·`tc`가 창 상대라 코드가 안 바뀌어도 창이 밀려 시간이 해소를 만든다 — 등록하면 원장이 시계를 잰다(F3-20). v3.10.11까지 통과하던 값이다(D191 뒤 열거에 넣었었다).",
+  "mechanism": "enum(어휘가 계약)",
+  "schema": "change.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/touched_legacy_findings/0/kind"
+  ]
+}

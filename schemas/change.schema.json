@@ -361,10 +361,9 @@
             "hotspot",
             "duplication_exposure",
             "frozen_core",
-            "component_cycle",
-            "hidden_coupling"
+            "component_cycle"
           ],
-          "description": "report의 finding과 같은 열거(§5.7·D191). `anchor_class`가 있어야 하는지(파일 렌즈 finding)·없어야 하는지(순환·Hidden Coupling)를 가르는 열쇠 — 이 열쇠가 없어 D191이 report에만 걸려 있었다(§0-41 보정)."
+          "description": "원장 finding의 종류(§5.5·D191) — report의 finding 열거에서 **`hidden_coupling`을 뺀 넷**(D227: Hidden Coupling은 지도 finding이지 원장 finding이 아니다 — 합격 함수의 원값이 없고 창 상대라 코드가 안 바뀌어도 시간이 해소를 만든다; 등록하면 원장이 시계를 잰다). `anchor_class`가 있어야 하는지(파일 렌즈 finding)·없어야 하는지(순환)를 가르는 열쇠."
         },
         "anchor_class": {
           "enum": [

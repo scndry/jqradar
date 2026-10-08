@@ -1,0 +1,37 @@
+{
+  "case": "state-id-jqradar-only-difference-same-id",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.8",
+    "§6.3",
+    "§2.9",
+    "D223",
+    "D87"
+  ],
+  "what_this_pins": "**`.jqradar/` 사건 파일만 다른 두 트리는 같은 `repository_state_id`다**(D223) — apply가 `claimed`로 쓰고(첫 커밋) validate가 결과로 갱신한(둘째 커밋) 사건 파일은 자기 검증 결과를 담아 검증 뒤 바뀐다; 자기 해시를 담는 파일은 그 해시의 대상일 수 없다. 변조(`with_jqradar` — `.jqradar/`를 빼지 않음): 두 커밋의 id가 달라진다 — 사건을 실은 claim의 머지 트리가 검증 트리와 구조적으로 같아질 수 없던 자리(O3-20), §7 원장 행의 `merge_drift: true`가 그 증상이었다.",
+  "canonical_encoding": "RFC8785-JCS",
+  "paths_in_id": {
+    "before": [
+      "src/main/java/com/example/order/OrderPolicy.java",
+      "src/main/java/com/example/order/OrderService.java"
+    ],
+    "after": [
+      "src/main/java/com/example/order/OrderPolicy.java",
+      "src/main/java/com/example/order/OrderService.java"
+    ]
+  },
+  "repository_state_id": {
+    "before": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+    "after": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0"
+  },
+  "mutation": {
+    "rule": "with_jqradar",
+    "before": "sha256:b561a298d63de136ab66044d22f3b1a04aad97199c01d13aa9d8e404c00f5b79",
+    "after": "sha256:5db594a87cd7b851921a2a3dc6ba22b95a6b2cf71eaaf355079197f53f77ea2f"
+  },
+  "assertions": {
+    "clean_checkout_equals_commit_tree": true,
+    "same_repository_state_id": true,
+    "mutation_gives_the_opposite": true
+  }
+}
