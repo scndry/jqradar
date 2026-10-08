@@ -54,13 +54,16 @@ def _ci(word: str) -> str:
 def build_pattern(terms: dict | None = None) -> str:
     """판정 어휘를 **포함하면** 일치하는 정규식.
 
-    라틴 문자는 단어 경계로 감싼다 — `badge`·`poorly`의 오탐을 막는다.
+    라틴 문자는 **ASCII 단어 경계**로 감싼다 — `badge`·`poorly`의 오탐을 막는다. `\\b`를 쓰지 않는 이유:
+    Python·ECMA의 `\\b`는 한글도 단어 문자로 봐서 "bad한 구조"·"구조가 poor함"처럼 한글이 붙으면
+    경계가 없어 **통과했다**(2026-10-08 실측 — 착지 검사기·반례 09·쌍 D 존재 검사에 이은 같은 함정의
+    다섯째 자리, 이번엔 하드룰 D67·D127의 방어). 앞뒤가 ASCII 영숫자·`_`가 아니면 경계로 본다.
     한글은 어미가 붙으므로 경계 없이 부분 문자열로 잡는다(`나쁘` -> `나쁘다`).
     """
     terms = terms or load_terms()
     latin = "|".join(_ci(w) for w in sorted(terms["latin"]))
     hangul = "|".join(sorted(terms["hangul"]))
-    return rf"(?:\b(?:{latin})\b|(?:{hangul}))"
+    return rf"(?:(?<![A-Za-z0-9_])(?:{latin})(?![A-Za-z0-9_])|(?:{hangul}))"
 
 
 def note_text_def(pattern: str) -> dict:

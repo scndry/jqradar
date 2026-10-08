@@ -2117,7 +2117,7 @@
       "description": "사람이 읽는 자유 텍스트. **판정 어휘를 담을 수 없다**(D67·D127) — 렌더러는 JSON의 순수 함수라 여기 들어간 단어는 그대로 화면에 뜬다. 금지 목록은 `contract/judgment-vocabulary.json` 한 곳에만 있고 `contract/renderer/`(G2)가 같은 사전을 쓴다. 아래 `pattern`은 그 사전에서 생성된 값이며 `contract/schema/vocabulary-sync/`가 동기화를 검사한다.",
       "not": {
         "type": "string",
-        "pattern": "(?:\\b(?:[Aa][Ww][Ff][Uu][Ll]|[Bb][Aa][Dd]|[Cc][Rr][Aa][Pp][Pp][Yy]|[Dd][Aa][Nn][Gg][Ee][Rr][Oo][Uu][Ss]|[Gg][Aa][Rr][Bb][Aa][Gg][Ee]|[Hh][Oo][Rr][Rr][Ii][Bb][Ll][Ee]|[Nn][Aa][Ss][Tt][Yy]|[Pp][Oo][Oo][Rr]|[Rr][Ii][Ss][Kk][Yy]|[Rr][Oo][Tt][Tt][Ee][Nn]|[Ss][Ee][Vv][Ee][Rr][Ee]|[Ss][Ee][Vv][Ee][Rr][Ii][Tt][Yy]|[Ss][Mm][Ee][Ll][Ll][Yy]|[Tt][Ee][Rr][Rr][Ii][Bb][Ll][Ee]|[Uu][Gg][Ll][Yy]|[Uu][Nn][Hh][Ee][Aa][Ll][Tt][Hh][Yy]|[Ww][Oo][Rr][Ss][Tt])\\b|(?:나쁘|나쁜|나쁨|더러운|불량|심각|썩은|엉망|위험|지저분|최악|형편없))"
+        "pattern": "(?:(?<![A-Za-z0-9_])(?:[Aa][Ww][Ff][Uu][Ll]|[Bb][Aa][Dd]|[Cc][Rr][Aa][Pp][Pp][Yy]|[Dd][Aa][Nn][Gg][Ee][Rr][Oo][Uu][Ss]|[Gg][Aa][Rr][Bb][Aa][Gg][Ee]|[Hh][Oo][Rr][Rr][Ii][Bb][Ll][Ee]|[Nn][Aa][Ss][Tt][Yy]|[Pp][Oo][Oo][Rr]|[Rr][Ii][Ss][Kk][Yy]|[Rr][Oo][Tt][Tt][Ee][Nn]|[Ss][Ee][Vv][Ee][Rr][Ee]|[Ss][Ee][Vv][Ee][Rr][Ii][Tt][Yy]|[Ss][Mm][Ee][Ll][Ll][Yy]|[Tt][Ee][Rr][Rr][Ii][Bb][Ll][Ee]|[Uu][Gg][Ll][Yy]|[Uu][Nn][Hh][Ee][Aa][Ll][Tt][Hh][Yy]|[Ww][Oo][Rr][Ss][Tt])(?![A-Za-z0-9_])|(?:나쁘|나쁜|나쁨|더러운|불량|심각|썩은|엉망|위험|지저분|최악|형편없))"
       }
     },
     "reason": {

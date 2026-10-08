@@ -1,0 +1,20 @@
+{
+  "case": "report-judgment-latin-with-hangul-suffix",
+  "check": "schema",
+  "kind": "hard_rule",
+  "schema": "report.schema.json",
+  "base": "prd:§7:report",
+  "mechanism": "pattern(공유 사전)",
+  "contract_ref": "D67·D127",
+  "what": "자유 텍스트의 라틴 판정 어휘에 **한글이 붙어도** 거부(D67·D127) — `\\b`는 한글도 단어 문자로 봐서 \"poor함\"·\"bad한\"에서 경계가 없어 통과했다(2026-10-08 실측). 경계를 ASCII 전용(`(?<![A-Za-z0-9_])…(?![A-Za-z0-9_])`)으로 바꿨다 — `badge`·`poorly`의 오탐 방지는 그대로. 착지 검사기·반례 09·쌍 D 존재 검사에 이은 같은 함정의 다섯째 자리이고 이번엔 하드룰의 방어였다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "population",
+        "population_note"
+      ],
+      "value": "구조가 poor함 — 분포가 좁다"
+    }
+  ]
+}
