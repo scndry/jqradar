@@ -303,6 +303,31 @@ def build_expected(inp: dict) -> dict:
                 abstract[comp] += 1
         out["class_edge_count"] = len(class_edges)
         out["external_edges"] = sorted(external_edges, key=lambda e: (e["from"], e["to"]))
+
+        # §2.1·D222 — 파일별 fan_in = X 밖의 **파일**(최상위 타입으로 접힌 단위) 중 X에 직접 의존하는 수. 피의존자도 의존자도
+        # D211의 접기(중첩·익명·합성·람다 → 바깥 최상위 타입의 소스)로 센다 — "기대는 다른 코드"의 수이지 클래스 수가 아니다.
+        # 세지 않는 것 둘: 같은 파일 안의 의존(§2.2 자기 간선의 파일 단위 짝 — Kotlin 합성 포함), external(by_name 밖 — 위에서 이미 접힘).
+        if inp.get("file_fan_in"):   # 최상위 타입에만 source_file이 있으면 된다 — 중첩·익명은 접힌다
+            def outermost(name: str) -> str:
+                simple = name.rsplit(".", 1)[-1].split("$", 1)[0]
+                return name.rsplit(".", 1)[0] + "." + simple if "." in name else simple
+            src = {c["name"]: c["source_file"] for c in classes if c.get("source_file")}
+            file_of = {c["name"]: src.get(c["name"]) or src[outermost(c["name"])] for c in classes}
+            files = sorted(set(file_of.values()))
+            fan = {}
+            for x in files:
+                dependents, same_file, class_unit = set(), [], set()
+                for s_, t in class_edges:
+                    if file_of[t] != x:
+                        continue
+                    if file_of[s_] == x:
+                        same_file.append(f"{s_} -> {t}")
+                    else:
+                        dependents.add(file_of[s_]); class_unit.add(s_)
+                fan[x] = {"fan_in": len(dependents), "dependent_files": sorted(dependents),
+                          "same_file_edges_ignored": sorted(same_file),
+                          "mutation_class_unit_count": len(class_unit)}   # 클래스로 세면(포기한 길) — S3-17의 부풀림
+            out["file_fan_in"] = fan
         out["external_included_in_metrics"] = False
     else:
         spec = inp["components"]

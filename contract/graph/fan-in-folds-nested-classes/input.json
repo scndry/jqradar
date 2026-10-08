@@ -1,0 +1,55 @@
+{
+  "case": "fan-in-folds-nested-classes",
+  "contract_refs": [
+    "§2.1",
+    "§2.2",
+    "§2.5",
+    "§2.9",
+    "D222",
+    "D211"
+  ],
+  "what_this_pins": "**`fan_in(X)` = X 밖의 파일(최상위 타입으로 접힌 단위) 중 X에 직접 의존하는 수**(D222) — 그래프 픽스처가 파일별 `fan_in`을 처음 낸다. `Outer.java`에 `Outer`·`Outer$Inner`·`Outer$1`(익명), `Caller.java`에 `Caller`·`Caller$1`이 있고 `Caller`와 `Caller$1`이 둘 다 `Outer`에 의존하며 `Outer$Inner`·`Outer$1`은 `Outer`에(같은 파일 안) 의존한다. **`fan_in(Outer.java) = 1`** — `Caller`·`Caller$1`은 한 단위(의존자도 D211의 접기; 클래스로 세면 2 — S3-17의 부풀림, `mutation_class_unit_count`), 같은 파일 안의 의존 둘은 세지 않는다(`same_file_edges_ignored` — §2.2 자기 간선의 파일 단위 짝; 세면 내부 클래스가 있는 모든 파일의 `fan_in`이 ≥ 1로 부푼다, F3-10). `Outer`의 JDK 의존(`java.util.List`)은 external이라 어디에도 들지 않는다. `fan_in(Caller.java) = 0`. 컴포넌트 지표(Ca·Ce)는 그대로 컴포넌트 단위.",
+  "component": {
+    "strategy": "auto"
+  },
+  "file_fan_in": true,
+  "classes": [
+    {
+      "name": "com.acme.app.core.Outer",
+      "package": "com.acme.app.core",
+      "source_file": "src/main/java/com/acme/app/core/Outer.java",
+      "depends_on": [
+        "java.util.List"
+      ]
+    },
+    {
+      "name": "com.acme.app.core.Outer$Inner",
+      "package": "com.acme.app.core",
+      "depends_on": [
+        "com.acme.app.core.Outer"
+      ]
+    },
+    {
+      "name": "com.acme.app.core.Outer$1",
+      "package": "com.acme.app.core",
+      "depends_on": [
+        "com.acme.app.core.Outer"
+      ]
+    },
+    {
+      "name": "com.acme.app.web.Caller",
+      "package": "com.acme.app.web",
+      "source_file": "src/main/java/com/acme/app/web/Caller.java",
+      "depends_on": [
+        "com.acme.app.core.Outer"
+      ]
+    },
+    {
+      "name": "com.acme.app.web.Caller$1",
+      "package": "com.acme.app.web",
+      "depends_on": [
+        "com.acme.app.core.Outer"
+      ]
+    }
+  ]
+}

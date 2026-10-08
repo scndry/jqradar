@@ -1,0 +1,225 @@
+{
+  "case": "new-duplication-line-overlap",
+  "contract_refs": [
+    "§5.2",
+    "§2.6",
+    "§2.9",
+    "D221",
+    "D165",
+    "D166"
+  ],
+  "what_this_pins": "**`new_duplication`의 새 발생은 (경로, 클러스터 ID)의 집합 차가 아니라 라인 구간 겹침이다**(D221). 순수 함수: BASE·HEAD 발생 목록 + 라인 매핑(변하지 않은 블록의 base ↔ head 구간, git 차분이 주는 것) → 새 발생 수. 셋: (1) **쪼개짐** — A·B가 250토큰(A `[45,82]`·B `[210,247]`)을 공유하던 BASE에서 A 사본 가운데 한 문장을 고쳐 HEAD에서 열이 둘(A `[45,60]`·`[63,82]`, B도 둘)이 됐다 — ID 둘 다 새것이라 집합 차로 세면 **4**(중복은 줄었는데 FAIL, O3-10), 라인 겹침으로는 넷 다 BASE 구간과 겹쳐 **0**; (2) **사본 추가** — A에 `[300,337]`이 더 생겼다 → **1**(D165 '같은 파일 안 추가 사본은 개수로 센다' 불변); (3) **위쪽 50줄 삽입** — A 위쪽에 무관한 50줄이 들어가 같은 사본이 `[95,132]`로 밀렸다(사본 길이 38줄보다 큰 이동이라 항등 판정은 겹침을 잃는다) → 매핑하면 **0**, 매핑 없이(항등 = 토큰 오프셋으로 판정하는 것과 같은 모양) 보면 **1**(§5.2가 오프셋을 키에서 뺀 이유를 뒷문으로 들이는 변조). 세 변조 축: `mutation_identity_mapping`(매핑 없음)·`mutation_cluster_id_set_difference`(v3.10.10까지의 규칙 — (경로, ID)별 `max(0, HEAD − BASE)`: 사본 추가는 맞게 1을 내지만 쪼개짐에서 4를 낸다).",
+  "scenarios": {
+    "split-inside-copy": {
+      "what": "A 사본 가운데 한 문장 수정 — 열이 250에서 120·129로 쪼개짐, ID 둘 다 새것",
+      "line_overlap": {
+        "rows": [
+          {
+            "path": "src/A.java",
+            "head_lines": [
+              45,
+              60
+            ],
+            "base_mapped_to_head": [
+              [
+                45,
+                82
+              ]
+            ],
+            "existing": true,
+            "cluster_id_in_base": false
+          },
+          {
+            "path": "src/A.java",
+            "head_lines": [
+              63,
+              82
+            ],
+            "base_mapped_to_head": [
+              [
+                45,
+                82
+              ]
+            ],
+            "existing": true,
+            "cluster_id_in_base": false
+          },
+          {
+            "path": "src/B.java",
+            "head_lines": [
+              210,
+              225
+            ],
+            "base_mapped_to_head": [
+              [
+                210,
+                247
+              ]
+            ],
+            "existing": true,
+            "cluster_id_in_base": false
+          },
+          {
+            "path": "src/B.java",
+            "head_lines": [
+              228,
+              247
+            ],
+            "base_mapped_to_head": [
+              [
+                210,
+                247
+              ]
+            ],
+            "existing": true,
+            "cluster_id_in_base": false
+          }
+        ],
+        "new_by_file": {},
+        "new_total": 0
+      },
+      "mutation_identity_mapping": {
+        "new_by_file": {},
+        "new_total": 0
+      },
+      "mutation_cluster_id_set_difference": {
+        "new_by_file": {
+          "src/A.java": 2,
+          "src/B.java": 2
+        },
+        "new_total": 4
+      },
+      "expected_new_total": 0
+    },
+    "copy-added": {
+      "what": "A에 둘째 사본 — 겹치지 않는 자리라 새 발생 1(D165 불변)",
+      "line_overlap": {
+        "rows": [
+          {
+            "path": "src/A.java",
+            "head_lines": [
+              45,
+              82
+            ],
+            "base_mapped_to_head": [
+              [
+                45,
+                82
+              ]
+            ],
+            "existing": true,
+            "cluster_id_in_base": true
+          },
+          {
+            "path": "src/A.java",
+            "head_lines": [
+              300,
+              337
+            ],
+            "base_mapped_to_head": [
+              [
+                45,
+                82
+              ]
+            ],
+            "existing": false,
+            "cluster_id_in_base": true
+          },
+          {
+            "path": "src/B.java",
+            "head_lines": [
+              210,
+              247
+            ],
+            "base_mapped_to_head": [
+              [
+                210,
+                247
+              ]
+            ],
+            "existing": true,
+            "cluster_id_in_base": true
+          }
+        ],
+        "new_by_file": {
+          "src/A.java": 1
+        },
+        "new_total": 1
+      },
+      "mutation_identity_mapping": {
+        "new_by_file": {
+          "src/A.java": 1
+        },
+        "new_total": 1
+      },
+      "mutation_cluster_id_set_difference": {
+        "new_by_file": {
+          "src/A.java": 1
+        },
+        "new_total": 1
+      },
+      "expected_new_total": 1
+    },
+    "lines-inserted-above": {
+      "what": "A 위쪽에 무관한 50줄 삽입 — 같은 사본이 [95,132]로 밀림(사본 길이 38줄보다 큰 이동); 매핑하면 0, 항등(= 오프셋 판정의 모양)이면 1",
+      "line_overlap": {
+        "rows": [
+          {
+            "path": "src/A.java",
+            "head_lines": [
+              95,
+              132
+            ],
+            "base_mapped_to_head": [
+              [
+                95,
+                132
+              ]
+            ],
+            "existing": true,
+            "cluster_id_in_base": true
+          },
+          {
+            "path": "src/B.java",
+            "head_lines": [
+              210,
+              247
+            ],
+            "base_mapped_to_head": [
+              [
+                210,
+                247
+              ]
+            ],
+            "existing": true,
+            "cluster_id_in_base": true
+          }
+        ],
+        "new_by_file": {},
+        "new_total": 0
+      },
+      "mutation_identity_mapping": {
+        "new_by_file": {
+          "src/A.java": 1
+        },
+        "new_total": 1
+      },
+      "mutation_cluster_id_set_difference": {
+        "new_by_file": {},
+        "new_total": 0
+      },
+      "expected_new_total": 0
+    }
+  },
+  "invariants": {
+    "line_overlap_matches_expected": true,
+    "identity_mapping_is_wrong_when_lines_shift": true,
+    "cluster_id_difference_is_wrong_when_copy_is_edited": true
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/cpd/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}
