@@ -53,8 +53,9 @@ GUARDS = [
 BODY_NUMBERS = [
     ("§2.5 P90 [1..9,100] = 18.1", "contract/percentile/p90-type7/expected.json",
      ["quantiles", 0, "value"], 18.1),
+    # 쌍 측정은 두 수다(D199) — 본문 예의 150은 A쪽 합집합 `a_dup_tokens`.
     ("§2.6 겹침 합집합 = 150", "contract/cpd/overlap-merge/expected.json",
-     ["duplication_pairs", 0, "pair_dup_tokens"], 150),
+     ["duplication_pairs", 0, "a_dup_tokens"], 150),
     ("§2.3 NCCD(N=41, CCD=512) = 2.76", "contract/graph/nccd-cross-check/expected.json",
      ["system", "display", "NCCD"], 2.76),
     ("§2.3 CCD_balanced(41) = 185.48", "contract/graph/nccd-cross-check/expected.json",
@@ -841,6 +842,22 @@ def selftest() -> int:
     same_as = [r for r, h in PREVIOUS_INPUT_HASHES.items() if h == h0]
     checks.append((f"입력 해시({h0})가 지난 라운드의 입력과 다르다 — '입력을 바꾼' 라운드(D151(b))"
                    + (f" — 같은 라운드: {same_as}" if same_as else ""), not same_as))
+
+    # `--verify`의 본문 숫자 행이 지금의 픽스처에서 읽히고 본문과 같은가.
+    # D199가 `pair_dup_tokens`를 두 수로 바꾼 뒤 이 행이 '읽기 실패'로 붉었는데
+    # `--verify`는 check-all에 없어서 4차 리뷰어가 처음 봤다 — selftest가 같은 행을 읽는다.
+    body = PRD.read_text(encoding="utf-8")
+    bad_rows = []
+    for label, path, jpath, expected in BODY_NUMBERS:
+        try:
+            got = dig(json.loads((ROOT / path).read_text(encoding="utf-8")), jpath)
+        except Exception as exc:  # noqa: BLE001
+            bad_rows.append(f"{label}: 읽기 실패 {exc}")
+            continue
+        if got != expected or str(expected) not in body:
+            bad_rows.append(f"{label}: 계산 {got}, 본문에 {'있음' if str(expected) in body else '없음'}")
+    checks.append(("`--verify`의 본문 숫자 행이 픽스처에서 읽히고 본문과 같다"
+                   + (f" — {bad_rows}" if bad_rows else ""), not bad_rows))
 
     # 쌍의 '이력'·'질문'이 인용하는 D 번호와 §0 항목이 실제로 있는가.
     # 없는 것을 가리키면 리뷰어가 첫 발을 헛디딘다. 절 번호만 보던 검사에
