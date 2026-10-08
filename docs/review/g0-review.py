@@ -483,11 +483,11 @@ def read_individuals(records_dir: Path) -> dict:
         else:
             continue
         cur = None
-        for line in text.split("\n"):
+        for lineno, line in enumerate(text.split("\n"), start=1):
             head = FINDING_HEAD_RE.match(line)
             if head:
                 cur = f"{'R' if r.isdigit() else ''}{r}-{head.group(1)}"
-                out[cur] = {"sections": [], "file": path.name}
+                out[cur] = {"sections": [], "file": path.name, "line": lineno}
                 continue
             if cur and line.startswith("- 절:") and not out[cur]["sections"]:
                 out[cur]["sections"] = SECTION_RE.findall(line)
@@ -539,7 +539,7 @@ def collect_keys(records_dir: Path) -> dict:
             problems.append(("대응 없음", path.name,
                              "병합 대응표가 없다 — 이 종합은 세지 않는다(D152)"))
             continue
-        groups = []   # (id, sources, sections, declared, closed)
+        groups = []   # (id, sources, sections, declared, closed, split, claim)
         for cells in merged:
             ident = cells[0]
             srcs = SOURCE_RE.findall(cells[2]) if len(cells) > 2 else []
@@ -557,7 +557,8 @@ def collect_keys(records_dir: Path) -> dict:
             split = SPLIT_RE.search(" ".join(cells))
             groups.append([ident, srcs, secs, decl,
                            "·".join(re.findall(r"D\d+", closed.group(1))) if closed else None,
-                           split.group(1) if split else None])
+                           split.group(1) if split else None,
+                           cells[1] if len(cells) > 1 else ""])
         # 쪼갬: 같은 개별이 둘 이상의 종합 항목에 붙으면 접는다
         folded, seen = [], {}
         for g in groups:
@@ -591,14 +592,17 @@ def collect_keys(records_dir: Path) -> dict:
                 continue
             secs = _reconcile(srcs[0] + "(미부착)", srcs, secs, individuals, problems, path.name)
             folded.append([srcs[0] + "(미부착)", srcs, secs, decl,
-                           "·".join(re.findall(r"D\d+", closed.group(1))) if closed else None, None])
-        for ident, srcs, secs, decl, closed, _split in folded:
+                           "·".join(re.findall(r"D\d+", closed.group(1))) if closed else None, None,
+                           cells[1] if len(cells) > 1 else ""])
+        for ident, srcs, secs, decl, closed, _split, claim in folded:
             computed = _scope_of(secs)
             if computed != decl:
                 problems.append(("범위 어긋남", path.name,
                                  f"{ident} — 표는 '{decl}', 절 집합 {' '.join(secs)}로는 '{computed}'"))
             keys.append({"id": ident, "file": path.name, "sources": srcs,
-                         "sections": secs, "scope": computed, "closed": closed})
+                         "sections": secs, "scope": computed, "closed": closed,
+                         "claim": claim, "round": synth.index(path) + 1,
+                         "source_lines": [f"{individuals[k]['file']}:{individuals[k]['line']}" for k in srcs]})
     return {"keys": keys, "problems": problems, "synth": [p.name for p in synth]}
 
 
@@ -632,6 +636,79 @@ def count_keys(records_dir: Path = RECORDS) -> int:
         print("  열린 key:")
         for k in openk:
             print(f"    {k['id']:<28} {' '.join(k['sections'])}")
+    return 0
+
+
+# ── `--g3-list` — 범위 밖 key의 목록을 **생성**한다 (D152) ─────────────────────────────
+#
+# 범위 밖 key는 "세지 않고 버리지도 않는다"(D152) — G3 입장 조건(§6.3–6.6 교차 검토·값 층
+# 픽스처)의 입력이 된다. 그 목록을 사람이 옮기면 status의 수처럼 옮기다 틀린다(140 → 142).
+# 그래서 종합에서 계산해 쓰고, `check-all`이 생성기를 다시 돌려 파일과 diff 0을 확인한다.
+G3_LIST = ROOT / "docs" / "review" / "g3-list.md"
+
+
+def _natural(key: str):
+    return [int(t) if t.isdigit() else t for t in re.split(r"(\d+)", key)]
+
+
+def g3_list_text(records_dir: Path = RECORDS) -> str:
+    got = collect_keys(records_dir)
+    out = [k for k in got["keys"] if k["scope"] == "밖"]
+    open_ = sorted((k for k in out if not k["closed"]), key=lambda k: (k["round"], _natural(k["id"])))
+    closed = sorted((k for k in out if k["closed"]), key=lambda k: (k["round"], _natural(k["id"])))
+    rounds = {i + 1: name for i, name in enumerate(got["synth"])}
+
+    def row(k, with_d=False):
+        ident = k["id"].replace("(미부착)", "")
+        claim = k["claim"].replace("\n", " ")
+        cells = [f"`{ident}`", claim, " ".join(f"`{s}`" for s in k["sections"]),
+                 " · ".join(k["source_lines"]), f"{k['round']}차"]
+        if with_d:
+            cells.append(k["closed"])
+        return "| " + " | ".join(cells) + " |"
+
+    lines = [
+        "# G3 목록 — 범위 밖 발견 (D152)",
+        "",
+        "> **생성됨 — 손으로 고치지 않는다.** `python3 docs/review/g0-review.py --g3-list`가 종합 기록에서",
+        "> 계산해 쓰고, `ci/check-all.sh`가 생성기를 다시 돌려 이 파일과 diff 0을 확인한다(`--g3-list --check`).",
+        "> 바꾸려면 기록(종합의 표·개별 기록)을 고친다 — 이 파일은 사본이다.",
+        "",
+        "범위 밖 = 절 집합(개별 기록의 `절:`)에 §2.1–2.9가 하나도 없는 key(D152). **세지 않고 버리지도 않는다** — G0 #1의",
+        "수에 닿지 않고, G3 입장 조건(§6.3–6.6 교차 검토·값 층 픽스처)의 입력이다. 닫힘 표시가 붙은 밖 key는 아래 따로 둔다",
+        "(D153 — 표시는 기록의 것이고 수에 닿지 않는다).",
+        "",
+        "읽은 종합: " + ", ".join(f"{i}차 `{n}`" for i, n in rounds.items()),
+        "",
+        f"## 열린 것 — {len(open_)}",
+        "",
+        "정렬: 라운드 → key(자연 순서). 출처는 개별 기록의 `### 발견` 머리 줄.",
+        "",
+        "| key | 주장 | 절 집합 | 출처(기록:줄) | 라운드 |",
+        "|---|---|---|---|---|",
+        *[row(k) for k in open_],
+        "",
+        f"## 닫힌 것 — {len(closed)}",
+        "",
+        "| key | 주장 | 절 집합 | 출처(기록:줄) | 라운드 | 닫은 결정 |",
+        "|---|---|---|---|---|---|",
+        *[row(k, with_d=True) for k in closed],
+        "",
+    ]
+    return "\n".join(lines)
+
+
+def g3_list(check: bool) -> int:
+    text = g3_list_text()
+    if check:
+        current = G3_LIST.read_text(encoding="utf-8") if G3_LIST.exists() else None
+        if current == text:
+            print(f"  ok   {G3_LIST.relative_to(ROOT)} — 생성기와 diff 0")
+            return 0
+        print(f"  BAD  {G3_LIST.relative_to(ROOT)} — " + ("없다" if current is None else "생성기 출력과 다르다(손으로 고쳤거나 기록이 바뀌었다 — `--g3-list`로 다시 쓴다)"))
+        return 1
+    G3_LIST.write_text(text, encoding="utf-8")
+    print(f"wrote {G3_LIST.relative_to(ROOT)}")
     return 0
 
 
@@ -745,7 +822,12 @@ def main() -> int:
     ap.add_argument("--count", action="store_true", help="기록에서 열린 발견을 센다")
     ap.add_argument("--selftest", action="store_true", help="이 스크립트 자신의 반례")
     ap.add_argument("--input-hash", action="store_true", help="리뷰어 입력(쌍 목록·질문·배정)의 해시만 — D151(b)")
+    ap.add_argument("--g3-list", action="store_true", help="범위 밖 key 목록 docs/review/g3-list.md를 생성한다(D152)")
+    ap.add_argument("--check", action="store_true", help="--g3-list와 함께: 쓰지 않고 파일과 생성기 출력의 diff 0만 본다")
     args = ap.parse_args()
+
+    if args.g3_list:
+        return g3_list(check=args.check)
 
     if args.input_hash:
         print(input_hash())
