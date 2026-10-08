@@ -43,6 +43,76 @@ def span(ranges: list[tuple[int, int]]) -> int:
     return sum(end - start for start, end in merge_ranges(ranges))
 
 
+# ── §5.2·D221 — new_duplication의 "새 발생" = HEAD 발생 중 같은 파일의 BASE 발생 구간과 한 줄도 겹치지 않는 것 ──
+#
+# 겹침은 **라인 구간**으로, BASE → HEAD 라인 차분 매핑 뒤에 본다. 토큰 오프셋은 사본 위쪽의 무관한 편집에 밀린다 —
+# §5.2가 오프셋을 키에서 뺀 바로 그 이유이고, 오프셋으로 판정하면 그 이유를 뒷문으로 들인다. 클러스터 ID는 열의
+# 정체이지 사본의 정체가 아니라(사본 안의 편집이 ID를 바꾼다, O3-10) 키에 들지 않는다. 순수 함수다 — 입력은
+# BASE·HEAD 발생 목록과 라인 매핑(변하지 않은 블록의 base ↔ head 구간 쌍, git 차분이 주는 것)이다.
+
+def map_lines(path: str, start: int, end: int, line_map: dict) -> list[tuple[int, int]]:
+    """BASE 라인 구간을 HEAD 라인 구간들로 — 매핑에 든 부분만(편집으로 사라진 줄은 HEAD에 자리가 없다)."""
+    out = []
+    for seg in line_map.get(path, []):
+        bs, be = seg["base"]; hs, he = seg["head"]
+        lo, hi = max(start, bs), min(end, be)
+        if lo <= hi:
+            out.append((hs + (lo - bs), hs + (hi - bs)))
+    return out
+
+
+def new_occurrences(base: list[dict], head: list[dict], line_map: dict | None) -> dict:
+    """HEAD 발생마다 기존(겹침)인지 새것인지. line_map이 None이면 매핑 없이(= 항등) 본다 — 변조용."""
+    rows = []
+    for h in head:
+        base_same = [b for b in base if b["path"] == h["path"]]
+        mapped = []
+        for b in base_same:
+            segs = (map_lines(b["path"], b["start_line"], b["end_line"], line_map) if line_map is not None
+                    else [(b["start_line"], b["end_line"])])
+            mapped.extend(segs)
+        overlaps = [m for m in mapped if m[0] <= h["end_line"] and h["start_line"] <= m[1]]
+        rows.append({"path": h["path"], "head_lines": [h["start_line"], h["end_line"]],
+                     "base_mapped_to_head": [list(m) for m in mapped],
+                     "existing": bool(overlaps), "cluster_id_in_base": h.get("cluster_id") in {b.get("cluster_id") for b in base_same}})
+    by_file: dict[str, int] = {}
+    for r in rows:
+        if not r["existing"]:
+            by_file[r["path"]] = by_file.get(r["path"], 0) + 1
+    return {"rows": rows, "new_by_file": dict(sorted(by_file.items())), "new_total": sum(by_file.values())}
+
+
+def run_new_duplication(inp: dict) -> dict:
+    scen = {}
+    for name, sc in inp["scenarios"].items():
+        by_line = new_occurrences(sc["base"], sc["head"], sc.get("line_map", {}))
+        by_offset = new_occurrences(sc["base"], sc["head"], None)        # 변조: 매핑 없이(오프셋/항등) 판정
+        # 변조: v3.10.10까지의 규칙(~~D165~~) — (경로, 클러스터 ID)별 max(0, HEAD 발생 수 − BASE 발생 수)의 합
+        from collections import Counter
+        cb = Counter((b["path"], b.get("cluster_id")) for b in sc["base"])
+        ch = Counter((h["path"], h.get("cluster_id")) for h in sc["head"])
+        by_id = {}
+        for (path, cid), n in ch.items():
+            extra = max(0, n - cb.get((path, cid), 0))
+            if extra:
+                by_id[path] = by_id.get(path, 0) + extra
+        scen[name] = {"what": sc["what"], "line_overlap": by_line,
+                      "mutation_identity_mapping": {"new_by_file": by_offset["new_by_file"], "new_total": by_offset["new_total"]},
+                      "mutation_cluster_id_set_difference": {"new_by_file": dict(sorted(by_id.items())), "new_total": sum(by_id.values())},
+                      "expected_new_total": sc["expected_new_total"]}
+    return {
+        "case": inp["case"], "contract_refs": inp["contract_refs"], "what_this_pins": inp["what_this_pins"],
+        "scenarios": scen,
+        "invariants": {
+            "line_overlap_matches_expected": all(v["line_overlap"]["new_total"] == v["expected_new_total"] for v in scen.values()),
+            "identity_mapping_is_wrong_when_lines_shift": any(
+                v["mutation_identity_mapping"]["new_total"] != v["expected_new_total"] for v in scen.values()),
+            "cluster_id_difference_is_wrong_when_copy_is_edited": any(
+                v["mutation_cluster_id_set_difference"]["new_total"] != v["expected_new_total"] for v in scen.values()),
+        },
+    }
+
+
 def build_expected(inp: dict) -> dict:
     minimum_tokens = int(inp["parameters"]["cpd.minimum_tokens"])
     file_tokens = {k: int(v) for k, v in inp["file_tokens"].items()}
@@ -170,7 +240,7 @@ def main() -> int:
     failures = 0
     for case_dir in dirs:
         inp = json.loads((case_dir / "input.json").read_text(encoding="utf-8"))
-        text = exact.finish(build_expected(inp), GENERATED_BY)
+        text = exact.finish(run_new_duplication(inp) if "scenarios" in inp else build_expected(inp), GENERATED_BY)
         target = case_dir / "expected.json"
         if args.check:
             current = target.read_text(encoding="utf-8") if target.exists() else None
