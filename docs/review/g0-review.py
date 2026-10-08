@@ -661,7 +661,24 @@ def collect_keys(records_dir: Path) -> dict:
                          "sections": secs, "scope": computed, "closed": closed,
                          "claim": claim, "round": synth.index(path) + 1,
                          "source_lines": [f"{individuals[k]['file']}:{individuals[k]['line']}" for k in srcs]})
-    return {"keys": keys, "problems": problems, "synth": [p.name for p in synth]}
+    # 종합이 읽지 않은 개별 — 수는 종합에서만 세므로(D152) 종합 전의 기록은 수에 닿지 않는다.
+    # 그래서 '열림 0'이 라운드를 반영하지 않은 채 참일 수 있다(4차 기록 셋이 들어온 날 실제로 그랬다:
+    # 범위 안 개별 64가 있는데 '열림 0'). 개별 key가 어느 종합 본문에도 없으면 보고한다 —
+    # 기록 하나가 통째로 없으면 '종합 전', 일부만 없으면 '누락'(종합을 먼저 쓰면 발견이 떨어진다).
+    synth_text = "\n".join(p.read_text(encoding="utf-8") for p in synth)
+    per_file, missing = {}, []
+    for k, v in individuals.items():
+        per_file[v["file"]] = per_file.get(v["file"], 0) + 1
+        if not re.search(rf"(?<![A-Za-z0-9]){re.escape(k)}(?![0-9])", synth_text):
+            missing.append(k)
+    for f in sorted({individuals[k]["file"] for k in missing}):
+        miss = sorted((k for k in missing if individuals[k]["file"] == f), key=_natural)
+        if len(miss) == per_file[f]:
+            problems.append(("종합 전", f, f"개별 발견 {len(miss)}개를 어느 종합도 읽지 않았다 — 위 수는 이 기록을 반영하지 않는다"))
+        else:
+            problems.append(("누락", f, f"어느 종합에도 없는 개별: {', '.join(miss)}"))
+    unsynth = [{"id": k, "scope": _scope_of(individuals[k]["sections"])} for k in missing]
+    return {"keys": keys, "problems": problems, "synth": [p.name for p in synth], "unsynthesized": unsynth}
 
 
 def count_keys(records_dir: Path = RECORDS) -> int:
@@ -676,6 +693,9 @@ def count_keys(records_dir: Path = RECORDS) -> int:
     print(f"  범위 안 `dedupe_key`  총 {len(inside)}")
     print(f"    닫힘  {len(closed)}" + (f" — {', '.join(sorted({d for k in closed for d in k['closed'].split('·')}, key=lambda x: int(x[1:])))}" if closed else ""))
     print(f"    열림  {len(openk)}")
+    pending_in = [u for u in got["unsynthesized"] if u["scope"] == "안"]
+    if pending_in:
+        print(f"    종합 전 범위 안 개별 {len(pending_in)} — 위 '열림'에 들지 않았다. 종합 뒤에 다시 센다(보고 참조)")
     outside = [k for k in keys if k["scope"] == "밖"]
     out_closed = [k for k in outside if k["closed"]]
     print(f"  범위 밖 (G3 목록으로) 총 {len(outside)} — 닫힘 {len(out_closed)}"
