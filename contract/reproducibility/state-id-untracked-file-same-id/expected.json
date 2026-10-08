@@ -1,0 +1,37 @@
+{
+  "case": "state-id-untracked-file-same-id",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.8",
+    "§6.3",
+    "§2.9",
+    "D223",
+    "D87"
+  ],
+  "what_this_pins": "**한쪽 머신에만 미추적 파일이 있어도 `repository_state_id`는 같다**(D223) — 집합은 HEAD 트리의 경로라 샌드박스의 `build/classes/…/OrderService.class`·jacoco 산출물·편집기 임시 파일은 밖이다. 변조(`all_worktree` — 작업트리의 모든 파일): 미추적 파일이 들어가 id가 달라진다 — 검증 트리 id가 어느 커밋의 id와도 같을 수 없던 자리(F3-16).",
+  "canonical_encoding": "RFC8785-JCS",
+  "paths_in_id": {
+    "before": [
+      "src/main/java/com/example/order/OrderPolicy.java",
+      "src/main/java/com/example/order/OrderService.java"
+    ],
+    "after": [
+      "src/main/java/com/example/order/OrderPolicy.java",
+      "src/main/java/com/example/order/OrderService.java"
+    ]
+  },
+  "repository_state_id": {
+    "before": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+    "after": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0"
+  },
+  "mutation": {
+    "rule": "all_worktree",
+    "before": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+    "after": "sha256:110e28464ea7369d322d8b41d6034229242680d9dbc2fe6f02efc6f70e1ec5a2"
+  },
+  "assertions": {
+    "clean_checkout_equals_commit_tree": true,
+    "same_repository_state_id": true,
+    "mutation_gives_the_opposite": true
+  }
+}

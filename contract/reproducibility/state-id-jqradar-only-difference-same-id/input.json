@@ -1,0 +1,55 @@
+{
+  "case": "state-id-jqradar-only-difference-same-id",
+  "contract_refs": [
+    "§2.8",
+    "§6.3",
+    "§2.9",
+    "D223",
+    "D87"
+  ],
+  "what_this_pins": "**`.jqradar/` 사건 파일만 다른 두 트리는 같은 `repository_state_id`다**(D223) — apply가 `claimed`로 쓰고(첫 커밋) validate가 결과로 갱신한(둘째 커밋) 사건 파일은 자기 검증 결과를 담아 검증 뒤 바뀐다; 자기 해시를 담는 파일은 그 해시의 대상일 수 없다. 변조(`with_jqradar` — `.jqradar/`를 빼지 않음): 두 커밋의 id가 달라진다 — 사건을 실은 claim의 머지 트리가 검증 트리와 구조적으로 같아질 수 없던 자리(O3-20), §7 원장 행의 `merge_drift: true`가 그 증상이었다.",
+  "repo": {
+    "tree": "tree/",
+    "history": [
+      {
+        "message": "seed: order domain",
+        "paths": [
+          "src/main/java/com/example/order/OrderPolicy.java"
+        ]
+      },
+      {
+        "message": "feat: order total",
+        "paths": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      }
+    ],
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-01-02T03:04:05+00:00",
+    "step_seconds": 86400
+  },
+  "state_id_variant": {
+    "commit_steps": [
+      {
+        "message": "claim fnd-dx-3f9a",
+        "at_unix": 1767500000,
+        "write": {
+          ".jqradar/events/debt-2026Q4/fnd-dx-3f9a/pr41.json": "{\"event\": \"claimed\", \"pr\": 41}\n"
+        },
+        "snapshot_as_before": true
+      },
+      {
+        "message": "record validation",
+        "at_unix": 1767503600,
+        "write": {
+          ".jqradar/events/debt-2026Q4/fnd-dx-3f9a/pr41.json": "{\"event\": \"claimed\", \"pr\": 41, \"validation\": {\"verdict\": \"validated\", \"validated_tree_id\": \"sha256:…\"}}\n"
+        }
+      }
+    ],
+    "expect": "same",
+    "mutation": "with_jqradar"
+  }
+}

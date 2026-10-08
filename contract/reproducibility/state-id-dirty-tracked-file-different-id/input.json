@@ -1,0 +1,41 @@
+{
+  "case": "state-id-dirty-tracked-file-different-id",
+  "contract_refs": [
+    "§2.8",
+    "§6.3",
+    "§2.9",
+    "D223",
+    "D87"
+  ],
+  "what_this_pins": "**추적 파일을 작업트리에서 수정하면 `repository_state_id`가 달라진다**(D223 — 내용은 작업트리 바이트). 변조(`commit_blobs` — 내용까지 커밋 블롭): 더러운 작업트리를 스캔해도 깨끗한 HEAD와 같은 id를 인쇄한다 — '무엇을 스캔했나'를 거짓으로 말하는 길, D223이 포기했다. 미커밋 **새** 파일(HEAD에 없는 경로)은 이 id 밖이고 적격 목록(D210)의 `uncommitted`(D189)가 `analysis_input_id`로 잡는다.",
+  "repo": {
+    "tree": "tree/",
+    "history": [
+      {
+        "message": "seed: order domain",
+        "paths": [
+          "src/main/java/com/example/order/OrderPolicy.java"
+        ]
+      },
+      {
+        "message": "feat: order total",
+        "paths": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      }
+    ],
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-01-02T03:04:05+00:00",
+    "step_seconds": 86400
+  },
+  "state_id_variant": {
+    "modify_tracked": {
+      "src/main/java/com/example/order/OrderService.java": "package com.example.order;\n\nclass OrderService { int dirty; }\n"
+    },
+    "expect": "different",
+    "mutation": "commit_blobs"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "case": "state-id-dirty-tracked-file-different-id",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.8",
+    "§6.3",
+    "§2.9",
+    "D223",
+    "D87"
+  ],
+  "what_this_pins": "**추적 파일을 작업트리에서 수정하면 `repository_state_id`가 달라진다**(D223 — 내용은 작업트리 바이트). 변조(`commit_blobs` — 내용까지 커밋 블롭): 더러운 작업트리를 스캔해도 깨끗한 HEAD와 같은 id를 인쇄한다 — '무엇을 스캔했나'를 거짓으로 말하는 길, D223이 포기했다. 미커밋 **새** 파일(HEAD에 없는 경로)은 이 id 밖이고 적격 목록(D210)의 `uncommitted`(D189)가 `analysis_input_id`로 잡는다.",
+  "canonical_encoding": "RFC8785-JCS",
+  "paths_in_id": {
+    "before": [
+      "src/main/java/com/example/order/OrderPolicy.java",
+      "src/main/java/com/example/order/OrderService.java"
+    ],
+    "after": [
+      "src/main/java/com/example/order/OrderPolicy.java",
+      "src/main/java/com/example/order/OrderService.java"
+    ]
+  },
+  "repository_state_id": {
+    "before": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+    "after": "sha256:8c9ab108803e8dab44aa13410f3898646b3b361860fc897871e11a023d4f9d19"
+  },
+  "mutation": {
+    "rule": "commit_blobs",
+    "before": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0",
+    "after": "sha256:e6a4a46b8ded0ee23568bb37d79001802eeafb33446e97824df1f00dd3f994c0"
+  },
+  "assertions": {
+    "clean_checkout_equals_commit_tree": true,
+    "different_repository_state_id": true,
+    "mutation_gives_the_opposite": true
+  }
+}
