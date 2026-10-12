@@ -3,7 +3,7 @@
 #
 #   sh ci/check-all.sh                       # 전부
 #   sh ci/check-all.sh contracts             # contract/*/compute.py --check 여섯
-#   sh ci/check-all.sh landing               # 결정 착지 (자기 반례 먼저)
+#   sh ci/check-all.sh landing               # 결정 착지·reproduce 표시·§2.9 케이스 이름 (자기 반례 먼저)
 #   sh ci/check-all.sh review-entry          # 검토 입구의 자기 반례
 #   sh ci/check-all.sh fixture-change [base] [head]
 #
@@ -49,6 +49,10 @@ if [ "$section" = all ] || [ "$section" = landing ]; then
   run "reproduce 종류 표시 — 자기 반례" sh ci/check-reproduce-kinds.sh --selftest
   run "§2.8 (i) ↔ id 스펙 — 자기 반례" "$PY" contract/reproducibility/compute.py --selftest
   run "reproduce 종류 표시 — prd.md"    sh ci/check-reproduce-kinds.sh prd.md
+  # D236 — §2.9 G0 행이 이름으로 가리키는 케이스가 디렉터리로 있는가. 가리키는 쪽을 택한 이상
+  # 가리킴이 끊기는 것을 잡는 장치가 함께 있어야 한다. 반례 먼저.
+  run "§2.9 케이스 이름 — 자기 반례" "$PY" ci/check-case-names.py --selftest
+  run "§2.9 케이스 이름 — prd.md"    "$PY" ci/check-case-names.py prd.md
 fi
 
 if [ "$section" = all ] || [ "$section" = review-entry ]; then
