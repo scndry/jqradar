@@ -26,11 +26,12 @@
 ## 케이스 모양
 
 ```
-<케이스>/input.json      {check, kind, schema, base, patch|text_patch, mechanism, contract_ref, what}
+<케이스>/input.json      {check, kind, schema, base, patch|text_patch, table_patch?, mechanism, contract_ref, what}
 <케이스>/expected.json    compute.py가 만든다 — verdict와 거부된 경로
 ```
 
 - `base` — `prd:§7:<블록>`은 **prd.md에서 직접** 읽는다. §7 예시가 곧 픽스처이므로(D26) 복사본을 두면 드리프트한다. §7에 예시가 없는 `change`만 [`base/`](base/)에 손으로 쓴 문서를 둔다. G1에 §7 예시가 `contract/lens/sample-service/`에서 **생성**되면(D128) `prd:` 참조가 그쪽으로 옮겨간다.
+- **스케일 린트의 표는 §2.5 `D155-1`을 읽는다**(D235) — 린트 안에 표의 사본이 없다. 첫째 칸이 행의 뜻, 둘째 칸의 괄호 밖 백틱이 필드 이름, 셋째 칸이 스케일이다. `table_patch`(scale_lint만)는 그 표 원문을 바꾼 뒤 읽는다 — `scale-table-is-read`(이름을 넣으면 본다)·`scale-table-name-removed`(빼면 못 본다)가 표를 읽는 경로가 실제로 쓰인다는 증거다. 표를 읽지 못하면(머리가 없거나, 모르는 행, 괄호 밖의 이름 아닌 백틱) 린트는 조용히 넘어가지 않고 멈춘다.
 - `kind` — `positive` / `hard_rule` / `structural`. 판정 기준은 하나다: **계약을 모르는 사람이 §7 예시만 보고 스키마를 써도 잡혔을까?** 아니오면 `hard_rule`.
 
 ## 실행

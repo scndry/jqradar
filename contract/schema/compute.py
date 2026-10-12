@@ -54,58 +54,130 @@ PRD_BLOCKS = ["report", "gate", "validate", "fixture_change", "campaign", "event
 # 소수가 오면 위반이고(decimal_in_integer_field), 스케일이 있는 행의 이름에 정수 리터럴이 오면
 # 후행 0을 뗀 것이라 위반이다(integer_in_scaled_field — "0.38이 아니라 0.3800").
 SCALES_VERSION = "D155-1"
-KIND_SCALE = {"integer": 0, "ratio": 4, "lens": 1, "lakos": 2, "elapsed_days": 2}
-FIELD_KIND = {
-    **{f: "integer" for f in (
-        "cx", "loc", "file_tokens", "chg_commits", "chg_days", "churn", "fan_in", "twins",
-        "active_twins", "shared", "union_dup_tokens", "self_dup_tokens", "Ca", "Ce", "CCD",
-        "components", "n_ranked", "n_population", "valid_n", "unknown_n",
-        "change_exposure_90d", "distinct_authors_90d", "team_count", "teams_folded",
-        "authors_unmapped",
-        "files_examined", "files_unmeasured",      # gate new_p1_smell 행의 본 수·못 본 수 (D208)
-        "unmapped_classes",                         # bytecode_scope 진단값 (D211)
-        "eligible_n")},                             # gate 핫스팟 행의 자격 집합 수 (D215)
-    # D184 — '일'은 초/86400의 유리수, 표시 2자리(0.01일 = 14분).
-    **{f: "elapsed_days" for f in ("age_last_days", "authors_window_days", "debt_age_days")},
-    **{f: "ratio" for f in (
-        "pct", "lens_pct", "dup_extent", "active_twin_ratio", "tc", "ownership_max_share",
-        "minor_contributor_share", "I", "A", "D", "RACD",
-        "delta", "changed_line_coverage")},                  # gate·validate (D185)
-    **{f: "lens" for f in ("H", "Dx", "F", "composite", "priority")},
-    **{f: "lakos" for f in ("ACD", "CCD_balanced", "NCCD", "nccd")},   # gate의 [base, head]는 소문자 그대로 (D185)
-}
-SUMMARY_KEYS = ("median", "iqr", "p90", "max")
-# 요약 통계 행에 이름으로 든 것 — `median_files_per_commit`은 짝수면 .5라 2자리 (D185)
-SUMMARY_NAMED = {"median_files_per_commit": 2,
-                 "p90_all": 2}   # evidence의 P90(age_last_days) — 경과 시간의 요약, §0-40 보정
+#
+# **린트는 표를 읽는다**(D235) — 린트 안에 표의 사본을 두지 않는다. 손으로 베낀 사본은 표가 바뀔 때
+# 한쪽만 바뀐다: D199·D201이 정수 행에 넣은 `a_dup_tokens`·`b_dup_tokens`·`chg_commits_a`·
+# `chg_commits_b`가 사본에 없어서, 그 이름의 소수 변조가 "정수여야 한다"가 아니라 "표에 없다"로
+# 거부됐다(4차 S4-29). 읽는 규칙(§2.5 표 아래 문장):
+#   - 첫째 칸은 행의 뜻(종류)이다 — 정수·경과 시간·비율·렌즈·Lakos·요약 통계·파라미터. 뜻 → 종류
+#     이름의 대응은 코드가 갖는다(`ROW_KIND`). 모르는 행이 생기면 조용히 건너뛰지 않고 멈춘다.
+#   - 둘째 칸의 **괄호 밖 백틱 이름**이 필드 이름이고, 괄호 안은 설명이다.
+#   - 셋째 칸이 스케일이다 — "정수"면 0, 아니면 `**n자리**`.
+#   - 요약 통계 행은 이름이 첫째 칸의 괄호 안에 있다(`spread`의 `median`… — 그릇 이름 `spread`는
+#     빼고). 그 이름들의 스케일은 대상 측정에 따르므로(규칙이지 목록이 아니다) 아래
+#     `SUMMARY_SCALE_BY_TARGET`·`SUMMARY_NAMED_TARGET`이 정한다. 표에 없는 규칙 이름이 있으면 멈춘다.
+SCALE_TABLE_HEADER = "| 종류 | 필드 | 스케일 |"
+ROW_KIND = (("정수", "integer"), ("경과 시간", "elapsed_days"), ("비율", "ratio"), ("렌즈", "lens"),
+            ("Lakos", "lakos"), ("요약 통계", "summary"), ("파라미터", None))
+# 요약 통계의 스케일은 대상 측정의 종류에 따른다(D155·D185) — 정수 측정 2자리(type-7 보간의 .25·.75),
+# 비율 4자리, 렌즈 1자리; 경과 시간(일)의 요약도 2자리 — 대상 자체가 2자리 유리수다(D184, §0-40 보정).
+SUMMARY_SCALE_BY_TARGET = {"integer": 2, "ratio": 4, "lens": 1, "elapsed_days": 2}
+# 요약 통계 행에 이름으로 든 것의 대상 — `median_files_per_commit`은 커밋당 파일 수(정수 측정)의
+# 중앙값이라 짝수면 .5(D185), `p90_all`은 evidence의 P90(age_last_days) — 경과 시간의 요약.
+SUMMARY_NAMED_TARGET = {"median_files_per_commit": "integer", "p90_all": "elapsed_days"}
+_IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 
 
-def scale_for(path: list, parent: dict | None = None) -> int | None:
-    """경로의 유리수 필드에 배정된 스케일. 표에 없으면 None."""
+def _names_outside_parens(cell: str) -> list[str]:
+    """칸의 괄호 밖 백틱 이름. 백틱 안의 괄호는 깊이를 바꾸지 않는다."""
+    names, depth, i = [], 0, 0
+    while i < len(cell):
+        ch = cell[i]
+        if ch == "`":
+            j = cell.index("`", i + 1)
+            if depth == 0:
+                names.append(cell[i + 1:j])
+            i = j + 1
+            continue
+        if ch == "(":
+            depth += 1
+        elif ch == ")":
+            if depth == 0:
+                raise ValueError(f"표 {SCALES_VERSION}: 닫는 괄호가 남는다 — {cell!r}")
+            depth -= 1
+        i += 1
+    if depth:
+        raise ValueError(f"표 {SCALES_VERSION}: 괄호가 닫히지 않았다 — {cell!r}")
+    return names
+
+
+def read_scale_table(prd_text: str) -> dict:
+    """§2.5 표 `D155-1`을 읽어 린트의 표를 만든다(D235). 읽을 수 없으면 멈춘다 — 빈 표는 모든 유리수를
+    '표에 없다'로 만들어 린트를 조용히 바꾼다."""
+    lines = prd_text.split("\n")
+    heads = [i for i, l in enumerate(lines) if l.strip() == SCALE_TABLE_HEADER]
+    if len(heads) != 1:
+        raise ValueError(f"표 {SCALES_VERSION}의 머리 `{SCALE_TABLE_HEADER}`가 {len(heads)}개 — 하나를 기대했다")
+    field_kind: dict[str, str] = {}
+    kind_scale: dict[str, int] = {}
+    summary_names: set[str] = set()
+    seen_kinds = []
+    for line in lines[heads[0] + 2:]:
+        row = line.strip()
+        if not row.startswith("|"):
+            break
+        cells = [c.strip() for c in row.strip("|").split("|")]
+        if len(cells) != 3:
+            raise ValueError(f"표 {SCALES_VERSION}: 칸이 셋이 아닌 행 — {row[:80]!r}")
+        label, fields, scale_text = cells
+        kinds = [k for prefix, k in ROW_KIND if label.startswith(prefix)]
+        if len(kinds) != 1:
+            raise ValueError(f"표 {SCALES_VERSION}: 모르는 행 `{label[:40]}` — 행을 더했으면 ROW_KIND에 뜻을 더한다")
+        kind = kinds[0]
+        seen_kinds.append(kind)
+        if kind is None:
+            continue
+        if kind == "summary":
+            summary_names |= set(re.findall(r"`([^`]+)`", label)) - {"spread"}
+            continue
+        if scale_text.startswith("정수"):
+            kind_scale[kind] = 0
+        else:
+            m = re.search(r"\*\*(\d+)자리\*\*", scale_text)
+            if not m:
+                raise ValueError(f"표 {SCALES_VERSION}: `{label}` 행의 스케일을 읽지 못했다 — {scale_text[:40]!r}")
+            kind_scale[kind] = int(m.group(1))
+        for name in _names_outside_parens(fields):
+            if not _IDENT.fullmatch(name):
+                raise ValueError(f"표 {SCALES_VERSION}: `{label}` 행의 괄호 밖 백틱 `{name}`은 필드 이름이 아니다 — 설명은 괄호 안에")
+            if name in field_kind:
+                raise ValueError(f"표 {SCALES_VERSION}: `{name}`이 두 행에 있다({field_kind[name]}·{kind})")
+            field_kind[name] = kind
+    missing = {k for _, k in ROW_KIND if k} - set(seen_kinds)
+    if missing:
+        raise ValueError(f"표 {SCALES_VERSION}: 행이 없다 — {sorted(missing)}")
+    stale = set(SUMMARY_NAMED_TARGET) - summary_names
+    if stale:
+        raise ValueError(f"표 {SCALES_VERSION}: 요약 통계 규칙의 이름이 표에 없다 — {sorted(stale)}")
+    return {"field_kind": field_kind, "kind_scale": kind_scale,
+            "summary_keys": summary_names - set(SUMMARY_NAMED_TARGET)}
+
+
+def scale_for(path: list, parent: dict | None, table: dict) -> int | None:
+    """경로의 유리수 필드에 배정된 스케일. 표에 없으면 None. `table`은 `read_scale_table`이 읽은 것."""
     leaf = str(path[-1])
     if leaf.isdigit() and len(path) >= 2:
         # 배열 원소 — 이름은 배열의 키다(`gate`의 `nccd: [base, head]`, D185).
-        return scale_for(path[:-1], parent)
-    if leaf in SUMMARY_NAMED:
-        return SUMMARY_NAMED[leaf]
+        return scale_for(path[:-1], parent, table)
+    if leaf in SUMMARY_NAMED_TARGET:
+        return SUMMARY_SCALE_BY_TARGET[SUMMARY_NAMED_TARGET[leaf]]
     if leaf == "value" and isinstance(parent, dict) and "measure" in parent:
         # 증거의 `value`는 그 측정의 값이다 — 스케일도 그 측정의 것(표 적용, 확장 아님).
-        kind = FIELD_KIND.get(str(parent["measure"]))
-        return KIND_SCALE[kind] if kind else None
-    if leaf in SUMMARY_KEYS and "spread" in [str(p) for p in path]:
+        kind = table["field_kind"].get(str(parent["measure"]))
+        return table["kind_scale"][kind] if kind else None
+    if leaf in table["summary_keys"] and "spread" in [str(p) for p in path]:
         # 요약 통계는 대상 측정에 따른다(D155). `cx.java`처럼 언어 접미어가 붙을 수 있다.
         measure = str(path[-2]).split(".")[0]
-        kind = FIELD_KIND.get(measure)
-        # 경과 시간(일)의 요약도 2자리 — 대상 자체가 2자리 유리수다(D184).
-        return {"integer": 2, "ratio": 4, "lens": 1, "elapsed_days": 2}.get(kind)
+        kind = table["field_kind"].get(measure)
+        return SUMMARY_SCALE_BY_TARGET.get(kind)
     if len(path) >= 2 and str(path[-2]) == "percentiles":
         return 4
     if len(path) >= 3 and str(path[-3]) == "percentiles":
         # D168 — 두 단계 기록 `percentiles.<field>.<population>`: 리프 키가 모집단 이름이어도
         # 값은 같은 `pct`다. 표의 이름은 경로에서 찾는다(§2.5 표 D155-1 아래 문장).
         return 4
-    kind = FIELD_KIND.get(leaf)
-    return KIND_SCALE[kind] if kind else None
+    kind = table["field_kind"].get(leaf)
+    return table["kind_scale"][kind] if kind else None
 
 
 class _Dec(str):
@@ -150,8 +222,7 @@ def strip_jsonc(text: str) -> str:
     return "".join(out)
 
 
-def prd_blocks() -> dict[str, str]:
-    text = PRD.read_text(encoding="utf-8")
+def prd_blocks(text: str) -> dict[str, str]:
     section = text[text.index("\n## 7. "):text.index("\n### 7.1 ")]
     found = re.findall(r"```jsonc\n(.*?)\n```", section, flags=re.DOTALL)
     if len(found) != len(PRD_BLOCKS):
@@ -219,7 +290,7 @@ def decimals(literal: str) -> int | None:
     return len(literal.split(".", 1)[1]) if "." in literal else 0
 
 
-def scale_violations(text: str) -> list[dict]:
+def scale_violations(text: str, table: dict) -> list[dict]:
     """`double`을 거치지 않고 리터럴 원문으로 검사한다(D125). 규칙은 표 `D155-1`(D155)."""
     doc = json.loads(text, parse_float=_Dec, parse_int=_Int)
     found: list[dict] = []
@@ -233,14 +304,14 @@ def scale_violations(text: str) -> list[dict]:
                 walk(v, path + [i], parent)
         elif type(node) is _Int:
             # D155·D185 — 스케일이 있는 행의 이름에 정수 리터럴이면 후행 0을 뗀 것이다(90 ≠ 90.00).
-            scale = scale_for(path, parent)
+            scale = scale_for(path, parent, table)
             if scale:
                 found.append({"path": "/" + "/".join(map(str, path)), "literal": node,
                               "problem": "integer_in_scaled_field", "allowed_scale": scale})
         elif type(node) is _Dec:                       # 소수 리터럴. 문자열은 보지 않는다
             where = "/" + "/".join(map(str, path))
             got = decimals(node)
-            scale = scale_for(path, parent)
+            scale = scale_for(path, parent, table)
             if got is None:
                 found.append({"path": where, "literal": node, "problem": "exponent_notation"})
             elif scale is None:
@@ -340,7 +411,7 @@ def order_violations(document) -> list[dict]:
     return out
 
 
-def run_case(inp: dict, blocks: dict[str, str], validator_cls) -> dict:
+def run_case(inp: dict, blocks: dict[str, str], validator_cls, prd_text: str, table: dict) -> dict:
     check = inp["check"]
     out = {
         "case": inp["case"],
@@ -364,7 +435,10 @@ def run_case(inp: dict, blocks: dict[str, str], validator_cls) -> dict:
         text = apply_text_patch(text, inp["text_patch"])
 
     if check == "scale_lint":
-        violations = scale_violations(text)
+        if inp.get("table_patch"):
+            # 표를 읽는다는 증거(D235): §2.5 표 원문을 바꾸면 린트가 바뀐다. 사본이었다면 그대로다.
+            table = read_scale_table(apply_text_patch(prd_text, inp["table_patch"]))
+        violations = scale_violations(text, table)
         out["verdict"] = "reject" if violations else "accept"
         out["violations"] = violations
         return out
@@ -442,7 +516,9 @@ def main() -> int:
               file=sys.stderr)
         return 2
 
-    blocks = prd_blocks()
+    prd_text = PRD.read_text(encoding="utf-8")
+    blocks = prd_blocks(prd_text)
+    table = read_scale_table(prd_text)
     dirs = sorted(p.parent for p in CASE_DIR.glob("*/input.json"))
     if args.cases:
         dirs = [p for p in dirs if p.name in set(args.cases)]
@@ -450,7 +526,7 @@ def main() -> int:
     failures, results = 0, []
     for case_dir in dirs:
         inp = json.loads((case_dir / "input.json").read_text(encoding="utf-8"))
-        result = run_case(inp, blocks, Draft202012Validator)
+        result = run_case(inp, blocks, Draft202012Validator, prd_text, table)
         results.append(result)
 
         expected_verdict = "accept" if inp["kind"] == "positive" else "reject"
