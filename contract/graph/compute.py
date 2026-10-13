@@ -381,9 +381,19 @@ def build_expected(inp: dict) -> dict:
         i = Fraction(ce, ca + ce) if (ca + ce) else None
         a = Fraction(abstract[n], total[n]) if total[n] else None   # D181 — 분모는 모든 클래스
         d = abs(a + i - 1) if (a is not None and i is not None) else None
-        entry = {"id": n, "Ca": ca, "Ce": ce, "I": i, "A": a, "D": d, "class_count": total[n]}
+        # D264 — zone = Main Sequence의 어느 쪽인가: A + I와 1의 정확 비교(임계 없음, 크기는 D). I가 null이면 null(D180).
+        zone = None
+        if a is not None and i is not None:
+            zone = "stable-concrete" if a + i < 1 else ("main-sequence" if a + i == 1 else "unstable-abstract")
+        entry = {"id": n, "Ca": ca, "Ce": ce, "I": i, "A": a, "D": d, "zone": zone, "class_count": total[n]}
         if (ca + ce) == 0:
             entry["reason"] = "isolated_component"
+        if inp.get("zone_mutations") and a is not None and i is not None:
+            # 포기한 길 — 사분면(I·A를 1/2에서 가른다): 절대 임계라 B.3·D2와 부딪친다. 어디서 갈리는지 기록한다.
+            half = Fraction(1, 2)
+            quadrant = ("stable-concrete" if i < half and a < half else
+                        "unstable-abstract" if i >= half and a >= half else None)
+            entry["zone_mutation_quadrant"] = {"zone": quadrant, "differs": quadrant != zone}
         components.append(entry)
     out["components"] = components
 

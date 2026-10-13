@@ -1,0 +1,24 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "graph.components[].zone — Main Sequence의 어느 쪽인가(v3.10.20 D264)",
+    "old": "계산기가 `zone`을 내지 않았다 — §2.2에 경계가 없어 §7의 `stable-concrete`를 다시 계산할 수 없었다(SESSION5)",
+    "new": "컴포넌트마다 `zone` 한 줄: `A + I < 1` `stable-concrete`, `= 1` `main-sequence`, `> 1` `unstable-abstract`, I가 null(고립)이면 null. 13 케이스에서 합 78줄이 더해졌고 다른 값은 하나도 바뀌지 않았다(stable-concrete 46 · main-sequence 15 · null 15 · unstable-abstract 2)",
+    "note": "추가만 있는 변경이다 — 기존 수(Ca·Ce·I·A·D·NCCD)는 그대로. `nccd-compare-same-n`은 컴포넌트를 내지 않아 움직이지 않았다. `zone_note`의 문구는 §2.2 한 자리라 계산기는 `zone`만 낸다. 새 경계 케이스 `zone-side-of-main-sequence`와 스키마 열거·변조 `report-zone-not-in-enum`이 같은 커밋에 있다.",
+    "fixtures": [
+      "graph/auto-longest-common-prefix",
+      "graph/auto-multiple-roots",
+      "graph/auto-oversized-child-splits",
+      "graph/auto-oversized-grandchild-not-split",
+      "graph/auto-single-child-descends",
+      "graph/component-cycle",
+      "graph/cycle-class-set-folded",
+      "graph/deep-enterprise-packages",
+      "graph/external-edges",
+      "graph/fan-in-folds-nested-classes",
+      "graph/generated-source-excluded-by-propagation",
+      "graph/nccd-cross-check",
+      "graph/pair-static-dependency-folded"
+    ]
+  }
+}

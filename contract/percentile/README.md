@@ -46,6 +46,7 @@ Q    = 9 + frac*(100-9) = 18.09999999999996767...
 | IQR=0 → low | median=0·IQR=0·N≥200에서 `IQR < 0.25·median`은 0<0이라 놓친다. `IQR = 0` 절이 잡는다 | [`iqr-zero-low-confidence/`](iqr-zero-low-confidence/) |
 | `n_ranked ≠ n_population` | 렌즈 케이스가 26/21로 이미 덮는다 | [`lens-percentile-zero-included/`](lens-percentile-zero-included/) |
 | `median`·`IQR`도 type-7 | P90 케이스가 같은 배열에서 median 5.5·IQR 4.5를 함께 낸다 | [`p90-type7/`](p90-type7/) |
+| `unknown_n`은 null 전부 | **D263** — 사유 넷(`age_unknown`·`uncommitted`·`rename_ancestry_lost`·`invalid_metadata`)이 섞여 `unknown_n` = 4, `valid_n + unknown_n = n`; 변조(`age_unknown`만)는 1 | [`unknown-n-counts-every-null/`](unknown-n-counts-every-null/) |
 | 언어 분리 | `cx` 백분위가 java/kotlin 모집단에서 따로 계산됨(D12) | **미작성** |
 | 0 팽창 | 0이 다수인 성분에서 동점 평균 순위가 0에 주는 pct | **미작성** |
 

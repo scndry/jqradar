@@ -29,6 +29,7 @@
 | [`deep-enterprise-packages/`](deep-enterprise-packages/) | **P8의 합성 리포**(§9) — 깊은 기업형 패키지에서 `auto`가 업무 영역을 내는가 |
 | [`cycle-class-set-folded/`](cycle-class-set-folded/) | **D259** — 순환 finding의 클래스 집합 = SCC의 서로 다른 멤버 컴포넌트를 잇는 간선의 양 끝을 D211로 접은 최상위 타입. 람다·익명은 바깥 타입으로, 순환 간선 없는 같은 컴포넌트의 클래스는 밖. 변조 둘(접지 않음·모든 멤버 클래스) |
 | [`pair-static-dependency-folded/`](pair-static-dependency-folded/) | **D260** — 쌍의 `static_dependency` = 접힌 두 파일 사이 어느 방향이든 직접 간선(`fan_in`과 같은 단위, D222). 변조 셋(한 방향만·간접 포함·접지 않음)이 각각 한 쌍에서 어긋난다 |
+| [`zone-side-of-main-sequence/`](zone-side-of-main-sequence/) | **D264** — `zone` = Main Sequence의 어느 쪽(`A + I`와 1의 정확 비교, 임계 없음). `mid`(1/2, 1/2)는 정확히 `main-sequence`; 고립 컴포넌트는 null. 포기한 사분면은 `mid`를 모서리 이름으로 부른다 |
 
 `deep-enterprise-packages/`가 `docs/battery.md`가 예고한 P8 합성 리포다. 패키지가 6–7단계일 때 `auto`가 기술 계층(domain·adapter)이 아니라 업무 영역(orders·payments·shipping·shared)으로 접는지를 본다. P8은 이것을 아키텍트 2명의 블라인드 주석과 대조하고(inter-rater κ), 이 픽스처는 그 대조의 **입력**을 결정적으로 고정한다.
 

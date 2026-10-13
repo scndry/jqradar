@@ -36,6 +36,9 @@ import jcs  # noqa: E402
 from javasource import GENERATED_ANNOTATIONS, top_level_declarations  # noqa: E402  — 주석·문자열 가르기는 history/와 같은 구현
 
 GENERATED_BY = "contract/reproducibility/compute.py"
+# §2.7·D262 — 창의 1개월 = 2,629,800초(365.25/12일, 정확한 정수 초). 일로 반올림하지 않는다 — 반올림 규칙이
+# 구현마다 달라(24개월 = 730.5일: 파이썬 짝수 반올림 730, Java Math.round 731) id가 갈린다. 하한은 포함.
+MONTH_SECONDS = 2_629_800
 
 # §2.8 — `analysis_input_id`의 **정규 인코딩은 RFC 8785 JCS**(D138). 해시는 바이트에
 # 대한 것이므로 입력을 바이트로 펴는 방법이 계약이다. 이전 판은 여기서
@@ -173,7 +176,7 @@ def history_facts(workdir: Path, files: list[str], parameters: dict) -> dict:
     by_sha = {c["sha"]: c for c in commits}
     head = commits[0]
     months, max_commits = int(parameters["window.months"]), int(parameters["window.max_commits"])
-    earliest = head["committer_time"] - round(months * 30.4375) * 86400
+    earliest = head["committer_time"] - months * MONTH_SECONDS
     non_merge = [c for c in commits if not c["is_merge"]]
     selected = [c for c in non_merge if c["committer_time"] >= earliest][:max_commits]
     oldest = selected[-1]["committer_time"] if selected else head["committer_time"]

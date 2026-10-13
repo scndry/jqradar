@@ -30,6 +30,7 @@
       "I": 1,
       "A": 0,
       "D": 0,
+      "zone": "main-sequence",
       "class_count": 1
     },
     {
@@ -39,6 +40,7 @@
       "I": null,
       "A": 0,
       "D": null,
+      "zone": null,
       "class_count": 1,
       "reason": "isolated_component"
     },
@@ -49,6 +51,7 @@
       "I": 0,
       "A": 0,
       "D": 1,
+      "zone": "stable-concrete",
       "class_count": 1
     },
     {
@@ -58,6 +61,7 @@
       "I": 1,
       "A": 0,
       "D": 0,
+      "zone": "main-sequence",
       "class_count": 1
     }
   ],

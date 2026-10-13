@@ -266,6 +266,15 @@ def build_expected(inp: dict) -> dict:
                 entry["n_population"] = n_declared
             if block.get("emit_percentiles", True):
                 entry["percentiles"] = pcts
+            # D263 — `unknown_n` = 유효 나이가 아닌 파일 수(사유 무관 — 사유는 각 파일의 `reason`). 변조 "age_unknown만"과 대조한다.
+            if block.get("check_unknown_n"):
+                unknown_n = sp.get("unknown_n", 0)
+                age_unknown_only = sum(1 for k, v in values.items() if v is None and reasons.get(k) == "age_unknown")
+                entry["unknown_n_check"] = {
+                    "valid_n_plus_unknown_n_equals_n": sp["valid_n"] + unknown_n == n_declared,
+                    "mutation_age_unknown_only": age_unknown_only,
+                    "mutation_differs": age_unknown_only != unknown_n,
+                }
             measures[measure] = entry
         populations[pop_name] = {"commit_granularity": granularity, "measures": measures}
     if populations:

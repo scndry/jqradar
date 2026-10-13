@@ -1,0 +1,14 @@
+{
+  "case": "report-zone-not-in-enum",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "structural",
+  "contract_ref": "D264",
+  "what": "`zone`은 Main Sequence의 어느 쪽인가의 세 이름(`stable-concrete`·`main-sequence`·`unstable-abstract`)과 null뿐이다(D264) — 열거 밖 이름(`zone-of-pain`)은 거부. 경계를 계약 밖에서 지은 이름은 다시 계산할 수 없는 표기다(B.4).",
+  "mechanism": "enum",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/components/0/zone"
+  ]
+}
