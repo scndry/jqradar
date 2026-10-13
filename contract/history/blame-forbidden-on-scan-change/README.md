@@ -40,12 +40,13 @@
 |---|---|
 | `must_be_caught` (4) | 규칙이 **무는지**. 하나라도 놓치면 `verdict: reject` |
 | `must_not_be_caught` (5) | 규칙이 **너무 물지 않는지**. 하나라도 걸리면 `verdict: reject` |
+| `path_check` (2 + 4) | 예외 접두사가 **넓지 않은지**(D255). 경로마다 예외인지를 같은 판정 함수로 보고 기대와 다르면 `verdict: reject` |
 
 ## 검사에서 빼는 자리
 
 **좁게** 둔다 — 넓게 빼면 검사가 공집합을 훑고 그 "통과"는 "검사하지 않았다"와 구별되지 않는다.
 
-- `io/jqradar/ledger/` — §5.6의 유일한 예외(캠페인 생성 1회, D57)
+- `io/jqradar/ledger/campaign/` — §5.6의 유일한 예외, 캠페인 생성·명시적 `--recompute` 경로(D57·D255). `ledger/` 전체가 아니다 — 원장 뷰·`claim` 경로는 검사 대상이다. 지금 리포에는 그 경로의 소스가 없어 자기 스캔으로는 드러나지 않으므로 `path_check`가 경로로 문다: 옛 접두사 `io/jqradar/ledger/`면 `ledger/view/`·`ledger/claim/`·`LedgerPaths.java`가 예외로 읽혀 reject, 끝의 `/`를 빼면 `ledger/campaignview/`가 샌다
 - `io/jqradar/arch/violations/` — 자체 ArchUnit 규칙의 반례. 일부러 어기는 것이 존재 이유다
 
 **테스트 소스 전체를 빼지 않는다.** 스캐너가 주석과 리터럴을 가르므로 계약을 인용하는 테스트 코드는 어차피 걸리지 않고, `scan`/`change`를 부르는 테스트는 걸려야 한다.

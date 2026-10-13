@@ -724,11 +724,16 @@ def build_expected(inp: dict, workdir: Path) -> dict:
 # 않는다" 같은 주석도 걸리는데, 그 주석은 여기 말고 계약 문서에 쓰는 것이 맞다.
 # 검사에서 빼는 자리. **좁게** 둔다 — 넓게 빼면 검사가 공집합을 훑고 그 "통과"는
 # "검사하지 않았다"와 구별되지 않는다.
-#   ledger/     §5.6의 유일한 예외 — 캠페인 생성 시 1회, 원장 finding 영역 한정(D57)
-#   violations/ 자체 ArchUnit 규칙의 반례. 일부러 어기는 것이 존재 이유다
+#   ledger/campaign/ §5.6의 유일한 예외 — 캠페인 생성·명시적 `--recompute` 경로(D57·D255).
+#                    `ledger/` 전체가 아니다: 원장 뷰·`claim` 경로는 검사 대상이다(D255)
+#   violations/      자체 ArchUnit 규칙의 반례. 일부러 어기는 것이 존재 이유다
 # 테스트 소스 전체를 빼지 않는다: 스캐너가 주석과 리터럴을 가르므로 계약을 인용하는
 # 테스트 코드는 어차피 걸리지 않고, scan/change를 부르는 테스트는 걸려야 한다.
-BLAME_SANCTIONED = ("io/jqradar/ledger/", "io/jqradar/arch/violations/")
+BLAME_SANCTIONED = ("io/jqradar/ledger/campaign/", "io/jqradar/arch/violations/")
+
+
+def is_blame_sanctioned(rel: str) -> bool:
+    return any(marker in rel for marker in BLAME_SANCTIONED)
 
 
 def split_java(source: str) -> tuple[str, list[str]]:
@@ -836,7 +841,7 @@ def check_no_blame(inp: dict) -> dict:
     for path in sorted(root.glob("jqradar-*/src/**/*.java")):
         rel = path.relative_to(root).as_posix()
         seen.append(rel)
-        if any(marker in rel for marker in BLAME_SANCTIONED):
+        if is_blame_sanctioned(rel):
             skipped.append(rel)
             continue
         scanned.append(rel)
@@ -862,6 +867,18 @@ def check_no_blame(inp: dict) -> dict:
                                 "evidence": evidence, "passed": not evidence})
     wrongly_caught = [f["name"] for f in false_positives if not f["passed"]]
 
+    # **경로 반례**(D255). 예외 접두사가 생성·재생성 경로보다 넓으면 원장 뷰·`claim`의 blame이
+    # 검사 밖으로 빠진다 — 지금 리포에는 그 경로의 소스가 없어 위 루프로는 드러나지 않는다.
+    # 경로마다 예외인지를 같은 판정 함수로 보고, 기대와 다르면 reject.
+    path_check = []
+    for want, key in (("sanctioned", "must_be_sanctioned"), ("scanned", "must_be_scanned")):
+        for sample in inp["path_check"][key]:
+            sanctioned = is_blame_sanctioned(sample["path"])
+            path_check.append({"path": sample["path"], "why": sample["why"], "must_be": want,
+                               "sanctioned": sanctioned,
+                               "passed": sanctioned == (want == "sanctioned")})
+    wrong_paths = [c["path"] for c in path_check if not c["passed"]]
+
     return {
         "case": inp["case"],
         "contract_refs": inp["contract_refs"],
@@ -885,7 +902,8 @@ def check_no_blame(inp: dict) -> dict:
         "violations": hits,
         "bite_check": bite,
         "false_positive_check": false_positives,
-        "verdict": "reject" if (hits or missed or wrongly_caught) else "accept",
+        "path_check": path_check,
+        "verdict": "reject" if (hits or missed or wrongly_caught or wrong_paths) else "accept",
         "note": ("G0에는 scan/change 코드가 없어 실제 스캔 대상이 0일 수 있다. "
                  "그래서 bite_check가 함께 있다 — 검사가 무는지는 공집합이 아니라 "
                  "반례가 증명한다."),

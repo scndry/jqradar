@@ -4,9 +4,10 @@
     "§2.7",
     "D18",
     "D113",
-    "§5.6"
+    "§5.6",
+    "D255"
   ],
-  "what_this_pins": "D113 — `scan`·`change` 경로에서 blame이 호출되면 **실패한다**. 값을 대조하는 것이 아니라 **부재**를 본다. §2.9가 이 검사를 `ledger/`(G2b)에서 `history/`(G0)로 옮긴 이유가 여기 있다: 강제 장치가 대상 코드보다 앞서야 한다. blame의 유일한 예외는 캠페인 생성 시 1회, 원장 finding 영역 한정이다(§5.6·D57) — 그래서 `io/jqradar/ledger/`는 검사에서 뺀다.\n\n**주석과 문자열 리터럴을 가르는 것이 이 케이스의 핵심이다.** 둘 다 보면 계약을 인용하는 주석이 걸려 규칙이 G1에 '계약을 설명하는 주석 금지'가 되고, 둘 다 안 보면 `new ProcessBuilder(\"git\", \"blame\", \"-p\")`를 놓친다. 주석은 버리고 리터럴은 남긴다.\n\n`must_be_caught` 넷과 `must_not_be_caught` 넷이 둘 다 있어야 규칙이 산다 — `schema/`가 긍정과 변조를 둘 다 요구하는 것과 같다(D124). 자체 ArchUnit 규칙 2가 같은 선을 바이트코드에서 지키지만 타입 의존만 보므로 `ProcessBuilder` 경로를 놓친다. 둘은 겹치는 것이 아니라 서로 다른 구멍을 막는다.",
+  "what_this_pins": "D113 — `scan`·`change` 경로에서 blame이 호출되면 **실패한다**. 값을 대조하는 것이 아니라 **부재**를 본다. §2.9가 이 검사를 `ledger/`(G2b)에서 `history/`(G0)로 옮긴 이유가 여기 있다: 강제 장치가 대상 코드보다 앞서야 한다. blame의 유일한 예외는 §5.6 — 캠페인 생성과 명시적 `--recompute`, 원장 finding 영역 한정이다(D57·D255) — 그래서 생성·재생성 경로 `io/jqradar/ledger/campaign/`만 검사에서 뺀다. `ledger/` 전체가 아니다: 원장 뷰·`claim` 경로는 검사 대상이고, 지금 리포에는 그 경로의 소스가 없으므로 `path_check`가 경로마다 예외인지를 판정해 문다(옛 접두사 `io/jqradar/ledger/`면 뷰·`claim`이 예외로 읽혀 reject).\n\n**주석과 문자열 리터럴을 가르는 것이 이 케이스의 핵심이다.** 둘 다 보면 계약을 인용하는 주석이 걸려 규칙이 G1에 '계약을 설명하는 주석 금지'가 되고, 둘 다 안 보면 `new ProcessBuilder(\"git\", \"blame\", \"-p\")`를 놓친다. 주석은 버리고 리터럴은 남긴다.\n\n`must_be_caught` 넷과 `must_not_be_caught` 넷이 둘 다 있어야 규칙이 산다 — `schema/`가 긍정과 변조를 둘 다 요구하는 것과 같다(D124). 자체 ArchUnit 규칙 2가 같은 선을 바이트코드에서 지키지만 타입 의존만 보므로 `ProcessBuilder` 경로를 놓친다. 둘은 겹치는 것이 아니라 서로 다른 구멍을 막는다.",
   "check": "no_blame_on_scan_change_path",
   "must_be_caught": [
     {
@@ -38,7 +39,7 @@
     {
       "name": "계약을 인용하는 줄 주석",
       "why": "이 리포의 코드 스타일이 정확히 이것이다 — JqradarArchRules.java도 compute.py도 계약 인용 주석으로 가득하다. 걸리면 규칙이 G1에 '계약을 설명하는 주석 금지'가 된다",
-      "source": "class ScanPath {\n    // §5.6 — blame의 유일한 예외는 캠페인 생성 시 1회다(D57).\n    void go() {}\n}"
+      "source": "class ScanPath {\n    // §5.6 — blame의 유일한 예외는 캠페인 생성·재생성 경로다(D57·D255).\n    void go() {}\n}"
     },
     {
       "name": "계약을 인용하는 javadoc",
@@ -60,5 +61,35 @@
       "why": "**이 리포에 실제로 있는 문장이다.** JqradarArchRulesTest의 @DisplayName이 규칙을 설명하며 `git.blame()`을 인용한다 — 처음 판이 이것을 잡았다. 리터럴이라고 다 증거는 아니다: 명령 조각 모양(토큰이 전부 CLI 형태)일 때만 증거이고 산문은 아니다",
       "source": "class ScanPathTest {\n    @DisplayName(\"어기면 잡는다 — git.blame()\")\n    void t() {}\n}"
     }
-  ]
+  ],
+  "path_check": {
+    "must_be_sanctioned": [
+      {
+        "path": "jqradar-ledger/src/main/java/io/jqradar/ledger/campaign/CampaignCreate.java",
+        "why": "§5.6의 예외 — 캠페인 생성·명시적 `--recompute`가 한정 blame을 돌리는 자리(D255)"
+      },
+      {
+        "path": "jqradar-core/src/test/java/io/jqradar/arch/violations/BlamesOnEveryScan.java",
+        "why": "자체 ArchUnit 규칙 2의 반례 — 일부러 어기는 것이 존재 이유다"
+      }
+    ],
+    "must_be_scanned": [
+      {
+        "path": "jqradar-ledger/src/main/java/io/jqradar/ledger/view/LedgerView.java",
+        "why": "원장 뷰 — 파생(앵커·HEAD 스캔) ⊕ 사건이라(§4.1) 한정 blame의 자리가 아니다(D255). 옛 접두사 `ledger/` 전체면 예외로 읽혔다"
+      },
+      {
+        "path": "jqradar-ledger/src/main/java/io/jqradar/ledger/claim/Claim.java",
+        "why": "`claim` 경로 — 같은 이유(D255)"
+      },
+      {
+        "path": "jqradar-ledger/src/main/java/io/jqradar/ledger/LedgerPaths.java",
+        "why": "`ledger/` 바로 아래의 실제 소스 — 생성·재생성 경로가 아니다"
+      },
+      {
+        "path": "jqradar-ledger/src/main/java/io/jqradar/ledger/campaignview/CampaignView.java",
+        "why": "접두사는 경로 조각 단위다 — 끝의 `/`를 빼면 `campaign`으로 시작하는 다른 패키지가 예외로 샌다"
+      }
+    ]
+  }
 }
