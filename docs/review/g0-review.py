@@ -309,13 +309,13 @@ ASSIGNED_STARTS = [
     ("5.7", "변경 리포트와 원장의 연결 — touched_legacy_findings의 kind가 이제 셋뿐(D227)·anchor_class 두 값(D213)·D191·D214가 §5.7 문장과 맞는가 — 결정 넷이 닿았는데 출발점이었던 적이 없다"),
 ]
 # 지난 라운드의 입력 해시 — 이번 입력이 그것들과 달라야 '입력을 바꾼' 라운드다(D151(b)). selftest가 본다.
-PREVIOUS_INPUT_HASHES = {"3차": "pairs@816c35bfca1d"}
+PREVIOUS_INPUT_HASHES = {"3차": "pairs@816c35bfca1d", "4차": "pairs@7525970dcc61"}
 
 QUESTIONS = [
     "두 절이 같은 이름을 **다른 뜻**으로 쓰는가?  (n이 모집단인지 랭킹 집합인지 — 실제로 갈렸다, D116)",
     "한 절이 요구하는 것을 다른 절이 **불가능하게** 하는가?  (F의 모집단 — 실제로 그랬다, D24)",
     "두 절을 순서대로 실행하면 **정의되지 않은 상태**가 생기는가?  (validated 뒤 머지 전에 다른 PR이 먼저 머지되면 — D91·D99)",
-    "한 절이 단언한 수·조건·예시 값이 그 절이 가리키는 픽스처나 §7 예시에서 **성립하는가**? — 답의 근거로 `expected.json`의 줄이나 계산기 출력을 **인용한다**.  (§2.9 cpd/ 행의 '20줄' — v3.10.11 보정; 3차 쌍 9는 기억에 기댔다)",
+    "**반례를 적는다**(D265): 한 절이 단언한 수·조건·예시 값이 그 절이 가리키는 픽스처나 §7 예시에서 **성립하지 않는가**(불일치), 또는 인용한 문장이 **두 읽기**를 허용해 같은 입력에서 다른 값이 나오는가(갈림)? — 입력(작게)·인용 문장·읽기(하나 또는 둘)·각 읽기의 값을 적는다; 근거로 `expected.json`의 줄이나 계산기 출력을 인용한다. 값을 적지 못하면 **후보**라고 적는다 — 반례는 주 세션이 리포에 실행 가능한 것으로 세우고 확인한다(D267: 후보는 G0을 막지 않는다).  (§2.9 cpd/ 행의 '20줄' — v3.10.11 보정; 창의 12개월이 365일인가 365.25일인가 — 다른 id, D262)",
 ]
 
 
@@ -439,18 +439,19 @@ def make_record(reviewer: str) -> Path:
 
 ### 발견 1
 - 쌍: (번호 — 자유·배정이면 그 번호)
-- 질문: (넷 중 몇째 — 넷째면 아래 '근거'에 `expected.json`의 줄이나 계산기 출력을 인용한다)
+- 질문: (넷 중 몇째 — 넷째면 아래 '반례'를 적는다)
 - 절:
 - 문장 A:
 - 문장 B:
 - 근거: (넷째 질문이면 필수 — 인용하지 못했으면 그렇다고 적는다: 붙여 넣은 범위 밖을 확인할 수 없었다는 것도 기록이다)
+- 반례: (입력·읽기·각 읽기의 값 — 값을 적지 못하면 "후보"라고 적는다; 실행 가능한 것은 주 세션이 세운다, D265·D267)
 - 무엇이 갈리나:
 - 의견:
 
 ## 판정
 
-- [ ] G0 #1 통과 — 모순 없음 (모호는 있어도 됨, 목록으로 남긴다)
-- [ ] 통과시키지 않음 — 발견 n건이 먼저 닫혀야 한다
+- [ ] G0 #1 통과 — 반례 없음 (후보는 있어도 됨, 목록으로 남긴다 — D265·D267)
+- [ ] 통과시키지 않음 — 반례 n건이 먼저 닫혀야 한다
 
 통과시키지 않기로 한 판단도 같은 자리에 적는다 — 그것은 도구가 일하고 있다는 증거다(§9 자기 적용 규칙).
 
@@ -506,6 +507,14 @@ SPLIT_RE = re.compile(r"분리\s*—\s*(D\d+)")
 SOURCE_RE = re.compile(r"(?:R\d+|[A-Z][A-Z0-9_]*)-\d+")
 SECTION_RE = re.compile(r"§\d+(?:\.\d+)?")
 IN_SCOPE_RE = re.compile(r"§2\.[1-9]$")
+# D265–D267 — 반례 단위의 표지(대응표 행 어디든). `반례 — <게이트>`: 리포에 실행 가능한 반례가 섰다(G0이면 G0을 막는다,
+# 그 밖이면 그 게이트의 입장 목록 — D266). `후보 — <게이트>`: 반례로 확인되지 않은 발견(PRD 공백 후보 — G0을 막지 않는다, D267).
+MARK_RE = re.compile(r"(반례|후보)\s*—\s*(G0|G1|G2b|G3)(?![A-Za-z0-9])")
+# 반례의 자리 — `docs/review/counterexamples/<key>/`(D265: 값을 낸 실행 가능한 것의 리포 안 위치).
+CX_RE = re.compile(r"docs/review/counterexamples/([^/`\s|]+)/")
+# 반례 key의 닫힘은 그 반례를 박은 G0 케이스의 이름을 든다(D265): `닫힘 — D<n> · G0 케이스 `<스위트>/<케이스>``.
+CASE_RE = re.compile(r"G0 케이스\s*`([a-z]+)/([a-z0-9-]+)`")
+GATES = ("G0", "G1", "G2b", "G3")
 
 
 # 개별 기록의 파일명 → key 접두어. 1차는 `리뷰어-<n>.md` → `R<n>`,
@@ -585,6 +594,69 @@ def _scope_of(sections: list[str]) -> str:
     return "안" if any(IN_SCOPE_RE.match(s) for s in sections) else "밖"
 
 
+def _marks(row: str) -> dict:
+    m = MARK_RE.search(row)
+    cx = CX_RE.search(row)
+    case = CASE_RE.search(row)
+    return {"mark": (m.group(1), m.group(2)) if m else None,
+            "cx": cx.group(1) if cx else None,
+            "case": f"{case.group(1)}/{case.group(2)}" if case else None}
+
+
+def g0_status(k: dict, root: Path = ROOT) -> tuple[str, str | None, str | None]:
+    """D265–D267 — key 하나의 반례 단위 상태 (상태, 게이트, 보고).
+
+    상태: `g0_open`(G0을 막는 열린 것) · `g0_closed`(반례를 G0 케이스로 박아 닫음) · `closed_legacy`(반례 규칙 전의 닫힘 —
+    소급하지 않는다) · `candidate`(PRD 공백 후보 — 막지 않는다) · `gate`(G0 밖 게이트의 반례 — 그 게이트의 목록) ·
+    `outside_legacy`(옛 범위 밖 — D152, G3 목록).
+
+    **표지 없는 열린 범위 안 key는 G0에 남는다**(보수적으로 — 반례가 세워지기 전, D265). 반례 key의 닫힘은 케이스 이름이
+    있고 그 디렉터리가 있어야 닫힘이다 — 없으면 열린 것으로 세고 보고한다(문장만 고쳐 닫는 길은 포기, D265).
+    한계: 표지 없는 key의 닫힘은 옛 닫힘으로 본다 — 반례 규칙 뒤에 표지 없이 닫는 것은 기계가 가르지 못하고 리뷰가 막는다.
+    """
+    mark = k.get("mark")
+    if mark and mark[0] == "후보":
+        return ("closed_legacy" if k["closed"] else "candidate", mark[1], None)
+    if mark and mark[0] == "반례" and mark[1] != "G0":
+        return ("gate", mark[1], None)
+    if mark and mark[0] == "반례":
+        if k["closed"]:
+            case = k.get("case")
+            if case and (root / "contract" / case).is_dir():
+                return ("g0_closed", "G0", None)
+            return ("g0_open", "G0", "케이스 없음")
+        if not (k.get("cx") and (root / "docs" / "review" / "counterexamples" / k["cx"]).is_dir()):
+            return ("g0_open", "G0", "반례 위치 없음")
+        return ("g0_open", "G0", None)
+    if k["scope"] == "밖":
+        return ("outside_legacy", "G3", None)
+    return ("closed_legacy" if k["closed"] else "g0_open", "G0", None)
+
+
+def counterexample_units(keys: list[dict], root: Path = ROOT) -> dict:
+    """반례 단위로 다시 센다(D265–D267). 옛 단위의 수는 `count_keys`가 그대로 낸다 — 좁아진 만큼이 후보로 보인다."""
+    out = {"g0_open": [], "g0_unclassified": [], "g0_closed": [], "candidates": {g: [] for g in GATES},
+           "gate_cx": {g: [] for g in GATES if g != "G0"}, "problems": []}
+    for k in keys:
+        state, gate, problem = g0_status(k, root)
+        if problem:
+            out["problems"].append((problem, k["file"], f"{k['id']} — "
+                                    + ("반례 key의 닫힘에 G0 케이스 이름이 없거나 그 디렉터리가 없다 — 열린 것으로 센다(D265)"
+                                       if problem == "케이스 없음" else
+                                       "`반례 — G0`인데 `docs/review/counterexamples/<key>/`가 없다 — 반례는 리포에 실행 가능한 것이다(D265)")))
+        if state == "g0_open":
+            out["g0_open"].append(k)
+            if not k.get("mark"):
+                out["g0_unclassified"].append(k)
+        elif state == "g0_closed":
+            out["g0_closed"].append(k)
+        elif state == "candidate":
+            out["candidates"][gate].append(k)
+        elif state == "gate":
+            out["gate_cx"][gate].append(k)
+    return out
+
+
 def collect_keys(records_dir: Path) -> dict:
     """종합 파일들에서 key를 모은다. 판정하지 않고 읽은 것과 어긋남을 함께 돌려준다."""
     keys, problems = [], []
@@ -617,7 +689,7 @@ def collect_keys(records_dir: Path) -> dict:
             groups.append([ident, srcs, secs, decl,
                            "·".join(re.findall(r"D\d+", closed.group(1))) if closed else None,
                            split.group(1) if split else None,
-                           cells[1] if len(cells) > 1 else ""])
+                           cells[1] if len(cells) > 1 else "", _marks(" ".join(cells))])
         # 쪼갬: 같은 개별이 둘 이상의 종합 항목에 붙으면 접는다
         folded, seen = [], {}
         for g in groups:
@@ -634,6 +706,7 @@ def collect_keys(records_dir: Path) -> dict:
                 hit[2] = sorted(set(hit[2]) | set(g[2]))
                 hit[4] = hit[4] or g[4]
                 hit[5] = hit[5] or g[5]
+                hit[7] = {k: hit[7][k] or g[7][k] for k in hit[7]}
                 continue
             folded.append(g)
             for s in g[1]:
@@ -652,15 +725,15 @@ def collect_keys(records_dir: Path) -> dict:
             secs = _reconcile(srcs[0] + "(미부착)", srcs, secs, individuals, problems, path.name)
             folded.append([srcs[0] + "(미부착)", srcs, secs, decl,
                            "·".join(re.findall(r"D\d+", closed.group(1))) if closed else None, None,
-                           cells[1] if len(cells) > 1 else ""])
-        for ident, srcs, secs, decl, closed, _split, claim in folded:
+                           cells[1] if len(cells) > 1 else "", _marks(" ".join(cells))])
+        for ident, srcs, secs, decl, closed, _split, claim, marks in folded:
             computed = _scope_of(secs)
             if computed != decl:
                 problems.append(("범위 어긋남", path.name,
                                  f"{ident} — 표는 '{decl}', 절 집합 {' '.join(secs)}로는 '{computed}'"))
             keys.append({"id": ident, "file": path.name, "sources": srcs,
                          "sections": secs, "scope": computed, "closed": closed,
-                         "claim": claim, "round": synth.index(path) + 1,
+                         "claim": claim, "round": synth.index(path) + 1, "split": bool(_split), **marks,
                          "source_lines": [f"{individuals[k]['file']}:{individuals[k]['line']}" for k in srcs]})
     # 종합이 읽지 않은 개별 — 수는 종합에서만 세므로(D152) 종합 전의 기록은 수에 닿지 않는다.
     # 그래서 '열림 0'이 라운드를 반영하지 않은 채 참일 수 있다(4차 기록 셋이 들어온 날 실제로 그랬다:
@@ -688,8 +761,22 @@ def count_keys(records_dir: Path = RECORDS) -> int:
     inside = [k for k in keys if k["scope"] == "안"]
     closed = [k for k in inside if k["closed"]]
     openk = [k for k in inside if not k["closed"]]
-    print("G0 #1 열린 발견 — 기록에서 센 수 (D140·D151·D152)")
+    units = counterexample_units(keys)
+    print("G0 #1 열린 반례 — 기록에서 센 수 (D265–D267)")
     print(f"  읽은 종합: {', '.join(got['synth']) or '없음'}")
+    print()
+    n_cx = len(units["g0_open"]) - len(units["g0_unclassified"])
+    print(f"  G0 반례 key  열림 {len(units['g0_open'])} — 반례 세움 {n_cx} · 표지 없음 {len(units['g0_unclassified'])}"
+          "(반례가 세워지기 전 — 보수적으로 G0에 남는다, D265) · 반례를 G0 케이스로 박아 닫음 "
+          f"{len(units['g0_closed'])}")
+    cand = units["candidates"]
+    print(f"  PRD 공백 후보(D267)  {sum(len(v) for v in cand.values())} — "
+          + " · ".join(f"{g} {len(cand[g])}" for g in GATES) + " — G0을 막지 않는다")
+    gx = units["gate_cx"]
+    print(f"  G0 밖 게이트의 반례(D266)  {sum(len(v) for v in gx.values())} — "
+          + " · ".join(f"{g} {len(gx[g])}" for g in gx) + " — 그 게이트의 입장 목록(`--gate-lists`)")
+    print()
+    print("옛 단위 — 발견(D151·D152, 계속 센다 — D267). 단위가 발견에서 반례로 좁아진 만큼이 후보의 수로 보인다.")
     print()
     print(f"  범위 안 `dedupe_key`  총 {len(inside)}")
     print(f"    닫힘  {len(closed)}" + (f" — {', '.join(sorted({d for k in closed for d in k['closed'].split('·')}, key=lambda x: int(x[1:])))}" if closed else ""))
@@ -702,28 +789,45 @@ def count_keys(records_dir: Path = RECORDS) -> int:
     print(f"  범위 밖 (G3 목록으로) 총 {len(outside)} — 닫힘 {len(out_closed)}"
           + (f"({', '.join(sorted({d for k in out_closed for d in k['closed'].split('·')}, key=lambda x: int(x[1:])))})" if out_closed else "")
           + f" · 열림 {len(outside) - len(out_closed)} — 안의 수에 더하지 않는다(D152·D153)")
+    # 라운드별 범위 안 key — 산문으로 옮기던 수(§0의 "6 → 40 → 54")를 계산이 낸다. 결정에 의한 분리(D153)는 발견이 아니라 따로,
+    # 패널 밖 기록(`OWNER`·`SESSION` 접두어)의 key도 따로 적는다.
+    per = []
+    for r, name in enumerate(got["synth"], start=1):
+        ks = [k for k in inside if k["round"] == r]
+        split = sum(1 for k in ks if k.get("split"))
+        outside_panel = sum(1 for k in ks if all(re.match(r"(OWNER|SESSION)", s) for s in k["sources"]))
+        note = []
+        if outside_panel:
+            note.append(f"패널 밖 {outside_panel}")
+        if split:
+            note.append(f"결정 분리 {split}")
+        per.append(f"{r}차 {len(ks) - split}" + (f"({' · '.join(note)})" if note else ""))
+    print(f"  라운드별 범위 안 key(결정 분리 제외): {' · '.join(per)}")
     print()
     print("  **닫힘 표시는 기록에서만 읽는다** — `닫힘 — D<n>`이 적힌 key만 닫힌 것으로 센다.")
     print("  `prd.md`를 읽어 추측하지 않는다. 표시가 없으면 열린 것이다.")
+    problems = problems + units["problems"]
     if problems:
         print()
         print("  보고 — 세지 않았거나 어긋난 것:")
         for kind, where, what in problems:
             print(f"    [{kind}] {where}: {what}")
-    if openk:
+    if units["g0_open"]:
         print()
-        print("  열린 key:")
-        for k in openk:
-            print(f"    {k['id']:<28} {' '.join(k['sections'])}")
+        print("  G0을 막는 열린 key(반례 단위):")
+        for k in units["g0_open"]:
+            tag = f"반례 {k['cx']}" if k.get("cx") else "표지 없음"
+            print(f"    {k['id']:<28} {' '.join(k['sections']):<24} {tag}")
     return 0
 
 
-# ── `--g3-list` — 범위 밖 key의 목록을 **생성**한다 (D152) ─────────────────────────────
+# ── `--gate-lists` — 게이트별 목록을 **생성**한다 (D266·D267, 옛 D152) ──────────────────────
 #
-# 범위 밖 key는 "세지 않고 버리지도 않는다"(D152) — G3 입장 조건(§6.3–6.6 교차 검토·값 층
-# 픽스처)의 입력이 된다. 그 목록을 사람이 옮기면 status의 수처럼 옮기다 틀린다(140 → 142).
-# 그래서 종합에서 계산해 쓰고, `check-all`이 생성기를 다시 돌려 파일과 diff 0을 확인한다.
-G3_LIST = ROOT / "docs" / "review" / "g3-list.md"
+# G0 밖 게이트의 반례(D266)와 PRD 공백 후보(D267)는 "세지 않고 버리지도 않는다" — 그 게이트의 입장 조건의 입력이 된다.
+# 옛 범위 밖 key(D152 — 절 집합에 §2.1–2.9가 없는 것)는 G3 목록 그대로 이 파일의 G3 절에 남는다. 목록을 사람이 옮기면
+# status의 수처럼 옮기다 틀린다(140 → 142) — 그래서 종합에서 계산해 쓰고, `check-all`이 생성기를 다시 돌려 diff 0을 본다.
+# (`--g3-list`를 넓힌 같은 생성기 — 그 이름도 받는다.)
+G3_LIST = ROOT / "docs" / "review" / "gate-lists.md"
 
 
 def _natural(key: str):
@@ -732,7 +836,8 @@ def _natural(key: str):
 
 def g3_list_text(records_dir: Path = RECORDS) -> str:
     got = collect_keys(records_dir)
-    out = [k for k in got["keys"] if k["scope"] == "밖"]
+    states = {id(k): g0_status(k) for k in got["keys"]}
+    out = [k for k in got["keys"] if states[id(k)][0] == "outside_legacy"]
     open_ = sorted((k for k in out if not k["closed"]), key=lambda k: (k["round"], _natural(k["id"])))
     closed = sorted((k for k in out if k["closed"]), key=lambda k: (k["round"], _natural(k["id"])))
     rounds = {i + 1: name for i, name in enumerate(got["synth"])}
@@ -746,20 +851,44 @@ def g3_list_text(records_dir: Path = RECORDS) -> str:
             cells.append(k["closed"])
         return "| " + " | ".join(cells) + " |"
 
+    def marked_rows(kind: str, gate: str) -> list[str]:
+        ks = sorted((k for k in got["keys"] if k.get("mark") == (kind, gate)),
+                    key=lambda k: (k["round"], _natural(k["id"])))
+        rows = [f"| `{k['id'].replace('(미부착)', '')}` | {k['claim'].replace(chr(10), ' ')} | "
+                + (f"`docs/review/counterexamples/{k['cx']}/`" if k.get("cx") else "—")
+                + f" | {k['round']}차 | {k['closed'] or '열림'} |" for k in ks]
+        return [f"### {'반례' if kind == '반례' else 'PRD 공백 후보'} — {len(ks)}", "",
+                "| key | 주장 | 반례의 자리 | 라운드 | 상태 |", "|---|---|---|---|---|", *rows, ""]
+
+    gate_sections = []
+    for gate in GATES:
+        sec = [f"## {gate}", ""]
+        if gate != "G0":
+            sec += marked_rows("반례", gate)
+        sec += marked_rows("후보", gate)
+        gate_sections += sec
+
     lines = [
-        "# G3 목록 — 범위 밖 발견 (D152)",
+        "# 게이트별 목록 — G0 밖의 반례·PRD 공백 후보 (D266·D267), 옛 범위 밖 (D152)",
         "",
-        "> **생성됨 — 손으로 고치지 않는다.** `python3 docs/review/g0-review.py --g3-list`가 종합 기록에서",
-        "> 계산해 쓰고, `ci/check-all.sh`가 생성기를 다시 돌려 이 파일과 diff 0을 확인한다(`--g3-list --check`).",
+        "> **생성됨 — 손으로 고치지 않는다.** `python3 docs/review/g0-review.py --gate-lists`가 종합 기록에서",
+        "> 계산해 쓰고, `ci/check-all.sh`가 생성기를 다시 돌려 이 파일과 diff 0을 확인한다(`--gate-lists --check`).",
         "> 바꾸려면 기록(종합의 표·개별 기록)을 고친다 — 이 파일은 사본이다.",
         "",
-        "범위 밖 = 절 집합(개별 기록의 `절:`)에 §2.1–2.9가 하나도 없는 key(D152). **세지 않고 버리지도 않는다** — G0 #1의",
-        "수에 닿지 않고, G3 입장 조건(§6.3–6.6 교차 검토·값 층 픽스처)의 입력이다. 닫힘 표시가 붙은 밖 key는 아래 따로 둔다",
-        "(D153 — 표시는 기록의 것이고 수에 닿지 않는다).",
+        "G0 #1은 G0의 값에 걸린 반례만 센다(D265·D266). 그 밖은 **세지 않고 버리지도 않는다**: 반례의 값이 G1·G2b·G3",
+        "스위트의 것이면 그 게이트의 입장 목록으로(`반례 — <게이트>`), 반례로 확인되지 않은 발견은 PRD 공백 후보로",
+        "(`후보 — <게이트>`, D267 — 구현이 밟으면 PRD 공백으로 멈춘다). 표지는 종합 대응표의 행에 적는다.",
         "",
         "읽은 종합: " + ", ".join(f"{i}차 `{n}`" for i, n in rounds.items()),
         "",
-        f"## 열린 것 — {len(open_)}",
+        *gate_sections,
+        "## 옛 범위 밖 — G3 목록 (D152)",
+        "",
+        "범위 밖 = 절 집합(개별 기록의 `절:`)에 §2.1–2.9가 하나도 없는 key(D152 — 반례 규칙 전의 기준, 소급하지 않는다).",
+        "**세지 않고 버리지도 않는다** — G0 #1의 수에 닿지 않고, G3 입장 조건(§6.3–6.6 교차 검토·값 층 픽스처)의 입력이다.",
+        "닫힘 표시가 붙은 밖 key는 아래 따로 둔다(D153 — 표시는 기록의 것이고 수에 닿지 않는다).",
+        "",
+        f"### 열린 것 — {len(open_)}",
         "",
         "정렬: 라운드 → key(자연 순서). 출처는 개별 기록의 `### 발견` 머리 줄.",
         "",
@@ -767,7 +896,7 @@ def g3_list_text(records_dir: Path = RECORDS) -> str:
         "|---|---|---|---|---|",
         *[row(k) for k in open_],
         "",
-        f"## 닫힌 것 — {len(closed)}",
+        f"### 닫힌 것 — {len(closed)}",
         "",
         "| key | 주장 | 절 집합 | 출처(기록:줄) | 라운드 | 닫은 결정 |",
         "|---|---|---|---|---|---|",
@@ -784,11 +913,66 @@ def g3_list(check: bool) -> int:
         if current == text:
             print(f"  ok   {G3_LIST.relative_to(ROOT)} — 생성기와 diff 0")
             return 0
-        print(f"  BAD  {G3_LIST.relative_to(ROOT)} — " + ("없다" if current is None else "생성기 출력과 다르다(손으로 고쳤거나 기록이 바뀌었다 — `--g3-list`로 다시 쓴다)"))
+        print(f"  BAD  {G3_LIST.relative_to(ROOT)} — " + ("없다" if current is None else "생성기 출력과 다르다(손으로 고쳤거나 기록이 바뀌었다 — `--gate-lists`로 다시 쓴다)"))
         return 1
     G3_LIST.write_text(text, encoding="utf-8")
     print(f"wrote {G3_LIST.relative_to(ROOT)}")
     return 0
+
+
+# ── `--counterexamples` — 반례가 아직 재현되는가 (D265) ──────────────────────────
+#
+# 반례는 리포에 실행 가능한 것이다 — `docs/review/counterexamples/<key>/run.py`가 두 읽기의 값을 계산해 마지막 줄에
+# JSON `{"key": …, "values": {"<읽기>": <값>, …}}`을 낸다. 값이 둘 이상이고 서로 다르면 재현이다. 반례 자체가 다시 계산할
+# 수 있어야 "반례 0"이 다시 계산할 수 있는 0이다. 닫는 판의 G0 케이스가 그 반례를 대신하면 디렉터리를 지운다.
+COUNTEREXAMPLES = ROOT / "docs" / "review" / "counterexamples"
+
+
+def run_counterexamples(base: Path = COUNTEREXAMPLES) -> list[tuple[str, bool, str]]:
+    out = []
+    for d in sorted(x for x in base.glob("*/") if x.is_dir()):
+        script = d / "run.py"
+        if not script.exists():
+            out.append((d.name, False, "run.py가 없다 — 반례는 실행 가능한 것이다"))
+            continue
+        proc = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, cwd=ROOT)
+        try:
+            got = json.loads(proc.stdout.strip().splitlines()[-1])
+            vals = [json.dumps(v, sort_keys=True, ensure_ascii=False) for v in got["values"].values()]
+            ok = proc.returncode == 0 and len(vals) >= 2 and len(set(vals)) == len(vals)
+            detail = " · ".join(f"{r} = {v}" for r, v in got["values"].items())
+        except Exception as exc:  # noqa: BLE001
+            ok, detail = False, f"출력을 읽지 못했다: {exc} {proc.stderr.strip()[-200:]}"
+        out.append((d.name, ok, detail))
+    return out
+
+
+def counterexamples_check() -> int:
+    results = run_counterexamples()
+    if not results:
+        print("  ok   반례 0개 — 재현할 것이 없다")
+        return 0
+    for name, ok, detail in results:
+        print(f"  {'ok ' if ok else 'BAD'}  {name:<16} {detail}")
+    return 0 if all(ok for _, ok, _ in results) else 1
+
+
+def counterexample_selftest() -> list[tuple[str, bool]]:
+    """재현 검사도 틀릴 수 있다 — 값이 갈리는 반례는 통과, 같아진 반례·실행 못 하는 반례는 붉어야 한다."""
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        base = Path(tmp)
+        (base / "differs").mkdir()
+        (base / "differs" / "run.py").write_text(
+            'import json\nprint(json.dumps({"key": "X", "values": {"A": 365, "B": 365.25}}))\n', encoding="utf-8")
+        (base / "same").mkdir()
+        (base / "same" / "run.py").write_text(
+            'import json\nprint(json.dumps({"key": "Y", "values": {"A": 1, "B": 1}}))\n', encoding="utf-8")
+        (base / "no-script").mkdir()
+        got = {name: ok for name, ok, _ in run_counterexamples(base)}
+    return [("반례 재현 검사: 값이 갈리면 통과", got.get("differs") is True),
+            ("반례 재현 검사: 값이 같아지면 붉다", got.get("same") is False),
+            ("반례 재현 검사: 실행할 것이 없으면 붉다", got.get("no-script") is False)]
 
 
 def count_selftest() -> list[tuple[str, bool, str]]:
@@ -813,16 +997,26 @@ def count_selftest() -> list[tuple[str, bool, str]]:
         closed = [k for k in inside if k["closed"]]
         outside = [k for k in got["keys"] if k["scope"] == "밖"]
         out_closed = [k for k in outside if k["closed"]]
-        kinds = sorted({p[0] for p in got["problems"]})
+        units = counterexample_units(got["keys"])
+        kinds = sorted({p[0] for p in got["problems"] + units["problems"]})
         # 밖은 기대에 없으면 0이어야 한다 — 밖 key가 있는 반례는 열림/닫힘을 둘 다 적는다(D191).
         ok = (len(inside) == exp["inside"] and len(closed) == exp["closed"]
               and len(inside) - len(closed) == exp["open"]
               and len(outside) == exp.get("outside", 0)
               and len(out_closed) == exp.get("outside_closed", 0)
-              and kinds == sorted(exp["problems"]))
+              and kinds == sorted(exp["problems"])
+              # D265–D267 — 반례 단위의 기대(적힌 것만 본다; 옛 반례는 옛 단위만 적는다)
+              and ("g0_open" not in exp or len(units["g0_open"]) == exp["g0_open"])
+              and ("g0_unclassified" not in exp or len(units["g0_unclassified"]) == exp["g0_unclassified"])
+              and ("g0_closed" not in exp or len(units["g0_closed"]) == exp["g0_closed"])
+              and ("candidates" not in exp or sum(len(v) for v in units["candidates"].values()) == exp["candidates"])
+              and ("gate_cx" not in exp or {g: len(v) for g, v in units["gate_cx"].items() if v} == exp["gate_cx"]))
         why = re.sub(r"^# 합성 종합 — ", "", md.read_text(encoding="utf-8").split("\n")[1])
         detail = (f"안{len(inside)} 닫{len(closed)} 열{len(inside)-len(closed)} "
-                  f"밖{len(outside)} 밖닫{len(out_closed)} {kinds or ''}")
+                  f"밖{len(outside)} 밖닫{len(out_closed)} {kinds or ''} "
+                  f"G0열{len(units['g0_open'])} 미분류{len(units['g0_unclassified'])} G0닫{len(units['g0_closed'])} "
+                  f"후보{sum(len(v) for v in units['candidates'].values())} "
+                  f"게이트{ {g: len(v) for g, v in units['gate_cx'].items() if v} }")
         out.append((f"{case.name:<30} {why}", ok, detail))
     return out
 
@@ -906,6 +1100,7 @@ def selftest() -> int:
                    + (f" — 없는 것 {dangling}" if dangling else ""), not dangling))
     for name, ok, detail in count_selftest():
         checks.append((f"--count 반례: {name}" + ("" if ok else f"  [{detail}]"), ok))
+    checks.extend(counterexample_selftest())
 
     bad = [name for name, ok in checks if not ok]
     for name, ok in checks:
@@ -918,15 +1113,20 @@ def main() -> int:
     ap.add_argument("--verify", action="store_true", help="기계 확인만")
     ap.add_argument("--pairs", action="store_true", help="읽을 쌍만 (본문 발췌 포함)")
     ap.add_argument("--record", metavar="이름", help="기록 파일만 만든다")
-    ap.add_argument("--count", action="store_true", help="기록에서 열린 발견을 센다")
+    ap.add_argument("--count", action="store_true", help="기록에서 열린 반례를 센다(옛 단위의 발견도 그대로)")
+    ap.add_argument("--counterexamples", action="store_true", help="docs/review/counterexamples/의 반례가 아직 재현되는가(D265)")
     ap.add_argument("--selftest", action="store_true", help="이 스크립트 자신의 반례")
     ap.add_argument("--input-hash", action="store_true", help="리뷰어 입력(쌍 목록·질문·배정)의 해시만 — D151(b)")
-    ap.add_argument("--g3-list", action="store_true", help="범위 밖 key 목록 docs/review/g3-list.md를 생성한다(D152)")
-    ap.add_argument("--check", action="store_true", help="--g3-list와 함께: 쓰지 않고 파일과 생성기 출력의 diff 0만 본다")
+    ap.add_argument("--gate-lists", "--g3-list", dest="gate_lists", action="store_true",
+                    help="게이트별 목록 docs/review/gate-lists.md를 생성한다(D266·D267, 옛 D152)")
+    ap.add_argument("--check", action="store_true", help="--gate-lists와 함께: 쓰지 않고 파일과 생성기 출력의 diff 0만 본다")
     args = ap.parse_args()
 
-    if args.g3_list:
+    if args.gate_lists:
         return g3_list(check=args.check)
+
+    if args.counterexamples:
+        return counterexamples_check()
 
     if args.input_hash:
         print(input_hash())

@@ -57,8 +57,10 @@ fi
 
 if [ "$section" = all ] || [ "$section" = review-entry ]; then
   run "검토 입구 — 자기 반례" "$PY" docs/review/g0-review.py --selftest
-  # D152 — 범위 밖 목록은 기록에서 생성한다. 사람이 옮기는 목록을 하나 없앤다.
-  run "G3 목록 — 생성기와 diff 0" "$PY" docs/review/g0-review.py --g3-list --check
+  # D266·D267(옛 D152) — 게이트별 목록은 기록에서 생성한다. 사람이 옮기는 목록을 하나 없앤다.
+  run "게이트별 목록 — 생성기와 diff 0" "$PY" docs/review/g0-review.py --gate-lists --check
+  # D265 — 반례는 리포에 실행 가능한 것이다. 열린 반례가 아직 재현되는가(값이 갈리는가).
+  run "반례 — 재현" "$PY" docs/review/g0-review.py --counterexamples
 fi
 
 if [ "$section" = all ] || [ "$section" = fixture-change ]; then
