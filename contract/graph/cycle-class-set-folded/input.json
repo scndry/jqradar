@@ -1,0 +1,65 @@
+{
+  "case": "cycle-class-set-folded",
+  "contract_refs": [
+    "§5.5",
+    "§2.2",
+    "§2.9",
+    "D259",
+    "D197",
+    "D211",
+    "D222",
+    "D250"
+  ],
+  "what_this_pins": "**순환 finding의 클래스 집합의 원소는 SCC의 서로 다른 멤버 컴포넌트를 잇는 클래스 간선의 양 끝을 D211로 접은 최상위 타입이다**(D259). 컴포넌트 `a`·`b`가 순환이다: `a.Outer$$Lambda$3` → `b.Svc`, `b.Svc$1` → `a.Repo`. 집합 = {`a.Outer`, `a.Repo`, `b.Svc`} — 람다와 익명 클래스는 바깥 최상위 타입으로 접히고(컴파일러의 합성 이름이 정체성에 닿지 않는다 — `fan_in`과 같은 단위, D222), `a.Unrelated`는 같은 멤버 컴포넌트에 있지만 순환 간선이 없어 집합 밖이다(무관한 클래스의 추가는 `grown`이 아니다). SCC 밖 컴포넌트 `c`에서 들어오는 간선(`c.Client` → `a.Repo`)은 순환 간선이 아니다.\n\n**변조 둘이 문다.** 접지 않음(`unfolded`)이면 `a.Outer$$Lambda$3`·`b.Svc$1`이 집합에 든다; 모든 멤버 클래스(`all_member_classes`)면 `a.Unrelated`가 든다. 정체성의 해시(정렬 해시, D197)와 생성 시 얼리기(D250)는 `ledger/`(G2b)의 몫이고 여기는 집합까지다.",
+  "component": {
+    "strategy": "depth:3"
+  },
+  "cycle_class_sets": true,
+  "classes": [
+    {
+      "name": "com.acme.a.Outer",
+      "package": "com.acme.a",
+      "source_file": "src/main/java/com/acme/a/Outer.java"
+    },
+    {
+      "name": "com.acme.a.Outer$$Lambda$3",
+      "package": "com.acme.a",
+      "depends_on": [
+        "com.acme.b.Svc"
+      ]
+    },
+    {
+      "name": "com.acme.a.Repo",
+      "package": "com.acme.a",
+      "source_file": "src/main/java/com/acme/a/Repo.java"
+    },
+    {
+      "name": "com.acme.a.Unrelated",
+      "package": "com.acme.a",
+      "source_file": "src/main/java/com/acme/a/Unrelated.java",
+      "depends_on": [
+        "com.acme.a.Repo"
+      ]
+    },
+    {
+      "name": "com.acme.b.Svc",
+      "package": "com.acme.b",
+      "source_file": "src/main/java/com/acme/b/Svc.java"
+    },
+    {
+      "name": "com.acme.b.Svc$1",
+      "package": "com.acme.b",
+      "depends_on": [
+        "com.acme.a.Repo"
+      ]
+    },
+    {
+      "name": "com.acme.c.Client",
+      "package": "com.acme.c",
+      "source_file": "src/main/java/com/acme/c/Client.java",
+      "depends_on": [
+        "com.acme.a.Repo"
+      ]
+    }
+  ]
+}

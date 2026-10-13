@@ -1,0 +1,109 @@
+{
+  "case": "pair-static-dependency-folded",
+  "contract_refs": [
+    "§2.4",
+    "§2.9",
+    "D260",
+    "D222",
+    "D211",
+    "D176",
+    "D202"
+  ],
+  "what_this_pins": "**쌍의 `static_dependency`는 두 파일로 접힌 클래스(D211) 사이에 어느 방향이든 직접 간선이 있는가다**(D260) — `fan_in`(D222)과 같은 단위·직접성. 쌍은 순서 없는 (a, b), a < b(D202)라 방향을 고르지 않는다; 간접 의존은 세지 않는다(도달 가능성이면 큰 SCC 안에서 거의 전부 `true`가 되어 숨은 결합이 사라진다).\n\n쌍 다섯: (A, B) — `A` → `B` 직접 → true · (C, D) — `D` → `C`만(뒤 방향) → true · (A, E) — `A` → `B` → `E`만(간접) → false · (Outer, Z) — `Outer$1` → `Z`(익명 클래스의 간선이 `Outer.java`로 접힌다) → true · (C, E) — 간선 없음 → false.\n\n**변조 셋이 각각 한 쌍에서 어긋난다**: 한 방향만(`one_direction`)은 (C, D)를 false로, 간접 포함(`indirect`)은 (A, E)를 true로, 접지 않음(`unfolded`)은 (Outer, Z)를 false로. 그래프 밖 파일이 든 쌍의 null(D176·D190)은 `history/`의 케이스가 진다.",
+  "component_strategy": {
+    "strategy": "depth:3",
+    "split_share_basis": "class_count"
+  },
+  "package_to_component": {
+    "com.acme.p": "com.acme.p"
+  },
+  "class_edge_count": 4,
+  "external_edges": [],
+  "pair_static_dependency": [
+    {
+      "a": "src/main/java/com/acme/p/A.java",
+      "b": "src/main/java/com/acme/p/B.java",
+      "static_dependency": true
+    },
+    {
+      "a": "src/main/java/com/acme/p/C.java",
+      "b": "src/main/java/com/acme/p/D.java",
+      "static_dependency": true
+    },
+    {
+      "a": "src/main/java/com/acme/p/A.java",
+      "b": "src/main/java/com/acme/p/E.java",
+      "static_dependency": false
+    },
+    {
+      "a": "src/main/java/com/acme/p/Outer.java",
+      "b": "src/main/java/com/acme/p/Z.java",
+      "static_dependency": true
+    },
+    {
+      "a": "src/main/java/com/acme/p/C.java",
+      "b": "src/main/java/com/acme/p/E.java",
+      "static_dependency": false
+    }
+  ],
+  "pair_static_dependency_mutations": {
+    "one_direction": {
+      "misjudged": [
+        {
+          "a": "src/main/java/com/acme/p/C.java",
+          "b": "src/main/java/com/acme/p/D.java"
+        }
+      ]
+    },
+    "indirect": {
+      "misjudged": [
+        {
+          "a": "src/main/java/com/acme/p/A.java",
+          "b": "src/main/java/com/acme/p/E.java"
+        }
+      ]
+    },
+    "unfolded": {
+      "misjudged": [
+        {
+          "a": "src/main/java/com/acme/p/Outer.java",
+          "b": "src/main/java/com/acme/p/Z.java"
+        }
+      ]
+    }
+  },
+  "external_included_in_metrics": false,
+  "components": [
+    {
+      "id": "com.acme.p",
+      "Ca": 0,
+      "Ce": 0,
+      "I": null,
+      "A": 0,
+      "D": null,
+      "class_count": 8,
+      "reason": "isolated_component"
+    }
+  ],
+  "cycles": [],
+  "system": {
+    "components": 1,
+    "CCD": 1,
+    "ACD": 1,
+    "RACD": 1,
+    "CCD_balanced": 1.00,
+    "NCCD": 1.00,
+    "display": {
+      "ACD": 1.00,
+      "RACD": 1.0000,
+      "CCD_balanced": 1.00,
+      "NCCD": 1.00
+    }
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/graph/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

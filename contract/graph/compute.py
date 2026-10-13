@@ -160,6 +160,12 @@ def tarjan_scc(nodes: list[str], edges: set[tuple[str, str]]) -> list[list[str]]
     return sorted((g for g in result if len(g) > 1), key=lambda g: g[0])
 
 
+def fold_top_level(name: str) -> str:
+    """D211의 접기 — 중첩·익명·합성·람다(`Outer$Inner`·`Outer$1`·`Outer$$Lambda$3`)는 바깥 최상위 타입의 FQCN으로."""
+    simple = name.rsplit(".", 1)[-1].split("$", 1)[0]
+    return name.rsplit(".", 1)[0] + "." + simple if "." in name else simple
+
+
 def reachable(node: str, edges: set[tuple[str, str]], nodes: list[str]) -> set[str]:
     """전이적 도달 + 자기 자신(§2.3 CCD의 정의)."""
     seen = {node}
@@ -328,6 +334,31 @@ def build_expected(inp: dict) -> dict:
                           "same_file_edges_ignored": sorted(same_file),
                           "mutation_class_unit_count": len(class_unit)}   # 클래스로 세면(포기한 길) — S3-17의 부풀림
             out["file_fan_in"] = fan
+
+        # §2.4·D260 — 쌍의 static_dependency = 두 파일로 접힌 클래스(D211) 사이에 어느 방향이든 **직접** 간선이 있는가.
+        # 단위·직접성은 fan_in(D222)과 같다. 변조 셋(한 방향만·간접 포함·접지 않음)이 각각 어긋나는 쌍을 기록한다.
+        if "file_pairs" in inp:
+            src = {c["name"]: c["source_file"] for c in classes if c.get("source_file")}
+            file_of = {c["name"]: src.get(c["name"]) or src[fold_top_level(c["name"])] for c in classes}
+            folded = {(file_of[s_], file_of[t]) for s_, t in class_edges if file_of[s_] != file_of[t]}
+            # 접지 않음: 자기 source_file이 있는 클래스(최상위 타입)의 간선만 — 중첩·람다의 간선이 파일에 닿지 않는다
+            unfolded = {(src[s_], src[t]) for s_, t in class_edges
+                        if s_ in src and t in src and src[s_] != src[t]}
+            pair_files = sorted({f for pair in inp["file_pairs"] for f in pair} | set(file_of.values()))
+            rules = {
+                "one_direction": lambda a, b: (a, b) in folded,
+                "indirect": lambda a, b: b in reachable(a, folded, pair_files) or a in reachable(b, folded, pair_files),
+                "unfolded": lambda a, b: (a, b) in unfolded or (b, a) in unfolded,
+            }
+            pairs = []
+            for a, b in inp["file_pairs"]:
+                assert a < b, "D202 — 쌍은 (a, b), a < b"
+                pairs.append({"a": a, "b": b, "static_dependency": (a, b) in folded or (b, a) in folded})
+            out["pair_static_dependency"] = pairs
+            out["pair_static_dependency_mutations"] = {
+                name: {"misjudged": [{"a": pr["a"], "b": pr["b"]} for pr in pairs
+                                     if rule(pr["a"], pr["b"]) != pr["static_dependency"]]}
+                for name, rule in rules.items()}
         out["external_included_in_metrics"] = False
     else:
         spec = inp["components"]
@@ -359,6 +390,22 @@ def build_expected(inp: dict) -> dict:
     cycles = tarjan_scc(nodes, component_edges)
     out["cycles"] = [{"id": f"cyc-{k + 1}", "size": len(g), "members": g}
                      for k, g in enumerate(cycles)]
+
+    # §5.5·D259 — 순환 finding의 클래스 집합의 원소 = SCC의 서로 다른 멤버 컴포넌트를 잇는 클래스 간선의 양 끝,
+    # D211의 접기로 최상위 타입 FQCN. 정체성의 해시는 ledger/(G2b)의 몫이고 여기는 집합까지. 변조 둘이 어긋남을 기록한다.
+    if inp.get("cycle_class_sets"):
+        for entry, members in zip(out["cycles"], cycles):
+            inside = set(members)
+            crossing = [(s_, t) for s_, t in class_edges
+                        if component_of[s_] in inside and component_of[t] in inside and component_of[s_] != component_of[t]]
+            rule = sorted({fold_top_level(x) for e in crossing for x in e})
+            unfolded = sorted({x for e in crossing for x in e})
+            every = sorted({fold_top_level(c["name"]) for c in classes if component_of[c["name"]] in inside})
+            entry["class_set"] = rule
+            entry["class_set_mutations"] = {
+                "unfolded": {"class_set": unfolded, "differs": unfolded != rule},
+                "all_member_classes": {"class_set": every, "differs": every != rule},
+            }
 
     # Lakos (§2.3)
     n_count = len(nodes)
