@@ -1,0 +1,10 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "reproducibility.analysis_input_id — id 입력의 키 이름 `core_tool_version` → `tool_version`(v3.10.14 D244)",
+    "old": "§2.8의 id 정의가 도구 버전을 `core_tool_version`이라 불렀고 계산기의 id 스펙이 그 이름을 해시 입력의 키로 썼다 — `reproduce`·(i) 목록·§7·스키마는 `tool_version`이라 `I_TO_SPEC`이 둘을 잇는 대응표였다",
+    "new": "이름 하나 — 해시 입력의 키도 `tool_version`. 키 이름은 정규 인코딩(RFC 8785)의 바이트라 `analysis_input_id`와 그것을 담는 해시(raw/canonical id, 산출물·비교 대상 해시, 재계산 id)가 13 케이스에서 바뀐다; `transition-cache-hits-across-head`의 전이 사영 제외 목록의 이름도 같은 이름으로",
+    "note": "판 번호는 v3.10.14 그대로 — §0-40의 선례(D186: 목록·이름의 정정이지 바이트 규칙을 새로 만드는 것이 아니다). 값은 하나도 바뀌지 않았다 — 같다/다르다의 판정(같은 트리·다른 PMD → id 다름, 앵커 고정 → 같음 …)은 전부 그대로다. `(i) ↔ id 스펙` 자기 반례의 대응표는 `\"tool_version\": \"tool_version\"`(항등)이 됐다 — 지우면 (i)의 `tool_version`이 '표에 없다'로 붉다(`I_TO_SPEC.get`).",
+    "fixtures": ["reproducibility/attribution-toggle-changes-id", "reproducibility/byte-identity-comparison-target", "reproducibility/deep-shallow-same-id", "reproducibility/history-cache-key-is-a-projection", "reproducibility/parameter-change-cache-projection", "reproducibility/recompute-id-from-reproduce", "reproducibility/same-tree-different-origin", "reproducibility/same-tree-different-pmd", "reproducibility/shallow-then-unshallow-no-false-hit", "reproducibility/team-mapping-edit-cache-projection", "reproducibility/time-notation-canonical", "reproducibility/transition-cache-hits-across-head", "reproducibility/unreachable-commits-do-not-leak"]
+  }
+}

@@ -16,7 +16,7 @@
   "transition_projection": [
     "schema_version",
     "contract_version",
-    "core_tool_version",
+    "tool_version",
     "environment.pmd",
     "environment.archunit",
     "environment.jgit",
@@ -42,15 +42,15 @@
     }
   ],
   "base": {
-    "analysis_input_id": "sha256:c787aad017dc8544afd133488e4e64d23b5624561de3b22eaa7cdf8a41626e18",
+    "analysis_input_id": "sha256:67a4a7fdb799c2cb927349085edf716ad33e8c246b71f789657512151dc49ce4",
     "transition_keys": {
-      "fnd:dx:dup:3f9a:120@src/main/java/com/example/order/OrderService.java@04c5de269": "sha256:307079c2b07c2a6ebe5a07e6c4ae4b39952f845bdb7292cf2d4d655dae8aaf11",
-      "fnd:cyc:sha256:0a1b@2a058a7ad": "sha256:946a9a709be68e78e9965ec91652908124ad1e0d91ab0e9b5d6301f87686970c"
+      "fnd:dx:dup:3f9a:120@src/main/java/com/example/order/OrderService.java@04c5de269": "sha256:3978540649a0d8c5c2816b7825d23675c157eab8858ceebd4f0b6dfd6058879e",
+      "fnd:cyc:sha256:0a1b@2a058a7ad": "sha256:3acea97b269d02180c5a8c3d90f7308929ad8a893f8fbde08a5df6c8ed9240d2"
     }
   },
   "head_plus_one": {
     "head": "fbc725864",
-    "analysis_input_id": "sha256:7eb95b52fdc3093284dece8acc4e1b2d44acd3a5413c996e0883c9e3edff960d",
+    "analysis_input_id": "sha256:ed72b45254870d5b7bf2435023cb58151a15922895fc2ad759eba230cf277feb",
     "cache": {
       "miss": [],
       "hit": [
@@ -61,7 +61,7 @@
   },
   "succession_bump": {
     "to": "2",
-    "analysis_input_id": "sha256:886424048382e8ae9369e85eb114dda04e5a738bff1852961440fa0bdbd1c676",
+    "analysis_input_id": "sha256:df0257aa50ce7e35c3cb1370dc8c42ddff0429e0da55f044f13ad8a910adeeca",
     "cache": {
       "miss": [
         "fnd:cyc:sha256:0a1b@2a058a7ad",
@@ -74,7 +74,7 @@
     "to": [
       "build/classes/java/main"
     ],
-    "analysis_input_id": "sha256:bc0dfecf4c174fe65eaed9fb2d0115f0d7e0dd2359c7c32ef9936ba2f126f487",
+    "analysis_input_id": "sha256:07015677f3fea662d72f1c0006364dcde6a778e887c21d1392a4e5f26918fce7",
     "cache": {
       "miss": [
         "fnd:cyc:sha256:0a1b@2a058a7ad",

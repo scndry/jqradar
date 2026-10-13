@@ -42,7 +42,7 @@
   "shared_inputs": {
     "schema_version": "jqradar/3",
     "contract_version": "2026-09-21",
-    "core_tool_version": "3.9.0",
+    "tool_version": "3.9.0",
     "history_backend": {
       "name": "jgit",
       "git_version": null
@@ -87,7 +87,7 @@
   "transition_projection": [
     "schema_version",
     "contract_version",
-    "core_tool_version",
+    "tool_version",
     "environment.pmd",
     "environment.archunit",
     "environment.jgit",

@@ -236,7 +236,7 @@ def analysis_input_id(shared: dict, environment: dict, files: list[tuple[str, st
     spec = {
         "schema_version": shared["schema_version"],
         "contract_version": shared["contract_version"],
-        "core_tool_version": shared["core_tool_version"],
+        "tool_version": shared["tool_version"],
         "environment": environment,
         "history_backend": shared["history_backend"],
         "component": shared["component"],
@@ -277,7 +277,7 @@ def id_from_reproduce(reproduce: dict, files: list[tuple[str, str]], history: di
     shared = {
         "schema_version": reproduce["schema_version"],
         "contract_version": reproduce["contract_version"],
-        "core_tool_version": reproduce["tool_version"],
+        "tool_version": reproduce["tool_version"],
         "history_backend": reproduce["history_backend"],
         "component": {k: reproduce["component"][k] for k in ("strategy", "split_share_basis")}
                      | {"algorithm_version": reproduce["algorithm_versions"]["component_strategy"]},
@@ -474,7 +474,7 @@ def run_byte_identity(case_dir: Path, inp: dict) -> dict:
         return {
             "schema": shared["schema_version"],
             "reproduce": {
-                "tool_version": shared["core_tool_version"],                      # [id]
+                "tool_version": shared["tool_version"],                      # [id]
                 "schema_version": shared["schema_version"],                       # [id]
                 "contract_version": shared["contract_version"],                   # [id]
                 "scanned_at": canonical_time(machine["scanned_at_unix"]),         # [x]
@@ -826,7 +826,7 @@ def run_recompute_from_reproduce(case_dir: Path, inp: dict) -> dict:
     aid, spec = analysis_input_id(shared, env, files, history)
     # 한 번 스캔한 결과의 reproduce 블록(§7 모양)을 만든다 — 이것만 들고 다시 계산한다.
     reproduce = {
-        "tool_version": shared["core_tool_version"], "schema_version": shared["schema_version"],
+        "tool_version": shared["tool_version"], "schema_version": shared["schema_version"],
         "contract_version": shared["contract_version"], "scanned_at": canonical_time(inp["scanned_at_unix"]),
         "algorithm_versions": {"component_strategy": shared["component"]["algorithm_version"], **shared["algorithm_versions"]},
         "window_anchor": spec["window_anchor"], "head": history["head"],
@@ -1284,7 +1284,7 @@ def run_clone_depths(case_dir: Path, inp: dict) -> dict:
 # 계약 목록에 있는데 계산기가 빠뜨린 입력이 두 번 났다(`percentile_method` v3.10.0, `bytecode_scope` v3.10.3) — 그리고
 # 이 판에서 셋째(`last_commit_map_sha256`). 이름을 글자로 대조해 넷째를 막는다. 표는 (i)의 이름 → 스펙 키.
 I_TO_SPEC = {
-    "tool_version": "core_tool_version", "schema_version": "schema_version", "contract_version": "contract_version",
+    "tool_version": "tool_version", "schema_version": "schema_version", "contract_version": "contract_version",
     "algorithm_versions": "algorithm_versions", "environment": "environment", "history_backend": "history_backend",
     "name": "history_backend", "git_version": "history_backend",          # history_backend의 두 필드 — 전체가 id 입력(D186)
     "window_anchor": "window_anchor", "head": "commit_list_sha256",           # head는 창 안 목록의 끝 — 목록 해시가 봉인
@@ -1306,7 +1306,7 @@ def selftest() -> int:
     names = re.findall(r"`([A-Za-z_.0-9]+)`", m.group(1))   # 이름에 숫자가 있다(`sha256`) — 첫 판의 정규식이 그 둘을 빠뜨렸다
     # 스펙 키: 최소 입력으로 한 번 만든다
     spec_keys = set(analysis_input_id(
-        {"schema_version": "x", "contract_version": "x", "core_tool_version": "x", "history_backend": {"name": "jgit", "git_version": None},
+        {"schema_version": "x", "contract_version": "x", "tool_version": "x", "history_backend": {"name": "jgit", "git_version": None},
          "component": {"strategy": "auto", "algorithm_version": "auto-1", "split_share_basis": "class_count"},
          "algorithm_versions": {}, "parameters": {"window.months": 12, "window.max_commits": 2000}},
         {}, [], {"commit_shas": [], "head_committer_time": canonical_time(0), "last_commit_map": {}})[1])

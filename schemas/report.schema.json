@@ -211,7 +211,7 @@
         },
         "tool_version": {
           "type": "string",
-          "description": "jQRadar 버전(§2.8 `core_tool_version`). major.minor.patch."
+          "description": "jQRadar 버전 — §2.8 id 입력의 키도 같은 이름(D244). major.minor.patch."
         },
         "schema_version": {
           "type": "string",
