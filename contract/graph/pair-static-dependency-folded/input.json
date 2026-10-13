@@ -1,0 +1,91 @@
+{
+  "case": "pair-static-dependency-folded",
+  "contract_refs": [
+    "§2.4",
+    "§2.9",
+    "D260",
+    "D222",
+    "D211",
+    "D176",
+    "D202"
+  ],
+  "what_this_pins": "**쌍의 `static_dependency`는 두 파일로 접힌 클래스(D211) 사이에 어느 방향이든 직접 간선이 있는가다**(D260) — `fan_in`(D222)과 같은 단위·직접성. 쌍은 순서 없는 (a, b), a < b(D202)라 방향을 고르지 않는다; 간접 의존은 세지 않는다(도달 가능성이면 큰 SCC 안에서 거의 전부 `true`가 되어 숨은 결합이 사라진다).\n\n쌍 다섯: (A, B) — `A` → `B` 직접 → true · (C, D) — `D` → `C`만(뒤 방향) → true · (A, E) — `A` → `B` → `E`만(간접) → false · (Outer, Z) — `Outer$1` → `Z`(익명 클래스의 간선이 `Outer.java`로 접힌다) → true · (C, E) — 간선 없음 → false.\n\n**변조 셋이 각각 한 쌍에서 어긋난다**: 한 방향만(`one_direction`)은 (C, D)를 false로, 간접 포함(`indirect`)은 (A, E)를 true로, 접지 않음(`unfolded`)은 (Outer, Z)를 false로. 그래프 밖 파일이 든 쌍의 null(D176·D190)은 `history/`의 케이스가 진다.",
+  "component": {
+    "strategy": "depth:3"
+  },
+  "classes": [
+    {
+      "name": "com.acme.p.A",
+      "package": "com.acme.p",
+      "source_file": "src/main/java/com/acme/p/A.java",
+      "depends_on": [
+        "com.acme.p.B"
+      ]
+    },
+    {
+      "name": "com.acme.p.B",
+      "package": "com.acme.p",
+      "source_file": "src/main/java/com/acme/p/B.java",
+      "depends_on": [
+        "com.acme.p.E"
+      ]
+    },
+    {
+      "name": "com.acme.p.C",
+      "package": "com.acme.p",
+      "source_file": "src/main/java/com/acme/p/C.java"
+    },
+    {
+      "name": "com.acme.p.D",
+      "package": "com.acme.p",
+      "source_file": "src/main/java/com/acme/p/D.java",
+      "depends_on": [
+        "com.acme.p.C"
+      ]
+    },
+    {
+      "name": "com.acme.p.E",
+      "package": "com.acme.p",
+      "source_file": "src/main/java/com/acme/p/E.java"
+    },
+    {
+      "name": "com.acme.p.Outer",
+      "package": "com.acme.p",
+      "source_file": "src/main/java/com/acme/p/Outer.java"
+    },
+    {
+      "name": "com.acme.p.Outer$1",
+      "package": "com.acme.p",
+      "depends_on": [
+        "com.acme.p.Z"
+      ]
+    },
+    {
+      "name": "com.acme.p.Z",
+      "package": "com.acme.p",
+      "source_file": "src/main/java/com/acme/p/Z.java"
+    }
+  ],
+  "file_pairs": [
+    [
+      "src/main/java/com/acme/p/A.java",
+      "src/main/java/com/acme/p/B.java"
+    ],
+    [
+      "src/main/java/com/acme/p/C.java",
+      "src/main/java/com/acme/p/D.java"
+    ],
+    [
+      "src/main/java/com/acme/p/A.java",
+      "src/main/java/com/acme/p/E.java"
+    ],
+    [
+      "src/main/java/com/acme/p/Outer.java",
+      "src/main/java/com/acme/p/Z.java"
+    ],
+    [
+      "src/main/java/com/acme/p/C.java",
+      "src/main/java/com/acme/p/E.java"
+    ]
+  ]
+}

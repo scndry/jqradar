@@ -1,0 +1,115 @@
+{
+  "case": "cycle-class-set-folded",
+  "contract_refs": [
+    "§5.5",
+    "§2.2",
+    "§2.9",
+    "D259",
+    "D197",
+    "D211",
+    "D222",
+    "D250"
+  ],
+  "what_this_pins": "**순환 finding의 클래스 집합의 원소는 SCC의 서로 다른 멤버 컴포넌트를 잇는 클래스 간선의 양 끝을 D211로 접은 최상위 타입이다**(D259). 컴포넌트 `a`·`b`가 순환이다: `a.Outer$$Lambda$3` → `b.Svc`, `b.Svc$1` → `a.Repo`. 집합 = {`a.Outer`, `a.Repo`, `b.Svc`} — 람다와 익명 클래스는 바깥 최상위 타입으로 접히고(컴파일러의 합성 이름이 정체성에 닿지 않는다 — `fan_in`과 같은 단위, D222), `a.Unrelated`는 같은 멤버 컴포넌트에 있지만 순환 간선이 없어 집합 밖이다(무관한 클래스의 추가는 `grown`이 아니다). SCC 밖 컴포넌트 `c`에서 들어오는 간선(`c.Client` → `a.Repo`)은 순환 간선이 아니다.\n\n**변조 둘이 문다.** 접지 않음(`unfolded`)이면 `a.Outer$$Lambda$3`·`b.Svc$1`이 집합에 든다; 모든 멤버 클래스(`all_member_classes`)면 `a.Unrelated`가 든다. 정체성의 해시(정렬 해시, D197)와 생성 시 얼리기(D250)는 `ledger/`(G2b)의 몫이고 여기는 집합까지다.",
+  "component_strategy": {
+    "strategy": "depth:3",
+    "split_share_basis": "class_count"
+  },
+  "package_to_component": {
+    "com.acme.a": "com.acme.a",
+    "com.acme.b": "com.acme.b",
+    "com.acme.c": "com.acme.c"
+  },
+  "class_edge_count": 4,
+  "external_edges": [],
+  "external_included_in_metrics": false,
+  "components": [
+    {
+      "id": "com.acme.a",
+      "Ca": 2,
+      "Ce": 1,
+      "I": 0.333333333333,
+      "A": 0,
+      "D": 0.666666666667,
+      "class_count": 4
+    },
+    {
+      "id": "com.acme.b",
+      "Ca": 1,
+      "Ce": 1,
+      "I": 0.5,
+      "A": 0,
+      "D": 0.5,
+      "class_count": 2
+    },
+    {
+      "id": "com.acme.c",
+      "Ca": 0,
+      "Ce": 1,
+      "I": 1,
+      "A": 0,
+      "D": 0,
+      "class_count": 1
+    }
+  ],
+  "cycles": [
+    {
+      "id": "cyc-1",
+      "size": 2,
+      "members": [
+        "com.acme.a",
+        "com.acme.b"
+      ],
+      "class_set": [
+        "com.acme.a.Outer",
+        "com.acme.a.Repo",
+        "com.acme.b.Svc"
+      ],
+      "class_set_mutations": {
+        "unfolded": {
+          "class_set": [
+            "com.acme.a.Outer$$Lambda$3",
+            "com.acme.a.Repo",
+            "com.acme.b.Svc",
+            "com.acme.b.Svc$1"
+          ],
+          "differs": true
+        },
+        "all_member_classes": {
+          "class_set": [
+            "com.acme.a.Outer",
+            "com.acme.a.Repo",
+            "com.acme.a.Unrelated",
+            "com.acme.b.Svc"
+          ],
+          "differs": true
+        }
+      }
+    }
+  ],
+  "system": {
+    "components": 3,
+    "CCD": 7,
+    "ACD": 2.333333333333,
+    "RACD": 0.777777777778,
+    "CCD_balanced": 5.00,
+    "NCCD": 1.40,
+    "display": {
+      "ACD": 2.33,
+      "RACD": 0.7778,
+      "CCD_balanced": 5.00,
+      "NCCD": 1.40
+    }
+  },
+  "non_terminating": {
+    "/components/0/I": "1/3",
+    "/components/0/D": "2/3",
+    "/system/ACD": "7/3",
+    "/system/RACD": "7/9"
+  },
+  "_fixture": {
+    "generated_by": "contract/graph/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}
