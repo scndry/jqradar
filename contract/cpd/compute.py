@@ -9,7 +9,7 @@
 투영하는가가 계약의 전부다.
 
 입력은 **CPD가 낸 것**(정규화 토큰 열의 발생 집합)이고, 출력은 §2.1이 쓰는 값들이다:
-`union_dup_tokens`·`dup_extent`·`self_dup_tokens`·`twins`·`pair_dup_tokens`.
+`union_dup_tokens`·`dup_extent`·`self_dup_tokens`·`twins`·쌍의 두 수(`a_dup_tokens`·`b_dup_tokens`, D199).
 토큰 구간은 반개구간 `[start, end)`이며 길이는 `end − start`다(§2.6의 150 예가 그렇다).
 """
 

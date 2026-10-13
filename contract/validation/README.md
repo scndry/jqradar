@@ -5,7 +5,7 @@
 **"validated"가 무엇을 뜻하고 무엇을 뜻하지 않는가**를 못 박는다. 고정 문구: **`validated ≠ 등가 증명`**(D20).
 
 - **목표 개선 합격 함수는 지표별**(D32). 240→239가 "개선"이면 엔진은 편법을 찾는다.
-  - 중복: `propose`가 명시한 **`target_pairs` 전부** `pair_dup_tokens = 0` **이고** 새 `new_duplication` 없음(D41)
+  - 중복: `propose`가 명시한 **`target_pairs` 전부**의 두 수가 0(D199) **이고** 새 `new_duplication` 없음(D41)
   - 순환: 해당 SCC 소멸 **이고** 새 SCC 없음
   - 복잡도: 목표 메서드 CYCLO ≥ 20% 감소 **이고** 파일 내 최대 CYCLO 비증가 — 실증되지 않은 **기본 휴리스틱**이며 조직이 `check`에서 바꿀 수 있다(D98)
 - **검증은 결과 + 검증 입력 정체성의 쌍**(§6.3 5a, D89). `validated_tree_id`·`validated_analysis_input_id`·`validated_head_sha`·`validation_scope`가 없는 `validated`는 `validated`가 아니다.
