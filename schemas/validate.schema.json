@@ -234,7 +234,7 @@
               "items": {
                 "type": "string"
               },
-              "description": "실제로 `pair_dup_tokens = 0`이 된 쌍(§6.3). 합격은 `target_pairs` **전부**를 요구한다."
+              "description": "실제로 해소된 쌍(§6.3) — 합격 조건은 D199(쌍 측정 `duplication_pair`의 두 수). 합격은 `target_pairs` **전부**를 요구한다."
             },
             "before": {
               "oneOf": [

@@ -747,7 +747,7 @@ def run_parameter_projection(case_dir: Path, inp: dict) -> dict:
 def run_people_variants(case_dir: Path, inp: dict) -> dict:
     """§2.8·D160 — 저작 정책 두 변이(같은 트리·같은 이력): `analysis_input_id`는 다르고
     `repository_state_id`는 같다. 그리고 사영(D159): `people`을 읽는 측정(`team_count`)만
-    캐시 미스, `cx`·`pair_dup_tokens`는 적중 — 매핑 한 줄이 바뀌어도 리포트는 다시
+    캐시 미스, `cx`·`duplication_pair`는 적중 — 매핑 한 줄이 바뀌어도 리포트는 다시
     조립되지만 내용 주소 측정은 다시 재지 않는다."""
     tree = case_dir / inp["repo"]["tree"]
     files = tree_files(tree)
