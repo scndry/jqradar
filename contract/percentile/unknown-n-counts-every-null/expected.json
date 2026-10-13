@@ -1,0 +1,115 @@
+{
+  "case": "unknown-n-counts-every-null",
+  "generated_by": "contract/percentile/compute.py",
+  "contract_refs": [
+    "§2.5",
+    "§7",
+    "§2.9",
+    "D263",
+    "D204",
+    "D189"
+  ],
+  "what_this_pins": "**`unknown_n`은 유효 나이가 아닌 파일 수다 — 사유 무관, 사유는 각 파일의 `reason`**(D263). 유효 나이 여섯과 사유 넷의 null(`age_unknown` — shallow, `uncommitted` — 미커밋 신규, `rename_ancestry_lost` — rename 조상 복구 실패, `invalid_metadata` — 음수 나이; D189·§2.1)이 섞인 모집단에서 `valid_n` = 6, `unknown_n` = 4, `valid_n + unknown_n = n`(10). shallow의 부분 모집단은 `history_complete`가 말한다(D204) — `unknown_n`이 아니다.\n\n**변조 — `age_unknown`만 세면 1**이다(`unknown_n_check.mutation_age_unknown_only`). 그 뜻이면 §7의 `history_complete: true ∧ unknown_n: 2`가 모순이 된다. `p90-type7`은 `age_unknown` 하나뿐이라 두 뜻을 가르지 못했다 — 이 케이스가 가른다.",
+  "parameters": {
+    "percentile.min_population": 20
+  },
+  "populations": {
+    "all": {
+      "commit_granularity": "fine",
+      "measures": {
+        "age_last_days": {
+          "lang": null,
+          "n_ranked": 6,
+          "spread": {
+            "min": 3,
+            "q1": 17.5,
+            "median": 65,
+            "q3": 172.5,
+            "iqr": 155,
+            "max": 700,
+            "valid_n": 6,
+            "unknown_n": 4
+          },
+          "confidence": "low",
+          "confidence_reasons": [
+            "n_below_50"
+          ],
+          "n_population": 10,
+          "percentiles": {
+            "f01": {
+              "value": 3,
+              "rank_avg": 1,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f02": {
+              "value": 10,
+              "rank_avg": 2,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f03": {
+              "value": 40,
+              "rank_avg": 3,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f04": {
+              "value": 90,
+              "rank_avg": 4,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f05": {
+              "value": 200,
+              "rank_avg": 5,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f06": {
+              "value": 700,
+              "rank_avg": 6,
+              "pct": null,
+              "reason": "insufficient_population"
+            },
+            "f07": {
+              "value": null,
+              "rank_avg": null,
+              "pct": null,
+              "reason": "age_unknown"
+            },
+            "f08": {
+              "value": null,
+              "rank_avg": null,
+              "pct": null,
+              "reason": "uncommitted"
+            },
+            "f09": {
+              "value": null,
+              "rank_avg": null,
+              "pct": null,
+              "reason": "rename_ancestry_lost"
+            },
+            "f10": {
+              "value": null,
+              "rank_avg": null,
+              "pct": null,
+              "reason": "invalid_metadata"
+            }
+          },
+          "unknown_n_check": {
+            "valid_n_plus_unknown_n_equals_n": true,
+            "mutation_age_unknown_only": 1,
+            "mutation_differs": true
+          }
+        }
+      }
+    }
+  },
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/percentile/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

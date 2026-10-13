@@ -1,0 +1,50 @@
+{
+  "case": "unknown-n-counts-every-null",
+  "contract_refs": [
+    "§2.5",
+    "§7",
+    "§2.9",
+    "D263",
+    "D204",
+    "D189"
+  ],
+  "what_this_pins": "**`unknown_n`은 유효 나이가 아닌 파일 수다 — 사유 무관, 사유는 각 파일의 `reason`**(D263). 유효 나이 여섯과 사유 넷의 null(`age_unknown` — shallow, `uncommitted` — 미커밋 신규, `rename_ancestry_lost` — rename 조상 복구 실패, `invalid_metadata` — 음수 나이; D189·§2.1)이 섞인 모집단에서 `valid_n` = 6, `unknown_n` = 4, `valid_n + unknown_n = n`(10). shallow의 부분 모집단은 `history_complete`가 말한다(D204) — `unknown_n`이 아니다.\n\n**변조 — `age_unknown`만 세면 1**이다(`unknown_n_check.mutation_age_unknown_only`). 그 뜻이면 §7의 `history_complete: true ∧ unknown_n: 2`가 모순이 된다. `p90-type7`은 `age_unknown` 하나뿐이라 두 뜻을 가르지 못했다 — 이 케이스가 가른다.",
+  "parameters": {
+    "percentile.min_population": 20
+  },
+  "populations": {
+    "all": {
+      "commit_granularity": "fine",
+      "measures": {
+        "age_last_days": {
+          "lang": null,
+          "check_unknown_n": true,
+          "values": {
+            "f01": 3,
+            "f02": 10,
+            "f03": 40,
+            "f04": 90,
+            "f05": 200,
+            "f06": 700,
+            "f07": {
+              "value": null,
+              "reason": "age_unknown"
+            },
+            "f08": {
+              "value": null,
+              "reason": "uncommitted"
+            },
+            "f09": {
+              "value": null,
+              "reason": "rename_ancestry_lost"
+            },
+            "f10": {
+              "value": null,
+              "reason": "invalid_metadata"
+            }
+          }
+        }
+      }
+    }
+  }
+}

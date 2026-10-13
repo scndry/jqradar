@@ -38,6 +38,9 @@ from javasource import split_java  # noqa: E402  — 주석·문자열 가르기
 
 GENERATED_BY = "contract/history/compute.py"
 SECONDS_PER_DAY = 86400
+# §2.7·D262 — 창의 1개월 = 2,629,800초(365.25/12일, 정확한 정수 초). 일로 반올림하지 않는다 — 반올림 규칙이
+# 구현마다 달라(24개월 = 730.5일: 파이썬 짝수 반올림 730, Java Math.round 731) id가 갈린다. 하한은 포함.
+MONTH_SECONDS = 2_629_800
 K_THRESHOLD = 3  # §2.7·D161 — 팀 집계의 k 하한. 3인 미만 팀은 `other`로 접힌다.
 
 # D162 — off 모드가 내는 저자 유래 필드의 **닫힌 목록**. 이 밖의 저자 유래 필드가 off
@@ -322,7 +325,7 @@ def build_expected(inp: dict, workdir: Path) -> dict:
     head_time = datetime.fromisoformat(head["committer_time"])
     window = inp["window"]
     months, max_commits = int(window["months"]), int(window["max_commits"])
-    earliest = head_time - timedelta(days=round(months * 30.4375))
+    earliest = head_time - timedelta(seconds=months * MONTH_SECONDS)
 
     # 머지 커밋(부모 ≥ 2) 제외 후 최신순. 두 상한 중 **먼저 닥치는 쪽**을 적용한다.
     non_merge = [c for c in commits if not c["is_merge"]]
@@ -876,6 +879,68 @@ def check_no_blame(inp: dict) -> dict:
     }
 
 
+# --------------------------------------------------------------------------
+# §2.7·D262 — 창의 1개월 = 2,629,800초. 경계의 커밋 하나가 id를 가르므로 규칙을 값으로 고정한다.
+# --------------------------------------------------------------------------
+
+def _calendar_months_back(head: datetime, months: int) -> datetime:
+    """변조 — UTC 달력 월 뺄셈(말일은 말일로). D184가 '일'에서 버린 길이다."""
+    y, m = divmod(head.month - 1 - months, 12)
+    year, month = head.year + y, m + 1
+    nxt = datetime(year + (month == 12), month % 12 + 1, 1, tzinfo=timezone.utc)
+    last_day = (nxt - timedelta(days=1)).day
+    return head.replace(year=year, month=month, day=min(head.day, last_day))
+
+
+def _round_half_up(x: Fraction) -> int:
+    """Java `Math.round`의 규칙(반 올림) — 파이썬 `round`(짝수 반올림)와 .5에서 갈린다."""
+    return int((x + Fraction(1, 2)).__floor__())
+
+
+def check_window_month_unit(inp: dict) -> dict:
+    """D262 — 하한 = HEAD_TIME − months × 2,629,800초, 포함, 반올림 없음. 변조마다 어느 경계 커밋을 다르게 판정하는지 적는다."""
+    tmp = tempfile.mkdtemp()
+    try:
+        workdir = Path(tmp) / "repo"
+        build_repo(inp["repo"], workdir)
+        commits = read_history(workdir)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    head_time = datetime.fromisoformat(commits[0]["committer_time"])
+    head_unix = int(head_time.timestamp())
+    at = {c["subject"]: int(datetime.fromisoformat(c["committer_time"]).timestamp()) for c in commits}
+    rules = {
+        "contract": lambda m: head_unix - m * MONTH_SECONDS,
+        "days_365_per_year": lambda m: head_unix - m * 2_628_000,                                   # 365/12일
+        "round_half_even_days": lambda m: head_unix - round(Fraction(m * 304375, 10000)) * SECONDS_PER_DAY,   # 옛 계산기
+        "round_half_up_days": lambda m: head_unix - _round_half_up(Fraction(m * 304375, 10000)) * SECONDS_PER_DAY,  # Java Math.round
+        "calendar_months": lambda m: int(_calendar_months_back(head_time, m).timestamp()),
+    }
+    variants = {}
+    for name, months in inp["window_months"].items():
+        bounds = {r: f(months) for r, f in rules.items()}
+        inside = {r: sorted(k for k, t in at.items() if t >= b) for r, b in bounds.items()}
+        contract = set(inside["contract"])
+        variants[name] = {
+            "months": months,
+            "lower_bound_offset_seconds": {r: head_unix - b for r, b in bounds.items()},
+            "in_window": inside["contract"],
+            "mutations": {r: {"misjudged": sorted(set(inside[r]) ^ contract)}
+                          for r in rules if r != "contract"},
+        }
+    bites = {r: sorted(n for n, v in variants.items() if v["mutations"][r]["misjudged"])
+             for r in rules if r != "contract"}
+    return {
+        "case": inp["case"], "contract_refs": inp["contract_refs"], "what_this_pins": inp["what_this_pins"],
+        "check": "window_month_unit", "month_seconds": MONTH_SECONDS,
+        "head_time": head_time.isoformat(),
+        "commit_offsets_seconds": {k: head_unix - t for k, t in sorted(at.items())},
+        "variants": variants,
+        "mutation_bites_in": bites,
+        "verdict": "accept" if all(bites.values()) else "reject",
+    }
+
+
 def identity_hashes(identifiers: list[str]) -> dict[str, list[str]]:
     """알고 있는 저자 식별자의 해시들. **모양이 아니라 출처로 가른다**(D135).
 
@@ -1062,6 +1127,8 @@ def main() -> int:
             expected = check_identity_absence(inp)
         elif inp.get("check") == "closed_list_absence":
             expected = check_closed_list_absence(inp)
+        elif inp.get("check") == "window_month_unit":
+            expected = check_window_month_unit(inp)
         elif "variants" in inp:
             # 같은 작업을 두 이력으로 만들어 값을 나란히 둔다(§2.4 스쿼시 대조, D134).
             expected = {"case": inp["case"], "contract_refs": inp["contract_refs"],

@@ -1,0 +1,128 @@
+{
+  "case": "window-month-unit-boundary",
+  "contract_refs": [
+    "§2.7",
+    "§2.9",
+    "D262",
+    "D184"
+  ],
+  "what_this_pins": "**창의 1개월 = 2,629,800초(365.25/12일, 정확한 정수 초) — 하한 `HEAD_TIME − window.months × 2,629,800`, 포함, 반올림 없음**(D262). 같은 리포를 12·24개월 창으로 본다. 12개월: 하한 정각(`c12_lower`) → 안, 하한 − 1초 → 밖, `HEAD − 365일 − 1초`(`c365d_plus_1s`) → 안. 24개월: 하한 정각(`c24_lower` = `HEAD − 730.5일`) → 안, 하한 − 1초 → 밖.\n\n**변조 넷이 각각 경계 커밋을 다르게 판정한다**(`mutations[].misjudged`). 12개월에서는 넷 모두 하한이 365일이라 `c12_lower`·`c365d_plus_1s`를 밖으로 보낸다. 24개월에서 갈린다: 365/12일(`days_365_per_year`)·옛 계산기의 짝수 반올림 일(`round_half_even_days`)·UTC 달력 월(`calendar_months`)은 730일이라 `c24_lower`를 밖으로, Java `Math.round`의 반 올림 일(`round_half_up_days`)은 731일이라 `c24_lower_minus_1s`를 안으로. 일로 반올림하는 어떤 규칙도 구현의 반올림 규칙을 id에 들인다 — 24개월의 730과 731이 그 증거다.",
+  "check": "window_month_unit",
+  "month_seconds": 2629800,
+  "head_time": "2026-10-13T00:00:00+00:00",
+  "commit_offsets_seconds": {
+    "c12_lower": 31557600,
+    "c12_lower_minus_1s": 31557601,
+    "c24_lower": 63115200,
+    "c24_lower_minus_1s": 63115201,
+    "c365d_plus_1s": 31536001,
+    "head": 0
+  },
+  "variants": {
+    "twelve": {
+      "months": 12,
+      "lower_bound_offset_seconds": {
+        "contract": 31557600,
+        "days_365_per_year": 31536000,
+        "round_half_even_days": 31536000,
+        "round_half_up_days": 31536000,
+        "calendar_months": 31536000
+      },
+      "in_window": [
+        "c12_lower",
+        "c365d_plus_1s",
+        "head"
+      ],
+      "mutations": {
+        "days_365_per_year": {
+          "misjudged": [
+            "c12_lower",
+            "c365d_plus_1s"
+          ]
+        },
+        "round_half_even_days": {
+          "misjudged": [
+            "c12_lower",
+            "c365d_plus_1s"
+          ]
+        },
+        "round_half_up_days": {
+          "misjudged": [
+            "c12_lower",
+            "c365d_plus_1s"
+          ]
+        },
+        "calendar_months": {
+          "misjudged": [
+            "c12_lower",
+            "c365d_plus_1s"
+          ]
+        }
+      }
+    },
+    "twenty_four": {
+      "months": 24,
+      "lower_bound_offset_seconds": {
+        "contract": 63115200,
+        "days_365_per_year": 63072000,
+        "round_half_even_days": 63072000,
+        "round_half_up_days": 63158400,
+        "calendar_months": 63072000
+      },
+      "in_window": [
+        "c12_lower",
+        "c12_lower_minus_1s",
+        "c24_lower",
+        "c365d_plus_1s",
+        "head"
+      ],
+      "mutations": {
+        "days_365_per_year": {
+          "misjudged": [
+            "c24_lower"
+          ]
+        },
+        "round_half_even_days": {
+          "misjudged": [
+            "c24_lower"
+          ]
+        },
+        "round_half_up_days": {
+          "misjudged": [
+            "c24_lower_minus_1s"
+          ]
+        },
+        "calendar_months": {
+          "misjudged": [
+            "c24_lower"
+          ]
+        }
+      }
+    }
+  },
+  "mutation_bites_in": {
+    "days_365_per_year": [
+      "twelve",
+      "twenty_four"
+    ],
+    "round_half_even_days": [
+      "twelve",
+      "twenty_four"
+    ],
+    "round_half_up_days": [
+      "twelve",
+      "twenty_four"
+    ],
+    "calendar_months": [
+      "twelve",
+      "twenty_four"
+    ]
+  },
+  "verdict": "accept",
+  "non_terminating": {},
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

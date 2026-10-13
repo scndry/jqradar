@@ -1,0 +1,42 @@
+{
+  "case": "zone-side-of-main-sequence",
+  "contract_refs": [
+    "§2.2",
+    "§2.9",
+    "D264",
+    "D115",
+    "D180"
+  ],
+  "what_this_pins": "**`zone`은 Main Sequence의 어느 쪽인가다 — `A + I`와 1의 정확 비교, 임계 없음**(D264). 컴포넌트 넷: `top` → `mid` → `core`, 그리고 이웃 없는 `iso`. `core`(I = 0, A = 0 → A + I = 0 < 1) `stable-concrete` · `mid`(I = 1/2, A = 1/2 → **정확히 1**) `main-sequence` · `top`(I = 1, A = 1/2 → 3/2 > 1) `unstable-abstract` · `iso`(Ca + Ce = 0) → I·D·zone null + `reason: isolated_component`, A는 값(D180). 크기는 `D`가 말하고 zone은 방향만 말한다.\n\n**포기한 길과 대조한다**(`zone_mutation_quadrant` — I·A를 1/2에서 가르는 사분면): `mid`(1/2, 1/2)를 `unstable-abstract`로 부른다 — Main Sequence 위의 컴포넌트에 모서리 이름이 붙는다. 사분면은 절대 임계라 B.3·D2와 부딪친다.",
+  "zone_mutations": true,
+  "components": {
+    "nodes": [
+      "core",
+      "iso",
+      "mid",
+      "top"
+    ],
+    "edges": [
+      [
+        "top",
+        "mid"
+      ],
+      [
+        "mid",
+        "core"
+      ]
+    ],
+    "abstract": {
+      "core": 0,
+      "iso": 0,
+      "mid": 1,
+      "top": 1
+    },
+    "total": {
+      "core": 2,
+      "iso": 1,
+      "mid": 2,
+      "top": 2
+    }
+  }
+}

@@ -954,7 +954,13 @@
             "string",
             "null"
           ],
-          "description": "Martin zone 표기(§2.2) — **설명이지 판정이 아니다**. 정당한 예외(유틸리티·도메인 코어)를 `zone_note`에 병기한다(§3.4). I가 null이면 null(D180)."
+          "enum": [
+            "stable-concrete",
+            "main-sequence",
+            "unstable-abstract",
+            null
+          ],
+          "description": "Main Sequence의 어느 쪽인가(§2.2, D264) — `A + I < 1` `stable-concrete`, `= 1` `main-sequence`, `> 1` `unstable-abstract`(정확 유리수, 임계 없음 — 크기는 `D`). **설명이지 판정이 아니다**. 문구는 `zone_note`에(zone마다 정해진 문구, §2.2·§3.4). I가 null이면 null(D180)."
         },
         "zone_note": {
           "$ref": "#/$defs/noteText",
@@ -1539,7 +1545,13 @@
                 "string",
                 "null"
               ],
-              "description": "Martin zone 표기 — 설명이지 판정이 아니다(§3.4). I가 null이면 null(D180)."
+              "enum": [
+                "stable-concrete",
+                "main-sequence",
+                "unstable-abstract",
+                null
+              ],
+              "description": "소속 컴포넌트의 zone — Main Sequence의 어느 쪽(§2.2, D264). 설명이지 판정이 아니다(§3.4). I가 null이면 null(D180)."
             },
             "cycle_id": {
               "type": [

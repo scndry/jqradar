@@ -81,6 +81,7 @@
       "I": null,
       "A": 0,
       "D": null,
+      "zone": null,
       "class_count": 8,
       "reason": "isolated_component"
     }

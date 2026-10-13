@@ -27,6 +27,7 @@
 | [`anchor-fixed/`](anchor-fixed/) | 같은 HEAD를 다른 날 재도 같은 값. v3.2까지 이 기준점이 없었다(§0-4 #2) |
 | [`merge-commits-excluded/`](merge-commits-excluded/) | 부모 ≥ 2는 세지 않는다. 브랜치 커밋은 센다 |
 | [`window-bound-time/`](window-bound-time/) | 12개월 상한이 먼저 — `bound_hit: time` |
+| [`window-month-unit-boundary/`](window-month-unit-boundary/) | **D262** — 1개월 = 2,629,800초, 하한 포함, 반올림 없음. 12·24개월 경계 커밋; 변조 넷(365/12일·짝수 반올림 일·반 올림 일·달력 월)이 경계 커밋을 다르게 판정한다 — 24개월의 730/731 |
 | [`window-bound-count/`](window-bound-count/) | 커밋 수 상한이 먼저 — `bound_hit: count` |
 | [`coarse-granularity/`](coarse-granularity/) | 중앙값 > 20 → `coarse`. `chg_commits`의 confidence가 low로(§3.7) |
 | [`rename-tiebreak/`](rename-tiebreak/) | 유사도 동률 → **경로 편집 거리**가 결정 |

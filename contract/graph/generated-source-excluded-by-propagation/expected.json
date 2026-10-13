@@ -70,6 +70,7 @@
       "I": 1,
       "A": 0,
       "D": 0,
+      "zone": "main-sequence",
       "class_count": 2
     },
     {
@@ -79,6 +80,7 @@
       "I": 0,
       "A": 0.5,
       "D": 0.5,
+      "zone": "stable-concrete",
       "class_count": 2
     }
   ],

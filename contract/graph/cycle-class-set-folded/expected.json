@@ -31,6 +31,7 @@
       "I": 0.333333333333,
       "A": 0,
       "D": 0.666666666667,
+      "zone": "stable-concrete",
       "class_count": 4
     },
     {
@@ -40,6 +41,7 @@
       "I": 0.5,
       "A": 0,
       "D": 0.5,
+      "zone": "stable-concrete",
       "class_count": 2
     },
     {
@@ -49,6 +51,7 @@
       "I": 1,
       "A": 0,
       "D": 0,
+      "zone": "main-sequence",
       "class_count": 1
     }
   ],
