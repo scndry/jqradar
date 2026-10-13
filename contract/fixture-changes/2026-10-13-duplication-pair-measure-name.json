@@ -1,0 +1,10 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "reproducibility.measure_projections — 측정 이름 `pair_dup_tokens` → `duplication_pair`(D199의 이름, v3.10.14 D241)",
+    "old": "캐시 사영 케이스 셋이 측정을 `pair_dup_tokens`로 불렀다 — 입력의 `source`가 '§4.5 첫째 예 — 글자 그대로'였고 §4.5가 그 이름을 썼다",
+    "new": "D241이 §2.9·§4.5·§5.5의 측정 이름을 `duplication_pair`로 고쳤으므로 입력도 같은 글자를 따른다. 캐시 키에는 측정 이름이 들지 않아(`measure_cache_key`는 내용·엔진·알고리즘·파라미터의 사영) 해시는 하나도 바뀌지 않았다 — expected의 차이는 이름뿐이다(이름을 바꾼 옛 expected와 바이트 동일)",
+    "note": "적중·미스 판정 불변. 같은 커밋에서 스키마 설명 둘(`report.schema.json`의 `duplication_pairs`, `validate.schema.json`의 `resolved_pairs`)이 D199를 가리키게 했다; `validate.schema.json`의 '옛 이름 `pair_dup_tokens`는 거부'는 거부의 근거라 남긴다.",
+    "fixtures": ["reproducibility/parameter-change-cache-projection", "reproducibility/attribution-toggle-changes-id", "reproducibility/team-mapping-edit-cache-projection"]
+  }
+}

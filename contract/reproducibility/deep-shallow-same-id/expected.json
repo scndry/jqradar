@@ -16,7 +16,7 @@
   "runs": {
     "full": {
       "depth": null,
-      "analysis_input_id": "sha256:45c3932d61f6df14e25d3043231d445807e0a36660482f8ca443fa5455ed0d6e",
+      "analysis_input_id": "sha256:590a42185e918c7d70db0919feb7dc70566f6d40e117db8b7008419e1603fd91",
       "repository_state_id": "sha256:b3ff24446aecbfedb8fb70ab717b84d8e79eaa0ef9404e291da4d59ecf6362ca",
       "commits_in_window": 3,
       "history_complete": true,
@@ -31,7 +31,7 @@
     },
     "deep": {
       "depth": 5,
-      "analysis_input_id": "sha256:45c3932d61f6df14e25d3043231d445807e0a36660482f8ca443fa5455ed0d6e",
+      "analysis_input_id": "sha256:590a42185e918c7d70db0919feb7dc70566f6d40e117db8b7008419e1603fd91",
       "repository_state_id": "sha256:b3ff24446aecbfedb8fb70ab717b84d8e79eaa0ef9404e291da4d59ecf6362ca",
       "commits_in_window": 3,
       "history_complete": true,
@@ -46,7 +46,7 @@
     },
     "shallow": {
       "depth": 3,
-      "analysis_input_id": "sha256:cac01a376a074c9a10426e2f692857872c86fbaa4cd8e13ab457259230718bcd",
+      "analysis_input_id": "sha256:c3b9cc634d1e83da90793df583b6b6314bcbf1495962b9154ed2c7a74acf789c",
       "repository_state_id": "sha256:b3ff24446aecbfedb8fb70ab717b84d8e79eaa0ef9404e291da4d59ecf6362ca",
       "commits_in_window": 3,
       "history_complete": false,

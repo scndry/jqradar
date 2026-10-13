@@ -63,7 +63,7 @@
     },
     "duplication_pairs": {
       "type": "array",
-      "description": "쌍별 중복 토큰 투영(§2.6). `pair_dup_tokens`는 A쪽 구간 합집합이며 A = 경로 사전순 앞.",
+      "description": "쌍별 중복 토큰 투영(§2.6) — 쌍의 두 수는 D199가 정한다(원소 모양은 `duplicationPair`).",
       "items": {
         "$ref": "#/$defs/duplicationPair"
       }
@@ -211,7 +211,7 @@
         },
         "tool_version": {
           "type": "string",
-          "description": "jQRadar 버전(§2.8 `core_tool_version`). major.minor.patch."
+          "description": "jQRadar 버전 — §2.8 id 입력의 키도 같은 이름(D244). major.minor.patch."
         },
         "schema_version": {
           "type": "string",

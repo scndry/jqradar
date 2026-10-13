@@ -66,7 +66,7 @@
   "shared_inputs": {
     "schema_version": "jqradar/3",
     "contract_version": "2026-09-11",
-    "core_tool_version": "3.8.2",
+    "tool_version": "3.8.2",
     "history_backend": {
       "name": "jgit",
       "git_version": null
