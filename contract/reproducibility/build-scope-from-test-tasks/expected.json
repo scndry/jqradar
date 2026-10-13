@@ -1,0 +1,118 @@
+{
+  "case": "build-scope-from-test-tasks",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.1",
+    "§4.1",
+    "§2.9",
+    "D257",
+    "D256",
+    "D212",
+    "D201"
+  ],
+  "what_this_pins": "**`origin: build`의 테스트 소스 세트는 어떤 `Test` 태스크가 실행하는 세트다**(D257) — 출력이 그 태스크의 테스트 클래스 디렉터리에 드는 세트; `main`은 main; 그 밖의 세트는 범위 밖(어느 루트에도 없고 쌍의 원소도 아니다, D201). 기준은 이름이 아니라 **빌드의 선언**이다(D212 — 빌드 선언이 정본). 입력은 빌드 모델의 사실(소스 세트의 이름·소스 루트·출력 디렉터리, `Test` 태스크의 테스트 클래스 디렉터리)이고 출력은 `source_scope` — 플러그인(D256)이 서기 전에 규칙이 값으로 선다.\n\n세트 여섯: `main` · `test`(`test` 태스크) · `integrationTest`(`integrationTest` 태스크) · **`functional`**(이름에 test가 없지만 `functionalTest` 태스크가 실행) · `jmh` · `testFixtures`(실행하는 태스크 없음). 규칙의 답은 `test_roots` = test·integrationTest·functional, 밖 = jmh·testFixtures.\n\n**변조 둘이 문다.** 이름 규칙(`name_contains_test` — 이름에 test가 든 세트)은 `functional`을 놓치고 `testFixtures`를 넣는다; \"main 아닌 전부\"(`not_main`)는 `jmh`·`testFixtures`를 넣는다. `same-tree-different-origin`의 `build` 변이 전제(integrationTest가 테스트 세트)는 이 규칙과 맞는다. 생성 소스 디렉터리(`generated_roots`)는 빌드가 선언한 값을 그대로 옮긴다 — 이 케이스가 보는 것이 아니다.",
+  "classification": [
+    {
+      "source_set": "main",
+      "class": "main",
+      "run_by": []
+    },
+    {
+      "source_set": "test",
+      "class": "test",
+      "run_by": [
+        "test"
+      ]
+    },
+    {
+      "source_set": "integrationTest",
+      "class": "test",
+      "run_by": [
+        "integrationTest"
+      ]
+    },
+    {
+      "source_set": "functional",
+      "class": "test",
+      "run_by": [
+        "functionalTest"
+      ]
+    },
+    {
+      "source_set": "jmh",
+      "class": "outside",
+      "run_by": []
+    },
+    {
+      "source_set": "testFixtures",
+      "class": "outside",
+      "run_by": []
+    }
+  ],
+  "source_scope": {
+    "origin": "build",
+    "main_roots": [
+      "src/main/java",
+      "src/main/kotlin"
+    ],
+    "test_roots": [
+      "src/functional/java",
+      "src/integrationTest/java",
+      "src/test/java"
+    ],
+    "generated_roots": [
+      "build/generated/sources/annotationProcessor/java/main"
+    ]
+  },
+  "mutations": {
+    "name_contains_test": {
+      "source_scope": {
+        "origin": "build",
+        "main_roots": [
+          "src/main/java",
+          "src/main/kotlin"
+        ],
+        "test_roots": [
+          "src/integrationTest/java",
+          "src/test/java",
+          "src/testFixtures/java"
+        ],
+        "generated_roots": [
+          "build/generated/sources/annotationProcessor/java/main"
+        ]
+      },
+      "misclassified": [
+        "functional",
+        "testFixtures"
+      ]
+    },
+    "not_main": {
+      "source_scope": {
+        "origin": "build",
+        "main_roots": [
+          "src/main/java",
+          "src/main/kotlin"
+        ],
+        "test_roots": [
+          "src/functional/java",
+          "src/integrationTest/java",
+          "src/jmh/java",
+          "src/test/java",
+          "src/testFixtures/java"
+        ],
+        "generated_roots": [
+          "build/generated/sources/annotationProcessor/java/main"
+        ]
+      },
+      "misclassified": [
+        "jmh",
+        "testFixtures"
+      ]
+    }
+  },
+  "assertions": {
+    "set_without_test_in_name_is_test_when_run": true,
+    "sets_not_run_by_a_test_task_are_outside": true,
+    "every_mutation_misclassifies": true
+  }
+}

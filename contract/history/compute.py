@@ -34,6 +34,7 @@ CASE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(CASE_DIR.parent / "tools"))
 import exact  # noqa: E402
 import historywalk  # noqa: E402  — §4.5 걷기는 공용(reproducibility/와 같은 구현)
+from javasource import split_java  # noqa: E402  — 주석·문자열 가르기는 공용(reproducibility/의 D258 판별과 같은 구현)
 
 GENERATED_BY = "contract/history/compute.py"
 SECONDS_PER_DAY = 86400
@@ -736,58 +737,23 @@ def is_blame_sanctioned(rel: str) -> bool:
     return any(marker in rel for marker in BLAME_SANCTIONED)
 
 
-def split_java(source: str) -> tuple[str, list[str]]:
-    """Java 소스를 (주석 뺀 코드, 문자열 리터럴 목록)으로 가른다.
-
-    **이 함수가 이 케이스의 핵심이다.** 주석과 문자열 리터럴을 같이 다루면 규칙이
-    둘 중 하나로 망가진다:
-
-    - 둘 다 보면 "매 스캔 blame 금지(D18)" 같은 **계약을 인용하는 주석**이 걸린다.
-      이 리포의 코드 스타일이 정확히 그것이라(JqradarArchRules.java도 compute.py도
-      계약 인용 주석으로 가득하다) 규칙이 G1에 "계약을 설명하는 주석 금지"가 된다.
-    - 둘 다 안 보면 `new ProcessBuilder("git", "blame", "-p")`를 놓친다 — 타입
-      의존이 없어 자체 ArchUnit 규칙 2도 못 잡는 경로다.
-
-    그래서 **주석은 버리고 문자열 리터럴은 남긴다.** `contract/judgment-vocabulary.json`이
-    `not_judgment` 절과 단어 경계로 오탐을 다루는 것과 같은 규율이다.
-
-    코드 쪽에서는 리터럴을 `""`로 지워 토큰만 남긴다 — 그래야 `.blame(`이 주석이나
-    문자열이 아니라 **호출**일 때만 걸린다.
-    """
-    out, literals = [], []
-    i, n = 0, len(source)
-    while i < n:
-        two = source[i:i + 2]
-        if two == "//":
-            while i < n and source[i] != "\n":
-                i += 1
-            continue
-        if two == "/*":
-            end = source.find("*/", i + 2)
-            i = n if end < 0 else end + 2
-            continue
-        if source[i:i + 3] == '"""':                      # 텍스트 블록(Java 15+)
-            end = source.find('"""', i + 3)
-            literals.append(source[i + 3:end] if end >= 0 else source[i + 3:])
-            out.append('""')
-            i = n if end < 0 else end + 3
-            continue
-        if source[i] in '"\'':
-            quote, j, buf = source[i], i + 1, []
-            while j < n and source[j] != quote:
-                if source[j] == "\\":
-                    buf.append(source[j:j + 2])
-                    j += 2
-                    continue
-                buf.append(source[j])
-                j += 1
-            literals.append("".join(buf))
-            out.append('""')
-            i = j + 1
-            continue
-        out.append(source[i])
-        i += 1
-    return "".join(out), literals
+# `split_java` — Java 소스를 (주석 뺀 코드, 문자열 리터럴 목록)으로 가른다. 공용 모듈(`contract/tools/javasource.py`)에 있다 —
+# `reproducibility/`의 `@Generated` 판별(D258)도 같은 규율로 주석·문자열을 가른다.
+#
+# **이 함수가 이 케이스의 핵심이다.** 주석과 문자열 리터럴을 같이 다루면 규칙이
+# 둘 중 하나로 망가진다:
+#
+# - 둘 다 보면 "매 스캔 blame 금지(D18)" 같은 **계약을 인용하는 주석**이 걸린다.
+#   이 리포의 코드 스타일이 정확히 그것이라(JqradarArchRules.java도 compute.py도
+#   계약 인용 주석으로 가득하다) 규칙이 G1에 "계약을 설명하는 주석 금지"가 된다.
+# - 둘 다 안 보면 `new ProcessBuilder("git", "blame", "-p")`를 놓친다 — 타입
+#   의존이 없어 자체 ArchUnit 규칙 2도 못 잡는 경로다.
+#
+# 그래서 **주석은 버리고 문자열 리터럴은 남긴다.** `contract/judgment-vocabulary.json`이
+# `not_judgment` 절과 단어 경계로 오탐을 다루는 것과 같은 규율이다.
+#
+# 코드 쪽에서는 리터럴을 `""`로 지워 토큰만 남긴다 — 그래야 `.blame(`이 주석이나
+# 문자열이 아니라 **호출**일 때만 걸린다.
 
 
 # 코드 토큰 마커 — **주석을 뺀 코드**에서만 찾는다.

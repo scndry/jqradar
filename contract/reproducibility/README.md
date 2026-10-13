@@ -41,6 +41,8 @@
 | 매핑 한 줄 수정 | 둘 다 `team`, 팀 매핑 파일 한 줄만 다름 → `team_mapping_sha256`이 바뀌어 id 변경, `team_count` 키만 미스(D160·D159). 키에서 매핑 해시를 빼면 **거짓 적중**이 나는 것(검사가 무는가)도 단언 | [`team-mapping-edit-cache-projection/`](team-mapping-edit-cache-projection/) ✅ |
 | full clone vs `--depth 3` shallow clone | 같은 트리·같은 창 안 커밋 목록 → `last_commit_map_sha256`이 달라 id 다름 ∧ shallow는 `age_unknown` ∧ `history_complete: false`(D146·D148·D149) | 미작성 |
 | 정규 인코딩 = RFC 8785 JCS | RFC 벡터를 **같은 바이트로** 내는가. 순진한 sorted-key JSON이 그 벡터에서 **갈리는가**(검사가 무는가). id 입력 영역에서는 둘이 바이트 동일한가. float를 **거부**하는가 | [`jcs-canonical-encoding/`](jcs-canonical-encoding/) ✅ |
+| `build`의 세트 분류 | 빌드 모델의 사실(소스 세트의 출력 디렉터리, `Test` 태스크의 테스트 클래스 디렉터리) → `source_scope`(D257). 테스트 세트 = 어떤 `Test` 태스크가 실행하는 세트 — 이름에 test가 없는 `functional`도 `functionalTest`가 실행하면 테스트, 실행되지 않는 `jmh`·`testFixtures`는 어느 루트에도 없다. 변조 둘(이름 규칙·"main 아닌 전부")이 문다 | [`build-scope-from-test-tasks/`](build-scope-from-test-tasks/) ✅ |
+| 섞인 파일 | 최상위 선언 중 하나라도 `@Generated`인 파일은 적격 목록에 없다(D258) — 최상위 타입 셋 중 하나만 생성인 `.java`, `@Generated` 최상위 함수가 있는 `.kt`; 메서드에만 붙은 파일과 주석·문자열에만 나오는 파일은 적격. 계산기가 처음으로 소스에서 `@Generated`를 읽는다(`contract/tools/javasource.py` — `split_java`는 `history/`와 공용). 변조 "전부" 규칙이면 섞인 파일 둘이 목록에 든다 | [`mixed-generated-file-not-eligible/`](mixed-generated-file-not-eligible/) ✅ |
 
 창 밖 커밋과 id의 관계는 **두 계약이 절반씩** 진다. 여기(`unreachable-commits-do-not-leak`)는 **id가 같아야 하는 쪽** — 도달 불가 커밋은 창의 입력이 아니므로 세 id가 전부 불변이다. `history/authors-window-truncated-by-count`는 **값이 달라지는 쪽** — 창 상한이 90일 구간을 자르면 `distinct_authors_90d`가 달라진다. 창 밖만 다른 두 리포로는 전자를 만들 수 없다: 커밋 SHA가 조상을 물고 가서 `commit_list_sha256`이 갈리고 `analysis_input_id`가 구조적으로 달라진다(실험으로 확인). 버려진 브랜치는 HEAD의 조상이 아니라서 그 자리가 성립한다.
 
