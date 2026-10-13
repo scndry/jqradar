@@ -1,0 +1,14 @@
+{
+  "case": "event-passed-without-projection",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D249",
+  "what": "검증 때의 전이 사영 해시 없는 passed는 거부된다 — 원인 판정이 같은 사영인지 볼 수 없다(D249, D89의 짝)",
+  "mechanism": "if/then",
+  "schema": "event.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/validation"
+  ]
+}
