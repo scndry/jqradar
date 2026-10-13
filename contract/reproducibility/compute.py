@@ -33,6 +33,7 @@ PRD = CASE_DIR.parent.parent / "prd.md"
 sys.path.insert(0, str(CASE_DIR.parent / "tools"))
 import historywalk  # noqa: E402  — §4.5 걷기는 history/와 같은 구현(D205: 두 구현이 같은 shallow에서 같은 id)
 import jcs  # noqa: E402
+from javasource import GENERATED_ANNOTATIONS, top_level_declarations  # noqa: E402  — 주석·문자열 가르기는 history/와 같은 구현
 
 GENERATED_BY = "contract/reproducibility/compute.py"
 
@@ -1328,12 +1329,32 @@ def selftest() -> int:
 
 # ── D210·D212 — 같은 트리·다른 origin → 다른 id ∧ repository_state_id 같음 ─────────────────────────
 
-def eligible_files(files: list[tuple[str, str]], scope: dict) -> list[tuple[str, str]]:
-    """§2.1·D210 — 적격 목록: main_roots 아래 .java/.kt 중 test_roots·generated_roots 유래를 뺀 것(@Generated 판별은 이 픽스처 밖)."""
-    def under(p, roots): return any(p == r or p.startswith(r.rstrip("/") + "/") for r in roots)
+def _under(p: str, roots: list[str]) -> bool:
+    return any(p == r or p.startswith(r.rstrip("/") + "/") for r in roots)
+
+
+def in_scope_roots(files: list[tuple[str, str]], scope: dict) -> list[tuple[str, str]]:
+    """§2.1·D210 — main_roots 아래 .java/.kt 중 test_roots·generated_roots 유래를 뺀 것(루트만 본 목록)."""
     return [(p, c) for p, c in files
-            if p.endswith((".java", ".kt")) and under(p, scope["main_roots"])
-            and not under(p, scope["test_roots"]) and not under(p, scope["generated_roots"])]
+            if p.endswith((".java", ".kt")) and _under(p, scope["main_roots"])
+            and not _under(p, scope["test_roots"]) and not _under(p, scope["generated_roots"])]
+
+
+def generated_top_level(tree: Path, path: str) -> list[dict]:
+    """D258 — 파일의 최상위 선언마다 {kind, name, generated}. 판별 대상은 최상위 **선언**(Java는 타입, Kotlin은
+    타입·함수·프로퍼티)이고 세 `@Generated`(계약 상수)를 본다. 실제 구현의 증인은 PMD AST(B.1) — 이 계산기는
+    합성 입력의 모양을 `javasource.top_level_declarations`로 읽는다."""
+    language = "kotlin" if path.endswith(".kt") else "java"
+    decls = top_level_declarations((tree / path).read_text(encoding="utf-8"), language)
+    return [{"kind": d["kind"], "name": d["name"],
+             "generated": any(a in GENERATED_ANNOTATIONS for a in d["annotations"])} for d in decls]
+
+
+def eligible_files(files: list[tuple[str, str]], scope: dict, tree: Path) -> list[tuple[str, str]]:
+    """§2.1 — 적격 목록: 루트로 고른 파일(D210) 중 최상위 선언을 **하나라도** `@Generated`로 가진 파일을 뺀 것(D258 —
+    파일 단위; 같은 파일의 수기 선언도 함께 빠진다)."""
+    return [(p, c) for p, c in in_scope_roots(files, scope)
+            if not any(d["generated"] for d in generated_top_level(tree, p))]
 
 
 def run_source_scope_variants(case_dir: Path, inp: dict) -> dict:
@@ -1345,15 +1366,15 @@ def run_source_scope_variants(case_dir: Path, inp: dict) -> dict:
     rsid = repository_state_id(files)
     variants = {}
     for name, scope in inp["source_scope_variants"].items():
-        elig = eligible_files(files, scope)
+        elig = eligible_files(files, scope, tree)
         aid, spec = analysis_input_id({**shared, "source_scope": scope}, env, elig, history)
         variants[name] = {"source_scope": scope, "eligible": [p for p, _ in elig], "eligible_count": len(elig),
                           "repository_state_id": rsid, "analysis_input_id": aid}
     a, b = list(variants)[:2]   # build · convention — 셋째(cli)는 적격 목록이 다른 변이
     # 변조: source_scope를 id에서 빼면 범위가 달라 적격 목록이 같을 때 같은 id가 난다 — D87 위반(범위가 입력인데 결과에 영향 없음).
     same_list = variants[a]["eligible"] == variants[b]["eligible"]
-    spec_a = analysis_input_id({**shared, "source_scope": variants[a]["source_scope"]}, env, eligible_files(files, variants[a]["source_scope"]), history)[1]
-    spec_b = analysis_input_id({**shared, "source_scope": variants[b]["source_scope"]}, env, eligible_files(files, variants[b]["source_scope"]), history)[1]
+    spec_a = analysis_input_id({**shared, "source_scope": variants[a]["source_scope"]}, env, eligible_files(files, variants[a]["source_scope"], tree), history)[1]
+    spec_b = analysis_input_id({**shared, "source_scope": variants[b]["source_scope"]}, env, eligible_files(files, variants[b]["source_scope"], tree), history)[1]
     without = {k: v for k, v in spec_a.items() if k != "source_scope"}, {k: v for k, v in spec_b.items() if k != "source_scope"}
     return {
         "case": inp["case"], "generated_by": GENERATED_BY, "contract_refs": inp["contract_refs"],
@@ -1369,12 +1390,111 @@ def run_source_scope_variants(case_dir: Path, inp: dict) -> dict:
             "third_source_set_is_outside_in_convention": all(
                 not p.startswith("src/integrationTest/") for p in variants[b]["eligible"]) if variants[b]["source_scope"]["origin"] == "convention" else True,
             "scope_itself_reaches_id": (
-                analysis_input_id({**shared, "source_scope": variants[a]["source_scope"]}, env, eligible_files(files, variants[a]["source_scope"]), history)[0]
-                != analysis_input_id({**shared, "source_scope": {**variants[a]["source_scope"], "origin": "cli"}}, env, eligible_files(files, variants[a]["source_scope"]), history)[0]),
+                analysis_input_id({**shared, "source_scope": variants[a]["source_scope"]}, env, eligible_files(files, variants[a]["source_scope"], tree), history)[0]
+                != analysis_input_id({**shared, "source_scope": {**variants[a]["source_scope"], "origin": "cli"}}, env, eligible_files(files, variants[a]["source_scope"], tree), history)[0]),
         },
     }
 
 
+
+# ── D257 — `origin: build`의 세트 분류: 빌드 모델의 사실 → source_scope ───────────────────────────────
+#
+# 테스트 소스 세트 = 어떤 `Test` 태스크가 실행하는 세트(출력이 그 태스크의 테스트 클래스 디렉터리에 든다); `main`은
+# main; 그 밖은 범위 밖. 기준은 이름이 아니라 빌드의 선언이다. 입력은 빌드 모델의 사실이고 계산기는 플러그인이
+# 서기 전에 규칙을 값으로 세운다 — blame 검사가 `scan`보다 앞선 것과 같은 이유.
+
+def classify_source_sets(model: dict, rule: str) -> dict[str, str]:
+    """세트 이름 → main | test | outside. `rule`은 계약(`test_task`)과 두 변조(`name_contains_test`·`not_main`)."""
+    run_dirs = {d for t in model["test_tasks"] for d in t["test_classes_dirs"]}
+    out = {}
+    for ss in model["source_sets"]:
+        if ss["name"] == "main":
+            out[ss["name"]] = "main"
+        elif rule == "test_task":
+            out[ss["name"]] = "test" if any(d in run_dirs for d in ss["output_dirs"]) else "outside"
+        elif rule == "name_contains_test":
+            out[ss["name"]] = "test" if "test" in ss["name"].lower() else "outside"
+        elif rule == "not_main":
+            out[ss["name"]] = "test"
+        else:
+            raise ValueError(rule)
+    return out
+
+
+def build_source_scope(model: dict, classes: dict[str, str]) -> dict:
+    roots = {k: sorted(r for ss in model["source_sets"] if classes[ss["name"]] == k for r in ss["source_roots"])
+             for k in ("main", "test")}
+    return {"origin": "build", "main_roots": roots["main"], "test_roots": roots["test"],
+            "generated_roots": sorted(model["generated_source_dirs"])}
+
+
+def run_build_scope(inp: dict) -> dict:
+    model = inp["build_model"]
+    classes = classify_source_sets(model, "test_task")
+    run_by = {ss["name"]: sorted(t["name"] for t in model["test_tasks"]
+                                 if any(d in t["test_classes_dirs"] for d in ss["output_dirs"]))
+              for ss in model["source_sets"]}
+    mutations = {}
+    for rule in ("name_contains_test", "not_main"):
+        mc = classify_source_sets(model, rule)
+        mutations[rule] = {"source_scope": build_source_scope(model, mc),
+                           "misclassified": sorted(n for n in classes if mc[n] != classes[n])}
+    return {
+        "case": inp["case"], "generated_by": GENERATED_BY, "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"],
+        "classification": [{"source_set": ss["name"], "class": classes[ss["name"]], "run_by": run_by[ss["name"]]}
+                           for ss in model["source_sets"]],
+        "source_scope": build_source_scope(model, classes),
+        "mutations": mutations,
+        "assertions": {
+            "set_without_test_in_name_is_test_when_run": any(
+                classes[n] == "test" and "test" not in n.lower() for n in classes),
+            "sets_not_run_by_a_test_task_are_outside": all(
+                classes[n] == "outside" for n in classes if n != "main" and not run_by[n]),
+            "every_mutation_misclassifies": all(m["misclassified"] for m in mutations.values()),
+        },
+    }
+
+
+# ── D258 — 최상위 선언 중 하나라도 `@Generated`인 파일은 적격이 아니다 ─────────────────────────────────
+
+def run_generated_eligibility(case_dir: Path, inp: dict) -> dict:
+    tree = case_dir / inp["repo"]["tree"]
+    files = tree_files(tree)
+    scope = inp["source_scope"]
+    scoped = in_scope_roots(files, scope)
+    per_file = []
+    for path, _ in scoped:
+        decls = generated_top_level(tree, path)
+        per_file.append({"path": path, "top_level_declarations": decls,
+                         "any_generated": any(d["generated"] for d in decls),
+                         "all_generated": bool(decls) and all(d["generated"] for d in decls)})
+    eligible = [path for path, _ in eligible_files(files, scope, tree)]
+    mixed = [f for f in per_file if f["any_generated"] and not f["all_generated"]]
+    # 변조 — "전부" 규칙: 모든 최상위 선언이 `@Generated`일 때만 밖. 섞인 파일이 목록에 든다.
+    eligible_all_rule = [f["path"] for f in per_file if not f["all_generated"]]
+    checks = []
+    for want, key in ((True, "must_be_eligible"), (False, "must_not_be_eligible")):
+        for sample in inp["eligibility_checks"][key]:
+            got = sample["path"] in eligible
+            checks.append({"path": sample["path"], "why": sample["why"], "must_be_eligible": want,
+                           "eligible": got, "passed": got == want})
+    return {
+        "case": inp["case"], "generated_by": GENERATED_BY, "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"],
+        "generated_annotations": list(GENERATED_ANNOTATIONS),
+        "source_scope": scope,
+        "files": per_file,
+        "eligible": eligible,
+        "checks": checks,
+        "mutation_all_rule": {"eligible": eligible_all_rule,
+                              "admits": sorted(set(eligible_all_rule) - set(eligible))},
+        "assertions": {
+            "every_check_passes": all(c["passed"] for c in checks),
+            "mixed_files_are_not_eligible": bool(mixed) and all(f["path"] not in eligible for f in mixed),
+            "mutation_all_rule_admits_mixed_files": bool(set(eligible_all_rule) - set(eligible)),
+        },
+    }
 
 # ── §2.8·D223 — repository_state_id의 집합 = HEAD 트리의 경로 × 작업트리 내용 − .jqradar/ ──────────────
 #
@@ -1486,6 +1606,10 @@ def run_case(case_dir: Path) -> dict:
         return run_clone_depths(case_dir, inp)
     if "source_scope_variants" in inp:
         return run_source_scope_variants(case_dir, inp)
+    if "build_model" in inp:
+        return run_build_scope(inp)
+    if "eligibility_checks" in inp:
+        return run_generated_eligibility(case_dir, inp)
     if "state_id_variant" in inp:
         return run_state_id_file_set(case_dir, inp)
     tree = case_dir / inp["repo"]["tree"]

@@ -1,0 +1,191 @@
+{
+  "case": "mixed-generated-file-not-eligible",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.1",
+    "§2.9",
+    "D258",
+    "D170",
+    "D211",
+    "D210"
+  ],
+  "what_this_pins": "**최상위 선언 중 하나라도 `@Generated`인 파일은 적격이 아니다**(D258) — 측정과 전파(D211)의 단위가 파일이라 생성 선언만 덜어 낼 수 없고, 같은 파일의 수기 선언도 함께 빠진다(생성 코드가 모집단에 드는 것이 더 큰 오류 — D170). 판별 대상은 최상위 **선언**: Java는 타입, Kotlin은 타입·함수·프로퍼티. 계산기가 처음으로 소스에서 `@Generated`를 읽는다 — 주석·문자열은 `history/`의 blame 검사와 같은 `split_java`로 가르고(`contract/tools/javasource.py`), 실제 구현의 증인은 PMD AST다(B.1).\n\n파일 여섯: 최상위 타입 셋 중 하나만 `@Generated`인 `.java`(`OrderMapper` — 수기 `OrderMapper`·`OrderDto`도 빠진다) → 없다 · 수기 클래스 + `@Generated` 최상위 함수인 `.kt`(`Helpers.kt`) → 없다 · 수기 클래스 안의 **메서드**에만 `@Generated`인 `.java`(`Payment`) → 있다(최상위가 아니다) · 주석·javadoc·문자열에만 `@Generated`가 나오는 `.java`(`Charge`) → 있다 · 전부 수기(`Order`) → 있다 · 최상위 선언 전부가 `@Generated`(`AllGenerated` — javax와 jakarta를 정규 이름으로) → 없다.\n\n**변조 — \"전부\" 규칙**(모든 최상위 선언이 `@Generated`일 때만 밖)이면 섞인 파일 둘(`OrderMapper.java`·`Helpers.kt`)이 목록에 든다 — `mutation_all_rule.admits`. 전부 생성인 파일은 두 규칙 모두에서 밖이라 변조가 공허하지 않음을 그 파일이 보인다.",
+  "generated_annotations": [
+    "javax.annotation.Generated",
+    "jakarta.annotation.Generated",
+    "javax.annotation.processing.Generated"
+  ],
+  "source_scope": {
+    "origin": "convention",
+    "main_roots": [
+      "src/main/java",
+      "src/main/kotlin"
+    ],
+    "test_roots": [
+      "src/test/java",
+      "src/test/kotlin"
+    ],
+    "generated_roots": []
+  },
+  "files": [
+    {
+      "path": "src/main/java/com/acme/app/gen/AllGenerated.java",
+      "top_level_declarations": [
+        {
+          "kind": "class",
+          "name": "AllGenerated",
+          "generated": true
+        },
+        {
+          "kind": "class",
+          "name": "AllGeneratedHelper",
+          "generated": true
+        }
+      ],
+      "any_generated": true,
+      "all_generated": true
+    },
+    {
+      "path": "src/main/java/com/acme/app/mapper/OrderMapper.java",
+      "top_level_declarations": [
+        {
+          "kind": "class",
+          "name": "OrderMapper",
+          "generated": false
+        },
+        {
+          "kind": "class",
+          "name": "OrderDtoImpl",
+          "generated": true
+        },
+        {
+          "kind": "interface",
+          "name": "OrderDto",
+          "generated": false
+        }
+      ],
+      "any_generated": true,
+      "all_generated": false
+    },
+    {
+      "path": "src/main/java/com/acme/app/order/Order.java",
+      "top_level_declarations": [
+        {
+          "kind": "class",
+          "name": "Order",
+          "generated": false
+        }
+      ],
+      "any_generated": false,
+      "all_generated": false
+    },
+    {
+      "path": "src/main/java/com/acme/app/payment/Charge.java",
+      "top_level_declarations": [
+        {
+          "kind": "class",
+          "name": "Charge",
+          "generated": false
+        }
+      ],
+      "any_generated": false,
+      "all_generated": false
+    },
+    {
+      "path": "src/main/java/com/acme/app/payment/Payment.java",
+      "top_level_declarations": [
+        {
+          "kind": "class",
+          "name": "Payment",
+          "generated": false
+        }
+      ],
+      "any_generated": false,
+      "all_generated": false
+    },
+    {
+      "path": "src/main/kotlin/com/acme/app/util/Helpers.kt",
+      "top_level_declarations": [
+        {
+          "kind": "class",
+          "name": "Formatter",
+          "generated": false
+        },
+        {
+          "kind": "fun",
+          "name": "generatedLookup",
+          "generated": true
+        }
+      ],
+      "any_generated": true,
+      "all_generated": false
+    }
+  ],
+  "eligible": [
+    "src/main/java/com/acme/app/order/Order.java",
+    "src/main/java/com/acme/app/payment/Charge.java",
+    "src/main/java/com/acme/app/payment/Payment.java"
+  ],
+  "checks": [
+    {
+      "path": "src/main/java/com/acme/app/order/Order.java",
+      "why": "전부 수기",
+      "must_be_eligible": true,
+      "eligible": true,
+      "passed": true
+    },
+    {
+      "path": "src/main/java/com/acme/app/payment/Payment.java",
+      "why": "`@Generated`가 메서드에만 — 최상위 선언이 아니다",
+      "must_be_eligible": true,
+      "eligible": true,
+      "passed": true
+    },
+    {
+      "path": "src/main/java/com/acme/app/payment/Charge.java",
+      "why": "`@Generated`가 주석·javadoc·문자열에만 — 주석은 버리고 리터럴은 코드에서 지운다",
+      "must_be_eligible": true,
+      "eligible": true,
+      "passed": true
+    },
+    {
+      "path": "src/main/java/com/acme/app/mapper/OrderMapper.java",
+      "why": "최상위 타입 셋 중 하나만 `@Generated` — 하나라도면 파일이 밖이다(D258)",
+      "must_be_eligible": false,
+      "eligible": false,
+      "passed": true
+    },
+    {
+      "path": "src/main/kotlin/com/acme/app/util/Helpers.kt",
+      "why": "Kotlin 최상위 **함수**에 `@Generated` — 판별 대상은 최상위 선언이다(D258)",
+      "must_be_eligible": false,
+      "eligible": false,
+      "passed": true
+    },
+    {
+      "path": "src/main/java/com/acme/app/gen/AllGenerated.java",
+      "why": "최상위 선언 전부가 `@Generated`(javax·jakarta 정규 이름)",
+      "must_be_eligible": false,
+      "eligible": false,
+      "passed": true
+    }
+  ],
+  "mutation_all_rule": {
+    "eligible": [
+      "src/main/java/com/acme/app/mapper/OrderMapper.java",
+      "src/main/java/com/acme/app/order/Order.java",
+      "src/main/java/com/acme/app/payment/Charge.java",
+      "src/main/java/com/acme/app/payment/Payment.java",
+      "src/main/kotlin/com/acme/app/util/Helpers.kt"
+    ],
+    "admits": [
+      "src/main/java/com/acme/app/mapper/OrderMapper.java",
+      "src/main/kotlin/com/acme/app/util/Helpers.kt"
+    ]
+  },
+  "assertions": {
+    "every_check_passes": true,
+    "mixed_files_are_not_eligible": true,
+    "mutation_all_rule_admits_mixed_files": true
+  }
+}
