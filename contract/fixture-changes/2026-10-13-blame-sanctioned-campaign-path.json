@@ -1,0 +1,10 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "history.no_blame_on_scan_change_path — blame 금지 검사의 예외 접두사 `io/jqradar/ledger/` → `io/jqradar/ledger/campaign/`(v3.10.17 D255)",
+    "old": "예외가 `ledger/` 패키지 전체였다 — §5.6의 \"캠페인 생성 시 1회\"를 패키지로 읽어 원장 뷰·`claim` 경로의 blame도 검사 밖이었다. 자기 스캔 `files_scanned` 2 · `files_skipped_as_sanctioned` 8",
+    "new": "예외는 생성·재생성 경로(`ledger/campaign/`)뿐 — `LedgerPaths.java`가 검사 대상이 되어 `files_scanned` 3 · `files_skipped_as_sanctioned` 7(걸린 것 0, `violations` 그대로 빈 배열). 같은 케이스에 `path_check`(예외여야 하는 경로 2 · 검사 대상이어야 하는 경로 4)가 더해졌다 — 지금 리포에는 뷰·`claim` 소스가 없어 자기 스캔으로는 접두사의 넓이가 드러나지 않기 때문이다",
+    "note": "판정은 `accept` 그대로. `path_check`가 무는지 확인했다: 접두사를 옛 `io/jqradar/ledger/`로 되돌리면 `ledger/view/`·`ledger/claim/`·`LedgerPaths.java` 셋이 `passed: false`·`verdict: reject`, 끝의 `/`를 뺀 `io/jqradar/ledger/campaign`이면 `ledger/campaignview/`가 `passed: false`. `what_this_pins`·`contract_refs`(D255)도 함께 바뀌었다. 자체 ArchUnit 규칙 2는 범위가 `io.jqradar..` 전체라 예외가 없다 — 설명 문장만 §5.6을 가리키게 고쳤다.",
+    "fixtures": ["history/blame-forbidden-on-scan-change"]
+  }
+}

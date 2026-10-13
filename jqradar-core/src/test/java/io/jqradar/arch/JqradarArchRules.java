@@ -74,7 +74,7 @@ public final class JqradarArchRules {
     /**
      * {@code scan}·{@code change} 경로에 {@code BlameCommand}가 없다.
      *
-     * <p>blame의 유일한 예외는 캠페인 생성 시 1회, 원장 finding 영역에 한정해서다(§5.6, D57).
+     * <p>blame의 유일한 예외는 §5.6 — 캠페인 생성·명시적 {@code --recompute}, 원장 finding 영역 한정(D57·D255).
      * "한 번만"이 "가끔"이 되고 "매 스캔"이 되는 압력은 §12가 명시한 위험이고, 이 규칙이
      * 그 선이다. 같은 선을 {@code contract/history/}의 픽스처가 값 쪽에서 지킨다(D113).
      */
@@ -83,7 +83,7 @@ public final class JqradarArchRules {
                 .that().resideInAnyPackage(scope)
                 .should().dependOnClassesThat()
                 .haveFullyQualifiedName("org.eclipse.jgit.api.BlameCommand")
-                .because("§2.7·D18 — 매 스캔 blame은 P7 예산을 깨고, 예외는 캠페인 생성 1회뿐이다(§5.6·D57)");
+                .because("§2.7·D18 — 매 스캔 blame은 P7 예산을 깨고, 예외는 §5.6의 캠페인 생성·재생성뿐이다(D57·D255)");
     }
 
     // ------------------------------------------------------------------
