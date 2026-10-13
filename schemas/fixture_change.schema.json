@@ -51,7 +51,7 @@
           "items": {
             "type": "string"
           },
-          "description": "§7 예시 — 영향받은 케이스 경로(`contract/` 상대, 예: `cpd/overlap-merge`). §2.9의 필드 목록에는 없고 §7 예시에만 있어 선택으로 뒀다."
+          "description": "§7 예시 — 영향받은 케이스 경로(`contract/` 상대). 예는 §7의 `fixture_change` 블록이 갖는다 — 여기 다시 적지 않는다(D236). §2.9의 필드 목록에는 없고 §7 예시에만 있어 선택으로 뒀다."
         }
       }
     }

@@ -1,0 +1,10 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "schema.scale_lint — 후행 0 변조(`scale-trailing-zero-dropped`)의 위반 자리가 `/components/0/I` `0.38` → `/hidden_couplings/0/tc` `0.75`",
+    "old": "변조가 §7의 `\"I\": 0.3800`을 찾아 `0.38`로 — v3.10.13(D229)이 I를 15/39 = 0.3846으로 고쳐 그 조각이 원문에 없다",
+    "new": "변조는 §7에서 이 판이 움직이지 않은 후행 0 값 `\"tc\": 0.7500`을 찾아 `0.75`로 — 위반은 같은 종류(actual_scale 2, allowed 4) 하나",
+    "note": "0.3846에는 떼어 낼 후행 0이 없어 '새 리터럴로 고치기'로는 이 변조의 뜻(후행 0을 떼면 같은 값이어도 다른 바이트)이 서지 않는다. 판정(reject)·위반 수 불변. 같은 커밋의 `scale-gate-nccd-one-decimal`은 `find`를 BASE 원소까지(`\"nccd\": [2.76,`)로 줄여 HEAD 값과 무관하게 했다 — expected 불변이라 이 레코드의 대상이 아니다. 문서 규칙(D236)의 결: 변조는 §7의 바뀌지 않는 가장 작은 조각만 베낀다.",
+    "fixtures": ["schema/scale-trailing-zero-dropped"]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "case": "scale-pair-denominator-decimal",
+  "check": "scale_lint",
+  "kind": "hard_rule",
+  "base": "prd:§7:report",
+  "mechanism": "원문 린트(스키마 아님)",
+  "contract_ref": "D235·D185·D201",
+  "what": "숨은 결합 행의 분모 `chg_commits_a`는 정수 행의 이름이다(D199·D201) — 소수 리터럴이면 **'정수여야 한다'**(decimal_in_integer_field)로 거부된다. 린트가 표의 손 사본을 가졌을 때는 이 이름이 사본에 없어 '표에 없다'로 거부됐다(4차 S4-29) — 거부는 같아도 이유가 표와 달랐다.",
+  "text_patch": [
+    {
+      "find": "\"chg_commits_a\": 12, ",
+      "replace": "\"chg_commits_a\": 12.0, "
+    }
+  ]
+}
