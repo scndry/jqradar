@@ -98,9 +98,10 @@
             "required": [
               "validated_tree_id",
               "validated_analysis_input_id",
-              "scope"
+              "scope",
+              "validated_transition_projection_sha256"
             ],
-            "description": "D89 — `validated_tree_id`가 없는 `passed`는 `none`으로 취급한다(B.4 둘째 원칙: 검증된 코드는 검증된 입력과 동일하다는 증거가 없는 한 검증된 것으로 보지 않는다)."
+            "description": "D89 — `validated_tree_id`가 없는 `passed`는 `none`으로 취급한다(B.4 둘째 원칙: 검증된 코드는 검증된 입력과 동일하다는 증거가 없는 한 검증된 것으로 보지 않는다). D249 — 검증 때의 전이 사영 해시가 없는 `passed`는 원인 판정이 같은 사영인지 볼 수 없다."
           }
         }
       ],
@@ -131,6 +132,10 @@
         "validated_analysis_input_id": {
           "type": "string",
           "description": "§2.8, D89."
+        },
+        "validated_transition_projection_sha256": {
+          "type": "string",
+          "description": "검증 때의 전이 사영 해시(§5.5, D249) — D194의 사영(툴체인·엔진·`algorithm_versions`·`bytecode_scope` 범위·컴포넌트 전략·판정이 읽는 파라미터). 원인 판정이 현재 사영과 비교해 다르면 `toolchain_changed`(원인 미정)로 끝난다. `validated_analysis_input_id`와 다른 이유: 그것은 창·커밋 목록까지 담아 새 커밋 하나에도 다르다."
         },
         "validate_hash": {
           "type": "string",
