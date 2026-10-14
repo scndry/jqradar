@@ -1,0 +1,128 @@
+{
+  "case": "self-dup-overlaps-cross",
+  "contract_refs": [
+    "§2.6",
+    "§2.1",
+    "D166",
+    "D277"
+  ],
+  "what_this_pins": "**자기 중복은 분할이 아니다**(D277). A에 혼합 클러스터 `x`(A·B, 150토큰 — A쪽 `[0,150)`)와 자기 중복 클러스터 `y`(A에만 두 번 — `[100,250)`·`[300,450)`)가 있고, `y`의 첫 발생이 `x`의 A쪽 발생과 `[100,150)` 50토큰 겹친다. 정의(D166의 ⊇)대로: `union_dup_tokens(A)`는 모든 발생 구간의 합집합 `[0,250) ∪ [300,450)` = 400, `self_dup_tokens(A)`는 `y`가 덮는 구간 `[100,250) ∪ [300,450)` = 300 — 겹친 50토큰은 교차 구간에도 자기 중복에도 든다(twin이 있어도 `self_dup_tokens`에 든다). **변조 = 반례(S4-11)의 고르지 않은 읽기**: 옛 §2.6의 \"분할로 읽는다\"대로 union을 자기 중복 + 교차의 합으로 내면 300 + 150 = 450이다(`mutation_partition_reading`) — `docs/review/counterexamples/S4-11/`이 낸 그 값이고, 이 케이스가 대신한다.",
+  "parameters": {
+    "cpd.minimum_tokens": 100
+  },
+  "clusters": [
+    {
+      "id": "dup:x-mixed:150",
+      "tokens": 150,
+      "occurrences": [
+        {
+          "path": "A.java",
+          "start_token": 0,
+          "end_token": 150
+        },
+        {
+          "path": "B.java",
+          "start_token": 0,
+          "end_token": 150
+        }
+      ],
+      "occurrence_count": 2,
+      "files": [
+        "A.java",
+        "B.java"
+      ],
+      "self_duplication": false
+    },
+    {
+      "id": "dup:y-self:150",
+      "tokens": 150,
+      "occurrences": [
+        {
+          "path": "A.java",
+          "start_token": 100,
+          "end_token": 250
+        },
+        {
+          "path": "A.java",
+          "start_token": 300,
+          "end_token": 450
+        }
+      ],
+      "occurrence_count": 2,
+      "files": [
+        "A.java"
+      ],
+      "self_duplication": true
+    }
+  ],
+  "rejected_clusters": [],
+  "files": {
+    "A.java": {
+      "file_tokens": 1000,
+      "duplicated_ranges": [
+        [
+          0,
+          250
+        ],
+        [
+          300,
+          450
+        ]
+      ],
+      "union_dup_tokens": 400,
+      "dup_extent": 0.4000,
+      "self_dup_tokens": 300,
+      "twins": 1
+    },
+    "B.java": {
+      "file_tokens": 1000,
+      "duplicated_ranges": [
+        [
+          0,
+          150
+        ]
+      ],
+      "union_dup_tokens": 150,
+      "dup_extent": 0.1500,
+      "self_dup_tokens": 0,
+      "twins": 1
+    }
+  },
+  "duplication_pairs": [
+    {
+      "a": "A.java",
+      "b": "B.java",
+      "a_dup_tokens": 150,
+      "b_dup_tokens": 150
+    }
+  ],
+  "mutation_partition_reading": {
+    "A.java": {
+      "cross_span": 150,
+      "self_dup_tokens": 300,
+      "union_by_partition": 450,
+      "union_dup_tokens": 400,
+      "differs": true
+    },
+    "B.java": {
+      "cross_span": 150,
+      "self_dup_tokens": 0,
+      "union_by_partition": 150,
+      "union_dup_tokens": 150,
+      "differs": false
+    }
+  },
+  "invariants": {
+    "dup_extent_at_most_one": true,
+    "pair_sides_both_positive_or_both_zero": true,
+    "twins_symmetric": true,
+    "partition_reading_bites": true,
+    "self_and_cross_cover_union": true
+  },
+  "exact": {},
+  "_fixture": {
+    "generated_by": "contract/cpd/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "표 D155-1의 이름인 필드는 표의 스케일로 고정 인쇄한다(HALF_EVEN, 후행 0 유지 — D275). 표에 없는 이름은 끝나는 십진수면 정확값 그대로, 아니면 소수점 12자리 ROUND_HALF_EVEN. 인쇄가 정확값이 아닌 모든 값의 정확 유리수를 exact에 함께 적는다. exact가 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}
