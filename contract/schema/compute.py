@@ -347,8 +347,9 @@ def _order_key(name: str, item):
     if name in ("files",):
         return (item["path"],)
     if name == "findings":
-        return (FINDING_KIND_ORDER.index(item["kind"]), -_num(item.get("priority")),
-                item.get("file", item.get("path", "")), item["id"])
+        # D268 — `path`는 finding에 없는 필드라 키가 아니다; `id`가 유일해 전순서다. `priority`가 없는 종류(순환·숨은 결합)는
+        # kind가 먼저 갈리므로 그 칸을 0으로 두어도 다른 종류와 섞이지 않는다.
+        return (FINDING_KIND_ORDER.index(item["kind"]), -_num(item.get("priority")), item["id"])
     if name in ("duplicate_clusters", "components", "cycles"):
         return (item["id"],)
     if name == "occurrences":
@@ -360,7 +361,8 @@ def _order_key(name: str, item):
     if name == "break_candidates":
         return (item["from"], item["to"])
     if name == "items":
-        return (item.get("file", item.get("path_head", "")),)
+        # D268 — `new_duplication`의 새 발생은 (HEAD 경로, 시작 줄)로 유일하다(같은 파일의 둘째 사본).
+        return (item.get("file", item.get("path_head", "")), item.get("start_line", 0))
     if name == "teams":
         return (item["team"],)
     return None
@@ -371,8 +373,11 @@ def _num(x):
     return _F(0) if x is None else _F(str(x))
 
 
+# D269 — 표 D202-1이 이름으로 든 키 없는 문자열 배열(id 입력인 범위의 루트 넷)은 `asc`. 표의 그 행은 "…"로 더 넓게 말하지만
+# 위치가 뜻인 문자열 배열(`classes_reproduction_inputs.compiler_args`)이 있어 이름 붙은 넷만 본다 — PR의 PRD 충돌 참조.
+STRING_ARRAYS = ("members", "main_roots", "test_roots", "generated_roots", "class_roots")
 ORDERED_ARRAYS = ("files", "findings", "duplicate_clusters", "components", "cycles", "occurrences",
-                  "duplication_pairs", "hidden_couplings", "break_candidates", "items", "teams", "members")
+                  "duplication_pairs", "hidden_couplings", "break_candidates", "items", "teams") + STRING_ARRAYS
 PAIR_ARRAYS = ("duplication_pairs", "hidden_couplings")
 
 
@@ -388,11 +393,12 @@ def order_violations(document) -> list[dict]:
             # 표의 이름이 같아도 원소가 객체가 아니면 다른 배열이다 — `gate.json`의 `components: [41, 43]`(수 둘),
             # `campaign.json`의 `scope.components`(문자열). 객체 배열만 표의 키로 본다; `members`는 문자열 배열이다.
             is_rule_array = bool(node) and (
-                (name == "members" and all(isinstance(x, str) for x in node))
-                or (name != "members" and all(isinstance(x, dict) for x in node)))
+                (name in STRING_ARRAYS and all(isinstance(x, str) for x in node))
+                or (name not in STRING_ARRAYS and all(isinstance(x, dict) for x in node)))
             if name in ORDERED_ARRAYS and is_rule_array:
-                if name == "members":
-                    keys = [(m,) for m in node]
+                if name in STRING_ARRAYS:
+                    # §2.8의 경로 비교 — UTF-8 바이트 사전순(D202)
+                    keys = [(m.encode("utf-8"),) for m in node]
                 else:
                     keys = [_order_key(name, it) for it in node]
                 for i in range(1, len(keys)):

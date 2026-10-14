@@ -1,0 +1,17 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "history.pairs[].commit_granularity — 쌍 행에서 뺀다(v3.10.22 D270)",
+    "old": "쌍 행마다 `commit_granularity`(창의 속성)를 반복했다 — §3.5의 \"각 행에 … 경고\"를 따른 모양이었고 report 스키마(`hiddenCoupling`, additionalProperties false)는 그 행을 거부했다(O4-13)",
+    "new": "거칠기는 리포에 하나(`commit_granularity` — 맨 위, 창의 속성). 쌍 행에서 그 한 줄이 빠지고 다른 값은 하나도 바뀌지 않았다",
+    "note": "6 케이스에서 행마다 `\"commit_granularity\": \"fine\"` 한 줄씩 빠졌다(합 18줄, 뒤 키의 쉼표만 따라 움직임). 리포 수준의 `commit_granularity`는 그대로.",
+    "fixtures": [
+      "history/generated-test-stub-not-in-pairs",
+      "history/hidden-coupling-sort-order",
+      "history/pair-report-threshold",
+      "history/shallow-clone-age-unknown",
+      "history/shared-window-limited",
+      "history/tc-squash-vs-merge"
+    ]
+  }
+}

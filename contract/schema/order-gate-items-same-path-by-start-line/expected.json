@@ -1,0 +1,26 @@
+{
+  "case": "order-gate-items-same-path-by-start-line",
+  "generated_by": "contract/schema/compute.py",
+  "check": "order_lint",
+  "kind": "hard_rule",
+  "contract_ref": "D268",
+  "what": "`new_duplication`의 같은 `path_head`에 새 발생이 둘이면(§5.2 \"A 안의 둘째 사본\") `start_line asc`가 둘째 키다(D268). 같은 경로·같은 클러스터의 두 항목을 시작 줄 40 → 10으로 두면 거부된다. **변조 = 반례(O4-33)의 고르지 않은 읽기**: 옛 린트처럼 `path_head`만 보면 두 순서가 **둘 다** 통과했다 — 키가 전순서가 아니었다.",
+  "mechanism": "순서 린트(파싱 후, 스키마 아님)",
+  "verdict": "reject",
+  "violations": [
+    {
+      "path": "/checks/0/items",
+      "index": 1,
+      "array": "items",
+      "kind": "not_sorted_by_D202_1",
+      "previous": [
+        "src/main/java/a/A.java",
+        "40"
+      ],
+      "this": [
+        "src/main/java/a/A.java",
+        "10"
+      ]
+    }
+  ]
+}

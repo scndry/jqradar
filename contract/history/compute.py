@@ -499,7 +499,7 @@ def build_expected(inp: dict, workdir: Path) -> dict:
                 # §3.5 — 정적 의존이 없는 쌍이 숨은 결합이다. 판정이 아니라 목록이며
                 # 테스트-대상 쌍은 긍정 해석을 병기한다.
                 "hidden_coupling": (None if sd is None else (reported and sd is False)),
-                "commit_granularity": granularity,
+                # D270 — 거칠기 경고는 행이 아니라 리포에 하나다(위 `commit_granularity` — 창의 속성).
             }
             if sd is None:
                 # D190 **동률 규칙** — 두 파일이 모두 밖이고 사유가 다르면 `outside_bytecode_scope`가

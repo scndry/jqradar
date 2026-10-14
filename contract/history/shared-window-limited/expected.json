@@ -281,8 +281,7 @@
           "tc": 0.75,
           "reported": true,
           "static_dependency": false,
-          "hidden_coupling": true,
-          "commit_granularity": "fine"
+          "hidden_coupling": true
         }
       ],
       "hidden_couplings": [
@@ -578,8 +577,7 @@
           "tc": 0.818181818182,
           "reported": true,
           "static_dependency": false,
-          "hidden_coupling": true,
-          "commit_granularity": "fine"
+          "hidden_coupling": true
         }
       ],
       "hidden_couplings": [

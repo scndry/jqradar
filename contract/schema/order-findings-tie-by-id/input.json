@@ -1,0 +1,25 @@
+{
+  "case": "order-findings-tie-by-id",
+  "check": "order_lint",
+  "kind": "hard_rule",
+  "base": "prd:§7:report",
+  "mechanism": "순서 린트(파싱 후, 스키마 아님)",
+  "contract_ref": "D268",
+  "what": "`findings`의 동률(같은 kind·같은 `priority`)은 `id asc`로 갈린다(D268 — `path`는 finding에 없는 필드라 키가 아니다). 둘째 자리에 같은 priority(95.6)의 hotspot `fnd:h-aaa`(파일 `f:zzz`)를 두면 id로는 `fnd:h-aaa` < `fnd:h-order-service`라 거부된다. **변조 = 반례(O4-33)의 고르지 않은 읽기**: 옛 린트처럼 `file`(id)로 비교하면 `f:order-service` < `f:zzz`라 이 순서가 통과한다 — 그 읽기와 경로 조인 읽기는 `docs/review/counterexamples/O4-33/`이 두 다른 순서를 낸 것이고, 이 케이스가 그것을 대신한다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "findings",
+        1
+      ],
+      "value": {
+        "id": "fnd:h-aaa",
+        "kind": "hotspot",
+        "lens": "H",
+        "file": "f:zzz",
+        "priority": 95.6
+      }
+    }
+  ]
+}

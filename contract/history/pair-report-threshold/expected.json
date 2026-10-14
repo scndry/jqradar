@@ -736,8 +736,7 @@
       "tc": 0.5,
       "reported": true,
       "static_dependency": false,
-      "hidden_coupling": true,
-      "commit_granularity": "fine"
+      "hidden_coupling": true
     },
     {
       "a": "src/C.java",
@@ -749,8 +748,7 @@
       "tc": 0.5,
       "reported": false,
       "static_dependency": true,
-      "hidden_coupling": false,
-      "commit_granularity": "fine"
+      "hidden_coupling": false
     },
     {
       "a": "src/E.java",
@@ -762,8 +760,7 @@
       "tc": 0.416666666667,
       "reported": false,
       "static_dependency": true,
-      "hidden_coupling": false,
-      "commit_granularity": "fine"
+      "hidden_coupling": false
     }
   ],
   "hidden_couplings": [

@@ -1,0 +1,127 @@
+{
+  "case": "source-scope-roots-order-canonical",
+  "contract_refs": [
+    "§2.5",
+    "§2.8",
+    "§2.9",
+    "D269",
+    "D210",
+    "D202"
+  ],
+  "what_this_pins": "**키 없는 문자열 배열은 `asc`이고, id 입력인 범위의 루트 배열도 같다 — 입구의 선언 순서가 `analysis_input_id`에 닿지 않는다**(D269). 같은 트리·같은 범위를 두 입구가 다른 순서로 선언한다: `declared_a`는 빌드가 준 순서(`main_roots` kotlin → java, `test_roots` test → integrationTest), `declared_b`는 그 역순. 입구가 `asc`(§2.8의 경로 비교)로 정렬해 넣으면 두 id가 **같고** 인쇄되는 `source_scope`도 같다.\n\n**변조 = 반례(U21)의 고르지 않은 읽기**: 선언 순서 그대로 넣으면 두 id가 다르다(`mutation_declared_order`). 반례 `docs/review/counterexamples/U21/`이 낸 그 갈림이다.",
+  "repo": {
+    "tree": "tree/",
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "base_time": "2026-01-02T03:04:05+00:00",
+    "step_seconds": 86400,
+    "history": [
+      {
+        "message": "seed",
+        "paths": [
+          "src/main/java/com/example/order/OrderService.java",
+          "src/test/java/com/example/order/OrderServiceTest.java",
+          "src/integrationTest/java/com/example/order/OrderServiceIT.java"
+        ]
+      }
+    ],
+    "parameters": {
+      "window.months": 12,
+      "window.max_commits": 2000,
+      "cpd.minimum_tokens": 100,
+      "percentile.min_population": 20,
+      "frozen.min_days": 180,
+      "rename.similarity": 60,
+      "hotspot.change_unit": "chg_commits",
+      "verify.min_changed_line_coverage": "0.8",
+      "profile": "jqradar-default",
+      "weights": {
+        "H": "0.5",
+        "Dx": "0.3",
+        "F": "0.2"
+      }
+    }
+  },
+  "environment": {
+    "pmd": "7.16.0",
+    "archunit": "1.5.0",
+    "jgit": "7.3.0"
+  },
+  "shared_inputs": {
+    "schema_version": "jqradar/3",
+    "contract_version": "2026-09-21",
+    "tool_version": "3.9.0",
+    "history_backend": {
+      "name": "jgit",
+      "git_version": null
+    },
+    "component": {
+      "strategy": "auto",
+      "algorithm_version": "auto-1",
+      "split_share_basis": "class_count"
+    },
+    "algorithm_versions": {
+      "measures": "1",
+      "percentile": "1",
+      "succession": "1",
+      "cpd_aggregation": "1"
+    },
+    "parameters": {
+      "window.months": 12,
+      "window.max_commits": 2000,
+      "cpd.minimum_tokens": 100,
+      "percentile.min_population": 20,
+      "frozen.min_days": 180,
+      "rename.similarity": 60,
+      "hotspot.change_unit": "chg_commits",
+      "verify.min_changed_line_coverage": "0.8",
+      "profile": "jqradar-default",
+      "weights": {
+        "H": "0.5",
+        "Dx": "0.3",
+        "F": "0.2"
+      }
+    },
+    "bytecode_scope": {
+      "class_roots": [
+        "build/classes/java/main",
+        "build/classes/kotlin/main"
+      ],
+      "test_classes_included": false,
+      "generated_excluded": true,
+      "external_included_in_metrics": false
+    }
+  },
+  "roots_order_variants": {
+    "declared_a": {
+      "origin": "build",
+      "main_roots": [
+        "src/main/kotlin",
+        "src/main/java"
+      ],
+      "test_roots": [
+        "src/test/java",
+        "src/integrationTest/java"
+      ],
+      "generated_roots": [
+        "build/generated/sources"
+      ]
+    },
+    "declared_b": {
+      "origin": "build",
+      "main_roots": [
+        "src/main/java",
+        "src/main/kotlin"
+      ],
+      "test_roots": [
+        "src/integrationTest/java",
+        "src/test/java"
+      ],
+      "generated_roots": [
+        "build/generated/sources"
+      ]
+    }
+  }
+}

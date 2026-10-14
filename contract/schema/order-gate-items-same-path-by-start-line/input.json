@@ -1,0 +1,35 @@
+{
+  "case": "order-gate-items-same-path-by-start-line",
+  "check": "order_lint",
+  "kind": "hard_rule",
+  "base": "prd:§7:gate",
+  "mechanism": "순서 린트(파싱 후, 스키마 아님)",
+  "contract_ref": "D268",
+  "what": "`new_duplication`의 같은 `path_head`에 새 발생이 둘이면(§5.2 \"A 안의 둘째 사본\") `start_line asc`가 둘째 키다(D268). 같은 경로·같은 클러스터의 두 항목을 시작 줄 40 → 10으로 두면 거부된다. **변조 = 반례(O4-33)의 고르지 않은 읽기**: 옛 린트처럼 `path_head`만 보면 두 순서가 **둘 다** 통과했다 — 키가 전순서가 아니었다.",
+  "patch": [
+    {
+      "op": "set",
+      "path": [
+        "checks",
+        0,
+        "items"
+      ],
+      "value": [
+        {
+          "path_head": "src/main/java/a/A.java",
+          "path_base_mapped": null,
+          "cluster_id": "dup:aa:120",
+          "tokens": 120,
+          "start_line": 40
+        },
+        {
+          "path_head": "src/main/java/a/A.java",
+          "path_base_mapped": null,
+          "cluster_id": "dup:aa:120",
+          "tokens": 120,
+          "start_line": 10
+        }
+      ]
+    }
+  ]
+}

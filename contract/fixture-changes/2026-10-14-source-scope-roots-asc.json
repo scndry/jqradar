@@ -1,0 +1,12 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "reproducibility.source_scope의 루트 배열 순서 → analysis_input_id(v3.10.22 D269)",
+    "old": "입구가 선언한 순서 그대로 id에 넣었다 — `build` 변이의 `test_roots`가 [src/test/java, src/integrationTest/java], `cli` 변이의 `main_roots`가 [src/main/java, src/integrationTest/java]",
+    "new": "입구가 `asc`(§2.8의 경로 비교)로 정렬해 넣는다 — 두 배열이 정렬되고 그 두 변이의 `analysis_input_id`가 바뀐다; 단언(같은 트리·다른 origin → 다른 id, repository_state_id 같음 …)은 전부 그대로",
+    "note": "새 케이스 `reproducibility/source-scope-roots-order-canonical`이 두 선언 순서 → 같은 id를 단언하고 선언 순서 그대로(변조)는 갈린다.",
+    "fixtures": [
+      "reproducibility/same-tree-different-origin"
+    ]
+  }
+}

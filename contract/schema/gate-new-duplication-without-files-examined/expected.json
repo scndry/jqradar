@@ -1,0 +1,14 @@
+{
+  "case": "gate-new-duplication-without-files-examined",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D272",
+  "what": "`new_duplication` 행은 본 수(`files_examined` — 변경 파일 중 CPD가 본 수)를 적는다(D272 — D208·D215의 모양). 없으면 빈 `items`가 \"새 중복 없음\"인지 \"본 파일 없음\"인지 같은 바이트다(F4-18).",
+  "mechanism": "if/then",
+  "schema": "gate.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/checks/0"
+  ]
+}

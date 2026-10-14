@@ -1,0 +1,14 @@
+{
+  "case": "report-hidden-coupling-row-granularity",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "structural",
+  "contract_ref": "D270",
+  "what": "거칠기 경고는 숨은 결합 **행**이 아니라 리포에 하나다(`population.commit_granularity` — 창의 속성, D270). 행에 `commit_granularity`를 실으면 거부된다. **변조 = 반례(O4-13)의 고르지 않은 읽기**: §3.5가 \"각 행에 … `commit_granularity` 경고\"라 적었고 history 계산기의 쌍 행이 그 모양이었다 — 이제 계산기도 행에서 뺐다(`fixture_change`).",
+  "mechanism": "additionalProperties:false",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/hidden_couplings/0"
+  ]
+}
