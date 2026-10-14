@@ -837,6 +837,8 @@ PR #11·#10·#12가 계약 → 구현 → 기록 순서로 머지되고 main pus
 
 **이 판이 하지 않은 것.** 정정 판(S4-5·S4-7·S4-28·F4-4·S4-11, U4), 묶음 E–G. G0 #1은 통과가 아니다.
 
+**보정(2026-10-14, 같은 판 안).** 구현 세션이 #85에서 D269의 "표에 없는 배열은 실패"를 구현하려다 멈췄다 — §7 블록에 표 D202-1 밖의 배열이 **20개**였고(`[base, head]` 쌍 넷, `evidence`·`transitions`·`guardrails`·`targets`·`warn` 같은 객체 배열, 문자열 집합 다섯, 빈 배열 다섯) 그대로면 §7 자신이 거부되며, "키 없는 문자열 배열 → `asc`"는 위치가 뜻인 `compiler_args`까지 정렬했다. 반례 `docs/review/counterexamples/U21/run.py`가 그 둘을 값으로 냈다. **D269를 쓸 때 §7의 배열을 세어 보지 않았다.** 정한 것: 표가 덮음을 받는다 — 위치 순서(원소의 자리가 뜻, 정렬하지 않는다) 한 행에 `[base, head]` 쌍·빌드 입력(`compiler_args`·`annotation_processors`)·식의 성분(`evidence` — 이름순이면 H의 근거에서 `chg_commits`가 `cx` 앞에 와 식이 뒤집힌다)·사건(`transitions`), 나머지 열넷에 키(문자열 집합 일곱은 이름을 들고 `asc`, `block`·`warn`·`info`는 `rule asc`, `targets`·`guardrails`는 선언 순서 — `checks`와 같은 결); "키 없는 문자열 배열 → `asc`"는 표에 이름이 든 것만. 그러면 "표에 없는 배열 → 실패"가 서고 `order-array-not-in-table`이 선다. §7의 값은 하나도 바뀌지 않는다(그 배열들은 원소가 하나이거나 비어 있다). 결과: 표 밖 배열 20 → 0(구현 세션 프로브). 포기: 규칙을 좁히기(U21의 덮음 주장이 반만 닫힌다), 모든 문자열 배열 `asc`. §10의 D269 줄은 같은 판 안이라 고쳐 썼다(취소선이 아니다). 판 번호는 올리지 않는다(§0-50·§0-44·§0-60과 같은 처리). 따라갈 자리: 린트가 표를 읽는다(D235의 모양 — 첫 칸의 이름이 덮음, 문자열 행은 `asc`, 위치 순서 행은 보지 않는다, `block`·`warn`·`info`는 `rule asc`, `targets`·`guardrails`는 보지 않는다), `order-array-not-in-table`(§7에 없는 이름의 배열을 끼운 변조 → 실패), U21 닫힘(`닫힘 — D269 · G0 케이스 schema/order-array-not-in-table`).
+
 **문서 규칙(v3.7.2)** — 본문(§1–§12)에는 계약·근거·결정만 쓴다. "언제 뭘 고쳤다"는 판 이력은 §0에만 남긴다 — 본문의 편집 메모는 읽는 사람이 아니라 쓰는 사람을 위한 것이었다. 문장 단위 "(vX.Y)" 태그는 본문(§1–§9, §11–§12)에서 제거했다 — 변경점은 §0와 git diff가 갖는다. §10 결정 기록의 판 표기는 기록의 일부(언제 결정·개정됐나)라 유지한다. **한 사실은 한 자리에 쓰고, 다른 자리는 가리킨다**(D236) — 결정은 §10과 그 착지 문장에, 값은 §7 예시와 픽스처의 `expected.json`에 한 번; 이웃은 결정 번호·케이스 이름으로 가리키고 그 값을 다시 적지 않는다. 같은 사실을 두 자리에 적으면 한쪽만 고쳐지는 날이 온다 — 4차 라운드의 열린 key 중 §7 예시 6·이웃 미착지 11·다시 적은 값 2가 그 모양이었다.
 
 **문서 규칙 2 — 본문은 언제나 자기 완결이어야 한다.** "이전 판과 같음"·"vX §n 그대로"·"나머지는 vY"라는 참조를 본문에 쓰지 않는다. 그것은 다음 재작성에서 내용이 사라지는 가장 확실한 경로였다 — §4·§8·§10 D1–D23·§6.5 전제조건·§9 P3–P6와 매트릭스·§7 예시가 그렇게 사라졌고, 참조가 가리키던 판은 이미 없었다. 줄이려면 본문을 줄이고, 옮기려면 옮긴 자리를 §n으로 가리킨다. 이전 판을 가리키는 문장이 본문에 있으면 리뷰에서 반려한다.
@@ -1010,7 +1012,10 @@ PR #11·#10·#12가 계약 → 구현 → 기록 순서로 머지되고 main pus
   | `cycles` · `members` · `break_candidates` | `id asc` · `asc` · `(from, to) asc` |
   | `gate.json` `checks` · `items` | 프로필 선언 순서(조직의 것, B.6) · `file`/`path_head asc` · `start_line asc`(`new_duplication`의 새 발생은 HEAD 경로와 시작 줄로 유일 — 같은 파일의 둘째 사본, D268) |
   | `people.json` `files` · `teams` | `path asc` · `team asc` |
-  | 키 없는 문자열 배열(`source_scope`의 `main_roots`·`test_roots`·`generated_roots`, `bytecode_scope.class_roots` …) | `asc`(§2.8의 경로 비교) — id 입력 배열도 같아 입구의 선언 순서가 `analysis_input_id`에 닿지 않는다(D269) |
+  | 키 없는 문자열 배열 — **표에 이름이 든 것만**: `main_roots`·`test_roots`·`generated_roots`(`source_scope`)·`class_roots`(`bytecode_scope`)·`graft_boundary_shas`·`identical_under`·`eligible_hotspots_from_base`·`target_pairs`·`resolved_pairs`·`not_validated_reasons`·`fixtures` | `asc`(§2.8의 경로 비교) — id 입력 배열도 같아 입구의 선언 순서가 `analysis_input_id`에 닿지 않는다(D269) |
+  | `validate.json` `block` · `warn` · `info` | `rule asc`(D269) |
+  | `campaign.json` `targets` · `guardrails` | 선언 순서(조직의 것, B.6 — D269) |
+  | **위치 순서** — 원소의 자리가 뜻이라 **정렬하지 않는다**: `[base, head]` 쌍(`ccd`·`nccd`·`components` — `gate`·`validate`의 수 둘 — ·`repo_cx`·`target_cx`), 빌드 입력(`compiler_args`·`annotation_processors` — `classes_reproduction_inputs`), 식의 성분(`evidence` — `ref` 먼저, 그다음 렌즈 식의 성분 순서), 사건(`transitions` — first-parent 시간순, §5.5) | 원소의 자리 그대로(D269) |
 - **"바이트 동일"은 파싱된 숫자가 아니라 직렬화된 텍스트에 대한 주장이다.** 그래서 스케일은 **JSON Schema로 강제되지 않는다** — JSON 숫자는 이진 부동소수점으로 파싱되어 `multipleOf`가 깨진다(`95.6 % 0.1`, `0.8056 % 0.0001`이 거짓이 된다). 스케일 검사는 스키마가 아니라 **원문 텍스트 린트**의 일이고 `contract/schema/`가 진다.
 - **측정·순위 경로에서 `double`·`float` 금지.** 자체 ArchUnit 규칙으로 강제하고 `contract/reproducibility/`가 회귀를 잡는다. 라이브러리가 내는 `double`도 같은 금지다 — ArchUnit `ArchitectureMetrics`의 `double` 반환 메서드는 호출하지 않고 정수만 받아 비율을 우리 산술로 낸다(D179); 규칙 4가 그 호출을 명시 조건으로 잡는다.
 
@@ -2197,7 +2202,7 @@ CodeScene 조사(2026-09)에서 가져온 것과 이유를 항목마다 적는�
 
 **v3.10.22 결정 — 4차 종류 4 묶음 D: 산출물 표면(O4-33 + U21 + O4-13 + O4-7 + F4-18)**
 - D268 [§2.5, §3.7, §7, §2.9] `findings`는 `kind`의 고정 순서 · `priority desc`(렌즈 finding만) · `id asc` — `path`는 finding에 없는 필드라 키가 아니다(`id`가 유일해 전순서); `gate.json` `items`는 `path_head asc · start_line asc`(새 발생은 HEAD 경로와 시작 줄로 유일 — 같은 파일의 둘째 사본), `start_line`은 D155-1 정수 행에. §3.7은 표를 가리킨다. kind별 필드 키·경로 조인·파일×클러스터로 접기는 포기.
-- D269 [§2.5, §2.9] 키 없는 문자열 배열은 `asc`(§2.8의 경로 비교) — id 입력 배열(`source_scope`의 `*_roots`·`bytecode_scope.class_roots`)도 같아 입구의 선언 순서가 `analysis_input_id`에 닿지 않는다; 표에 없는 배열이 산출물에 나오면 순서 린트가 실패한다(새 배열은 표에 먼저 — D155의 모양). 선언 순서 그대로는 포기.
+- D269 [§2.5, §2.9] 표 D202-1이 **모든 배열**을 든다 — 키 없는 문자열 배열은 표에 이름이 든 것만 `asc`(§2.8의 경로 비교 — id 입력 배열(`source_scope`의 `*_roots`·`bytecode_scope.class_roots`)도 같아 입구의 선언 순서가 `analysis_input_id`에 닿지 않는다), 원소의 자리가 뜻인 배열(`[base, head]` 쌍·빌드 입력·식의 성분·사건)은 **위치 순서** 행에 들고 정렬하지 않는다; 표에 없는 배열이 산출물에 나오면 순서 린트가 실패한다(새 배열은 표에 먼저 — D155의 모양). 선언 순서 그대로·모든 문자열 배열 `asc`는 포기.
 - D270 [§3.5, §2.4, §2.9] `commit_granularity`는 리포에 하나(`population` — 창의 속성)이고 숨은 결합 행에 반복하지 않는다; history 계산기의 쌍 행에서도 뺀다(`contract_change`). 행마다 반복은 포기.
 - D271 [§3.6, §2.5] composite는 `priority`를 갖지 않는다(D172) — 그 정렬은 'composite 값 desc'이고 산출물 배열이 아니라 표시(§7.1 A2)·`get_hotspots`의 것이라 D202-1에 행이 없다; 비교는 34자리. composite를 finding으로 넣는 길·문장 삭제는 포기.
 - D272 [§5.3, §7, §2.9] 다섯 gate 행이 모두 '본 수'를 갖는다 — `new_duplication`은 `files_examined`(변경 파일 중 CPD가 본 수), `new_component_cycle`은 `components: [base_n, head_n]`(기존 이름, 새 결과 어휘 없음 — D208·D215의 모양); 빈 `items`·`context_changed`가 "가릴 것이 없었다"와 "없었다"를 가른다. 구별을 포기하는 길은 포기.
