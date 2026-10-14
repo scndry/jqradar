@@ -28,9 +28,9 @@
       "id": "com.acme.a",
       "Ca": 2,
       "Ce": 1,
-      "I": 0.333333333333,
-      "A": 0,
-      "D": 0.666666666667,
+      "I": 0.3333,
+      "A": 0.0000,
+      "D": 0.6667,
       "zone": "stable-concrete",
       "class_count": 4
     },
@@ -38,9 +38,9 @@
       "id": "com.acme.b",
       "Ca": 1,
       "Ce": 1,
-      "I": 0.5,
-      "A": 0,
-      "D": 0.5,
+      "I": 0.5000,
+      "A": 0.0000,
+      "D": 0.5000,
       "zone": "stable-concrete",
       "class_count": 2
     },
@@ -48,9 +48,9 @@
       "id": "com.acme.c",
       "Ca": 0,
       "Ce": 1,
-      "I": 1,
-      "A": 0,
-      "D": 0,
+      "I": 1.0000,
+      "A": 0.0000,
+      "D": 0.0000,
       "zone": "main-sequence",
       "class_count": 1
     }
@@ -93,8 +93,8 @@
   "system": {
     "components": 3,
     "CCD": 7,
-    "ACD": 2.333333333333,
-    "RACD": 0.777777777778,
+    "ACD": 2.33,
+    "RACD": 0.7778,
     "CCD_balanced": 5.00,
     "NCCD": 1.40,
     "display": {
@@ -104,7 +104,7 @@
       "NCCD": 1.40
     }
   },
-  "non_terminating": {
+  "exact": {
     "/components/0/I": "1/3",
     "/components/0/D": "2/3",
     "/system/ACD": "7/3",
@@ -113,6 +113,6 @@
   "_fixture": {
     "generated_by": "contract/graph/compute.py",
     "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
-    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+    "serialization": "표 D155-1의 이름인 필드는 표의 스케일로 고정 인쇄한다(HALF_EVEN, 후행 0 유지 — D275). 표에 없는 이름은 끝나는 십진수면 정확값 그대로, 아니면 소수점 12자리 ROUND_HALF_EVEN. 인쇄가 정확값이 아닌 모든 값의 정확 유리수를 exact에 함께 적는다. exact가 비어 있으면 이 파일 전체가 정확값이다."
   }
 }

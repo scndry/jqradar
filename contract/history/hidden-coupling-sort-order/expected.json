@@ -901,7 +901,7 @@
       "in_window": true
     }
   ],
-  "median_files_per_commit": 2,
+  "median_files_per_commit": 2.00,
   "commit_granularity": "fine",
   "renames": [],
   "last_commit_map": {
@@ -960,8 +960,8 @@
       "age_last_days": 0.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -987,8 +987,8 @@
       "age_last_days": 7.03,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1010,8 +1010,8 @@
       "age_last_days": 2.31,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1033,8 +1033,8 @@
       "age_last_days": 2.31,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1060,8 +1060,8 @@
       "age_last_days": 4.71,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1087,8 +1087,8 @@
       "age_last_days": 3.56,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1119,8 +1119,8 @@
       "age_last_days": 11.57,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1151,8 +1151,8 @@
       "age_last_days": 10.42,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1170,8 +1170,8 @@
       "age_last_days": 1.32,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1189,8 +1189,8 @@
       "age_last_days": 1.32,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1212,8 +1212,8 @@
       "age_last_days": 0.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1235,8 +1235,8 @@
       "age_last_days": 0.58,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1258,8 +1258,8 @@
       "age_last_days": 1.74,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1281,8 +1281,8 @@
       "age_last_days": 1.74,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1296,7 +1296,7 @@
       "chg_commits_a": 22,
       "chg_commits_b": 10,
       "denominator": 10,
-      "tc": 0.6,
+      "tc": 0.6000,
       "reported": true,
       "static_dependency": false,
       "hidden_coupling": true
@@ -1308,7 +1308,7 @@
       "chg_commits_a": 22,
       "chg_commits_b": 6,
       "denominator": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "reported": true,
       "static_dependency": null,
       "hidden_coupling": null,
@@ -1324,7 +1324,7 @@
       "chg_commits_a": 22,
       "chg_commits_b": 6,
       "denominator": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "reported": true,
       "static_dependency": null,
       "hidden_coupling": null,
@@ -1340,7 +1340,7 @@
       "chg_commits_a": 6,
       "chg_commits_b": 6,
       "denominator": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "reported": true,
       "static_dependency": true,
       "hidden_coupling": false
@@ -1352,7 +1352,7 @@
       "chg_commits_a": 10,
       "chg_commits_b": 10,
       "denominator": 10,
-      "tc": 0.6,
+      "tc": 0.6000,
       "reported": true,
       "static_dependency": false,
       "hidden_coupling": true
@@ -1364,7 +1364,7 @@
       "chg_commits_a": 15,
       "chg_commits_b": 15,
       "denominator": 15,
-      "tc": 0.6,
+      "tc": 0.6000,
       "reported": true,
       "static_dependency": false,
       "hidden_coupling": true
@@ -1376,7 +1376,7 @@
       "chg_commits_a": 2,
       "chg_commits_b": 2,
       "denominator": 2,
-      "tc": 1,
+      "tc": 1.0000,
       "reported": false,
       "static_dependency": false,
       "hidden_coupling": false
@@ -1388,7 +1388,7 @@
       "chg_commits_a": 6,
       "chg_commits_b": 6,
       "denominator": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "reported": true,
       "static_dependency": null,
       "hidden_coupling": null,
@@ -1406,7 +1406,7 @@
       "shared": 9,
       "chg_commits_a": 15,
       "chg_commits_b": 15,
-      "tc": 0.6,
+      "tc": 0.6000,
       "static_dependency": false,
       "hidden_coupling": true
     },
@@ -1416,7 +1416,7 @@
       "shared": 6,
       "chg_commits_a": 22,
       "chg_commits_b": 10,
-      "tc": 0.6,
+      "tc": 0.6000,
       "static_dependency": false,
       "hidden_coupling": true
     },
@@ -1426,7 +1426,7 @@
       "shared": 6,
       "chg_commits_a": 10,
       "chg_commits_b": 10,
-      "tc": 0.6,
+      "tc": 0.6000,
       "static_dependency": false,
       "hidden_coupling": true
     },
@@ -1436,7 +1436,7 @@
       "shared": 6,
       "chg_commits_a": 6,
       "chg_commits_b": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "static_dependency": true,
       "hidden_coupling": false
     },
@@ -1446,7 +1446,7 @@
       "shared": 6,
       "chg_commits_a": 22,
       "chg_commits_b": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "static_dependency": null,
       "hidden_coupling": null,
       "reason": "outside_bytecode_scope"
@@ -1457,7 +1457,7 @@
       "shared": 6,
       "chg_commits_a": 22,
       "chg_commits_b": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "static_dependency": null,
       "hidden_coupling": null,
       "reason": "no_bytecode"
@@ -1468,17 +1468,17 @@
       "shared": 6,
       "chg_commits_a": 6,
       "chg_commits_b": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "static_dependency": null,
       "hidden_coupling": null,
       "reason": "outside_bytecode_scope"
     }
   ],
   "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
-  "non_terminating": {},
+  "exact": {},
   "_fixture": {
     "generated_by": "contract/history/compute.py",
     "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
-    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+    "serialization": "표 D155-1의 이름인 필드는 표의 스케일로 고정 인쇄한다(HALF_EVEN, 후행 0 유지 — D275). 표에 없는 이름은 끝나는 십진수면 정확값 그대로, 아니면 소수점 12자리 ROUND_HALF_EVEN. 인쇄가 정확값이 아닌 모든 값의 정확 유리수를 exact에 함께 적는다. exact가 비어 있으면 이 파일 전체가 정확값이다."
   }
 }
