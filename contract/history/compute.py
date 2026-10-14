@@ -328,11 +328,14 @@ def build_expected(inp: dict, workdir: Path) -> dict:
     earliest = head_time - timedelta(seconds=months * MONTH_SECONDS)
 
     # 머지 커밋(부모 ≥ 2) 제외 후 최신순. 두 상한 중 **먼저 닥치는 쪽**을 적용한다.
+    # W는 닫힌 구간 `[HEAD_TIME − months, HEAD_TIME]`이다(§2.7·D273) — HEAD보다 커미터 시각이 늦은 조상 커밋(시계 오차)은
+    # W 밖이다. 그것은 상한(`window.months`·`window.max_commits`)이 자른 것이 아니라 `bound_hit`에 들지 않는다.
     non_merge = [c for c in commits if not c["is_merge"]]
-    in_time = [c for c in non_merge
+    not_after_head = [c for c in non_merge if datetime.fromisoformat(c["committer_time"]) <= head_time]
+    in_time = [c for c in not_after_head
                if datetime.fromisoformat(c["committer_time"]) >= earliest]
     bound_hit = "none"
-    if len(in_time) < len(non_merge):
+    if len(in_time) < len(not_after_head):
         bound_hit = "time"
     selected = in_time
     if len(selected) > max_commits:
@@ -554,10 +557,10 @@ def build_expected(inp: dict, workdir: Path) -> dict:
     # §2.1 저자 사실 — 익명 집계만 (D48·D135)
     # ------------------------------------------------------------------
     ninety_days_ago = head_time - timedelta(days=90)
-    # 창이 실제로 덮는 일수. `min(90, HEAD_TIME − 창의 가장 오래된 커밋 시각)`.
-    # 음수로 내려가지 않게 0에서 자른다 — 커미터 시각이 뒤죽박죽이면(§2.1
-    # `invalid_metadata`) HEAD가 자기 조상보다 이를 수 있고, 그때 '음수 일수'는
-    # 아무 뜻이 없다. 창이 비면 0 — 아무것도 덮지 못했다.
+    # 90일 지표가 실제로 본 일수 — 창 안 가장 오래된 커밋부터 HEAD_TIME까지, 90에서 자른다(§2.7·D276):
+    # `max(0, min(90, HEAD_TIME − 창의 가장 오래된 커밋 시각))`. 창이 90일을 덮었는지가 아니다 — 창 안 커밋이 HEAD
+    # 하나면 0이다. W의 위 끝이 닫혀 있어(D273) 음수는 나오지 않는다 — `max(0, …)`는 물지 않는 하한이다.
+    # 창이 비면 0 — 아무것도 덮지 못했다.
     if selected:
         oldest = datetime.fromisoformat(selected[-1]["committer_time"])
         span = Fraction(int((head_time - oldest).total_seconds()), SECONDS_PER_DAY)
@@ -572,11 +575,13 @@ def build_expected(inp: dict, workdir: Path) -> dict:
     #
     # 따라서 시간 상한(12개월)은 90일 구간을 자를 수 없다 — 90일 ⊂ 12개월이다.
     # 자를 수 있는 것은 개수 상한뿐이다.
+    # "최근 90일"은 `[HEAD_TIME − 90d, HEAD_TIME]`(D137) — HEAD보다 늦은 커밋(시계 오차)은 W 밖이지만(D273) 상한이
+    # 자른 것이 아니고 90일 구간에도 들지 않는다.
     selected_shas = {c["sha"] for c in selected}
     excluded_within_90d = [
         c for c in commits
         if not c["is_merge"] and c["sha"] not in selected_shas
-        and datetime.fromisoformat(c["committer_time"]) >= ninety_days_ago]
+        and ninety_days_ago <= datetime.fromisoformat(c["committer_time"]) <= head_time]
     authors_window_truncated = bool(excluded_within_90d)
     for path, entry in files.items():
         touching = [c for c in selected

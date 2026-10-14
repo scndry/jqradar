@@ -178,7 +178,8 @@ def history_facts(workdir: Path, files: list[str], parameters: dict) -> dict:
     months, max_commits = int(parameters["window.months"]), int(parameters["window.max_commits"])
     earliest = head["committer_time"] - months * MONTH_SECONDS
     non_merge = [c for c in commits if not c["is_merge"]]
-    selected = [c for c in non_merge if c["committer_time"] >= earliest][:max_commits]
+    # W = `[HEAD_TIME − months, HEAD_TIME]`, 닫힌 구간(§2.7·D273) — HEAD보다 늦은 조상 커밋은 W 밖이다
+    selected = [c for c in non_merge if earliest <= c["committer_time"] <= head["committer_time"]][:max_commits]
     oldest = selected[-1]["committer_time"] if selected else head["committer_time"]
     in_window = {c["sha"] for c in selected} | {c["sha"] for c in commits if c["is_merge"] and c["committer_time"] >= oldest}
     start = historywalk.frontier(by_sha, in_window)
