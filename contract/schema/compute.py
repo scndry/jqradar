@@ -373,15 +373,54 @@ def _num(x):
     return _F(0) if x is None else _F(str(x))
 
 
-# D269 — 표 D202-1이 이름으로 든 키 없는 문자열 배열(id 입력인 범위의 루트 넷)은 `asc`. 표의 그 행은 "…"로 더 넓게 말하지만
-# 위치가 뜻인 문자열 배열(`classes_reproduction_inputs.compiler_args`)이 있어 이름 붙은 넷만 본다 — PR의 PRD 충돌 참조.
-STRING_ARRAYS = ("members", "main_roots", "test_roots", "generated_roots", "class_roots")
 ORDERED_ARRAYS = ("files", "findings", "duplicate_clusters", "components", "cycles", "occurrences",
-                  "duplication_pairs", "hidden_couplings", "break_candidates", "items", "teams") + STRING_ARRAYS
+                  "duplication_pairs", "hidden_couplings", "break_candidates", "items", "teams")
+
+
+def read_order_table(prd_text: str) -> dict[str, set]:
+    """D269·D235 — 표 D202-1을 **읽는다**(린트 안에 표의 사본을 두지 않는다). 행의 첫 칸의 백틱 이름이 표의 덮음이고,
+    이름 → 종류 집합을 돌려준다: `string_asc`(키 없는 문자열 배열 행 — 이름이 든 것만), `positional`(위치 순서 행 — 원소의
+    자리가 뜻이라 정렬하지 않는다), `rule_asc`(`rule asc` 행), `keyed`(그 밖의 행 — 키는 `_order_key`). 같은 이름이 두 행에
+    들 수 있다(`components` — report의 객체 배열과 gate·validate의 `[base, head]` 수 둘) — 종류는 원소의 모양으로 가른다."""
+    lines = prd_text.split("\n")
+    start = next(i for i, l in enumerate(lines) if "**배열 정렬 키 표 `D202-1`**" in l)
+    table: dict[str, set] = {}
+    seen = False
+    for l in lines[start + 1:]:
+        st = l.strip()
+        if not st.startswith("|"):
+            if seen:
+                break
+            continue
+        cells = [c.strip() for c in st.strip("|").split("|")]
+        if cells[0] == "배열" or set(cells[0]) <= set("-: "):
+            continue
+        seen = True
+        first, key = cells[0], (cells[1] if len(cells) > 1 else "")
+        if "위치 순서" in first:
+            kind = "positional"
+        elif "키 없는 문자열 배열" in first:
+            kind = "string_asc"
+        elif "rule asc" in key:
+            kind = "rule_asc"
+        else:
+            kind = "keyed"
+        for name in re.findall(r"`([A-Za-z_.]+)`", first):
+            if name.endswith(".json"):
+                continue                      # 산출물 이름(`gate.json`)은 배열이 아니다
+            table.setdefault(name.split(".")[-1], set()).add(kind)
+    # `members`는 `cycles` · `members` · `break_candidates` 행의 `asc`(문자열 배열) — 그 행은 객체 배열과 함께 든다.
+    if "members" in table:
+        table["members"].add("string_asc")
+    return table
 PAIR_ARRAYS = ("duplication_pairs", "hidden_couplings")
 
 
-def order_violations(document) -> list[dict]:
+def order_violations(document, table: dict[str, set] | None = None) -> list[dict]:
+    """D202·D268·D269 — 배열마다 표 D202-1의 키로 정렬돼 있는가, 그리고 **표에 없는 배열이 없는가**(D269). `table`은
+    `read_order_table(prd.md)` — 없으면 리포의 prd.md를 읽는다."""
+    if table is None:
+        table = read_order_table(PRD.read_text(encoding="utf-8"))
     out = []
 
     def walk(node, path):
@@ -389,18 +428,23 @@ def order_violations(document) -> list[dict]:
             for k, v in node.items():
                 walk(v, path + [k])
         elif isinstance(node, list):
-            name = path[-1] if path else None
-            # 표의 이름이 같아도 원소가 객체가 아니면 다른 배열이다 — `gate.json`의 `components: [41, 43]`(수 둘),
-            # `campaign.json`의 `scope.components`(문자열). 객체 배열만 표의 키로 본다; `members`는 문자열 배열이다.
-            is_rule_array = bool(node) and (
-                (name in STRING_ARRAYS and all(isinstance(x, str) for x in node))
-                or (name not in STRING_ARRAYS and all(isinstance(x, dict) for x in node)))
-            if name in ORDERED_ARRAYS and is_rule_array:
-                if name in STRING_ARRAYS:
-                    # §2.8의 경로 비교 — UTF-8 바이트 사전순(D202)
-                    keys = [(m.encode("utf-8"),) for m in node]
-                else:
-                    keys = [_order_key(name, it) for it in node]
+            name = path[-1] if path and isinstance(path[-1], str) else None
+            kinds = table.get(name, set()) if name else set()
+            if name and not kinds:
+                out.append({"path": "/" + "/".join(map(str, path)), "array": name, "kind": "not_in_D202_1"})
+            dicts = bool(node) and all(isinstance(x, dict) for x in node)
+            strings = bool(node) and all(isinstance(x, str) for x in node)
+            keys = None
+            if strings and "string_asc" in kinds:
+                # §2.8의 경로 비교 — UTF-8 바이트 사전순(D202·D269)
+                keys = [(m.encode("utf-8"),) for m in node]
+            elif dicts and "rule_asc" in kinds:
+                keys = [(it.get("rule", ""),) for it in node]
+            elif dicts and "keyed" in kinds and name in ORDERED_ARRAYS:
+                keys = [_order_key(name, it) for it in node]
+            # 그 밖 — 위치 순서(원소의 자리가 뜻), 선언 순서(`checks`·`targets`·`guardrails` — 조직의 것), 문자열·수가 객체
+            # 행의 이름과 겹친 것(`campaign`의 `scope.components`·gate의 `components: [41, 43]`)은 순서를 보지 않는다.
+            if keys is not None:
                 for i in range(1, len(keys)):
                     if keys[i - 1] is not None and keys[i] is not None and keys[i - 1] > keys[i]:
                         out.append({"path": "/" + "/".join(map(str, path)), "index": i, "array": name,
@@ -453,7 +497,7 @@ def run_case(inp: dict, blocks: dict[str, str], validator_cls, prd_text: str, ta
         document = json.loads(text)
         if inp.get("patch"):
             document = apply_patch(document, inp["patch"])
-        violations = order_violations(document)
+        violations = order_violations(document, read_order_table(prd_text))
         out["verdict"] = "reject" if violations else "accept"
         out["violations"] = violations
         return out
