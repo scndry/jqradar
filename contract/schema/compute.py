@@ -23,6 +23,8 @@
                    그래서 스키마에 `multipleOf`를 넣지 않고 텍스트로 본다. 읽을 때도
                    `double`을 경유하지 않는다(`parse_float=str`).
   vocabulary_sync  스키마에 심긴 판정 어휘 패턴이 사전과 같은지(D127).
+  reason_sync      스키마의 `reason` 부분집합이 §2.5 사전의 셋째 열에서 생성한 것과 같은지(D278 — `reasons.py`).
+                   `table_patch`가 있으면 사전 원문을 바꿔 생성한다 — 생성기가 표를 읽는다는 증거.
 """
 
 from __future__ import annotations
@@ -41,6 +43,7 @@ GENERATED_BY = "contract/schema/compute.py"
 
 sys.path.insert(0, str(CASE_DIR))
 import vocabulary  # noqa: E402
+import reasons  # noqa: E402  — D278: `reason` 부분집합은 §2.5 사전에서 생성된다
 
 # §7의 jsonc 블록 순서. `prd:§7:<이름>`으로 참조한다.
 PRD_BLOCKS = ["report", "gate", "validate", "fixture_change", "campaign", "event", "ledger_row", "people"]
@@ -348,6 +351,14 @@ def run_case(inp: dict, blocks: dict[str, str], validator_cls, prd_text: str, ta
         drift = vocabulary.check()
         out["verdict"] = "reject" if drift else "accept"
         out["drifted_schemas"] = drift
+        return out
+
+    if check == "reason_sync":
+        # D278 — 사전의 셋째 열에서 생성한 부분집합 = 스키마. 표를 바꾸면(`table_patch`) 생성물이 바뀌어야 한다 — 사본이었다면 그대로다.
+        source = apply_text_patch(prd_text, inp["table_patch"]) if inp.get("table_patch") else prd_text
+        found = reasons.drift(source, json.loads((SCHEMAS / "report.schema.json").read_text(encoding="utf-8")))
+        out["verdict"] = "reject" if found else "accept"
+        out["drift"] = found
         return out
 
     text = base_text(inp["base"], blocks)

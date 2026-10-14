@@ -1,0 +1,24 @@
+{
+  "case": "reason-dictionary-place-added",
+  "generated_by": "contract/schema/compute.py",
+  "check": "reason_sync",
+  "kind": "hard_rule",
+  "contract_ref": "D278·D235",
+  "what": "**생성기는 사전을 읽는다**(D278 — D235의 짝): §2.5 사전 `isolated_component` 행의 셋째 칸에 자리 `쌍`을 더하면 생성한 `hidden_couplings`의 부분집합에 `isolated_component`가 들어 스키마와 달라진다 → 잡힌다. 생성기가 사전의 사본을 갖고 있었다면 이 변경을 보지 못한다. `scale-table-is-read`의 모양.",
+  "mechanism": "생성기(사전 → enum) diff 0",
+  "verdict": "reject",
+  "drift": [
+    {
+      "place": "hidden_couplings",
+      "generated": [
+        "no_bytecode",
+        "outside_bytecode_scope",
+        "isolated_component"
+      ],
+      "schema": [
+        "no_bytecode",
+        "outside_bytecode_scope"
+      ]
+    }
+  ]
+}
