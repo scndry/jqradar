@@ -15,7 +15,7 @@
   "shallow_depth": null,
   "window_anchor": {
     "type": "head_committer_time",
-    "timestamp": "2026-02-05T00:00:00+00:00"
+    "timestamp": "2026-02-05T00:00:00Z"
   },
   "head": "f5c1767eb",
   "window_applied": {
@@ -31,7 +31,7 @@
   "commits": [
     {
       "sha": "f5c1767eb",
-      "at": "2026-02-05T00:00:00+00:00",
+      "at": "2026-02-05T00:00:00Z",
       "subject": "add New",
       "is_merge": false,
       "shallow_boundary": false,
@@ -42,7 +42,7 @@
     },
     {
       "sha": "fbfaa3188",
-      "at": "2025-01-01T00:00:00+00:00",
+      "at": "2025-01-01T00:00:00Z",
       "subject": "add Old",
       "is_merge": false,
       "shallow_boundary": false,

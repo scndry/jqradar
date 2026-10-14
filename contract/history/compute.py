@@ -35,6 +35,7 @@ sys.path.insert(0, str(CASE_DIR.parent / "tools"))
 import exact  # noqa: E402
 import historywalk  # noqa: E402  — §4.5 걷기는 공용(reproducibility/와 같은 구현)
 from javasource import split_java  # noqa: E402  — 주석·문자열 가르기는 공용(reproducibility/의 D258 판별과 같은 구현)
+from timefmt import canonical_time_of  # noqa: E402  — 인쇄하는 시각은 D157의 표기(D274) — reproducibility/와 같은 함수
 
 GENERATED_BY = "contract/history/compute.py"
 SECONDS_PER_DAY = 86400
@@ -676,7 +677,7 @@ def build_expected(inp: dict, workdir: Path) -> dict:
         "contract_refs": inp["contract_refs"],
         "what_this_pins": inp["what_this_pins"],
         "shallow_depth": inp.get("shallow_depth"),
-        "window_anchor": {"type": "head_committer_time", "timestamp": head["committer_time"]},
+        "window_anchor": {"type": "head_committer_time", "timestamp": canonical_time_of(head["committer_time"])},
         "head": head["sha"][:9],
         "window_applied": {
             "months": months, "max_commits": max_commits, "bound_hit": bound_hit,
@@ -691,7 +692,7 @@ def build_expected(inp: dict, workdir: Path) -> dict:
             "commits_excluded_within_90d": len(excluded_within_90d),
         },
         "commits": [
-            {"sha": c["sha"][:9], "at": c["committer_time"], "subject": c["subject"],
+            {"sha": c["sha"][:9], "at": canonical_time_of(c["committer_time"]), "subject": c["subject"],
              "is_merge": c["is_merge"], "shallow_boundary": c["is_shallow_boundary"],
              "paths": c["paths"],
              "in_window": any(s["sha"] == c["sha"] for s in selected)}
@@ -938,7 +939,7 @@ def check_window_month_unit(inp: dict) -> dict:
     return {
         "case": inp["case"], "contract_refs": inp["contract_refs"], "what_this_pins": inp["what_this_pins"],
         "check": "window_month_unit", "month_seconds": MONTH_SECONDS,
-        "head_time": head_time.isoformat(),
+        "head_time": canonical_time_of(head_time),
         "commit_offsets_seconds": {k: head_unix - t for k, t in sorted(at.items())},
         "variants": variants,
         "mutation_bites_in": bites,

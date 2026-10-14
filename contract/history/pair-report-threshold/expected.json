@@ -9,7 +9,7 @@
   "shallow_depth": null,
   "window_anchor": {
     "type": "head_committer_time",
-    "timestamp": "2026-03-10T12:13:20+00:00"
+    "timestamp": "2026-03-10T12:13:20Z"
   },
   "head": "cf2d5e5dd",
   "window_applied": {
@@ -25,7 +25,7 @@
   "commits": [
     {
       "sha": "cf2d5e5dd",
-      "at": "2026-03-10T12:13:20+00:00",
+      "at": "2026-03-10T12:13:20Z",
       "subject": "touch F.java #7",
       "is_merge": false,
       "shallow_boundary": false,
@@ -36,7 +36,7 @@
     },
     {
       "sha": "0c9bf123b",
-      "at": "2026-03-10T11:13:20+00:00",
+      "at": "2026-03-10T11:13:20Z",
       "subject": "touch F.java #6",
       "is_merge": false,
       "shallow_boundary": false,
@@ -47,7 +47,7 @@
     },
     {
       "sha": "ac9417767",
-      "at": "2026-03-10T10:13:20+00:00",
+      "at": "2026-03-10T10:13:20Z",
       "subject": "touch F.java #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -58,7 +58,7 @@
     },
     {
       "sha": "ad1b6efcb",
-      "at": "2026-03-10T09:13:20+00:00",
+      "at": "2026-03-10T09:13:20Z",
       "subject": "touch F.java #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -69,7 +69,7 @@
     },
     {
       "sha": "11b72f68b",
-      "at": "2026-03-10T08:13:20+00:00",
+      "at": "2026-03-10T08:13:20Z",
       "subject": "touch F.java #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -80,7 +80,7 @@
     },
     {
       "sha": "571563950",
-      "at": "2026-03-10T07:13:20+00:00",
+      "at": "2026-03-10T07:13:20Z",
       "subject": "touch F.java #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -91,7 +91,7 @@
     },
     {
       "sha": "3402e5e31",
-      "at": "2026-03-10T06:13:20+00:00",
+      "at": "2026-03-10T06:13:20Z",
       "subject": "touch F.java #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -102,7 +102,7 @@
     },
     {
       "sha": "2f4005e19",
-      "at": "2026-03-09T08:26:40+00:00",
+      "at": "2026-03-09T08:26:40Z",
       "subject": "touch E.java #7",
       "is_merge": false,
       "shallow_boundary": false,
@@ -113,7 +113,7 @@
     },
     {
       "sha": "90bb24ab0",
-      "at": "2026-03-09T07:26:40+00:00",
+      "at": "2026-03-09T07:26:40Z",
       "subject": "touch E.java #6",
       "is_merge": false,
       "shallow_boundary": false,
@@ -124,7 +124,7 @@
     },
     {
       "sha": "5f5b0d4b0",
-      "at": "2026-03-09T06:26:40+00:00",
+      "at": "2026-03-09T06:26:40Z",
       "subject": "touch E.java #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -135,7 +135,7 @@
     },
     {
       "sha": "9e3259b93",
-      "at": "2026-03-09T05:26:40+00:00",
+      "at": "2026-03-09T05:26:40Z",
       "subject": "touch E.java #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -146,7 +146,7 @@
     },
     {
       "sha": "59756fc9d",
-      "at": "2026-03-09T04:26:40+00:00",
+      "at": "2026-03-09T04:26:40Z",
       "subject": "touch E.java #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -157,7 +157,7 @@
     },
     {
       "sha": "c2ed8c750",
-      "at": "2026-03-09T03:26:40+00:00",
+      "at": "2026-03-09T03:26:40Z",
       "subject": "touch E.java #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -168,7 +168,7 @@
     },
     {
       "sha": "4f3a7e429",
-      "at": "2026-03-09T02:26:40+00:00",
+      "at": "2026-03-09T02:26:40Z",
       "subject": "touch E.java #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -179,7 +179,7 @@
     },
     {
       "sha": "260bc1c7e",
-      "at": "2026-03-08T02:40:00+00:00",
+      "at": "2026-03-08T02:40:00Z",
       "subject": "touch E.java+F.java #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -191,7 +191,7 @@
     },
     {
       "sha": "bf478ea0e",
-      "at": "2026-03-08T01:40:00+00:00",
+      "at": "2026-03-08T01:40:00Z",
       "subject": "touch E.java+F.java #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -203,7 +203,7 @@
     },
     {
       "sha": "c9eb375fe",
-      "at": "2026-03-08T00:40:00+00:00",
+      "at": "2026-03-08T00:40:00Z",
       "subject": "touch E.java+F.java #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -215,7 +215,7 @@
     },
     {
       "sha": "95e9a2fba",
-      "at": "2026-03-07T23:40:00+00:00",
+      "at": "2026-03-07T23:40:00Z",
       "subject": "touch E.java+F.java #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -227,7 +227,7 @@
     },
     {
       "sha": "a37ee8090",
-      "at": "2026-03-07T22:40:00+00:00",
+      "at": "2026-03-07T22:40:00Z",
       "subject": "touch E.java+F.java #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -239,7 +239,7 @@
     },
     {
       "sha": "412b61dbc",
-      "at": "2026-03-06T21:53:20+00:00",
+      "at": "2026-03-06T21:53:20Z",
       "subject": "touch D.java #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -250,7 +250,7 @@
     },
     {
       "sha": "a0971838e",
-      "at": "2026-03-06T20:53:20+00:00",
+      "at": "2026-03-06T20:53:20Z",
       "subject": "touch D.java #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -261,7 +261,7 @@
     },
     {
       "sha": "27b7b61d3",
-      "at": "2026-03-06T19:53:20+00:00",
+      "at": "2026-03-06T19:53:20Z",
       "subject": "touch D.java #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -272,7 +272,7 @@
     },
     {
       "sha": "4d061d47c",
-      "at": "2026-03-06T18:53:20+00:00",
+      "at": "2026-03-06T18:53:20Z",
       "subject": "touch D.java #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -283,7 +283,7 @@
     },
     {
       "sha": "413a9fed4",
-      "at": "2026-03-05T18:06:40+00:00",
+      "at": "2026-03-05T18:06:40Z",
       "subject": "touch C.java #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -294,7 +294,7 @@
     },
     {
       "sha": "eb5b8e460",
-      "at": "2026-03-05T17:06:40+00:00",
+      "at": "2026-03-05T17:06:40Z",
       "subject": "touch C.java #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -305,7 +305,7 @@
     },
     {
       "sha": "ed8cf6932",
-      "at": "2026-03-05T16:06:40+00:00",
+      "at": "2026-03-05T16:06:40Z",
       "subject": "touch C.java #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -316,7 +316,7 @@
     },
     {
       "sha": "05091ecf9",
-      "at": "2026-03-05T15:06:40+00:00",
+      "at": "2026-03-05T15:06:40Z",
       "subject": "touch C.java #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -327,7 +327,7 @@
     },
     {
       "sha": "52cb1d9fb",
-      "at": "2026-03-04T14:20:00+00:00",
+      "at": "2026-03-04T14:20:00Z",
       "subject": "touch C.java+D.java #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -339,7 +339,7 @@
     },
     {
       "sha": "3e4aa4999",
-      "at": "2026-03-04T13:20:00+00:00",
+      "at": "2026-03-04T13:20:00Z",
       "subject": "touch C.java+D.java #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -351,7 +351,7 @@
     },
     {
       "sha": "9e5cbfdf8",
-      "at": "2026-03-04T12:20:00+00:00",
+      "at": "2026-03-04T12:20:00Z",
       "subject": "touch C.java+D.java #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -363,7 +363,7 @@
     },
     {
       "sha": "a633c8fd6",
-      "at": "2026-03-04T11:20:00+00:00",
+      "at": "2026-03-04T11:20:00Z",
       "subject": "touch C.java+D.java #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -375,7 +375,7 @@
     },
     {
       "sha": "fa5ca5aa8",
-      "at": "2026-03-03T11:33:20+00:00",
+      "at": "2026-03-03T11:33:20Z",
       "subject": "touch B.java #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -386,7 +386,7 @@
     },
     {
       "sha": "f99b1b239",
-      "at": "2026-03-03T10:33:20+00:00",
+      "at": "2026-03-03T10:33:20Z",
       "subject": "touch B.java #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -397,7 +397,7 @@
     },
     {
       "sha": "0ef02b3b9",
-      "at": "2026-03-03T09:33:20+00:00",
+      "at": "2026-03-03T09:33:20Z",
       "subject": "touch B.java #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -408,7 +408,7 @@
     },
     {
       "sha": "20f37efaf",
-      "at": "2026-03-03T08:33:20+00:00",
+      "at": "2026-03-03T08:33:20Z",
       "subject": "touch B.java #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -419,7 +419,7 @@
     },
     {
       "sha": "510f97a16",
-      "at": "2026-03-03T07:33:20+00:00",
+      "at": "2026-03-03T07:33:20Z",
       "subject": "touch B.java #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -430,7 +430,7 @@
     },
     {
       "sha": "c612a4733",
-      "at": "2026-03-02T07:46:40+00:00",
+      "at": "2026-03-02T07:46:40Z",
       "subject": "touch A.java #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -441,7 +441,7 @@
     },
     {
       "sha": "ef3d5f184",
-      "at": "2026-03-02T06:46:40+00:00",
+      "at": "2026-03-02T06:46:40Z",
       "subject": "touch A.java #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -452,7 +452,7 @@
     },
     {
       "sha": "068c0f37e",
-      "at": "2026-03-02T05:46:40+00:00",
+      "at": "2026-03-02T05:46:40Z",
       "subject": "touch A.java #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -463,7 +463,7 @@
     },
     {
       "sha": "12175a83e",
-      "at": "2026-03-02T04:46:40+00:00",
+      "at": "2026-03-02T04:46:40Z",
       "subject": "touch A.java #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -474,7 +474,7 @@
     },
     {
       "sha": "a17e546a7",
-      "at": "2026-03-02T03:46:40+00:00",
+      "at": "2026-03-02T03:46:40Z",
       "subject": "touch A.java #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -485,7 +485,7 @@
     },
     {
       "sha": "6ab1b37f0",
-      "at": "2026-03-01T04:00:00+00:00",
+      "at": "2026-03-01T04:00:00Z",
       "subject": "touch A.java+B.java #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -497,7 +497,7 @@
     },
     {
       "sha": "6b0d20af9",
-      "at": "2026-03-01T03:00:00+00:00",
+      "at": "2026-03-01T03:00:00Z",
       "subject": "touch A.java+B.java #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -509,7 +509,7 @@
     },
     {
       "sha": "b4050f849",
-      "at": "2026-03-01T02:00:00+00:00",
+      "at": "2026-03-01T02:00:00Z",
       "subject": "touch A.java+B.java #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -521,7 +521,7 @@
     },
     {
       "sha": "659855eac",
-      "at": "2026-03-01T01:00:00+00:00",
+      "at": "2026-03-01T01:00:00Z",
       "subject": "touch A.java+B.java #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -533,7 +533,7 @@
     },
     {
       "sha": "84a173cac",
-      "at": "2026-03-01T00:00:00+00:00",
+      "at": "2026-03-01T00:00:00Z",
       "subject": "touch A.java+B.java #1",
       "is_merge": false,
       "shallow_boundary": false,

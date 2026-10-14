@@ -11,7 +11,7 @@
     "unsquashed": {
       "window_anchor": {
         "type": "head_committer_time",
-        "timestamp": "2026-04-05T02:00:00+00:00"
+        "timestamp": "2026-04-05T02:00:00Z"
       },
       "head": "db2d463c3",
       "window_applied": {
@@ -27,7 +27,7 @@
       "commits": [
         {
           "sha": "db2d463c3",
-          "at": "2026-04-05T02:00:00+00:00",
+          "at": "2026-04-05T02:00:00Z",
           "subject": "u5: touch both",
           "is_merge": false,
           "shallow_boundary": false,
@@ -39,7 +39,7 @@
         },
         {
           "sha": "582f3e2cb",
-          "at": "2026-04-05T01:00:00+00:00",
+          "at": "2026-04-05T01:00:00Z",
           "subject": "u5: touch B",
           "is_merge": false,
           "shallow_boundary": false,
@@ -50,7 +50,7 @@
         },
         {
           "sha": "f919dc54d",
-          "at": "2026-04-05T00:00:00+00:00",
+          "at": "2026-04-05T00:00:00Z",
           "subject": "u5: touch A",
           "is_merge": false,
           "shallow_boundary": false,
@@ -61,7 +61,7 @@
         },
         {
           "sha": "c571b29c1",
-          "at": "2026-04-04T02:00:00+00:00",
+          "at": "2026-04-04T02:00:00Z",
           "subject": "u4: touch both",
           "is_merge": false,
           "shallow_boundary": false,
@@ -73,7 +73,7 @@
         },
         {
           "sha": "47600680e",
-          "at": "2026-04-04T01:00:00+00:00",
+          "at": "2026-04-04T01:00:00Z",
           "subject": "u4: touch B",
           "is_merge": false,
           "shallow_boundary": false,
@@ -84,7 +84,7 @@
         },
         {
           "sha": "4afd4a0cf",
-          "at": "2026-04-04T00:00:00+00:00",
+          "at": "2026-04-04T00:00:00Z",
           "subject": "u4: touch A",
           "is_merge": false,
           "shallow_boundary": false,
@@ -95,7 +95,7 @@
         },
         {
           "sha": "cca4b2737",
-          "at": "2026-04-03T02:00:00+00:00",
+          "at": "2026-04-03T02:00:00Z",
           "subject": "u3: touch both",
           "is_merge": false,
           "shallow_boundary": false,
@@ -107,7 +107,7 @@
         },
         {
           "sha": "6a8e66b04",
-          "at": "2026-04-03T01:00:00+00:00",
+          "at": "2026-04-03T01:00:00Z",
           "subject": "u3: touch B",
           "is_merge": false,
           "shallow_boundary": false,
@@ -118,7 +118,7 @@
         },
         {
           "sha": "0e8d57942",
-          "at": "2026-04-03T00:00:00+00:00",
+          "at": "2026-04-03T00:00:00Z",
           "subject": "u3: touch A",
           "is_merge": false,
           "shallow_boundary": false,
@@ -129,7 +129,7 @@
         },
         {
           "sha": "1ce879b7f",
-          "at": "2026-04-02T02:00:00+00:00",
+          "at": "2026-04-02T02:00:00Z",
           "subject": "u2: touch both",
           "is_merge": false,
           "shallow_boundary": false,
@@ -141,7 +141,7 @@
         },
         {
           "sha": "e31848c7f",
-          "at": "2026-04-02T01:00:00+00:00",
+          "at": "2026-04-02T01:00:00Z",
           "subject": "u2: touch B",
           "is_merge": false,
           "shallow_boundary": false,
@@ -152,7 +152,7 @@
         },
         {
           "sha": "95b16aee2",
-          "at": "2026-04-02T00:00:00+00:00",
+          "at": "2026-04-02T00:00:00Z",
           "subject": "u2: touch A",
           "is_merge": false,
           "shallow_boundary": false,
@@ -163,7 +163,7 @@
         },
         {
           "sha": "d99c57861",
-          "at": "2026-04-01T02:00:00+00:00",
+          "at": "2026-04-01T02:00:00Z",
           "subject": "u1: touch both",
           "is_merge": false,
           "shallow_boundary": false,
@@ -175,7 +175,7 @@
         },
         {
           "sha": "804d9a88f",
-          "at": "2026-04-01T01:00:00+00:00",
+          "at": "2026-04-01T01:00:00Z",
           "subject": "u1: touch B",
           "is_merge": false,
           "shallow_boundary": false,
@@ -186,7 +186,7 @@
         },
         {
           "sha": "114c2accc",
-          "at": "2026-04-01T00:00:00+00:00",
+          "at": "2026-04-01T00:00:00Z",
           "subject": "u1: touch A",
           "is_merge": false,
           "shallow_boundary": false,
@@ -296,7 +296,7 @@
     "squashed": {
       "window_anchor": {
         "type": "head_committer_time",
-        "timestamp": "2026-04-05T00:00:00+00:00"
+        "timestamp": "2026-04-05T00:00:00Z"
       },
       "head": "fafa52fad",
       "window_applied": {
@@ -312,7 +312,7 @@
       "commits": [
         {
           "sha": "fafa52fad",
-          "at": "2026-04-05T00:00:00+00:00",
+          "at": "2026-04-05T00:00:00Z",
           "subject": "unit 5 (squashed)",
           "is_merge": false,
           "shallow_boundary": false,
@@ -324,7 +324,7 @@
         },
         {
           "sha": "d9365464b",
-          "at": "2026-04-04T00:00:00+00:00",
+          "at": "2026-04-04T00:00:00Z",
           "subject": "unit 4 (squashed)",
           "is_merge": false,
           "shallow_boundary": false,
@@ -336,7 +336,7 @@
         },
         {
           "sha": "a522f8230",
-          "at": "2026-04-03T00:00:00+00:00",
+          "at": "2026-04-03T00:00:00Z",
           "subject": "unit 3 (squashed)",
           "is_merge": false,
           "shallow_boundary": false,
@@ -348,7 +348,7 @@
         },
         {
           "sha": "7d6cd9821",
-          "at": "2026-04-02T00:00:00+00:00",
+          "at": "2026-04-02T00:00:00Z",
           "subject": "unit 2 (squashed)",
           "is_merge": false,
           "shallow_boundary": false,
@@ -360,7 +360,7 @@
         },
         {
           "sha": "2edf6e826",
-          "at": "2026-04-01T00:00:00+00:00",
+          "at": "2026-04-01T00:00:00Z",
           "subject": "unit 1 (squashed)",
           "is_merge": false,
           "shallow_boundary": false,

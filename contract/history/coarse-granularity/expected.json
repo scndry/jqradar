@@ -8,7 +8,7 @@
   "shallow_depth": null,
   "window_anchor": {
     "type": "head_committer_time",
-    "timestamp": "2026-04-03T00:00:00+00:00"
+    "timestamp": "2026-04-03T00:00:00Z"
   },
   "head": "17234d0e3",
   "window_applied": {
@@ -24,7 +24,7 @@
   "commits": [
     {
       "sha": "17234d0e3",
-      "at": "2026-04-03T00:00:00+00:00",
+      "at": "2026-04-03T00:00:00Z",
       "subject": "bulk 3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -59,7 +59,7 @@
     },
     {
       "sha": "ef5ee8612",
-      "at": "2026-04-02T00:00:00+00:00",
+      "at": "2026-04-02T00:00:00Z",
       "subject": "bulk 2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -94,7 +94,7 @@
     },
     {
       "sha": "e0c167f06",
-      "at": "2026-04-01T00:00:00+00:00",
+      "at": "2026-04-01T00:00:00Z",
       "subject": "bulk 1",
       "is_merge": false,
       "shallow_boundary": false,

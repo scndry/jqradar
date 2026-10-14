@@ -12,7 +12,7 @@
   "shallow_depth": 2,
   "window_anchor": {
     "type": "head_committer_time",
-    "timestamp": "2026-08-30T00:00:00+00:00"
+    "timestamp": "2026-08-30T00:00:00Z"
   },
   "head": "9942c3432",
   "window_applied": {
@@ -28,7 +28,7 @@
   "commits": [
     {
       "sha": "9942c3432",
-      "at": "2026-08-30T00:00:00+00:00",
+      "at": "2026-08-30T00:00:00Z",
       "subject": "touch New again",
       "is_merge": false,
       "shallow_boundary": false,
@@ -39,7 +39,7 @@
     },
     {
       "sha": "6c310081f",
-      "at": "2026-07-31T00:00:00+00:00",
+      "at": "2026-07-31T00:00:00Z",
       "subject": "touch New",
       "is_merge": false,
       "shallow_boundary": true,

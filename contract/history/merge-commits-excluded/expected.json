@@ -8,7 +8,7 @@
   "shallow_depth": null,
   "window_anchor": {
     "type": "head_committer_time",
-    "timestamp": "2026-02-01T03:00:00+00:00"
+    "timestamp": "2026-02-01T03:00:00Z"
   },
   "head": "e412b5eca",
   "window_applied": {
@@ -24,7 +24,7 @@
   "commits": [
     {
       "sha": "e412b5eca",
-      "at": "2026-02-01T03:00:00+00:00",
+      "at": "2026-02-01T03:00:00Z",
       "subject": "merge feature",
       "is_merge": true,
       "shallow_boundary": false,
@@ -33,7 +33,7 @@
     },
     {
       "sha": "ba01025f8",
-      "at": "2026-02-01T02:00:00+00:00",
+      "at": "2026-02-01T02:00:00Z",
       "subject": "main: add B",
       "is_merge": false,
       "shallow_boundary": false,
@@ -44,7 +44,7 @@
     },
     {
       "sha": "dd250449a",
-      "at": "2026-02-01T01:00:00+00:00",
+      "at": "2026-02-01T01:00:00Z",
       "subject": "feature: edit A",
       "is_merge": false,
       "shallow_boundary": false,
@@ -55,7 +55,7 @@
     },
     {
       "sha": "567f3927e",
-      "at": "2026-02-01T00:00:00+00:00",
+      "at": "2026-02-01T00:00:00Z",
       "subject": "seed",
       "is_merge": false,
       "shallow_boundary": false,

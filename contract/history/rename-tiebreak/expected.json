@@ -7,7 +7,7 @@
   "shallow_depth": null,
   "window_anchor": {
     "type": "head_committer_time",
-    "timestamp": "2026-05-02T00:00:00+00:00"
+    "timestamp": "2026-05-02T00:00:00Z"
   },
   "head": "91868cbda",
   "window_applied": {
@@ -23,7 +23,7 @@
   "commits": [
     {
       "sha": "91868cbda",
-      "at": "2026-05-02T00:00:00+00:00",
+      "at": "2026-05-02T00:00:00Z",
       "subject": "move and copy",
       "is_merge": false,
       "shallow_boundary": false,
@@ -35,7 +35,7 @@
     },
     {
       "sha": "f3f55f5d4",
-      "at": "2026-05-01T00:00:00+00:00",
+      "at": "2026-05-01T00:00:00Z",
       "subject": "seed",
       "is_merge": false,
       "shallow_boundary": false,

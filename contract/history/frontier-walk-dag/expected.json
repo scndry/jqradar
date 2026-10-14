@@ -13,7 +13,7 @@
   "shallow_depth": null,
   "window_anchor": {
     "type": "head_committer_time",
-    "timestamp": "2026-05-06T00:00:00+00:00"
+    "timestamp": "2026-05-06T00:00:00Z"
   },
   "head": "569d54225",
   "window_applied": {
@@ -29,7 +29,7 @@
   "commits": [
     {
       "sha": "569d54225",
-      "at": "2026-05-06T00:00:00+00:00",
+      "at": "2026-05-06T00:00:00Z",
       "subject": "main: head Y",
       "is_merge": false,
       "shallow_boundary": false,
@@ -40,7 +40,7 @@
     },
     {
       "sha": "c802420d6",
-      "at": "2026-04-06T00:00:00+00:00",
+      "at": "2026-04-06T00:00:00Z",
       "subject": "merge G",
       "is_merge": true,
       "shallow_boundary": false,
@@ -49,7 +49,7 @@
     },
     {
       "sha": "32c9f3061",
-      "at": "2026-03-27T00:00:00+00:00",
+      "at": "2026-03-27T00:00:00Z",
       "subject": "merge F",
       "is_merge": true,
       "shallow_boundary": false,
@@ -58,7 +58,7 @@
     },
     {
       "sha": "d39010552",
-      "at": "2026-02-05T00:00:00+00:00",
+      "at": "2026-02-05T00:00:00Z",
       "subject": "main: in-window Y",
       "is_merge": false,
       "shallow_boundary": false,
@@ -69,7 +69,7 @@
     },
     {
       "sha": "82e3b84d3",
-      "at": "2025-03-22T00:00:00+00:00",
+      "at": "2025-03-22T00:00:00Z",
       "subject": "main: edit Y again",
       "is_merge": false,
       "shallow_boundary": false,
@@ -80,7 +80,7 @@
     },
     {
       "sha": "63f3b22da",
-      "at": "2025-02-20T00:00:00+00:00",
+      "at": "2025-02-20T00:00:00Z",
       "subject": "main: edit Y",
       "is_merge": false,
       "shallow_boundary": false,
@@ -91,7 +91,7 @@
     },
     {
       "sha": "5a86cef75",
-      "at": "2025-02-10T00:00:00+00:00",
+      "at": "2025-02-10T00:00:00Z",
       "subject": "branch G: edit X",
       "is_merge": false,
       "shallow_boundary": false,
@@ -102,7 +102,7 @@
     },
     {
       "sha": "c530d7755",
-      "at": "2025-01-31T00:00:00+00:00",
+      "at": "2025-01-31T00:00:00Z",
       "subject": "branch F: edit X",
       "is_merge": false,
       "shallow_boundary": false,
@@ -113,7 +113,7 @@
     },
     {
       "sha": "00de01b3d",
-      "at": "2025-01-01T00:00:00+00:00",
+      "at": "2025-01-01T00:00:00Z",
       "subject": "seed X Y",
       "is_merge": false,
       "shallow_boundary": false,

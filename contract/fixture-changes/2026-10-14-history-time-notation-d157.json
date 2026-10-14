@@ -1,0 +1,34 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "history 픽스처가 인쇄하는 시각 문자열 — window_anchor.timestamp · commits[].at · head_time(v3.10.23 D274)",
+    "old": "history 계산기가 파이썬 `isoformat()`을 그대로 인쇄했다 — `2026-01-15T09:00:00+00:00`(S4-7 반례: D157의 정규 표기와 같은 순간의 다른 바이트)",
+    "new": "D157의 정규 표기 `YYYY-MM-DDTHH:MM:SSZ`, unix 초에서 — reproducibility 계산기의 `canonical_time`을 `contract/tools/timefmt.py`로 옮겨 두 계산기가 같은 함수를 쓴다",
+    "note": "값 불변, 직렬화만(§2.9). 비교한 것: 바뀐 369줄 각각에서 옛 줄의 `+00:00`을 `Z`로 바꾸면 새 줄과 바이트가 같다 — 다른 차이 0. 계산기 안의 표현(시각대가 붙은 ISO 문자열)은 그대로이고 인쇄하는 자리 셋에서만 바꿨다(파이썬 3.9의 `fromisoformat`은 `Z`를 읽지 못한다). `anchor-fixed`는 `what_this_pins`에 D274 한 문장이 더해졌다(닫는 케이스). reproducibility 스위트는 이미 정규 표기라 움직이지 않았다.",
+    "fixtures": [
+      "history/age-boundary-180-days",
+      "history/anchor-fixed",
+      "history/author-facts-minor-threshold",
+      "history/authors-window-truncated-by-count",
+      "history/coarse-granularity",
+      "history/frontier-walk-dag",
+      "history/generated-test-stub-not-in-pairs",
+      "history/hidden-coupling-sort-order",
+      "history/merge-commits-excluded",
+      "history/negative-age-invalid-metadata",
+      "history/pair-report-threshold",
+      "history/rename-ambiguous",
+      "history/rename-tiebreak",
+      "history/shallow-clone-age-unknown",
+      "history/shared-window-limited",
+      "history/tc-squash-vs-merge",
+      "history/team-folding-k-threshold",
+      "history/uncommitted-file",
+      "history/window-bound-count",
+      "history/window-bound-time",
+      "history/window-month-unit-boundary",
+      "history/window-outside-last-commit-recovered",
+      "history/window-vs-first-parent"
+    ]
+  }
+}
