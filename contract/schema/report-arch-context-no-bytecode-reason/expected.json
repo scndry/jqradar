@@ -1,0 +1,14 @@
+{
+  "case": "report-arch-context-no-bytecode-reason",
+  "generated_by": "contract/schema/compute.py",
+  "check": "schema",
+  "kind": "hard_rule",
+  "contract_ref": "D278·D170",
+  "what": "클래스가 없는 파일의 `arch_context`는 **통째로 null**이고(D170) 사유 `no_bytecode`는 `fan_in`·F의 `reason`이 든다(D278) — `arch_context`의 `reason` 자리는 `isolated_component` 하나다. `isolated_component`의 모양(I·D·zone null, A·cycle_id 값)에 사유만 `no_bytecode`로 두면 `/files/0/arch_context/reason`에서 거부된다. **변조 = 반례(U4)의 고르지 않은 읽기**: 옛 사전의 셋째 열이 `no_bytecode`에 \"`arch_context` 전체 null\"을 적어 이 자리를 허용했다.",
+  "mechanism": "allOf($defs.reason + 자리별 enum)",
+  "schema": "report.schema.json",
+  "verdict": "reject",
+  "rejected_at": [
+    "/files/0/arch_context/reason"
+  ]
+}

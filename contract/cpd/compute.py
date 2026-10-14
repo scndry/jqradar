@@ -203,6 +203,19 @@ def build_expected(inp: dict) -> dict:
         except SystemExit:
             bite = {"one_sided_input_rejected": True}
 
+    partition = None
+    if inp.get("bite_partition_reading"):
+        # D277 — 자기 중복은 분할이 아니다: 자기 중복 구간은 교차 구간과 겹칠 수 있고 겹친 토큰은 양쪽에 든다(D166의 ⊇).
+        # 변조 = "분할로 읽기"(옛 §2.6 문장): union을 자기 중복 + 교차 구간의 합으로 낸다. 겹치는 입력에서 그 합은 union보다 크다.
+        partition = {}
+        for path in paths:
+            cross = span([(o["start_token"], o["end_token"]) for c in clusters if not c["self_duplication"]
+                          for o in c["occurrences"] if o["path"] == path])
+            selfd, union = per_file[path]["self_dup_tokens"], per_file[path]["union_dup_tokens"]
+            partition[path] = {"cross_span": cross, "self_dup_tokens": selfd,
+                               "union_by_partition": selfd + cross, "union_dup_tokens": union,
+                               "differs": selfd + cross != union}
+
     return {
         "case": inp["case"],
         "contract_refs": inp["contract_refs"],
@@ -212,6 +225,7 @@ def build_expected(inp: dict) -> dict:
         "rejected_clusters": rejected,
         "files": per_file,
         "duplication_pairs": pairs,
+        **({"mutation_partition_reading": partition} if partition is not None else {}),
         # D187 — 분자·분모가 같은 정규화 후 스트림이라 dup_extent ≤ 1. 모든 케이스가 인쇄한다.
         "invariants": {
             "dup_extent_at_most_one": all(
@@ -223,6 +237,9 @@ def build_expected(inp: dict) -> dict:
                 (p["a"] in {q["a"] for q in pairs if q["b"] == p["b"]} | {q["b"] for q in pairs if q["a"] == p["b"]})
                 for p in pairs),
             **(bite or {}),
+            **({"partition_reading_bites": any(v["differs"] for v in partition.values()),
+                "self_and_cross_cover_union": all(v["union_by_partition"] >= v["union_dup_tokens"] for v in partition.values())}
+               if partition is not None else {}),
         },
     }
 

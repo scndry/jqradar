@@ -37,9 +37,9 @@
       "id": "com.acme.app.order",
       "Ca": 0,
       "Ce": 1,
-      "I": 1,
-      "A": 0.5,
-      "D": 0.5,
+      "I": 1.0000,
+      "A": 0.5000,
+      "D": 0.5000,
       "zone": "unstable-abstract",
       "class_count": 2
     },
@@ -47,9 +47,9 @@
       "id": "com.acme.app.payment",
       "Ca": 1,
       "Ce": 0,
-      "I": 0,
-      "A": 0,
-      "D": 1,
+      "I": 0.0000,
+      "A": 0.0000,
+      "D": 1.0000,
       "zone": "stable-concrete",
       "class_count": 1
     }
@@ -58,8 +58,8 @@
   "system": {
     "components": 2,
     "CCD": 3,
-    "ACD": 1.5,
-    "RACD": 0.75,
+    "ACD": 1.50,
+    "RACD": 0.7500,
     "CCD_balanced": 2.75,
     "NCCD": 1.09,
     "display": {
@@ -69,10 +69,10 @@
       "NCCD": 1.09
     }
   },
-  "non_terminating": {},
+  "exact": {},
   "_fixture": {
     "generated_by": "contract/graph/compute.py",
     "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
-    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+    "serialization": "표 D155-1의 이름인 필드는 표의 스케일로 고정 인쇄한다(HALF_EVEN, 후행 0 유지 — D275). 표에 없는 이름은 끝나는 십진수면 정확값 그대로, 아니면 소수점 12자리 ROUND_HALF_EVEN. 인쇄가 정확값이 아닌 모든 값의 정확 유리수를 exact에 함께 적는다. exact가 비어 있으면 이 파일 전체가 정확값이다."
   }
 }

@@ -9,7 +9,7 @@
   "what_this_pins": "**창의 1개월 = 2,629,800초(365.25/12일, 정확한 정수 초) — 하한 `HEAD_TIME − window.months × 2,629,800`, 포함, 반올림 없음**(D262). 같은 리포를 12·24개월 창으로 본다. 12개월: 하한 정각(`c12_lower`) → 안, 하한 − 1초 → 밖, `HEAD − 365일 − 1초`(`c365d_plus_1s`) → 안. 24개월: 하한 정각(`c24_lower` = `HEAD − 730.5일`) → 안, 하한 − 1초 → 밖.\n\n**변조 넷이 각각 경계 커밋을 다르게 판정한다**(`mutations[].misjudged`). 12개월에서는 넷 모두 하한이 365일이라 `c12_lower`·`c365d_plus_1s`를 밖으로 보낸다. 24개월에서 갈린다: 365/12일(`days_365_per_year`)·옛 계산기의 짝수 반올림 일(`round_half_even_days`)·UTC 달력 월(`calendar_months`)은 730일이라 `c24_lower`를 밖으로, Java `Math.round`의 반 올림 일(`round_half_up_days`)은 731일이라 `c24_lower_minus_1s`를 안으로. 일로 반올림하는 어떤 규칙도 구현의 반올림 규칙을 id에 들인다 — 24개월의 730과 731이 그 증거다.",
   "check": "window_month_unit",
   "month_seconds": 2629800,
-  "head_time": "2026-10-13T00:00:00+00:00",
+  "head_time": "2026-10-13T00:00:00Z",
   "commit_offsets_seconds": {
     "c12_lower": 31557600,
     "c12_lower_minus_1s": 31557601,
@@ -119,10 +119,10 @@
     ]
   },
   "verdict": "accept",
-  "non_terminating": {},
+  "exact": {},
   "_fixture": {
     "generated_by": "contract/history/compute.py",
     "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
-    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+    "serialization": "표 D155-1의 이름인 필드는 표의 스케일로 고정 인쇄한다(HALF_EVEN, 후행 0 유지 — D275). 표에 없는 이름은 끝나는 십진수면 정확값 그대로, 아니면 소수점 12자리 ROUND_HALF_EVEN. 인쇄가 정확값이 아닌 모든 값의 정확 유리수를 exact에 함께 적는다. exact가 비어 있으면 이 파일 전체가 정확값이다."
   }
 }

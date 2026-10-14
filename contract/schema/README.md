@@ -23,6 +23,8 @@
 
 판정 어휘 사전은 [`contract/judgment-vocabulary.json`](../judgment-vocabulary.json) **한 곳**에만 있다. `contract/schema/`(지금)와 `contract/renderer/`(G2)가 같은 파일을 읽고, `vocabulary-sync` 케이스가 스키마에 심긴 패턴이 사전과 어긋나지 않았는지 본다.
 
+`reason` 사전도 한 곳 — `prd.md` §2.5의 표다(D188). 스키마의 `reason` 부분집합(`$defs.reason`·성분 자리·렌즈 H·Dx·F·`arch_context`·`component`·`hidden_couplings`)은 그 표의 셋째 열에서 **생성된다**(D278 — [`reasons.py`](reasons.py)). 셋째 열은 `reason` **키**가 오는 자리만이고, 사유 키 없이 나타나는 null은 표 아래 문장이 가리킨다. `reason-subsets-from-dictionary`가 생성 = 스키마를, `reason-dictionary-place-added`가 생성기가 표를 읽는다는 것(셋째 열에 자리를 더하면 생성물이 바뀐다)을 본다. 읽을 수 없는 자리가 있으면 생성기는 멈춘다.
+
 ## 케이스 모양
 
 ```
@@ -32,6 +34,7 @@
 
 - `base` — `prd:§7:<블록>`은 **prd.md에서 직접** 읽는다. §7 예시가 곧 픽스처이므로(D26) 복사본을 두면 드리프트한다. §7에 예시가 없는 `change`만 [`base/`](base/)에 손으로 쓴 문서를 둔다. G1에 §7 예시가 `contract/lens/sample-service/`에서 **생성**되면(D128) `prd:` 참조가 그쪽으로 옮겨간다.
 - **스케일 린트의 표는 §2.5 `D155-1`을 읽는다**(D235) — 린트 안에 표의 사본이 없다. 첫째 칸이 행의 뜻, 둘째 칸의 괄호 밖 백틱이 필드 이름, 셋째 칸이 스케일이다. `table_patch`(scale_lint만)는 그 표 원문을 바꾼 뒤 읽는다 — `scale-table-is-read`(이름을 넣으면 본다)·`scale-table-name-removed`(빼면 못 본다)가 표를 읽는 경로가 실제로 쓰인다는 증거다. 표를 읽지 못하면(머리가 없거나, 모르는 행, 괄호 밖의 이름 아닌 백틱) 린트는 조용히 넘어가지 않고 멈춘다.
+- **`reason_sync`의 `table_patch`**는 §2.5 `reason` 사전 원문을 바꾼 뒤 생성한다 — 스케일 린트의 `table_patch`와 같은 모양.
 - `kind` — `positive` / `hard_rule` / `structural`. 판정 기준은 하나다: **계약을 모르는 사람이 §7 예시만 보고 스키마를 써도 잡혔을까?** 아니오면 `hard_rule`.
 
 ## 실행
@@ -40,6 +43,7 @@
 python3 contract/schema/compute.py            # 케이스 실행 + expected.json 재생성
 python3 contract/schema/compute.py --check    # 커밋된 것과 같은지 (CI)
 python3 contract/schema/vocabulary.py --sync  # 사전 -> 스키마 pattern 심기
+python3 contract/schema/reasons.py --write    # §2.5 reason 사전 -> 스키마 reason 부분집합 (D278)
 ```
 
 집계가 함께 나온다. 대상 하나라도 하드룰 변조가 0이면 그 줄에 **`D124 미충족`**이 찍힌다.

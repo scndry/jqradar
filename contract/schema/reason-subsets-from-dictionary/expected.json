@@ -1,0 +1,11 @@
+{
+  "case": "reason-subsets-from-dictionary",
+  "generated_by": "contract/schema/compute.py",
+  "check": "reason_sync",
+  "kind": "positive",
+  "contract_ref": "D278·D188",
+  "what": "`report.schema.json`의 `reason` 부분집합(`$defs.reason`·`percentile_population`의 일반 자리와 성분 이름 자리·렌즈 H·Dx·F·`arch_context`·`component`·`hidden_couplings`)이 §2.5 사전의 셋째 열에서 생성한 것과 **같다**(D278 — `contract/schema/reasons.py`). 사전이 한 곳이라는 말이 기계로 선다: 손으로 맞추면 표가 둘이 된다. **반례(U4)의 고르지 않은 읽기**: 셋째 열이 `reason` 키의 자리와 사유 없이 null이 나타나는 자리를 섞어 적었을 때 사전은 `no_bytecode @ arch_context`·`unsupported_language @ percentile_population.loc`을 허용하고 스키마는 거부했다 — `docs/review/counterexamples/U4/`; 이 케이스와 변조 셋이 대신한다.",
+  "mechanism": "생성기(사전 → enum) diff 0",
+  "verdict": "accept",
+  "drift": []
+}

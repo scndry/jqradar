@@ -1,20 +1,22 @@
 {
   "case": "negative-age-invalid-metadata",
   "contract_refs": [
-    "§2.1"
+    "§2.1",
+    "§2.7",
+    "D273"
   ],
-  "what_this_pins": "커미터 시각이 뒤죽박죽이면 `HEAD_TIME − 마지막 변경 시각`이 **음수**가 된다. git은 시각 순서를 강제하지 않으므로 잘못된 시계·수입된 이력에서 실제로 생긴다. 음수 나이는 0으로 자르지 않고 **null + `invalid_metadata`**다(§2.1) — 0으로 자르면 '방금 바뀐 파일'이 되어 F에서 빠지고, 음수를 그대로 두면 `P90(age_last_days)` 분위가 망가진다. 여기서 HEAD(`c2`)의 시각이 부모(`c1`)보다 하루 **이르다**.",
+  "what_this_pins": "커미터 시각이 뒤죽박죽이면 `HEAD_TIME − 마지막 변경 시각`이 **음수**가 된다. git은 시각 순서를 강제하지 않으므로 잘못된 시계·수입된 이력에서 실제로 생긴다. 음수 나이는 0으로 자르지 않고 **null + `invalid_metadata`**다(§2.1) — 0으로 자르면 '방금 바뀐 파일'이 되어 F에서 빠지고, 음수를 그대로 두면 `P90(age_last_days)` 분위가 망가진다. 여기서 HEAD(`c2`)의 시각이 부모(`c1`)보다 하루 **이르다**. **창 W의 위 끝은 닫혀 있다**(§2.7·D273): 부모 `c1`은 HEAD보다 커미터 시각이 늦어 W 밖이다 — `commits_in_window`는 1이고 `c1`만 만진 `src/A.java`의 `chg_commits`는 0이다. 그 파일의 나이는 여전히 `invalid_metadata`다 — 마지막 커밋은 창 밖 걷기가 `c1`로 찾고(D203), `HEAD_TIME − c1`이 음수다. 위 끝을 열어 두는 읽기(변조)는 `commits_in_window` 2·`chg_commits` 1을 낸다 — `docs/review/counterexamples/S4-5/`가 낸 그 값이다.",
   "shallow_depth": null,
   "window_anchor": {
     "type": "head_committer_time",
-    "timestamp": "2026-08-02T00:00:00+00:00"
+    "timestamp": "2026-08-02T00:00:00Z"
   },
   "head": "39b38b7a3",
   "window_applied": {
     "months": 12,
     "max_commits": 2000,
     "bound_hit": "none",
-    "commits_in_window": 2,
+    "commits_in_window": 1,
     "merge_commits_excluded": 0,
     "authors_window_truncated": false,
     "authors_window_days": 0.00,
@@ -23,7 +25,7 @@
   "commits": [
     {
       "sha": "39b38b7a3",
-      "at": "2026-08-02T00:00:00+00:00",
+      "at": "2026-08-02T00:00:00Z",
       "subject": "HEAD with earlier timestamp",
       "is_merge": false,
       "shallow_boundary": false,
@@ -34,17 +36,17 @@
     },
     {
       "sha": "8339ea0a0",
-      "at": "2026-08-03T00:00:00+00:00",
+      "at": "2026-08-03T00:00:00Z",
       "subject": "later timestamp",
       "is_merge": false,
       "shallow_boundary": false,
       "paths": [
         "src/A.java"
       ],
-      "in_window": true
+      "in_window": false
     }
   ],
-  "median_files_per_commit": 1,
+  "median_files_per_commit": 1.00,
   "commit_granularity": "fine",
   "renames": [],
   "last_commit_map": {
@@ -54,28 +56,37 @@
   "history_complete": true,
   "graft_boundary_shas": [],
   "walk": {
-    "frontier": [],
-    "files": {}
+    "frontier": [
+      "8339ea0a0"
+    ],
+    "files": {
+      "src/A.java": {
+        "sha": "8339ea0a0",
+        "contacts": [
+          "8339ea0a0"
+        ],
+        "undominated": [
+          "8339ea0a0"
+        ],
+        "touched_boundary": false,
+        "visited": 1
+      }
+    }
   },
   "files": {
     "src/A.java": {
-      "chg_commits": 1,
-      "chg_days": 1,
-      "churn": 1,
-      "touched_by": [
-        "8339ea0a0"
-      ],
-      "age_basis": "in_window",
+      "chg_commits": 0,
+      "chg_days": 0,
+      "churn": 0,
+      "touched_by": [],
+      "age_basis": "frontier_walk",
       "last_commit": "8339ea0a0",
       "age_last_days": null,
       "age_reason": "invalid_metadata",
-      "distinct_authors_90d": 1,
-      "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
-      "contribution_shares_sorted": [
-        1
-      ]
+      "distinct_authors_90d": 0,
+      "contributor_count": 0,
+      "ownership_max_share": null,
+      "minor_contributor_share": null
     },
     "src/B.java": {
       "chg_commits": 1,
@@ -89,8 +100,8 @@
       "age_last_days": 0.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -98,10 +109,10 @@
   },
   "pairs": [],
   "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
-  "non_terminating": {},
+  "exact": {},
   "_fixture": {
     "generated_by": "contract/history/compute.py",
     "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
-    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+    "serialization": "표 D155-1의 이름인 필드는 표의 스케일로 고정 인쇄한다(HALF_EVEN, 후행 0 유지 — D275). 표에 없는 이름은 끝나는 십진수면 정확값 그대로, 아니면 소수점 12자리 ROUND_HALF_EVEN. 인쇄가 정확값이 아닌 모든 값의 정확 유리수를 exact에 함께 적는다. exact가 비어 있으면 이 파일 전체가 정확값이다."
   }
 }

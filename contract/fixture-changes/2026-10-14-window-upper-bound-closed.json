@@ -1,0 +1,12 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "history.window_applied.commits_in_window · files[].chg_commits — 창 W의 위 끝(v3.10.23 D273)",
+    "old": "계산기가 W의 아래 끝(`HEAD_TIME − months`)만 봤다 — HEAD보다 커미터 시각이 늦은 부모 `c1`이 W에 들어 `commits_in_window` 2, `c1`만 만진 `src/A.java`의 `chg_commits` 1(S4-5 반례)",
+    "new": "W = `[HEAD_TIME − months, HEAD_TIME]`, 닫힌 구간(§2.7) — `c1`은 W 밖: `commits_in_window` 1, `src/A.java`의 `chg_commits`·`chg_days`·`churn` 0, 마지막 커밋은 창 밖 걷기가 `c1`로 찾는다(`age_basis: frontier_walk`), 나이는 그대로 `invalid_metadata`",
+    "note": "`src/A.java`의 W 안 저자 사실(`distinct_authors_90d` 0·`contributor_count` 0·비율 둘 null)은 W 안 커밋이 없는 파일의 기존 모양을 따른다. `authors_window_truncated`는 false 그대로 — '최근 90일'은 `[HEAD_TIME − 90d, HEAD_TIME]`(D137)이라 HEAD보다 늦은 커밋은 상한이 자른 것이 아니다(계산기의 절단 집합에도 같은 위 끝을 넣었다). `bound_hit`도 none 그대로 — 위 끝 밖은 상한(`window.months`·`window.max_commits`)이 자른 것이 아니다. reproducibility 계산기도 같은 위 끝으로 고쳤고 그 스위트의 expected는 움직이지 않았다(HEAD보다 늦은 커밋을 가진 케이스가 없다).",
+    "fixtures": [
+      "history/negative-age-invalid-metadata"
+    ]
+  }
+}

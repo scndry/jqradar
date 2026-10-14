@@ -15,7 +15,7 @@
   "shallow_depth": null,
   "window_anchor": {
     "type": "head_committer_time",
-    "timestamp": "2026-02-05T00:00:00+00:00"
+    "timestamp": "2026-02-05T00:00:00Z"
   },
   "head": "f5c1767eb",
   "window_applied": {
@@ -31,7 +31,7 @@
   "commits": [
     {
       "sha": "f5c1767eb",
-      "at": "2026-02-05T00:00:00+00:00",
+      "at": "2026-02-05T00:00:00Z",
       "subject": "add New",
       "is_merge": false,
       "shallow_boundary": false,
@@ -42,7 +42,7 @@
     },
     {
       "sha": "fbfaa3188",
-      "at": "2025-01-01T00:00:00+00:00",
+      "at": "2025-01-01T00:00:00Z",
       "subject": "add Old",
       "is_merge": false,
       "shallow_boundary": false,
@@ -52,7 +52,7 @@
       "in_window": false
     }
   ],
-  "median_files_per_commit": 1,
+  "median_files_per_commit": 1.00,
   "commit_granularity": "fine",
   "renames": [],
   "last_commit_map": {
@@ -105,8 +105,8 @@
       "age_last_days": 0.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -114,10 +114,10 @@
   },
   "pairs": [],
   "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
-  "non_terminating": {},
+  "exact": {},
   "_fixture": {
     "generated_by": "contract/history/compute.py",
     "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
-    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+    "serialization": "표 D155-1의 이름인 필드는 표의 스케일로 고정 인쇄한다(HALF_EVEN, 후행 0 유지 — D275). 표에 없는 이름은 끝나는 십진수면 정확값 그대로, 아니면 소수점 12자리 ROUND_HALF_EVEN. 인쇄가 정확값이 아닌 모든 값의 정확 유리수를 exact에 함께 적는다. exact가 비어 있으면 이 파일 전체가 정확값이다."
   }
 }

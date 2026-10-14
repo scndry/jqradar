@@ -14,7 +14,7 @@
   "shallow_depth": null,
   "window_anchor": {
     "type": "head_committer_time",
-    "timestamp": "2026-03-13T22:33:20+00:00"
+    "timestamp": "2026-03-13T22:33:20Z"
   },
   "head": "06aa86d4c",
   "window_applied": {
@@ -30,7 +30,7 @@
   "commits": [
     {
       "sha": "06aa86d4c",
-      "at": "2026-03-13T22:33:20+00:00",
+      "at": "2026-03-13T22:33:20Z",
       "subject": "touch A+ATest #6",
       "is_merge": false,
       "shallow_boundary": false,
@@ -42,7 +42,7 @@
     },
     {
       "sha": "bbe2629fc",
-      "at": "2026-03-13T21:33:20+00:00",
+      "at": "2026-03-13T21:33:20Z",
       "subject": "touch A+ATest #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -54,7 +54,7 @@
     },
     {
       "sha": "259e4b2aa",
-      "at": "2026-03-13T20:33:20+00:00",
+      "at": "2026-03-13T20:33:20Z",
       "subject": "touch A+ATest #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -66,7 +66,7 @@
     },
     {
       "sha": "31a56630b",
-      "at": "2026-03-13T19:33:20+00:00",
+      "at": "2026-03-13T19:33:20Z",
       "subject": "touch A+ATest #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -78,7 +78,7 @@
     },
     {
       "sha": "207f821fe",
-      "at": "2026-03-13T18:33:20+00:00",
+      "at": "2026-03-13T18:33:20Z",
       "subject": "touch A+ATest #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -90,7 +90,7 @@
     },
     {
       "sha": "e42bc3d18",
-      "at": "2026-03-13T17:33:20+00:00",
+      "at": "2026-03-13T17:33:20Z",
       "subject": "touch A+ATest #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -102,7 +102,7 @@
     },
     {
       "sha": "79edf1d8c",
-      "at": "2026-03-13T08:40:00+00:00",
+      "at": "2026-03-13T08:40:00Z",
       "subject": "touch A+M #6",
       "is_merge": false,
       "shallow_boundary": false,
@@ -114,7 +114,7 @@
     },
     {
       "sha": "57355fcc3",
-      "at": "2026-03-13T07:40:00+00:00",
+      "at": "2026-03-13T07:40:00Z",
       "subject": "touch A+M #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -126,7 +126,7 @@
     },
     {
       "sha": "9341a6995",
-      "at": "2026-03-13T06:40:00+00:00",
+      "at": "2026-03-13T06:40:00Z",
       "subject": "touch A+M #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -138,7 +138,7 @@
     },
     {
       "sha": "4e8dd5bdd",
-      "at": "2026-03-13T05:40:00+00:00",
+      "at": "2026-03-13T05:40:00Z",
       "subject": "touch A+M #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -150,7 +150,7 @@
     },
     {
       "sha": "f7b62141d",
-      "at": "2026-03-13T04:40:00+00:00",
+      "at": "2026-03-13T04:40:00Z",
       "subject": "touch A+M #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -162,7 +162,7 @@
     },
     {
       "sha": "2e4bcf684",
-      "at": "2026-03-13T03:40:00+00:00",
+      "at": "2026-03-13T03:40:00Z",
       "subject": "touch A+M #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -174,7 +174,7 @@
     },
     {
       "sha": "44c4e32dd",
-      "at": "2026-03-12T14:46:40+00:00",
+      "at": "2026-03-12T14:46:40Z",
       "subject": "touch I+J #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -186,7 +186,7 @@
     },
     {
       "sha": "f34dd3c5a",
-      "at": "2026-03-12T13:46:40+00:00",
+      "at": "2026-03-12T13:46:40Z",
       "subject": "touch I+J #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -198,7 +198,7 @@
     },
     {
       "sha": "a77ee83b1",
-      "at": "2026-03-12T04:53:20+00:00",
+      "at": "2026-03-12T04:53:20Z",
       "subject": "touch P+PTest #6",
       "is_merge": false,
       "shallow_boundary": false,
@@ -210,7 +210,7 @@
     },
     {
       "sha": "46c2db97c",
-      "at": "2026-03-12T03:53:20+00:00",
+      "at": "2026-03-12T03:53:20Z",
       "subject": "touch P+PTest #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -222,7 +222,7 @@
     },
     {
       "sha": "ec3bbe7a5",
-      "at": "2026-03-12T02:53:20+00:00",
+      "at": "2026-03-12T02:53:20Z",
       "subject": "touch P+PTest #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -234,7 +234,7 @@
     },
     {
       "sha": "33200c49e",
-      "at": "2026-03-12T01:53:20+00:00",
+      "at": "2026-03-12T01:53:20Z",
       "subject": "touch P+PTest #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -246,7 +246,7 @@
     },
     {
       "sha": "94774c7e7",
-      "at": "2026-03-12T00:53:20+00:00",
+      "at": "2026-03-12T00:53:20Z",
       "subject": "touch P+PTest #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -258,7 +258,7 @@
     },
     {
       "sha": "1723a062b",
-      "at": "2026-03-11T23:53:20+00:00",
+      "at": "2026-03-11T23:53:20Z",
       "subject": "touch P+PTest #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -270,7 +270,7 @@
     },
     {
       "sha": "cc37a7fa4",
-      "at": "2026-03-11T15:00:00+00:00",
+      "at": "2026-03-11T15:00:00Z",
       "subject": "touch C+D #6",
       "is_merge": false,
       "shallow_boundary": false,
@@ -282,7 +282,7 @@
     },
     {
       "sha": "4a8bf718b",
-      "at": "2026-03-11T14:00:00+00:00",
+      "at": "2026-03-11T14:00:00Z",
       "subject": "touch C+D #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -294,7 +294,7 @@
     },
     {
       "sha": "2a71081f5",
-      "at": "2026-03-11T13:00:00+00:00",
+      "at": "2026-03-11T13:00:00Z",
       "subject": "touch C+D #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -306,7 +306,7 @@
     },
     {
       "sha": "f34e45244",
-      "at": "2026-03-11T12:00:00+00:00",
+      "at": "2026-03-11T12:00:00Z",
       "subject": "touch C+D #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -318,7 +318,7 @@
     },
     {
       "sha": "2fab6b2b0",
-      "at": "2026-03-11T11:00:00+00:00",
+      "at": "2026-03-11T11:00:00Z",
       "subject": "touch C+D #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -330,7 +330,7 @@
     },
     {
       "sha": "6ef5115e1",
-      "at": "2026-03-11T10:00:00+00:00",
+      "at": "2026-03-11T10:00:00Z",
       "subject": "touch C+D #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -342,7 +342,7 @@
     },
     {
       "sha": "8e9e0944b",
-      "at": "2026-03-10T09:13:20+00:00",
+      "at": "2026-03-10T09:13:20Z",
       "subject": "touch F #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -353,7 +353,7 @@
     },
     {
       "sha": "e164115b6",
-      "at": "2026-03-10T08:13:20+00:00",
+      "at": "2026-03-10T08:13:20Z",
       "subject": "touch F #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -364,7 +364,7 @@
     },
     {
       "sha": "85dd95016",
-      "at": "2026-03-10T07:13:20+00:00",
+      "at": "2026-03-10T07:13:20Z",
       "subject": "touch F #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -375,7 +375,7 @@
     },
     {
       "sha": "a3decd34f",
-      "at": "2026-03-10T06:13:20+00:00",
+      "at": "2026-03-10T06:13:20Z",
       "subject": "touch F #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -386,7 +386,7 @@
     },
     {
       "sha": "1751bd407",
-      "at": "2026-03-09T05:26:40+00:00",
+      "at": "2026-03-09T05:26:40Z",
       "subject": "touch E #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -397,7 +397,7 @@
     },
     {
       "sha": "3ccaa387c",
-      "at": "2026-03-09T04:26:40+00:00",
+      "at": "2026-03-09T04:26:40Z",
       "subject": "touch E #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -408,7 +408,7 @@
     },
     {
       "sha": "fa1708cc7",
-      "at": "2026-03-09T03:26:40+00:00",
+      "at": "2026-03-09T03:26:40Z",
       "subject": "touch E #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -419,7 +419,7 @@
     },
     {
       "sha": "e59ecdf46",
-      "at": "2026-03-09T02:26:40+00:00",
+      "at": "2026-03-09T02:26:40Z",
       "subject": "touch E #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -430,7 +430,7 @@
     },
     {
       "sha": "a0953f540",
-      "at": "2026-03-08T03:40:00+00:00",
+      "at": "2026-03-08T03:40:00Z",
       "subject": "touch E+F #6",
       "is_merge": false,
       "shallow_boundary": false,
@@ -442,7 +442,7 @@
     },
     {
       "sha": "c3745b6a7",
-      "at": "2026-03-08T02:40:00+00:00",
+      "at": "2026-03-08T02:40:00Z",
       "subject": "touch E+F #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -454,7 +454,7 @@
     },
     {
       "sha": "b38c488ba",
-      "at": "2026-03-08T01:40:00+00:00",
+      "at": "2026-03-08T01:40:00Z",
       "subject": "touch E+F #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -466,7 +466,7 @@
     },
     {
       "sha": "9212c9f38",
-      "at": "2026-03-08T00:40:00+00:00",
+      "at": "2026-03-08T00:40:00Z",
       "subject": "touch E+F #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -478,7 +478,7 @@
     },
     {
       "sha": "c597066be",
-      "at": "2026-03-07T23:40:00+00:00",
+      "at": "2026-03-07T23:40:00Z",
       "subject": "touch E+F #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -490,7 +490,7 @@
     },
     {
       "sha": "29a211fd4",
-      "at": "2026-03-07T22:40:00+00:00",
+      "at": "2026-03-07T22:40:00Z",
       "subject": "touch E+F #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -502,7 +502,7 @@
     },
     {
       "sha": "cb1a8b929",
-      "at": "2026-03-06T21:53:20+00:00",
+      "at": "2026-03-06T21:53:20Z",
       "subject": "touch B #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -513,7 +513,7 @@
     },
     {
       "sha": "06529dc42",
-      "at": "2026-03-06T20:53:20+00:00",
+      "at": "2026-03-06T20:53:20Z",
       "subject": "touch B #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -524,7 +524,7 @@
     },
     {
       "sha": "a62f31b71",
-      "at": "2026-03-06T19:53:20+00:00",
+      "at": "2026-03-06T19:53:20Z",
       "subject": "touch B #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -535,7 +535,7 @@
     },
     {
       "sha": "eea68611a",
-      "at": "2026-03-06T18:53:20+00:00",
+      "at": "2026-03-06T18:53:20Z",
       "subject": "touch B #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -546,7 +546,7 @@
     },
     {
       "sha": "13c7117ec",
-      "at": "2026-03-05T18:06:40+00:00",
+      "at": "2026-03-05T18:06:40Z",
       "subject": "touch A #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -557,7 +557,7 @@
     },
     {
       "sha": "bd663edce",
-      "at": "2026-03-05T17:06:40+00:00",
+      "at": "2026-03-05T17:06:40Z",
       "subject": "touch A #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -568,7 +568,7 @@
     },
     {
       "sha": "155a5f5df",
-      "at": "2026-03-05T16:06:40+00:00",
+      "at": "2026-03-05T16:06:40Z",
       "subject": "touch A #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -579,7 +579,7 @@
     },
     {
       "sha": "dd265cb63",
-      "at": "2026-03-05T15:06:40+00:00",
+      "at": "2026-03-05T15:06:40Z",
       "subject": "touch A #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -590,7 +590,7 @@
     },
     {
       "sha": "1516a2043",
-      "at": "2026-03-04T16:20:00+00:00",
+      "at": "2026-03-04T16:20:00Z",
       "subject": "touch A+B #6",
       "is_merge": false,
       "shallow_boundary": false,
@@ -602,7 +602,7 @@
     },
     {
       "sha": "4a1e27184",
-      "at": "2026-03-04T15:20:00+00:00",
+      "at": "2026-03-04T15:20:00Z",
       "subject": "touch A+B #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -614,7 +614,7 @@
     },
     {
       "sha": "93ac3a164",
-      "at": "2026-03-04T14:20:00+00:00",
+      "at": "2026-03-04T14:20:00Z",
       "subject": "touch A+B #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -626,7 +626,7 @@
     },
     {
       "sha": "a14491bab",
-      "at": "2026-03-04T13:20:00+00:00",
+      "at": "2026-03-04T13:20:00Z",
       "subject": "touch A+B #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -638,7 +638,7 @@
     },
     {
       "sha": "000ebef40",
-      "at": "2026-03-04T12:20:00+00:00",
+      "at": "2026-03-04T12:20:00Z",
       "subject": "touch A+B #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -650,7 +650,7 @@
     },
     {
       "sha": "136b99a07",
-      "at": "2026-03-04T11:20:00+00:00",
+      "at": "2026-03-04T11:20:00Z",
       "subject": "touch A+B #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -662,7 +662,7 @@
     },
     {
       "sha": "745723afa",
-      "at": "2026-03-03T12:33:20+00:00",
+      "at": "2026-03-03T12:33:20Z",
       "subject": "touch H #6",
       "is_merge": false,
       "shallow_boundary": false,
@@ -673,7 +673,7 @@
     },
     {
       "sha": "25992e46e",
-      "at": "2026-03-03T11:33:20+00:00",
+      "at": "2026-03-03T11:33:20Z",
       "subject": "touch H #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -684,7 +684,7 @@
     },
     {
       "sha": "73cdf6fd2",
-      "at": "2026-03-03T10:33:20+00:00",
+      "at": "2026-03-03T10:33:20Z",
       "subject": "touch H #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -695,7 +695,7 @@
     },
     {
       "sha": "36dc307e2",
-      "at": "2026-03-03T09:33:20+00:00",
+      "at": "2026-03-03T09:33:20Z",
       "subject": "touch H #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -706,7 +706,7 @@
     },
     {
       "sha": "2b622208c",
-      "at": "2026-03-03T08:33:20+00:00",
+      "at": "2026-03-03T08:33:20Z",
       "subject": "touch H #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -717,7 +717,7 @@
     },
     {
       "sha": "d91653a81",
-      "at": "2026-03-03T07:33:20+00:00",
+      "at": "2026-03-03T07:33:20Z",
       "subject": "touch H #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -728,7 +728,7 @@
     },
     {
       "sha": "608804b49",
-      "at": "2026-03-02T08:46:40+00:00",
+      "at": "2026-03-02T08:46:40Z",
       "subject": "touch G #6",
       "is_merge": false,
       "shallow_boundary": false,
@@ -739,7 +739,7 @@
     },
     {
       "sha": "c52c02941",
-      "at": "2026-03-02T07:46:40+00:00",
+      "at": "2026-03-02T07:46:40Z",
       "subject": "touch G #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -750,7 +750,7 @@
     },
     {
       "sha": "0f114eca7",
-      "at": "2026-03-02T06:46:40+00:00",
+      "at": "2026-03-02T06:46:40Z",
       "subject": "touch G #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -761,7 +761,7 @@
     },
     {
       "sha": "d23655b63",
-      "at": "2026-03-02T05:46:40+00:00",
+      "at": "2026-03-02T05:46:40Z",
       "subject": "touch G #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -772,7 +772,7 @@
     },
     {
       "sha": "04d76cd97",
-      "at": "2026-03-02T04:46:40+00:00",
+      "at": "2026-03-02T04:46:40Z",
       "subject": "touch G #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -783,7 +783,7 @@
     },
     {
       "sha": "df5a3c82a",
-      "at": "2026-03-02T03:46:40+00:00",
+      "at": "2026-03-02T03:46:40Z",
       "subject": "touch G #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -794,7 +794,7 @@
     },
     {
       "sha": "e930331a7",
-      "at": "2026-03-01T08:00:00+00:00",
+      "at": "2026-03-01T08:00:00Z",
       "subject": "touch G+H #9",
       "is_merge": false,
       "shallow_boundary": false,
@@ -806,7 +806,7 @@
     },
     {
       "sha": "d79069ad9",
-      "at": "2026-03-01T07:00:00+00:00",
+      "at": "2026-03-01T07:00:00Z",
       "subject": "touch G+H #8",
       "is_merge": false,
       "shallow_boundary": false,
@@ -818,7 +818,7 @@
     },
     {
       "sha": "49d4ce738",
-      "at": "2026-03-01T06:00:00+00:00",
+      "at": "2026-03-01T06:00:00Z",
       "subject": "touch G+H #7",
       "is_merge": false,
       "shallow_boundary": false,
@@ -830,7 +830,7 @@
     },
     {
       "sha": "e637b4502",
-      "at": "2026-03-01T05:00:00+00:00",
+      "at": "2026-03-01T05:00:00Z",
       "subject": "touch G+H #6",
       "is_merge": false,
       "shallow_boundary": false,
@@ -842,7 +842,7 @@
     },
     {
       "sha": "bb2bf87a5",
-      "at": "2026-03-01T04:00:00+00:00",
+      "at": "2026-03-01T04:00:00Z",
       "subject": "touch G+H #5",
       "is_merge": false,
       "shallow_boundary": false,
@@ -854,7 +854,7 @@
     },
     {
       "sha": "154c89ded",
-      "at": "2026-03-01T03:00:00+00:00",
+      "at": "2026-03-01T03:00:00Z",
       "subject": "touch G+H #4",
       "is_merge": false,
       "shallow_boundary": false,
@@ -866,7 +866,7 @@
     },
     {
       "sha": "9a765854b",
-      "at": "2026-03-01T02:00:00+00:00",
+      "at": "2026-03-01T02:00:00Z",
       "subject": "touch G+H #3",
       "is_merge": false,
       "shallow_boundary": false,
@@ -878,7 +878,7 @@
     },
     {
       "sha": "b02120676",
-      "at": "2026-03-01T01:00:00+00:00",
+      "at": "2026-03-01T01:00:00Z",
       "subject": "touch G+H #2",
       "is_merge": false,
       "shallow_boundary": false,
@@ -890,7 +890,7 @@
     },
     {
       "sha": "1cd2be147",
-      "at": "2026-03-01T00:00:00+00:00",
+      "at": "2026-03-01T00:00:00Z",
       "subject": "touch G+H #1",
       "is_merge": false,
       "shallow_boundary": false,
@@ -901,7 +901,7 @@
       "in_window": true
     }
   ],
-  "median_files_per_commit": 2,
+  "median_files_per_commit": 2.00,
   "commit_granularity": "fine",
   "renames": [],
   "last_commit_map": {
@@ -960,8 +960,8 @@
       "age_last_days": 0.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -987,8 +987,8 @@
       "age_last_days": 7.03,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1010,8 +1010,8 @@
       "age_last_days": 2.31,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1033,8 +1033,8 @@
       "age_last_days": 2.31,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1060,8 +1060,8 @@
       "age_last_days": 4.71,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1087,8 +1087,8 @@
       "age_last_days": 3.56,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1119,8 +1119,8 @@
       "age_last_days": 11.57,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1151,8 +1151,8 @@
       "age_last_days": 10.42,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1170,8 +1170,8 @@
       "age_last_days": 1.32,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1189,8 +1189,8 @@
       "age_last_days": 1.32,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1212,8 +1212,8 @@
       "age_last_days": 0.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1235,8 +1235,8 @@
       "age_last_days": 0.58,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1258,8 +1258,8 @@
       "age_last_days": 1.74,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1281,8 +1281,8 @@
       "age_last_days": 1.74,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -1296,7 +1296,7 @@
       "chg_commits_a": 22,
       "chg_commits_b": 10,
       "denominator": 10,
-      "tc": 0.6,
+      "tc": 0.6000,
       "reported": true,
       "static_dependency": false,
       "hidden_coupling": true
@@ -1308,7 +1308,7 @@
       "chg_commits_a": 22,
       "chg_commits_b": 6,
       "denominator": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "reported": true,
       "static_dependency": null,
       "hidden_coupling": null,
@@ -1324,7 +1324,7 @@
       "chg_commits_a": 22,
       "chg_commits_b": 6,
       "denominator": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "reported": true,
       "static_dependency": null,
       "hidden_coupling": null,
@@ -1340,7 +1340,7 @@
       "chg_commits_a": 6,
       "chg_commits_b": 6,
       "denominator": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "reported": true,
       "static_dependency": true,
       "hidden_coupling": false
@@ -1352,7 +1352,7 @@
       "chg_commits_a": 10,
       "chg_commits_b": 10,
       "denominator": 10,
-      "tc": 0.6,
+      "tc": 0.6000,
       "reported": true,
       "static_dependency": false,
       "hidden_coupling": true
@@ -1364,7 +1364,7 @@
       "chg_commits_a": 15,
       "chg_commits_b": 15,
       "denominator": 15,
-      "tc": 0.6,
+      "tc": 0.6000,
       "reported": true,
       "static_dependency": false,
       "hidden_coupling": true
@@ -1376,7 +1376,7 @@
       "chg_commits_a": 2,
       "chg_commits_b": 2,
       "denominator": 2,
-      "tc": 1,
+      "tc": 1.0000,
       "reported": false,
       "static_dependency": false,
       "hidden_coupling": false
@@ -1388,7 +1388,7 @@
       "chg_commits_a": 6,
       "chg_commits_b": 6,
       "denominator": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "reported": true,
       "static_dependency": null,
       "hidden_coupling": null,
@@ -1406,7 +1406,7 @@
       "shared": 9,
       "chg_commits_a": 15,
       "chg_commits_b": 15,
-      "tc": 0.6,
+      "tc": 0.6000,
       "static_dependency": false,
       "hidden_coupling": true
     },
@@ -1416,7 +1416,7 @@
       "shared": 6,
       "chg_commits_a": 22,
       "chg_commits_b": 10,
-      "tc": 0.6,
+      "tc": 0.6000,
       "static_dependency": false,
       "hidden_coupling": true
     },
@@ -1426,7 +1426,7 @@
       "shared": 6,
       "chg_commits_a": 10,
       "chg_commits_b": 10,
-      "tc": 0.6,
+      "tc": 0.6000,
       "static_dependency": false,
       "hidden_coupling": true
     },
@@ -1436,7 +1436,7 @@
       "shared": 6,
       "chg_commits_a": 6,
       "chg_commits_b": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "static_dependency": true,
       "hidden_coupling": false
     },
@@ -1446,7 +1446,7 @@
       "shared": 6,
       "chg_commits_a": 22,
       "chg_commits_b": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "static_dependency": null,
       "hidden_coupling": null,
       "reason": "outside_bytecode_scope"
@@ -1457,7 +1457,7 @@
       "shared": 6,
       "chg_commits_a": 22,
       "chg_commits_b": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "static_dependency": null,
       "hidden_coupling": null,
       "reason": "no_bytecode"
@@ -1468,17 +1468,17 @@
       "shared": 6,
       "chg_commits_a": 6,
       "chg_commits_b": 6,
-      "tc": 1,
+      "tc": 1.0000,
       "static_dependency": null,
       "hidden_coupling": null,
       "reason": "outside_bytecode_scope"
     }
   ],
   "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
-  "non_terminating": {},
+  "exact": {},
   "_fixture": {
     "generated_by": "contract/history/compute.py",
     "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
-    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+    "serialization": "표 D155-1의 이름인 필드는 표의 스케일로 고정 인쇄한다(HALF_EVEN, 후행 0 유지 — D275). 표에 없는 이름은 끝나는 십진수면 정확값 그대로, 아니면 소수점 12자리 ROUND_HALF_EVEN. 인쇄가 정확값이 아닌 모든 값의 정확 유리수를 exact에 함께 적는다. exact가 비어 있으면 이 파일 전체가 정확값이다."
   }
 }
