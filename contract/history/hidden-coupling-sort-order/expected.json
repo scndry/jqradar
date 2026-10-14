@@ -1299,8 +1299,7 @@
       "tc": 0.6,
       "reported": true,
       "static_dependency": false,
-      "hidden_coupling": true,
-      "commit_granularity": "fine"
+      "hidden_coupling": true
     },
     {
       "a": "src/A.java",
@@ -1313,7 +1312,6 @@
       "reported": true,
       "static_dependency": null,
       "hidden_coupling": null,
-      "commit_granularity": "fine",
       "reason": "outside_bytecode_scope",
       "graph_absent": {
         "src/ATest.java": "outside_bytecode_scope"
@@ -1330,7 +1328,6 @@
       "reported": true,
       "static_dependency": null,
       "hidden_coupling": null,
-      "commit_granularity": "fine",
       "reason": "no_bytecode",
       "graph_absent": {
         "src/M.java": "no_bytecode"
@@ -1346,8 +1343,7 @@
       "tc": 1,
       "reported": true,
       "static_dependency": true,
-      "hidden_coupling": false,
-      "commit_granularity": "fine"
+      "hidden_coupling": false
     },
     {
       "a": "src/E.java",
@@ -1359,8 +1355,7 @@
       "tc": 0.6,
       "reported": true,
       "static_dependency": false,
-      "hidden_coupling": true,
-      "commit_granularity": "fine"
+      "hidden_coupling": true
     },
     {
       "a": "src/G.java",
@@ -1372,8 +1367,7 @@
       "tc": 0.6,
       "reported": true,
       "static_dependency": false,
-      "hidden_coupling": true,
-      "commit_granularity": "fine"
+      "hidden_coupling": true
     },
     {
       "a": "src/I.java",
@@ -1385,8 +1379,7 @@
       "tc": 1,
       "reported": false,
       "static_dependency": false,
-      "hidden_coupling": false,
-      "commit_granularity": "fine"
+      "hidden_coupling": false
     },
     {
       "a": "src/P.java",
@@ -1399,7 +1392,6 @@
       "reported": true,
       "static_dependency": null,
       "hidden_coupling": null,
-      "commit_granularity": "fine",
       "reason": "outside_bytecode_scope",
       "graph_absent": {
         "src/P.java": "no_bytecode",

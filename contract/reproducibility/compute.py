@@ -1360,6 +1360,15 @@ def eligible_files(files: list[tuple[str, str]], scope: dict, tree: Path) -> lis
             if not any(d["generated"] for d in generated_top_level(tree, p))]
 
 
+SOURCE_SCOPE_ROOTS = ("main_roots", "test_roots", "generated_roots")
+
+
+def canonical_source_scope(scope: dict) -> dict:
+    """D269 — 입구가 선언한 루트 배열을 `asc`(§2.8의 경로 비교 — UTF-8 바이트 사전순)로 정렬해 id에 넣는다.
+    입구의 선언 순서가 `analysis_input_id`에 닿지 않게."""
+    return {**scope, **{k: sorted(scope[k], key=lambda p: p.encode("utf-8")) for k in SOURCE_SCOPE_ROOTS if k in scope}}
+
+
 def run_source_scope_variants(case_dir: Path, inp: dict) -> dict:
     tree = case_dir / inp["repo"]["tree"]
     files = tree_files(tree)
@@ -1369,6 +1378,7 @@ def run_source_scope_variants(case_dir: Path, inp: dict) -> dict:
     rsid = repository_state_id(files)
     variants = {}
     for name, scope in inp["source_scope_variants"].items():
+        scope = canonical_source_scope(scope)
         elig = eligible_files(files, scope, tree)
         aid, spec = analysis_input_id({**shared, "source_scope": scope}, env, elig, history)
         variants[name] = {"source_scope": scope, "eligible": [p for p, _ in elig], "eligible_count": len(elig),
@@ -1398,6 +1408,34 @@ def run_source_scope_variants(case_dir: Path, inp: dict) -> dict:
         },
     }
 
+
+
+def run_roots_order(case_dir: Path, inp: dict) -> dict:
+    """D269 — 두 입구가 루트 배열을 다른 순서로 선언해도 입구가 `asc`로 정렬하면 같은 id. 변조: 선언 순서 그대로."""
+    tree = case_dir / inp["repo"]["tree"]
+    files = tree_files(tree)
+    with tempfile.TemporaryDirectory() as tmp:
+        history = build_history(tree, inp["repo"], Path(tmp) / "repo")
+    shared, env = inp["shared_inputs"], inp["environment"]
+    out, raw = {}, {}
+    for name, declared in inp["roots_order_variants"].items():
+        scope = canonical_source_scope(declared)
+        aid, _ = analysis_input_id({**shared, "source_scope": scope}, env, eligible_files(files, scope, tree), history)
+        out[name] = {"declared": declared, "source_scope": scope, "analysis_input_id": aid}
+        raw[name] = analysis_input_id({**shared, "source_scope": declared}, env, eligible_files(files, declared, tree), history)[0]
+    a, b = list(out)[:2]
+    return {
+        "case": inp["case"], "generated_by": GENERATED_BY, "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"], "canonical_encoding": CANONICAL_ENCODING,
+        "variants": out,
+        "mutation_declared_order": {"analysis_input_id": raw, "differs": raw[a] != raw[b]},
+        "assertions": {
+            "declared_orders_differ": out[a]["declared"] != out[b]["declared"],
+            "canonical_scopes_equal": out[a]["source_scope"] == out[b]["source_scope"],
+            "same_analysis_input_id": out[a]["analysis_input_id"] == out[b]["analysis_input_id"],
+            "mutation_declared_order_splits_id": raw[a] != raw[b],
+        },
+    }
 
 
 # ── D257 — `origin: build`의 세트 분류: 빌드 모델의 사실 → source_scope ───────────────────────────────
@@ -1609,6 +1647,8 @@ def run_case(case_dir: Path) -> dict:
         return run_clone_depths(case_dir, inp)
     if "source_scope_variants" in inp:
         return run_source_scope_variants(case_dir, inp)
+    if "roots_order_variants" in inp:
+        return run_roots_order(case_dir, inp)
     if "build_model" in inp:
         return run_build_scope(inp)
     if "eligibility_checks" in inp:

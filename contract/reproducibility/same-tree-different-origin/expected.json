@@ -26,8 +26,8 @@
           "src/main/java"
         ],
         "test_roots": [
-          "src/test/java",
-          "src/integrationTest/java"
+          "src/integrationTest/java",
+          "src/test/java"
         ],
         "generated_roots": [
           "build/generated/sources"
@@ -38,7 +38,7 @@
       ],
       "eligible_count": 1,
       "repository_state_id": "sha256:a48cc6a72788765b2bca74774df8ffb4e3049e1d0cfff35bc7553949034a0e5d",
-      "analysis_input_id": "sha256:2947331af7a538cd983d7785dcebfbd3770ef7a1769344ab2f944bd5589f1d65"
+      "analysis_input_id": "sha256:c2df82ec9503fe9208d330408ea0492706168971d9f15549869d1aac07f0a91e"
     },
     "convention": {
       "source_scope": {
@@ -64,8 +64,8 @@
       "source_scope": {
         "origin": "cli",
         "main_roots": [
-          "src/main/java",
-          "src/integrationTest/java"
+          "src/integrationTest/java",
+          "src/main/java"
         ],
         "test_roots": [
           "src/test/java"
@@ -78,7 +78,7 @@
       ],
       "eligible_count": 2,
       "repository_state_id": "sha256:a48cc6a72788765b2bca74774df8ffb4e3049e1d0cfff35bc7553949034a0e5d",
-      "analysis_input_id": "sha256:01ada48c368b9340151f70796d13047226701e5d6bc6662d39ebcb8e70dd0bfc"
+      "analysis_input_id": "sha256:d91ed921329bb23ad17668a58ecba4d53c6f4f786a100f2ca9472a4e8da690c8"
     }
   },
   "mutation_scope_outside_id": {

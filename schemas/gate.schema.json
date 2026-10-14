@@ -124,6 +124,52 @@
             ],
             "description": "D215 — 핫스팟 행은 자격 집합의 수를 적는다(D208의 모양)."
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "rule": {
+                "const": "new_duplication"
+              }
+            },
+            "required": [
+              "rule"
+            ]
+          },
+          "then": {
+            "required": [
+              "files_examined"
+            ],
+            "properties": {
+              "items": {
+                "items": {
+                  "required": [
+                    "path_head",
+                    "start_line"
+                  ]
+                }
+              }
+            },
+            "description": "D272·D268 — 새 중복 행은 본 수(`files_examined` — 변경 파일 중 CPD가 본 수, Java·Kotlin 모두)를 적고, 항목마다 HEAD 경로와 시작 줄을 든다. 없으면 빈 `items`가 '새 중복 없음'인지 '본 파일 없음'인지 읽을 수 없다(D208의 모양)."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "rule": {
+                "const": "new_component_cycle"
+              }
+            },
+            "required": [
+              "rule"
+            ]
+          },
+          "then": {
+            "required": [
+              "components"
+            ],
+            "description": "D272 — 새 SCC 행은 NCCD 행과 같은 `components: [base_n, head_n]`을 적는다(같은 BASE·HEAD의 두 행이 같은 양의 증거를 든다)."
+          }
         }
       ],
       "properties": {
@@ -177,6 +223,11 @@
               "delta": {
                 "type": "number",
                 "description": "원값 델타의 비율. 기본 임계 0.15(§5.3)."
+              },
+              "start_line": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "HEAD에서 그 새 발생이 시작하는 줄(§5.2 — 발생의 라인 구간, D221). 출력 순서의 둘째 키(D268)."
               }
             },
             "additionalProperties": false

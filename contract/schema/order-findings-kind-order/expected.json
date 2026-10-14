@@ -16,13 +16,11 @@
       "previous": [
         "1",
         "-793/10",
-        "f:order-service",
         "fnd:dx-order-service"
       ],
       "this": [
         "0",
         "-478/5",
-        "f:order-service",
         "fnd:h-order-service"
       ]
     }

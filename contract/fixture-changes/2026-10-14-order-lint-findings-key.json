@@ -1,0 +1,12 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "schema 순서 린트 — findings 키의 셋째 칸(v3.10.22 D268)",
+    "old": "findings 키 = (kind, −priority, file, id) — `path asc`를 finding의 `file`(파일 id)로 읽었다",
+    "new": "findings 키 = (kind, −priority, id) — `path`는 finding에 없는 필드라 키가 아니다. 거부 판정은 그대로이고 위반 기록의 키 목록(previous·this)에서 file id가 빠졌다",
+    "note": "새 케이스 `schema/order-findings-tie-by-id`가 동률을 id로 가르는 것을 박는다(옛 읽기로는 통과하던 순서).",
+    "fixtures": [
+      "schema/order-findings-kind-order"
+    ]
+  }
+}

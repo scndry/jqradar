@@ -1,0 +1,91 @@
+{
+  "case": "source-scope-roots-order-canonical",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.5",
+    "§2.8",
+    "§2.9",
+    "D269",
+    "D210",
+    "D202"
+  ],
+  "what_this_pins": "**키 없는 문자열 배열은 `asc`이고, id 입력인 범위의 루트 배열도 같다 — 입구의 선언 순서가 `analysis_input_id`에 닿지 않는다**(D269). 같은 트리·같은 범위를 두 입구가 다른 순서로 선언한다: `declared_a`는 빌드가 준 순서(`main_roots` kotlin → java, `test_roots` test → integrationTest), `declared_b`는 그 역순. 입구가 `asc`(§2.8의 경로 비교)로 정렬해 넣으면 두 id가 **같고** 인쇄되는 `source_scope`도 같다.\n\n**변조 = 반례(U21)의 고르지 않은 읽기**: 선언 순서 그대로 넣으면 두 id가 다르다(`mutation_declared_order`). 반례 `docs/review/counterexamples/U21/`이 낸 그 갈림이다.",
+  "canonical_encoding": "RFC8785-JCS",
+  "variants": {
+    "declared_a": {
+      "declared": {
+        "origin": "build",
+        "main_roots": [
+          "src/main/kotlin",
+          "src/main/java"
+        ],
+        "test_roots": [
+          "src/test/java",
+          "src/integrationTest/java"
+        ],
+        "generated_roots": [
+          "build/generated/sources"
+        ]
+      },
+      "source_scope": {
+        "origin": "build",
+        "main_roots": [
+          "src/main/java",
+          "src/main/kotlin"
+        ],
+        "test_roots": [
+          "src/integrationTest/java",
+          "src/test/java"
+        ],
+        "generated_roots": [
+          "build/generated/sources"
+        ]
+      },
+      "analysis_input_id": "sha256:38cf27e6661911b69ac8c11b04ec40c9c4577be49cf5e4173f8457d50cf6d8e6"
+    },
+    "declared_b": {
+      "declared": {
+        "origin": "build",
+        "main_roots": [
+          "src/main/java",
+          "src/main/kotlin"
+        ],
+        "test_roots": [
+          "src/integrationTest/java",
+          "src/test/java"
+        ],
+        "generated_roots": [
+          "build/generated/sources"
+        ]
+      },
+      "source_scope": {
+        "origin": "build",
+        "main_roots": [
+          "src/main/java",
+          "src/main/kotlin"
+        ],
+        "test_roots": [
+          "src/integrationTest/java",
+          "src/test/java"
+        ],
+        "generated_roots": [
+          "build/generated/sources"
+        ]
+      },
+      "analysis_input_id": "sha256:38cf27e6661911b69ac8c11b04ec40c9c4577be49cf5e4173f8457d50cf6d8e6"
+    }
+  },
+  "mutation_declared_order": {
+    "analysis_input_id": {
+      "declared_a": "sha256:b0cf5e75c99d939921dc4e0539906a3a1f53662e19756506faf00f73315a8457",
+      "declared_b": "sha256:38cf27e6661911b69ac8c11b04ec40c9c4577be49cf5e4173f8457d50cf6d8e6"
+    },
+    "differs": true
+  },
+  "assertions": {
+    "declared_orders_differ": true,
+    "canonical_scopes_equal": true,
+    "same_analysis_input_id": true,
+    "mutation_declared_order_splits_id": true
+  }
+}

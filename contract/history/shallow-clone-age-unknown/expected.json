@@ -115,8 +115,7 @@
       "tc": 1,
       "reported": false,
       "static_dependency": null,
-      "hidden_coupling": false,
-      "commit_granularity": "fine"
+      "hidden_coupling": false
     }
   ],
   "shallow_invariants": {
