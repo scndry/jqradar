@@ -7,6 +7,8 @@
   "required": [
     "finding",
     "branch",
+    "profile",
+    "policy_hash",
     "build",
     "tests",
     "equivalence_basis",
@@ -113,6 +115,16 @@
     "option": {
       "type": "string",
       "description": "`propose`가 낸 옵션 ID(§6.2). LLM은 이 집합 밖의 값을 낼 수 없다 — 구조적 방어(§6.6, D33)."
+    },
+    "profile": {
+      "type": "string",
+      "minLength": 1,
+      "description": "합격 함수가 읽은 `check` 프로필의 이름(§6.3 5a, §5.3) — `gate.json`과 같은 필드. 복잡도의 20%·`gate.new_duplication.min_tokens`(D178)는 조직의 것이라(B.6) 결과를 바꾸는 입력이고, 이것 없이는 이 파일만으로 `verdict`를 다시 계산할 수 없다(B.4, D280). 재배치의 30%·5%는 계약 상수라 여기 들지 않는다(§6.4)."
+    },
+    "policy_hash": {
+      "type": "string",
+      "minLength": 1,
+      "description": "그 프로필 정의의 해시(§6.3 5a) — `gate.json`의 `policy_hash`와 같은 부류(D160의 원칙: 정책은 결과를 바꾸는 입력이라 적는다, D280)."
     },
     "sandbox": {
       "type": "object",
