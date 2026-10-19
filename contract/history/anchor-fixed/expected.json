@@ -2,13 +2,15 @@
   "case": "anchor-fixed",
   "contract_refs": [
     "§2.7",
-    "D25"
+    "D25",
+    "D157",
+    "D274"
   ],
-  "what_this_pins": "시간 앵커는 **HEAD 커밋의 커미터 시각**이지 실행 시각이 아니다. 같은 HEAD·같은 트리를 언제 재도 같은 값이 나와야 한다 — v3.2까지 이 기준점이 없어 같은 HEAD를 나중에 재면 `age_last_days`와 `chg_commits`가 달라졌다(§0-4 #2). `scanned_at`은 감사 메타데이터일 뿐 계산에 들어가지 않는다(D25). expected.json의 `window_anchor`가 스캔 시각과 무관하게 고정된 값이라는 것이 이 케이스의 전부다 — 내일 재생성해도 바이트가 같아야 한다.",
+  "what_this_pins": "시간 앵커는 **HEAD 커밋의 커미터 시각**이지 실행 시각이 아니다. 같은 HEAD·같은 트리를 언제 재도 같은 값이 나와야 한다 — v3.2까지 이 기준점이 없어 같은 HEAD를 나중에 재면 `age_last_days`와 `chg_commits`가 달라졌다(§0-4 #2). `scanned_at`은 감사 메타데이터일 뿐 계산에 들어가지 않는다(D25). expected.json의 `window_anchor`가 스캔 시각과 무관하게 고정된 값이라는 것이 이 케이스의 전부다 — 내일 재생성해도 바이트가 같아야 한다. **인쇄되는 시각은 D157의 정규 표기다**(D274): `window_anchor.timestamp`·`commits[].at`은 unix 초에서 만든 `YYYY-MM-DDTHH:MM:SSZ`이다 — 계산기가 파이썬 `isoformat()`을 그대로 인쇄하면 같은 순간이 `…+00:00`이라는 다른 바이트가 된다(`docs/review/counterexamples/S4-7/`이 낸 그 값; 이 케이스의 바이트 비교가 그것을 문다).",
   "shallow_depth": null,
   "window_anchor": {
     "type": "head_committer_time",
-    "timestamp": "2026-01-15T09:00:00+00:00"
+    "timestamp": "2026-01-15T09:00:00Z"
   },
   "head": "d09d95585",
   "window_applied": {
@@ -24,7 +26,7 @@
   "commits": [
     {
       "sha": "d09d95585",
-      "at": "2026-01-15T09:00:00+00:00",
+      "at": "2026-01-15T09:00:00Z",
       "subject": "edit A",
       "is_merge": false,
       "shallow_boundary": false,
@@ -35,7 +37,7 @@
     },
     {
       "sha": "1c280407f",
-      "at": "2026-01-05T09:00:00+00:00",
+      "at": "2026-01-05T09:00:00Z",
       "subject": "seed",
       "is_merge": false,
       "shallow_boundary": false,
@@ -45,7 +47,7 @@
       "in_window": true
     }
   ],
-  "median_files_per_commit": 1,
+  "median_files_per_commit": 1.00,
   "commit_granularity": "fine",
   "renames": [],
   "last_commit_map": {
@@ -71,8 +73,8 @@
       "age_last_days": 0.00,
       "distinct_authors_90d": 1,
       "contributor_count": 1,
-      "ownership_max_share": 1,
-      "minor_contributor_share": 0,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
       "contribution_shares_sorted": [
         1
       ]
@@ -80,10 +82,10 @@
   },
   "pairs": [],
   "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
-  "non_terminating": {},
+  "exact": {},
   "_fixture": {
     "generated_by": "contract/history/compute.py",
     "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
-    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+    "serialization": "표 D155-1의 이름인 필드는 표의 스케일로 고정 인쇄한다(HALF_EVEN, 후행 0 유지 — D275). 표에 없는 이름은 끝나는 십진수면 정확값 그대로, 아니면 소수점 12자리 ROUND_HALF_EVEN. 인쇄가 정확값이 아닌 모든 값의 정확 유리수를 exact에 함께 적는다. exact가 비어 있으면 이 파일 전체가 정확값이다."
   }
 }

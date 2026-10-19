@@ -33,6 +33,7 @@ PRD = CASE_DIR.parent.parent / "prd.md"
 sys.path.insert(0, str(CASE_DIR.parent / "tools"))
 import historywalk  # noqa: E402  — §4.5 걷기는 history/와 같은 구현(D205: 두 구현이 같은 shallow에서 같은 id)
 import jcs  # noqa: E402
+from timefmt import canonical_time  # noqa: E402  — 시각의 정규 표기는 history/와 같은 함수(D157·D274)
 from javasource import GENERATED_ANNOTATIONS, top_level_declarations  # noqa: E402  — 주석·문자열 가르기는 history/와 같은 구현
 
 GENERATED_BY = "contract/reproducibility/compute.py"
@@ -73,19 +74,6 @@ def tree_files(root: Path) -> list[tuple[str, str]]:
 def repository_state_id(files: list[tuple[str, str]]) -> str:
     """§2.8 — 정렬된 `(path, content_id)` 전체의 sha256."""
     return sha256([[p, c] for p, c in files])
-
-
-def canonical_time(unix_seconds: int) -> str:
-    """§2.7 시각의 정규 표기(D157) — UTC · RFC 3339 · 초 · `Z` · 소수 초 없음, unix 초에서.
-
-    `%cI`가 아니라 `%ct`(unix 초). git 버전에 따라 UTC를 `Z`로도 `+00:00`으로도
-    써서 두 머신에서 문자열이 갈리고, 이 값은 `analysis_input_id`에 **해시로
-    들어간다** — 그러면 같은 트리·같은 툴체인인데 id가 달라진다(PR #4에서 CI가
-    잡았다). `%ct`로 바꾼 뒤에도 파이썬 `isoformat()`이 `+00:00`을 냈다 — 표기가
-    계약이 아니어서 계산기가 제 사정대로 적은 것이다. v3.9.0이 표기를 정했다.
-    JCS는 문자열 안을 건드리지 않으므로 여기서 한 형식으로 만들어야 한다.
-    """
-    return datetime.fromtimestamp(unix_seconds, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def build_history(tree: Path, spec: dict, workdir: Path) -> dict:
@@ -178,7 +166,8 @@ def history_facts(workdir: Path, files: list[str], parameters: dict) -> dict:
     months, max_commits = int(parameters["window.months"]), int(parameters["window.max_commits"])
     earliest = head["committer_time"] - months * MONTH_SECONDS
     non_merge = [c for c in commits if not c["is_merge"]]
-    selected = [c for c in non_merge if c["committer_time"] >= earliest][:max_commits]
+    # W = `[HEAD_TIME − months, HEAD_TIME]`, 닫힌 구간(§2.7·D273) — HEAD보다 늦은 조상 커밋은 W 밖이다
+    selected = [c for c in non_merge if earliest <= c["committer_time"] <= head["committer_time"]][:max_commits]
     oldest = selected[-1]["committer_time"] if selected else head["committer_time"]
     in_window = {c["sha"] for c in selected} | {c["sha"] for c in commits if c["is_merge"] and c["committer_time"] >= oldest}
     start = historywalk.frontier(by_sha, in_window)

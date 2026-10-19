@@ -25,6 +25,7 @@
 | [`threshold-boundary/`](threshold-boundary/) | `minimumTokens=100`에서 99는 아니고 100은 맞다. 거부된 것도 기록한다 |
 | [`four-occurrences-one-cluster/`](four-occurrences-one-cluster/) | 네 파일의 같은 열 = 클러스터 **1개**(쌍 6개가 아니다, D39) |
 | [`mixed-cluster/`](mixed-cluster/) | **D166** — A 2회·B 1회 혼합 클러스터: `union(A) 200`·`pair(A,B) 200`·**`self(A) 0`**·`twins(A) 1`. 자기 중복은 한 파일에만 있는 클러스터의 것이다 — 혼합의 반복을 넣으면 두 번 셈 |
+| [`self-dup-overlaps-cross/`](self-dup-overlaps-cross/) | **D277** — 자기 중복은 분할이 아니다: A의 자기 중복 `[100,250)·[300,450)`이 혼합 클러스터의 A쪽 `[0,150)`과 50토큰 겹친다 → `union(A) 400`·`self(A) 300`(겹친 토큰은 양쪽에 든다, D166의 ⊇). 변조 — "분할로 읽기"(union = 자기 중복 + 교차)는 450 |
 
 ## 실행
 

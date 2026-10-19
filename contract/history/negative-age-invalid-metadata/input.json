@@ -1,9 +1,11 @@
 {
   "case": "negative-age-invalid-metadata",
   "contract_refs": [
-    "§2.1"
+    "§2.1",
+    "§2.7",
+    "D273"
   ],
-  "what_this_pins": "커미터 시각이 뒤죽박죽이면 `HEAD_TIME − 마지막 변경 시각`이 **음수**가 된다. git은 시각 순서를 강제하지 않으므로 잘못된 시계·수입된 이력에서 실제로 생긴다. 음수 나이는 0으로 자르지 않고 **null + `invalid_metadata`**다(§2.1) — 0으로 자르면 '방금 바뀐 파일'이 되어 F에서 빠지고, 음수를 그대로 두면 `P90(age_last_days)` 분위가 망가진다. 여기서 HEAD(`c2`)의 시각이 부모(`c1`)보다 하루 **이르다**.",
+  "what_this_pins": "커미터 시각이 뒤죽박죽이면 `HEAD_TIME − 마지막 변경 시각`이 **음수**가 된다. git은 시각 순서를 강제하지 않으므로 잘못된 시계·수입된 이력에서 실제로 생긴다. 음수 나이는 0으로 자르지 않고 **null + `invalid_metadata`**다(§2.1) — 0으로 자르면 '방금 바뀐 파일'이 되어 F에서 빠지고, 음수를 그대로 두면 `P90(age_last_days)` 분위가 망가진다. 여기서 HEAD(`c2`)의 시각이 부모(`c1`)보다 하루 **이르다**. **창 W의 위 끝은 닫혀 있다**(§2.7·D273): 부모 `c1`은 HEAD보다 커미터 시각이 늦어 W 밖이다 — `commits_in_window`는 1이고 `c1`만 만진 `src/A.java`의 `chg_commits`는 0이다. 그 파일의 나이는 여전히 `invalid_metadata`다 — 마지막 커밋은 창 밖 걷기가 `c1`로 찾고(D203), `HEAD_TIME − c1`이 음수다. 위 끝을 열어 두는 읽기(변조)는 `commits_in_window` 2·`chg_commits` 1을 낸다 — `docs/review/counterexamples/S4-5/`가 낸 그 값이다.",
   "repo": {
     "committer": {
       "name": "fixture",

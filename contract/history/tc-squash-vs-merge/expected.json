@@ -11,7 +11,7 @@
     "unsquashed": {
       "window_anchor": {
         "type": "head_committer_time",
-        "timestamp": "2026-04-05T02:00:00+00:00"
+        "timestamp": "2026-04-05T02:00:00Z"
       },
       "head": "db2d463c3",
       "window_applied": {
@@ -27,7 +27,7 @@
       "commits": [
         {
           "sha": "db2d463c3",
-          "at": "2026-04-05T02:00:00+00:00",
+          "at": "2026-04-05T02:00:00Z",
           "subject": "u5: touch both",
           "is_merge": false,
           "shallow_boundary": false,
@@ -39,7 +39,7 @@
         },
         {
           "sha": "582f3e2cb",
-          "at": "2026-04-05T01:00:00+00:00",
+          "at": "2026-04-05T01:00:00Z",
           "subject": "u5: touch B",
           "is_merge": false,
           "shallow_boundary": false,
@@ -50,7 +50,7 @@
         },
         {
           "sha": "f919dc54d",
-          "at": "2026-04-05T00:00:00+00:00",
+          "at": "2026-04-05T00:00:00Z",
           "subject": "u5: touch A",
           "is_merge": false,
           "shallow_boundary": false,
@@ -61,7 +61,7 @@
         },
         {
           "sha": "c571b29c1",
-          "at": "2026-04-04T02:00:00+00:00",
+          "at": "2026-04-04T02:00:00Z",
           "subject": "u4: touch both",
           "is_merge": false,
           "shallow_boundary": false,
@@ -73,7 +73,7 @@
         },
         {
           "sha": "47600680e",
-          "at": "2026-04-04T01:00:00+00:00",
+          "at": "2026-04-04T01:00:00Z",
           "subject": "u4: touch B",
           "is_merge": false,
           "shallow_boundary": false,
@@ -84,7 +84,7 @@
         },
         {
           "sha": "4afd4a0cf",
-          "at": "2026-04-04T00:00:00+00:00",
+          "at": "2026-04-04T00:00:00Z",
           "subject": "u4: touch A",
           "is_merge": false,
           "shallow_boundary": false,
@@ -95,7 +95,7 @@
         },
         {
           "sha": "cca4b2737",
-          "at": "2026-04-03T02:00:00+00:00",
+          "at": "2026-04-03T02:00:00Z",
           "subject": "u3: touch both",
           "is_merge": false,
           "shallow_boundary": false,
@@ -107,7 +107,7 @@
         },
         {
           "sha": "6a8e66b04",
-          "at": "2026-04-03T01:00:00+00:00",
+          "at": "2026-04-03T01:00:00Z",
           "subject": "u3: touch B",
           "is_merge": false,
           "shallow_boundary": false,
@@ -118,7 +118,7 @@
         },
         {
           "sha": "0e8d57942",
-          "at": "2026-04-03T00:00:00+00:00",
+          "at": "2026-04-03T00:00:00Z",
           "subject": "u3: touch A",
           "is_merge": false,
           "shallow_boundary": false,
@@ -129,7 +129,7 @@
         },
         {
           "sha": "1ce879b7f",
-          "at": "2026-04-02T02:00:00+00:00",
+          "at": "2026-04-02T02:00:00Z",
           "subject": "u2: touch both",
           "is_merge": false,
           "shallow_boundary": false,
@@ -141,7 +141,7 @@
         },
         {
           "sha": "e31848c7f",
-          "at": "2026-04-02T01:00:00+00:00",
+          "at": "2026-04-02T01:00:00Z",
           "subject": "u2: touch B",
           "is_merge": false,
           "shallow_boundary": false,
@@ -152,7 +152,7 @@
         },
         {
           "sha": "95b16aee2",
-          "at": "2026-04-02T00:00:00+00:00",
+          "at": "2026-04-02T00:00:00Z",
           "subject": "u2: touch A",
           "is_merge": false,
           "shallow_boundary": false,
@@ -163,7 +163,7 @@
         },
         {
           "sha": "d99c57861",
-          "at": "2026-04-01T02:00:00+00:00",
+          "at": "2026-04-01T02:00:00Z",
           "subject": "u1: touch both",
           "is_merge": false,
           "shallow_boundary": false,
@@ -175,7 +175,7 @@
         },
         {
           "sha": "804d9a88f",
-          "at": "2026-04-01T01:00:00+00:00",
+          "at": "2026-04-01T01:00:00Z",
           "subject": "u1: touch B",
           "is_merge": false,
           "shallow_boundary": false,
@@ -186,7 +186,7 @@
         },
         {
           "sha": "114c2accc",
-          "at": "2026-04-01T00:00:00+00:00",
+          "at": "2026-04-01T00:00:00Z",
           "subject": "u1: touch A",
           "is_merge": false,
           "shallow_boundary": false,
@@ -196,7 +196,7 @@
           "in_window": true
         }
       ],
-      "median_files_per_commit": 1,
+      "median_files_per_commit": 1.00,
       "commit_granularity": "fine",
       "renames": [],
       "last_commit_map": {
@@ -231,8 +231,8 @@
           "age_last_days": 0.00,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
-          "ownership_max_share": 1,
-          "minor_contributor_share": 0,
+          "ownership_max_share": 1.0000,
+          "minor_contributor_share": 0.0000,
           "contribution_shares_sorted": [
             1
           ]
@@ -258,8 +258,8 @@
           "age_last_days": 0.00,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
-          "ownership_max_share": 1,
-          "minor_contributor_share": 0,
+          "ownership_max_share": 1.0000,
+          "minor_contributor_share": 0.0000,
           "contribution_shares_sorted": [
             1
           ]
@@ -273,7 +273,7 @@
           "chg_commits_a": 10,
           "chg_commits_b": 10,
           "denominator": 10,
-          "tc": 0.5,
+          "tc": 0.5000,
           "reported": true,
           "static_dependency": false,
           "hidden_coupling": true
@@ -286,7 +286,7 @@
           "shared": 5,
           "chg_commits_a": 10,
           "chg_commits_b": 10,
-          "tc": 0.5,
+          "tc": 0.5000,
           "static_dependency": false,
           "hidden_coupling": true
         }
@@ -296,7 +296,7 @@
     "squashed": {
       "window_anchor": {
         "type": "head_committer_time",
-        "timestamp": "2026-04-05T00:00:00+00:00"
+        "timestamp": "2026-04-05T00:00:00Z"
       },
       "head": "fafa52fad",
       "window_applied": {
@@ -312,7 +312,7 @@
       "commits": [
         {
           "sha": "fafa52fad",
-          "at": "2026-04-05T00:00:00+00:00",
+          "at": "2026-04-05T00:00:00Z",
           "subject": "unit 5 (squashed)",
           "is_merge": false,
           "shallow_boundary": false,
@@ -324,7 +324,7 @@
         },
         {
           "sha": "d9365464b",
-          "at": "2026-04-04T00:00:00+00:00",
+          "at": "2026-04-04T00:00:00Z",
           "subject": "unit 4 (squashed)",
           "is_merge": false,
           "shallow_boundary": false,
@@ -336,7 +336,7 @@
         },
         {
           "sha": "a522f8230",
-          "at": "2026-04-03T00:00:00+00:00",
+          "at": "2026-04-03T00:00:00Z",
           "subject": "unit 3 (squashed)",
           "is_merge": false,
           "shallow_boundary": false,
@@ -348,7 +348,7 @@
         },
         {
           "sha": "7d6cd9821",
-          "at": "2026-04-02T00:00:00+00:00",
+          "at": "2026-04-02T00:00:00Z",
           "subject": "unit 2 (squashed)",
           "is_merge": false,
           "shallow_boundary": false,
@@ -360,7 +360,7 @@
         },
         {
           "sha": "2edf6e826",
-          "at": "2026-04-01T00:00:00+00:00",
+          "at": "2026-04-01T00:00:00Z",
           "subject": "unit 1 (squashed)",
           "is_merge": false,
           "shallow_boundary": false,
@@ -371,7 +371,7 @@
           "in_window": true
         }
       ],
-      "median_files_per_commit": 2,
+      "median_files_per_commit": 2.00,
       "commit_granularity": "fine",
       "renames": [],
       "last_commit_map": {
@@ -401,8 +401,8 @@
           "age_last_days": 0.00,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
-          "ownership_max_share": 1,
-          "minor_contributor_share": 0,
+          "ownership_max_share": 1.0000,
+          "minor_contributor_share": 0.0000,
           "contribution_shares_sorted": [
             1
           ]
@@ -423,8 +423,8 @@
           "age_last_days": 0.00,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
-          "ownership_max_share": 1,
-          "minor_contributor_share": 0,
+          "ownership_max_share": 1.0000,
+          "minor_contributor_share": 0.0000,
           "contribution_shares_sorted": [
             1
           ]
@@ -438,7 +438,7 @@
           "chg_commits_a": 5,
           "chg_commits_b": 5,
           "denominator": 5,
-          "tc": 1,
+          "tc": 1.0000,
           "reported": true,
           "static_dependency": false,
           "hidden_coupling": true
@@ -451,7 +451,7 @@
           "shared": 5,
           "chg_commits_a": 5,
           "chg_commits_b": 5,
-          "tc": 1,
+          "tc": 1.0000,
           "static_dependency": false,
           "hidden_coupling": true
         }
@@ -459,10 +459,10 @@
       "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다."
     }
   },
-  "non_terminating": {},
+  "exact": {},
   "_fixture": {
     "generated_by": "contract/history/compute.py",
     "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
-    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+    "serialization": "표 D155-1의 이름인 필드는 표의 스케일로 고정 인쇄한다(HALF_EVEN, 후행 0 유지 — D275). 표에 없는 이름은 끝나는 십진수면 정확값 그대로, 아니면 소수점 12자리 ROUND_HALF_EVEN. 인쇄가 정확값이 아닌 모든 값의 정확 유리수를 exact에 함께 적는다. exact가 비어 있으면 이 파일 전체가 정확값이다."
   }
 }

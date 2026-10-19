@@ -1,0 +1,12 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "schema/accept-report-invalid-metadata-f — 나이의 사유가 오는 자리(v3.10.23 D278·D218)",
+    "old": "긍정이 `percentiles.age_last_days`와 `percentile_population.age_last_days.all.reason: invalid_metadata`를 실었다 — 사전의 셋째 열이 \"성분(`age_last_days`)\"이었고 스키마에 그 자리가 있었다(D218이 사전에 안 내려간 것 — U4)",
+    "new": "나이에는 백분위 기록이 없다(D218) — `age_last_days: null`·F null·`lens_percentiles.F.reason: invalid_metadata`만으로 통과한다. 옛 모양은 변조 `report-age-reason-in-percentile-population`(거부, `/files/0/percentile_population/age_last_days/all/reason`)",
+    "note": "판정(accept)은 그대로이고 `contract_ref`·`what`만 바뀌었다 — 입력에서 패치 둘을 뺐다. 스키마의 `percentile_population.age_last_days` 자리는 §2.5 사전에서 생성하며 사라졌다(`contract/schema/reasons.py --write` — 생성 전후의 집합 차이는 이 자리 하나, `hidden_couplings`는 같은 두 사유의 순서만 사전의 행 순서로).",
+    "fixtures": [
+      "schema/accept-report-invalid-metadata-f"
+    ]
+  }
+}

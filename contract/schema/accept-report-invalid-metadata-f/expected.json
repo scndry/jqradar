@@ -3,8 +3,8 @@
   "generated_by": "contract/schema/compute.py",
   "check": "schema",
   "kind": "positive",
-  "contract_ref": "D188·D189·§2.1",
-  "what": "나이가 음수인 파일(§2.1 `invalid_metadata`)의 정상 모양 — `age_last_days: null`, `percentile_population.age_last_days.all.reason: invalid_metadata`, F null, `lens_percentiles.F.reason: invalid_metadata`가 **통과**한다(D188 — `invalid_metadata`가 처음으로 열거에 든 자리, 3차 T2(a)). 이 긍정이 없으면 사전 통합은 검사되지 않는다 — §7 예시의 나이는 둘 다 값이라 첫 커밋이 초록이었다. F finding(`fnd:f-order-policy`)은 렌즈가 null이라 뺀다.",
+  "contract_ref": "D188·D189·§2.1·D218·D278",
+  "what": "나이가 음수인 파일(§2.1 `invalid_metadata`)의 정상 모양 — `age_last_days: null`, F null, `lens_percentiles.F.reason: invalid_metadata`가 **통과**한다(D188 — `invalid_metadata`가 처음으로 열거에 든 자리, 3차 T2(a)). **나이에는 백분위 기록이 없다**(D218 — 성분이 아니라 지시변수의 입력): `age_last_days`의 null은 사유 키 없이 나타나고 사유는 렌즈 F의 `reason`이 든다(D278). 옛 모양(`percentile_population.age_last_days.all.reason: invalid_metadata`)은 이제 변조다 — `report-age-reason-in-percentile-population`. 이 긍정이 없으면 사전 통합은 검사되지 않는다 — §7 예시의 나이는 둘 다 값이라 첫 커밋이 초록이었다. F finding(`fnd:f-order-policy`)은 렌즈가 null이라 뺀다.",
   "schema": "report.schema.json",
   "verdict": "accept",
   "rejected_at": []

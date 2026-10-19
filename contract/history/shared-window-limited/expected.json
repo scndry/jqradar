@@ -12,7 +12,7 @@
     "window_12m": {
       "window_anchor": {
         "type": "head_committer_time",
-        "timestamp": "2025-04-10T09:40:00+00:00"
+        "timestamp": "2025-04-10T09:40:00Z"
       },
       "head": "c28010009",
       "window_applied": {
@@ -28,7 +28,7 @@
       "commits": [
         {
           "sha": "c28010009",
-          "at": "2025-04-10T09:40:00+00:00",
+          "at": "2025-04-10T09:40:00Z",
           "subject": "touch B #4",
           "is_merge": false,
           "shallow_boundary": false,
@@ -39,7 +39,7 @@
         },
         {
           "sha": "7eb65ad1a",
-          "at": "2025-04-10T08:40:00+00:00",
+          "at": "2025-04-10T08:40:00Z",
           "subject": "touch B #3",
           "is_merge": false,
           "shallow_boundary": false,
@@ -50,7 +50,7 @@
         },
         {
           "sha": "c547c4445",
-          "at": "2025-04-10T07:40:00+00:00",
+          "at": "2025-04-10T07:40:00Z",
           "subject": "touch B #2",
           "is_merge": false,
           "shallow_boundary": false,
@@ -61,7 +61,7 @@
         },
         {
           "sha": "aa1f44760",
-          "at": "2025-04-10T06:40:00+00:00",
+          "at": "2025-04-10T06:40:00Z",
           "subject": "touch B #1",
           "is_merge": false,
           "shallow_boundary": false,
@@ -72,7 +72,7 @@
         },
         {
           "sha": "cbb51802b",
-          "at": "2025-04-09T03:53:20+00:00",
+          "at": "2025-04-09T03:53:20Z",
           "subject": "touch A #2",
           "is_merge": false,
           "shallow_boundary": false,
@@ -83,7 +83,7 @@
         },
         {
           "sha": "6f4094549",
-          "at": "2025-04-09T02:53:20+00:00",
+          "at": "2025-04-09T02:53:20Z",
           "subject": "touch A #1",
           "is_merge": false,
           "shallow_boundary": false,
@@ -94,7 +94,7 @@
         },
         {
           "sha": "fe2f5b240",
-          "at": "2025-04-08T04:06:40+00:00",
+          "at": "2025-04-08T04:06:40Z",
           "subject": "touch A+B #6",
           "is_merge": false,
           "shallow_boundary": false,
@@ -106,7 +106,7 @@
         },
         {
           "sha": "c3c9423f0",
-          "at": "2025-04-08T03:06:40+00:00",
+          "at": "2025-04-08T03:06:40Z",
           "subject": "touch A+B #5",
           "is_merge": false,
           "shallow_boundary": false,
@@ -118,7 +118,7 @@
         },
         {
           "sha": "1d90c326f",
-          "at": "2025-04-08T02:06:40+00:00",
+          "at": "2025-04-08T02:06:40Z",
           "subject": "touch A+B #4",
           "is_merge": false,
           "shallow_boundary": false,
@@ -130,7 +130,7 @@
         },
         {
           "sha": "f63294308",
-          "at": "2025-04-08T01:06:40+00:00",
+          "at": "2025-04-08T01:06:40Z",
           "subject": "touch A+B #3",
           "is_merge": false,
           "shallow_boundary": false,
@@ -142,7 +142,7 @@
         },
         {
           "sha": "f4ea975f4",
-          "at": "2025-04-08T00:06:40+00:00",
+          "at": "2025-04-08T00:06:40Z",
           "subject": "touch A+B #2",
           "is_merge": false,
           "shallow_boundary": false,
@@ -154,7 +154,7 @@
         },
         {
           "sha": "98f89790d",
-          "at": "2025-04-07T23:06:40+00:00",
+          "at": "2025-04-07T23:06:40Z",
           "subject": "touch A+B #1",
           "is_merge": false,
           "shallow_boundary": false,
@@ -166,7 +166,7 @@
         },
         {
           "sha": "b372c99d2",
-          "at": "2024-01-01T02:00:00+00:00",
+          "at": "2024-01-01T02:00:00Z",
           "subject": "touch A+B #3",
           "is_merge": false,
           "shallow_boundary": false,
@@ -178,7 +178,7 @@
         },
         {
           "sha": "a28e77d0a",
-          "at": "2024-01-01T01:00:00+00:00",
+          "at": "2024-01-01T01:00:00Z",
           "subject": "touch A+B #2",
           "is_merge": false,
           "shallow_boundary": false,
@@ -190,7 +190,7 @@
         },
         {
           "sha": "0209b7f58",
-          "at": "2024-01-01T00:00:00+00:00",
+          "at": "2024-01-01T00:00:00Z",
           "subject": "touch A+B #1",
           "is_merge": false,
           "shallow_boundary": false,
@@ -201,7 +201,7 @@
           "in_window": false
         }
       ],
-      "median_files_per_commit": 1.5,
+      "median_files_per_commit": 1.50,
       "commit_granularity": "fine",
       "renames": [],
       "last_commit_map": {
@@ -236,8 +236,8 @@
           "age_last_days": 1.24,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
-          "ownership_max_share": 1,
-          "minor_contributor_share": 0,
+          "ownership_max_share": 1.0000,
+          "minor_contributor_share": 0.0000,
           "contribution_shares_sorted": [
             1
           ]
@@ -263,8 +263,8 @@
           "age_last_days": 0.00,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
-          "ownership_max_share": 1,
-          "minor_contributor_share": 0,
+          "ownership_max_share": 1.0000,
+          "minor_contributor_share": 0.0000,
           "contribution_shares_sorted": [
             1
           ]
@@ -278,7 +278,7 @@
           "chg_commits_a": 8,
           "chg_commits_b": 10,
           "denominator": 8,
-          "tc": 0.75,
+          "tc": 0.7500,
           "reported": true,
           "static_dependency": false,
           "hidden_coupling": true
@@ -291,7 +291,7 @@
           "shared": 6,
           "chg_commits_a": 8,
           "chg_commits_b": 10,
-          "tc": 0.75,
+          "tc": 0.7500,
           "static_dependency": false,
           "hidden_coupling": true
         }
@@ -304,7 +304,7 @@
     "window_240m": {
       "window_anchor": {
         "type": "head_committer_time",
-        "timestamp": "2025-04-10T09:40:00+00:00"
+        "timestamp": "2025-04-10T09:40:00Z"
       },
       "head": "c28010009",
       "window_applied": {
@@ -320,7 +320,7 @@
       "commits": [
         {
           "sha": "c28010009",
-          "at": "2025-04-10T09:40:00+00:00",
+          "at": "2025-04-10T09:40:00Z",
           "subject": "touch B #4",
           "is_merge": false,
           "shallow_boundary": false,
@@ -331,7 +331,7 @@
         },
         {
           "sha": "7eb65ad1a",
-          "at": "2025-04-10T08:40:00+00:00",
+          "at": "2025-04-10T08:40:00Z",
           "subject": "touch B #3",
           "is_merge": false,
           "shallow_boundary": false,
@@ -342,7 +342,7 @@
         },
         {
           "sha": "c547c4445",
-          "at": "2025-04-10T07:40:00+00:00",
+          "at": "2025-04-10T07:40:00Z",
           "subject": "touch B #2",
           "is_merge": false,
           "shallow_boundary": false,
@@ -353,7 +353,7 @@
         },
         {
           "sha": "aa1f44760",
-          "at": "2025-04-10T06:40:00+00:00",
+          "at": "2025-04-10T06:40:00Z",
           "subject": "touch B #1",
           "is_merge": false,
           "shallow_boundary": false,
@@ -364,7 +364,7 @@
         },
         {
           "sha": "cbb51802b",
-          "at": "2025-04-09T03:53:20+00:00",
+          "at": "2025-04-09T03:53:20Z",
           "subject": "touch A #2",
           "is_merge": false,
           "shallow_boundary": false,
@@ -375,7 +375,7 @@
         },
         {
           "sha": "6f4094549",
-          "at": "2025-04-09T02:53:20+00:00",
+          "at": "2025-04-09T02:53:20Z",
           "subject": "touch A #1",
           "is_merge": false,
           "shallow_boundary": false,
@@ -386,7 +386,7 @@
         },
         {
           "sha": "fe2f5b240",
-          "at": "2025-04-08T04:06:40+00:00",
+          "at": "2025-04-08T04:06:40Z",
           "subject": "touch A+B #6",
           "is_merge": false,
           "shallow_boundary": false,
@@ -398,7 +398,7 @@
         },
         {
           "sha": "c3c9423f0",
-          "at": "2025-04-08T03:06:40+00:00",
+          "at": "2025-04-08T03:06:40Z",
           "subject": "touch A+B #5",
           "is_merge": false,
           "shallow_boundary": false,
@@ -410,7 +410,7 @@
         },
         {
           "sha": "1d90c326f",
-          "at": "2025-04-08T02:06:40+00:00",
+          "at": "2025-04-08T02:06:40Z",
           "subject": "touch A+B #4",
           "is_merge": false,
           "shallow_boundary": false,
@@ -422,7 +422,7 @@
         },
         {
           "sha": "f63294308",
-          "at": "2025-04-08T01:06:40+00:00",
+          "at": "2025-04-08T01:06:40Z",
           "subject": "touch A+B #3",
           "is_merge": false,
           "shallow_boundary": false,
@@ -434,7 +434,7 @@
         },
         {
           "sha": "f4ea975f4",
-          "at": "2025-04-08T00:06:40+00:00",
+          "at": "2025-04-08T00:06:40Z",
           "subject": "touch A+B #2",
           "is_merge": false,
           "shallow_boundary": false,
@@ -446,7 +446,7 @@
         },
         {
           "sha": "98f89790d",
-          "at": "2025-04-07T23:06:40+00:00",
+          "at": "2025-04-07T23:06:40Z",
           "subject": "touch A+B #1",
           "is_merge": false,
           "shallow_boundary": false,
@@ -458,7 +458,7 @@
         },
         {
           "sha": "b372c99d2",
-          "at": "2024-01-01T02:00:00+00:00",
+          "at": "2024-01-01T02:00:00Z",
           "subject": "touch A+B #3",
           "is_merge": false,
           "shallow_boundary": false,
@@ -470,7 +470,7 @@
         },
         {
           "sha": "a28e77d0a",
-          "at": "2024-01-01T01:00:00+00:00",
+          "at": "2024-01-01T01:00:00Z",
           "subject": "touch A+B #2",
           "is_merge": false,
           "shallow_boundary": false,
@@ -482,7 +482,7 @@
         },
         {
           "sha": "0209b7f58",
-          "at": "2024-01-01T00:00:00+00:00",
+          "at": "2024-01-01T00:00:00Z",
           "subject": "touch A+B #1",
           "is_merge": false,
           "shallow_boundary": false,
@@ -493,7 +493,7 @@
           "in_window": true
         }
       ],
-      "median_files_per_commit": 2,
+      "median_files_per_commit": 2.00,
       "commit_granularity": "fine",
       "renames": [],
       "last_commit_map": {
@@ -529,8 +529,8 @@
           "age_last_days": 1.24,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
-          "ownership_max_share": 1,
-          "minor_contributor_share": 0,
+          "ownership_max_share": 1.0000,
+          "minor_contributor_share": 0.0000,
           "contribution_shares_sorted": [
             1
           ]
@@ -559,8 +559,8 @@
           "age_last_days": 0.00,
           "distinct_authors_90d": 1,
           "contributor_count": 1,
-          "ownership_max_share": 1,
-          "minor_contributor_share": 0,
+          "ownership_max_share": 1.0000,
+          "minor_contributor_share": 0.0000,
           "contribution_shares_sorted": [
             1
           ]
@@ -574,7 +574,7 @@
           "chg_commits_a": 11,
           "chg_commits_b": 13,
           "denominator": 11,
-          "tc": 0.818181818182,
+          "tc": 0.8182,
           "reported": true,
           "static_dependency": false,
           "hidden_coupling": true
@@ -587,7 +587,7 @@
           "shared": 9,
           "chg_commits_a": 11,
           "chg_commits_b": 13,
-          "tc": 0.818181818182,
+          "tc": 0.8182,
           "static_dependency": false,
           "hidden_coupling": true
         }
@@ -598,13 +598,13 @@
       "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다."
     }
   },
-  "non_terminating": {
+  "exact": {
     "/variants/window_240m/pairs/0/tc": "9/11",
     "/variants/window_240m/hidden_couplings/0/tc": "9/11"
   },
   "_fixture": {
     "generated_by": "contract/history/compute.py",
     "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
-    "serialization": "끝나는 십진수는 정확값 그대로. 그렇지 않은 값만 소수점 12자리 ROUND_HALF_EVEN으로 인쇄하고 정확 유리수를 non_terminating에 함께 적는다. non_terminating이 비어 있으면 이 파일 전체가 정확값이다."
+    "serialization": "표 D155-1의 이름인 필드는 표의 스케일로 고정 인쇄한다(HALF_EVEN, 후행 0 유지 — D275). 표에 없는 이름은 끝나는 십진수면 정확값 그대로, 아니면 소수점 12자리 ROUND_HALF_EVEN. 인쇄가 정확값이 아닌 모든 값의 정확 유리수를 exact에 함께 적는다. exact가 비어 있으면 이 파일 전체가 정확값이다."
   }
 }
