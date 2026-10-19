@@ -1,0 +1,65 @@
+{
+  "case": "tree-identity-is-id-input",
+  "generated_by": "contract/reproducibility/compute.py",
+  "contract_refs": [
+    "§2.8",
+    "§4.5",
+    "§2.9",
+    "D279",
+    "D87",
+    "D154",
+    "D223",
+    "D158"
+  ],
+  "what_this_pins": "**트리의 정체성(`repository_state_id`)과 `head`는 `analysis_input_id`의 입력이다**(D279 — §2.8 (i)·§7이 이미 [id]로 적은 두 필드). (1) 같은 커밋에서 적격 소스가 아닌 추적 파일(`README.md`)만 작업트리에서 고친 스캔 — 적격 목록·`head`는 같고 `repository_state_id`가 달라(D223 — 내용은 작업트리 바이트) id가 다르다. (2) 같은 비머지 이력 위에 메시지만 다른 두 머지 HEAD — 창 안 비머지 목록·트리는 같고(머지는 W 밖, §2.7) `head`가 달라 id가 다르다. 조립된 리포트가 두 필드를 인쇄하므로 같은 id에서 다른 바이트가 되면 D87·D154 위반이다. 변조는 옛 정의(스펙에서 두 키를 뺀 것)이고 두 쌍 모두 같은 id를 낸다 — U8 반례의 값. 층 캐시의 키는 이 두 필드를 읽지 않는다(D159·D192 — `history-cache-key-is-a-projection`·`transition-cache-hits-across-head`).",
+  "canonical_encoding": "RFC8785-JCS",
+  "worktree_only": {
+    "eligible": [
+      "src/main/java/com/example/A.java"
+    ],
+    "clean": {
+      "head": "9ae7c1038736726b3563340b9efda8091dd1d3a2",
+      "repository_state_id": "sha256:ac99ae0e42ed97b0b9c365045296fc9989f81a3c5dc515a6923292ea398fcc2e",
+      "analysis_input_id": "sha256:a278905d76969685354387924abaffb0c9ca7348a78bfd064e9fd6e11773bef2",
+      "legacy_analysis_input_id": "sha256:652b00d7659c5e7f641707614197c58820a93ec9c839f4eb8fa5e85a91951b9f"
+    },
+    "dirty": {
+      "head": "9ae7c1038736726b3563340b9efda8091dd1d3a2",
+      "repository_state_id": "sha256:f4e84867aa56e78b51e96e9beb42d010e43cf334450784008e3720711f146ce6",
+      "analysis_input_id": "sha256:d0077636887256e0359fc07460c0f6e033d3eaa0f10d0ef62c79ebf8d96872c7",
+      "legacy_analysis_input_id": "sha256:652b00d7659c5e7f641707614197c58820a93ec9c839f4eb8fa5e85a91951b9f"
+    }
+  },
+  "merge_head_only": {
+    "eligible": [
+      "src/main/java/com/example/A.java",
+      "src/main/java/com/example/B.java"
+    ],
+    "messages": [
+      "merge feature (m1)",
+      "merge feature (m2)"
+    ],
+    "a": {
+      "head": "d9431e31965736ccc8da6c7e5a3908e875f43957",
+      "repository_state_id": "sha256:b9674b8e588df397cd41c02be549f61ca326edb26d037b7294f075ece31b9b41",
+      "analysis_input_id": "sha256:a4960ecc709bdec6878518799dc64f0f4a9b32bc45ed73d8e183436a2b9a99f3",
+      "legacy_analysis_input_id": "sha256:584906d9cd484d5fb49ef5099dd7d4b135f85305b65540d33caf44f2b4bc9ac3"
+    },
+    "b": {
+      "head": "1bb8154f7ae74d6e296239226238cc4d203282bb",
+      "repository_state_id": "sha256:b9674b8e588df397cd41c02be549f61ca326edb26d037b7294f075ece31b9b41",
+      "analysis_input_id": "sha256:dd2f661d2e18f0a1635cdd749b7ace684650487bbcc4ca6b1a64ae4f3774ffc4",
+      "legacy_analysis_input_id": "sha256:584906d9cd484d5fb49ef5099dd7d4b135f85305b65540d33caf44f2b4bc9ac3"
+    }
+  },
+  "assertions": {
+    "worktree_only_same_eligible_list_and_head": true,
+    "worktree_only_repository_state_id_differs": true,
+    "merge_head_only_same_commit_list_and_tree": true,
+    "merge_head_only_head_differs": true,
+    "worktree_only_analysis_input_id_differs": true,
+    "merge_head_only_analysis_input_id_differs": true,
+    "legacy_definition_same_id_for_worktree_only": true,
+    "legacy_definition_same_id_for_merge_head_only": true
+  }
+}
