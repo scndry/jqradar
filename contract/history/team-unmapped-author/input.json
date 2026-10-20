@@ -1,0 +1,211 @@
+{
+  "case": "team-unmapped-author",
+  "contract_refs": [
+    "§2.1",
+    "§2.7",
+    "D161",
+    "D163",
+    "D282"
+  ],
+  "what_this_pins": "**매핑 밖 저자는 team 모드에서도 `unmapped` 한 칸이다**(D282): 입력은 [`team-folding-k-threshold`](../team-folding-k-threshold/)(매핑 `payments` 4인·`platform` 3인·`billing` 1인)에 **매핑에 없는 저자 z**를 더한 것이다(S4-16의 반례 입력). `OnlyUnmapped.java`는 z만 만졌다 → **`team_count: 1`·`authors_unmapped: 1`** — `teams`에 `{\"team\": \"unmapped\"}` 한 칸, `unmapped`는 팀이 아니라 **표지**라 k 하한을 걸지 않는다(`other`와 같은 이유 — 1은 '매핑 밖 누군가가 만졌다'이지 누구인지가 아니다, D161). `PaymentsAndUnmapped.java`는 a(payments)와 z → **`2`·`1`**. 앞의 네 파일은 `team-folding-k-threshold`와 같은 값이고 `authors_unmapped: 0`이다. **변조**(`mutation_mapped_teams_only`): §2.1의 \"이 파일을 만진 팀 수\"를 글자 그대로 매핑의 팀만 세면 `OnlyUnmapped` **0**·`PaymentsAndUnmapped` **1** — 0이 '만진 팀 없음'과 '매핑 밖 저자만 만졌다'를 같은 바이트로 낸다(D208의 모양). `authors_unmapped`는 `people.json`의 필드다(D163) — 이 계약의 파일 항목에 함께 인쇄하는 것은 `teams`와 같은 자리이기 때문이다.",
+  "window": {
+    "months": 12,
+    "max_commits": 2000
+  },
+  "people": {
+    "attribution": "team",
+    "team_mapping": {
+      "payments": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "platform": [
+        "e",
+        "f",
+        "g"
+      ],
+      "billing": [
+        "h"
+      ]
+    }
+  },
+  "mutation_mapped_teams_only": true,
+  "measure_files": [
+    "src/OnlyBilling.java",
+    "src/PaymentsAndBilling.java",
+    "src/OnlyPayments.java",
+    "src/PlatformBoundary.java",
+    "src/OnlyUnmapped.java",
+    "src/PaymentsAndUnmapped.java"
+  ],
+  "repo": {
+    "committer": {
+      "name": "fixture",
+      "email": "fixture@example.invalid"
+    },
+    "authors": {
+      "a": {
+        "name": "Author A",
+        "email": "a@example.invalid"
+      },
+      "b": {
+        "name": "Author B",
+        "email": "b@example.invalid"
+      },
+      "c": {
+        "name": "Author C",
+        "email": "c@example.invalid"
+      },
+      "d": {
+        "name": "Author D",
+        "email": "d@example.invalid"
+      },
+      "e": {
+        "name": "Author E",
+        "email": "e@example.invalid"
+      },
+      "f": {
+        "name": "Author F",
+        "email": "f@example.invalid"
+      },
+      "g": {
+        "name": "Author G",
+        "email": "g@example.invalid"
+      },
+      "h": {
+        "name": "Author H",
+        "email": "h@example.invalid"
+      },
+      "z": {
+        "name": "Author Z",
+        "email": "z@example.invalid"
+      }
+    },
+    "base_time": "2026-05-01T00:00:00+00:00",
+    "commits": [
+      {
+        "id": "ob-h",
+        "at_seconds": 0,
+        "author": "h",
+        "repeat": 3,
+        "step_seconds": 3600,
+        "message": "h -> src/OnlyBilling.java",
+        "write": {
+          "src/OnlyBilling.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "pb-a",
+        "at_seconds": 100000,
+        "author": "a",
+        "repeat": 4,
+        "step_seconds": 3600,
+        "message": "a -> src/PaymentsAndBilling.java",
+        "write": {
+          "src/PaymentsAndBilling.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "pb-h",
+        "at_seconds": 200000,
+        "author": "h",
+        "repeat": 2,
+        "step_seconds": 3600,
+        "message": "h -> src/PaymentsAndBilling.java",
+        "write": {
+          "src/PaymentsAndBilling.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "op-a",
+        "at_seconds": 300000,
+        "author": "a",
+        "repeat": 2,
+        "step_seconds": 3600,
+        "message": "a -> src/OnlyPayments.java",
+        "write": {
+          "src/OnlyPayments.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "op-b",
+        "at_seconds": 400000,
+        "author": "b",
+        "repeat": 3,
+        "step_seconds": 3600,
+        "message": "b -> src/OnlyPayments.java",
+        "write": {
+          "src/OnlyPayments.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "pl-e",
+        "at_seconds": 500000,
+        "author": "e",
+        "repeat": 1,
+        "step_seconds": 3600,
+        "message": "e -> src/PlatformBoundary.java",
+        "write": {
+          "src/PlatformBoundary.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "pl-f",
+        "at_seconds": 510000,
+        "author": "f",
+        "repeat": 1,
+        "step_seconds": 3600,
+        "message": "f -> src/PlatformBoundary.java",
+        "write": {
+          "src/PlatformBoundary.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "pl-g",
+        "at_seconds": 520000,
+        "author": "g",
+        "repeat": 1,
+        "step_seconds": 3600,
+        "message": "g -> src/PlatformBoundary.java",
+        "write": {
+          "src/PlatformBoundary.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "ou-z",
+        "at_seconds": 620000,
+        "author": "z",
+        "repeat": 2,
+        "step_seconds": 3600,
+        "message": "z -> src/OnlyUnmapped.java",
+        "write": {
+          "src/OnlyUnmapped.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "pu-a",
+        "at_seconds": 720000,
+        "author": "a",
+        "repeat": 2,
+        "step_seconds": 3600,
+        "message": "a -> src/PaymentsAndUnmapped.java",
+        "write": {
+          "src/PaymentsAndUnmapped.java": "class X { int v{id}; }\n"
+        }
+      },
+      {
+        "id": "pu-z",
+        "at_seconds": 820000,
+        "author": "z",
+        "repeat": 1,
+        "step_seconds": 3600,
+        "message": "z -> src/PaymentsAndUnmapped.java",
+        "write": {
+          "src/PaymentsAndUnmapped.java": "class X { int v{id}; }\n"
+        }
+      }
+    ]
+  }
+}

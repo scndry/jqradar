@@ -224,8 +224,12 @@ def team_mapping_sha256(text: str | None) -> str | None:
 
 
 def analysis_input_id(shared: dict, environment: dict, files: list[tuple[str, str]],
-                      history: dict) -> tuple[str, dict]:
-    """§2.8 — 툴체인·계약·입력 전부. 여기 없는 입력은 결과에 영향을 주면 안 된다(D87)."""
+                      history: dict, *, state_id: str) -> tuple[str, dict]:
+    """§2.8 — 툴체인·계약·입력 전부. 여기 없는 입력은 결과에 영향을 주면 안 된다(D87).
+
+    `files`는 적격 목록이고 `state_id`는 트리의 정체성(`repository_state_id`, D223)이다 — 둘은 다른 입력이라 따로 받는다
+    (D279: 적격 소스가 아닌 추적 파일만 다른 두 작업트리는 목록이 같고 트리의 id가 다르다). 기본값을 두지 않는다 — 목록에서
+    트리의 id를 만들어 넣는 것이 U8의 대리 이름이었다."""
     spec = {
         "schema_version": shared["schema_version"],
         "contract_version": shared["contract_version"],
@@ -235,6 +239,11 @@ def analysis_input_id(shared: dict, environment: dict, files: list[tuple[str, st
         "component": shared["component"],
         "algorithm_versions": shared["algorithm_versions"],
         "source_files": [[p, c] for p, c in files],
+        # D279 — §2.8 (i)이 id 입력으로 적은 두 필드. 조립된 리포트가 둘을 인쇄하므로 둘이 다르면 리포트의 바이트가 다르다 —
+        # 정의에 없던 동안 README만 다른 작업트리·메시지만 다른 머지 HEAD가 같은 id로 다른 바이트를 냈다(D87·D154).
+        # 커밋 목록은 머지를 빼므로(§2.7) 머지 HEAD를 봉인하지 않는다. 층 캐시는 사영이라 이 둘을 읽지 않는다(D159·D192).
+        "repository_state_id": state_id,
+        "head": history["head"],
         "class_files": [],
         "window_anchor": {"type": "head_committer_time",
                           "timestamp": history["head_committer_time"]},
@@ -281,8 +290,11 @@ def id_from_reproduce(reproduce: dict, files: list[tuple[str, str]], history: di
         "bytecode_scope": {k: reproduce["bytecode_scope"][k] for k in BYTECODE_SCOPE_ID_FIELDS},
         "source_scope": {k: reproduce["source_scope"][k] for k in SOURCE_SCOPE_FIELDS},
     }
-    history = {**history, "last_commit_map_sha256": reproduce["window_applied"]["last_commit_map_sha256"]}
-    aid, _ = analysis_input_id(shared, reproduce["environment"], files, history)
+    # 해시로만 있는 것은 인쇄된 해시를, 값으로 있는 것은 값을 쓴다 — `head`·`repository_state_id`는 값이다(D279).
+    history = {**history, "last_commit_map_sha256": reproduce["window_applied"]["last_commit_map_sha256"],
+               "head": reproduce["head"]}
+    aid, _ = analysis_input_id(shared, reproduce["environment"], files, history,
+                               state_id=reproduce["repository_state_id"])
     return aid
 
 
@@ -305,7 +317,8 @@ def run_repo_variants(case_dir: Path, inp: dict) -> dict:
         with tempfile.TemporaryDirectory() as tmp:
             history = build_history(tree, repo, Path(tmp) / "repo")
         aid, _ = analysis_input_id(inp["shared_inputs"],
-                                   inp["runs"]["a"]["environment"], files, history)
+                                   inp["runs"]["a"]["environment"], files, history,
+                                   state_id=repository_state_id(files))
         results[name] = {
             "unreachable_commit_count": history["unreachable_commit_count"],
             "reachable_commit_count": len(history["commit_shas"]),
@@ -452,8 +465,8 @@ def run_byte_identity(case_dir: Path, inp: dict) -> dict:
     with tempfile.TemporaryDirectory() as tmp:
         history = build_history(tree, inp["repo"], Path(tmp) / "repo")
     shared, env = inp["shared_inputs"], inp["environment"]
-    aid, spec = analysis_input_id(shared, env, files, history)
     rsid = repository_state_id(files)
+    aid, spec = analysis_input_id(shared, env, files, history, state_id=rsid)
     excluded = inp["excluded_fields"]
 
     def report_for(machine: dict, file_order: list | None = None, sort_arrays: bool = True) -> dict:
@@ -474,8 +487,8 @@ def run_byte_identity(case_dir: Path, inp: dict) -> dict:
                 "algorithm_versions": shared["algorithm_versions"],               # [id]
                 "window_anchor": spec["window_anchor"],                           # [id]
                 "canonical_encoding": CANONICAL_ENCODING,                         # [id] (D186)
-                "head": history["head"],                                          # [fn]
-                "repository_state_id": rsid,                                      # [fn]
+                "head": history["head"],                                          # [id] (D279)
+                "repository_state_id": rsid,                                      # [id] (D279)
                 "analysis_input_id": aid,                                         # [fn]
                 "environment": env,                                               # [id]
                 "classes_reproduction_inputs": machine["classes_reproduction_inputs"],  # [x]
@@ -680,7 +693,8 @@ def run_parameter_projection(case_dir: Path, inp: dict) -> dict:
     p_after = {**p_before, change["name"]: change["to"]}
 
     def ids(params):
-        aid, _ = analysis_input_id({**shared, "parameters": params}, env, files, history)
+        aid, _ = analysis_input_id({**shared, "parameters": params}, env, files, history,
+                                   state_id=repository_state_id(files))
         return aid
 
     projections = inp["measure_projections"]
@@ -755,7 +769,8 @@ def run_people_variants(case_dir: Path, inp: dict) -> dict:
     for name, v in inp["people_variants"].items():
         people = {"attribution": v["attribution"],
                   "team_mapping_sha256": team_mapping_sha256(v.get("team_mapping"))}
-        aid, _ = analysis_input_id({**shared, "people": people}, env, files, history)
+        aid, _ = analysis_input_id({**shared, "people": people}, env, files, history,
+                                   state_id=repository_state_id(files))
         variants[name] = {"people": people,
                           "team_mapping_lines": (len(v["team_mapping"].splitlines())
                                                  if v.get("team_mapping") is not None else None),
@@ -807,23 +822,19 @@ def run_people_variants(case_dir: Path, inp: dict) -> dict:
     }
 
 
-def run_recompute_from_reproduce(case_dir: Path, inp: dict) -> dict:
-    """§2.8·D111·D186 — reproduce만으로 id 재계산. 단언 둘: 같은 블록에서 같은 id, 블록의 id 입력 하나를
-    바꾸면(창 12 → 24개월, 커밋 목록은 그대로) id가 **갈린다** — 창 파라미터가 [fn] 자리에 있던 v3.10.0까지는
-    그 변경이 id에 닿지 않았다(O3-6)."""
-    tree = case_dir / inp["repo"]["tree"]
-    files = tree_files(tree)
-    with tempfile.TemporaryDirectory() as tmp:
-        history = build_history(tree, inp["repo"], Path(tmp) / "repo")
-    shared, env = inp["shared_inputs"], inp["environment"]
-    aid, spec = analysis_input_id(shared, env, files, history)
-    # 한 번 스캔한 결과의 reproduce 블록(§7 모양)을 만든다 — 이것만 들고 다시 계산한다.
-    reproduce = {
+def classes_id(class_files: list) -> str:
+    """§2.8 — `bytecode_scope` 안 클래스 파일 목록의 해시. G0에는 바이트코드가 없어 목록은 언제나 비어 있다."""
+    return sha256(class_files)
+
+
+def reproduce_block(shared: dict, env: dict, history: dict, spec: dict, aid: str, rsid: str, scanned_at_unix: int) -> dict:
+    """§7 모양의 `reproduce` 블록 — `id_from_reproduce`가 읽는 것이고, 자기 반례가 (i)의 이름을 **값으로** 대조하는 것이다."""
+    return {
         "tool_version": shared["tool_version"], "schema_version": shared["schema_version"],
-        "contract_version": shared["contract_version"], "scanned_at": canonical_time(inp["scanned_at_unix"]),
+        "contract_version": shared["contract_version"], "scanned_at": canonical_time(scanned_at_unix),
         "algorithm_versions": {"component_strategy": shared["component"]["algorithm_version"], **shared["algorithm_versions"]},
         "window_anchor": spec["window_anchor"], "head": history["head"],
-        "repository_state_id": repository_state_id(files), "analysis_input_id": aid,
+        "repository_state_id": rsid, "analysis_input_id": aid, "classes_id": classes_id(spec["class_files"]),
         "canonical_encoding": CANONICAL_ENCODING, "environment": env,
         "history_backend": shared["history_backend"],
         "window_applied": {"commits_in_window": len(history["commit_shas"]), "commit_list_sha256": spec["commit_list_sha256"],
@@ -835,6 +846,21 @@ def run_recompute_from_reproduce(case_dir: Path, inp: dict) -> dict:
         "bytecode_scope": {**spec["bytecode_scope"], "external_edges": 0, "unmapped_classes": 0},   # [id] 범위 정의 + [fn] 집계
         "source_scope": spec["source_scope"],                                                    # [id] (D210)
     }
+
+
+def run_recompute_from_reproduce(case_dir: Path, inp: dict) -> dict:
+    """§2.8·D111·D186 — reproduce만으로 id 재계산. 단언 둘: 같은 블록에서 같은 id, 블록의 id 입력 하나를
+    바꾸면(창 12 → 24개월, 커밋 목록은 그대로) id가 **갈린다** — 창 파라미터가 [fn] 자리에 있던 v3.10.0까지는
+    그 변경이 id에 닿지 않았다(O3-6)."""
+    tree = case_dir / inp["repo"]["tree"]
+    files = tree_files(tree)
+    with tempfile.TemporaryDirectory() as tmp:
+        history = build_history(tree, inp["repo"], Path(tmp) / "repo")
+    shared, env = inp["shared_inputs"], inp["environment"]
+    rsid = repository_state_id(files)
+    aid, spec = analysis_input_id(shared, env, files, history, state_id=rsid)
+    # 한 번 스캔한 결과의 reproduce 블록(§7 모양)을 만든다 — 이것만 들고 다시 계산한다.
+    reproduce = reproduce_block(shared, env, history, spec, aid, rsid, inp["scanned_at_unix"])
     recomputed = id_from_reproduce(reproduce, files, history)
     mutated = json.loads(json.dumps(reproduce)); mutated["parameters"]["window.months"] = 24
     recomputed_mutated = id_from_reproduce(mutated, files, history)
@@ -923,7 +949,7 @@ def run_history_cache_projection(case_dir: Path, inp: dict) -> dict:
 
     def aid_for(history_backend, env, parameters):
         return analysis_input_id({**shared, "history_backend": history_backend, "parameters": parameters},
-                                 env, files, history)[0]
+                                 env, files, history, state_id=repository_state_id(files))[0]
 
     base = variants[base_name]
     base_keys = keys_for(base["history_backend"], base["environment"], shared["parameters"])
@@ -1033,8 +1059,8 @@ def scan_with_layer1_cache(workdir: Path, cache: dict, projection: list[str],
                 break
     head_time = canonical_time(int(_git(workdir, "show", "-s", "--format=%ct", "HEAD")))
     history = {"commit_shas": [sha for sha, _ in reversed(commits)], "head_committer_time": head_time,
-               "last_commit_map": last}
-    aid, _ = analysis_input_id(shared, env, files, history)
+               "last_commit_map": last, "head": _git(workdir, "rev-parse", "HEAD")}
+    aid, _ = analysis_input_id(shared, env, files, history, state_id=repository_state_id(files))
     artifact = {
         "analysis_input_id": aid,
         "repository_state_id": repository_state_id(files),
@@ -1168,19 +1194,19 @@ def run_transition_cache(case_dir: Path, inp: dict) -> dict:
     files_plus = [(p, c) for p, c in files_plus if not p.startswith(".git")]
     findings = [{"finding_id": f["finding_id"], "commit": history["commit_shas"][f["commit_index"]]} for f in inp["findings"]]
 
-    aid0, spec0 = analysis_input_id(shared, env, files, history)
+    aid0, spec0 = analysis_input_id(shared, env, files, history, state_id=repository_state_id(files))
     keys0 = transition_keys(projection, spec0, findings)
-    aid1, spec1 = analysis_input_id(shared, env, files_plus, history_plus)
+    aid1, spec1 = analysis_input_id(shared, env, files_plus, history_plus, state_id=repository_state_id(files_plus))
     keys1 = transition_keys(projection, spec1, findings)
 
     bump = inp["variants"]["succession_bump"]
     shared_b = json.loads(json.dumps(shared)); shared_b["algorithm_versions"]["succession"] = bump
-    aid2, spec2 = analysis_input_id(shared_b, env, files, history)
+    aid2, spec2 = analysis_input_id(shared_b, env, files, history, state_id=repository_state_id(files))
     keys2 = transition_keys(projection, spec2, findings)
 
     roots = inp["variants"]["class_roots"]
     shared_c = json.loads(json.dumps(shared)); shared_c["bytecode_scope"]["class_roots"] = roots
-    aid3, spec3 = analysis_input_id(shared_c, env, files, history)
+    aid3, spec3 = analysis_input_id(shared_c, env, files, history, state_id=repository_state_id(files))
     keys3 = transition_keys(projection, spec3, findings)
 
     def diff(a, b):
@@ -1244,7 +1270,7 @@ def run_clone_depths(case_dir: Path, inp: dict) -> dict:
                 _git(Path(tmp), "clone", "-q", "--depth", str(depth), "--no-local", f"file://{full}", str(wd))
             files = [(p, c) for p, c in tree_files(wd) if not p.startswith(".git/")]
             facts = history_facts(wd, [p for p, _ in files], shared["parameters"])
-            aid, spec = analysis_input_id(shared, env, files, facts)
+            aid, spec = analysis_input_id(shared, env, files, facts, state_id=repository_state_id(files))
             runs[name] = {"depth": depth, "analysis_input_id": aid, "repository_state_id": repository_state_id(files),
                           "commits_in_window": len(facts["commit_shas"]), "history_complete": facts["history_complete"],
                           "graft_boundary_shas": [b[:9] for b in facts["graft_boundary_shas"]],
@@ -1275,20 +1301,96 @@ def run_clone_depths(case_dir: Path, inp: dict) -> dict:
 
 # ── §2.8 (i) ↔ id 스펙 — 자기 반례 ────────────────────────────────────────────────────────────────
 # 계약 목록에 있는데 계산기가 빠뜨린 입력이 두 번 났다(`percentile_method` v3.10.0, `bytecode_scope` v3.10.3) — 그리고
-# 이 판에서 셋째(`last_commit_map_sha256`). 이름을 글자로 대조해 넷째를 막는다. 표는 (i)의 이름 → 스펙 키.
+# 셋째(`last_commit_map_sha256`). 첫 판은 이름을 글자로 대조했고 **대리 이름**을 통과시켰다(U8 — `repository_state_id →
+# source_files`, `head → commit_list_sha256`: 다른 값을 담은 스펙 키에 이름만 대응시켰다). D279 뒤 표는 (i)의 이름마다
+# (§7 `reproduce`의 인쇄 자리, 스펙 자리, 관계)이고 셀프테스트가 **값으로** 확인한다. 관계는 셋뿐:
+#   `=` 같은 값 · `⊇` 인쇄가 스펙 값을 담는다([fn] 집계가 곁에 붙은 블록) · `#` 인쇄 = 스펙 값의 해시.
 I_TO_SPEC = {
-    "tool_version": "tool_version", "schema_version": "schema_version", "contract_version": "contract_version",
-    "algorithm_versions": "algorithm_versions", "environment": "environment", "history_backend": "history_backend",
-    "name": "history_backend", "git_version": "history_backend",          # history_backend의 두 필드 — 전체가 id 입력(D186)
-    "window_anchor": "window_anchor", "head": "commit_list_sha256",           # head는 창 안 목록의 끝 — 목록 해시가 봉인
-    "repository_state_id": "source_files", "classes_id": "class_files",
-    "commit_list_sha256": "commit_list_sha256", "last_commit_map_sha256": "last_commit_map_sha256",
-    "component.strategy": "component", "component.split_share_basis": "component",
-    "canonical_encoding": "canonical_encoding", "parameters": "parameters",
-    "percentile_method": "percentile_method", "bytecode_scope": "bytecode_scope", "people": "people",
-    "source_scope": "source_scope",                                       # D210 — 필드 넷은 블록 안
-    "origin": "source_scope", "main_roots": "source_scope", "test_roots": "source_scope", "generated_roots": "source_scope",
+    "tool_version": (("tool_version",), ("tool_version",), "="),
+    "schema_version": (("schema_version",), ("schema_version",), "="),
+    "contract_version": (("contract_version",), ("contract_version",), "="),
+    "algorithm_versions": (("algorithm_versions",), ("algorithm_versions",), "⊇"),   # 인쇄에 component_strategy가 곁에
+    "environment": (("environment",), ("environment",), "="),
+    "history_backend": (("history_backend",), ("history_backend",), "="),
+    "name": (("history_backend", "name"), ("history_backend", "name"), "="),          # history_backend의 두 필드(D186)
+    "git_version": (("history_backend", "git_version"), ("history_backend", "git_version"), "="),
+    "window_anchor": (("window_anchor",), ("window_anchor",), "="),
+    "head": (("head",), ("head",), "="),                                              # D279
+    "repository_state_id": (("repository_state_id",), ("repository_state_id",), "="),  # D279
+    "classes_id": (("classes_id",), ("class_files",), "#"),
+    "commit_list_sha256": (("window_applied", "commit_list_sha256"), ("commit_list_sha256",), "="),
+    "last_commit_map_sha256": (("window_applied", "last_commit_map_sha256"), ("last_commit_map_sha256",), "="),
+    "component.strategy": (("component", "strategy"), ("component", "strategy"), "="),
+    "component.split_share_basis": (("component", "split_share_basis"), ("component", "split_share_basis"), "="),
+    "canonical_encoding": (("canonical_encoding",), ("canonical_encoding",), "="),
+    "parameters": (("parameters",), ("parameters",), "="),
+    "percentile_method": (("percentile_method",), ("percentile_method",), "="),
+    "bytecode_scope": (("bytecode_scope",), ("bytecode_scope",), "⊇"),               # 인쇄에 [fn] 집계 둘이 곁에(D211)
+    "source_scope": (("source_scope",), ("source_scope",), "="),
+    "people": (("people",), ("people",), "="),
 }
+# 스펙 키 중 (i)의 이름이 아닌 것 — 인쇄되지 않고 다른 (i)에서 재생성된다(D111). 재생성도 값으로 확인한다.
+DERIVED = {"source_files": "트리(`repository_state_id`가 봉인) + `source_scope` → 적격 목록(D111·D210)"}
+# 변조 — 첫 판의 대리 대응. 값 검사가 둘 다 잡아야 한다(잡지 못하면 이 검사는 이름만 보는 것이다).
+LEGACY_PROXIES = {"repository_state_id": (("repository_state_id",), ("source_files",), "#"),
+                  "head": (("head",), ("commit_list_sha256",), "#")}
+
+
+def _at(obj, path):
+    for k in path:
+        if not isinstance(obj, dict) or k not in obj:
+            return KeyError
+        obj = obj[k]
+    return obj
+
+
+def _holds(printed, spec_value, relation: str) -> bool:
+    if printed is KeyError or spec_value is KeyError:
+        return False
+    if relation == "=":
+        return printed == spec_value
+    if relation == "⊇":
+        return isinstance(printed, dict) and isinstance(spec_value, dict) and \
+            all(k in printed and printed[k] == v for k, v in spec_value.items())
+    if relation == "#":
+        return printed == sha256(spec_value)
+    return False
+
+
+def _selftest_sample(tmp: Path) -> tuple[dict, dict, list]:
+    """대리 이름이 값에서 갈리는 표본 — 적격 소스가 아닌 추적 파일(README)이 있는 트리, 커밋 목록에 없는 머지 HEAD."""
+    for rel, text in {"README.md": "# sample\n",
+                      "src/main/java/com/example/A.java": "package com.example;\nclass A { int a; }\n"}.items():
+        (tmp / rel).parent.mkdir(parents=True, exist_ok=True)
+        (tmp / rel).write_text(text, encoding="utf-8")
+    tree = tree_files(tmp)
+    shared = {"schema_version": "x", "contract_version": "x", "tool_version": "x",
+              "history_backend": {"name": "jgit", "git_version": None},
+              "component": {"strategy": "auto", "algorithm_version": "auto-1", "split_share_basis": "class_count"},
+              "algorithm_versions": {"measures": "m-1"}, "parameters": {"window.months": 12, "window.max_commits": 2000},
+              "source_scope": DEFAULT_SOURCE_SCOPE}
+    commit = "1" * 40
+    history = {"commit_shas": [commit], "head": "2" * 40,                      # 머지 HEAD — 비머지 목록에 없다
+               "head_committer_time": canonical_time(0), "last_commit_map": {"src/main/java/com/example/A.java": commit},
+               "history_complete": True, "graft_boundary_shas": []}
+    eligible = eligible_files(tree, DEFAULT_SOURCE_SCOPE, tmp)
+    rsid = repository_state_id(tree)
+    aid, spec = analysis_input_id(shared, {"pmd": "7.16.0"}, eligible, history, state_id=rsid)
+    reproduce = reproduce_block(shared, {"pmd": "7.16.0"}, history, spec, aid, rsid, 0)
+    return spec, reproduce, tree
+
+
+def _value_checks(names: list[str], table: dict, spec: dict, reproduce: dict) -> list[tuple[str, bool]]:
+    out = []
+    for n in names:
+        entry = table.get(n)
+        if entry is None:
+            out.append((f"(i) `{n}` → 표에 없다", False))
+            continue
+        ppath, spath, rel = entry
+        ok = _holds(_at(reproduce, ppath), _at(spec, spath), rel)
+        out.append((f"(i) `{n}` — 인쇄 `{'.'.join(ppath)}` {rel} 스펙 `{'.'.join(spath)}`", ok))
+    return out
 
 
 def selftest() -> int:
@@ -1297,24 +1399,23 @@ def selftest() -> int:
     if not m:
         print("  BAD  §2.8의 (i) 목록을 찾지 못했다"); return 1
     names = re.findall(r"`([A-Za-z_.0-9]+)`", m.group(1))   # 이름에 숫자가 있다(`sha256`) — 첫 판의 정규식이 그 둘을 빠뜨렸다
-    # 스펙 키: 최소 입력으로 한 번 만든다
-    spec_keys = set(analysis_input_id(
-        {"schema_version": "x", "contract_version": "x", "tool_version": "x", "history_backend": {"name": "jgit", "git_version": None},
-         "component": {"strategy": "auto", "algorithm_version": "auto-1", "split_share_basis": "class_count"},
-         "algorithm_versions": {}, "parameters": {"window.months": 12, "window.max_commits": 2000}},
-        {}, [], {"commit_shas": [], "head_committer_time": canonical_time(0), "last_commit_map": {}})[1])
-    checks, bad = [], 0
-    for n in names:
-        key = I_TO_SPEC.get(n)
-        ok = key is not None and key in spec_keys
-        checks.append((f"(i) `{n}` → 스펙 `{key}`" if key else f"(i) `{n}` → 표에 없다", ok))
-        bad += 0 if ok else 1
-    unmapped = sorted(spec_keys - set(I_TO_SPEC.values()))
-    checks.append((f"스펙 키가 전부 (i)의 이름에 대응한다" + (f" — 대응 없음 {unmapped}" if unmapped else ""), not unmapped))
-    bad += 1 if unmapped else 0
-    for name, ok in checks:
-        print(f"  {'ok ' if ok else 'BAD'}  {name}")
-    print(f"  (i)의 이름 {len(names)} · 스펙 키 {len(spec_keys)}")
+    with tempfile.TemporaryDirectory() as tmp:
+        spec, reproduce, tree = _selftest_sample(Path(tmp))
+        regenerated = [[p, c] for p, c in eligible_files(tree, reproduce["source_scope"], Path(tmp))]
+    checks = _value_checks(names, I_TO_SPEC, spec, reproduce)
+    covered = {entry[1][0] for n, entry in I_TO_SPEC.items() if n in names}
+    unmapped = sorted(set(spec) - covered - set(DERIVED))
+    checks.append(("스펙 키가 전부 (i)의 이름이거나 재생성되는 것이다" + (f" — 대응 없음 {unmapped}" if unmapped else ""), not unmapped))
+    checks.append(("재생성 `source_files` = 인쇄된 `source_scope`로 트리에서 고른 적격 목록(README는 빠진다)",
+                   spec["source_files"] == regenerated and len(regenerated) < len(tree)))
+    legacy = _value_checks(list(LEGACY_PROXIES), LEGACY_PROXIES, spec, reproduce)
+    caught = [label for label, ok in legacy if not ok]
+    checks.append((f"변조 — 옛 대리 대응 둘을 값 검사가 잡는다({len(caught)}/{len(LEGACY_PROXIES)})",
+                   len(caught) == len(LEGACY_PROXIES)))
+    bad = sum(1 for _, ok in checks if not ok)
+    for label, ok in checks:
+        print(f"  {'ok ' if ok else 'BAD'}  {label}")
+    print(f"  (i)의 이름 {len(names)} · 스펙 키 {len(spec)} · 재생성 {len(DERIVED)}")
     return 1 if bad else 0
 
 
@@ -1369,14 +1470,14 @@ def run_source_scope_variants(case_dir: Path, inp: dict) -> dict:
     for name, scope in inp["source_scope_variants"].items():
         scope = canonical_source_scope(scope)
         elig = eligible_files(files, scope, tree)
-        aid, spec = analysis_input_id({**shared, "source_scope": scope}, env, elig, history)
+        aid, spec = analysis_input_id({**shared, "source_scope": scope}, env, elig, history, state_id=rsid)
         variants[name] = {"source_scope": scope, "eligible": [p for p, _ in elig], "eligible_count": len(elig),
                           "repository_state_id": rsid, "analysis_input_id": aid}
     a, b = list(variants)[:2]   # build · convention — 셋째(cli)는 적격 목록이 다른 변이
     # 변조: source_scope를 id에서 빼면 범위가 달라 적격 목록이 같을 때 같은 id가 난다 — D87 위반(범위가 입력인데 결과에 영향 없음).
     same_list = variants[a]["eligible"] == variants[b]["eligible"]
-    spec_a = analysis_input_id({**shared, "source_scope": variants[a]["source_scope"]}, env, eligible_files(files, variants[a]["source_scope"], tree), history)[1]
-    spec_b = analysis_input_id({**shared, "source_scope": variants[b]["source_scope"]}, env, eligible_files(files, variants[b]["source_scope"], tree), history)[1]
+    spec_a = analysis_input_id({**shared, "source_scope": variants[a]["source_scope"]}, env, eligible_files(files, variants[a]["source_scope"], tree), history, state_id=rsid)[1]
+    spec_b = analysis_input_id({**shared, "source_scope": variants[b]["source_scope"]}, env, eligible_files(files, variants[b]["source_scope"], tree), history, state_id=rsid)[1]
     without = {k: v for k, v in spec_a.items() if k != "source_scope"}, {k: v for k, v in spec_b.items() if k != "source_scope"}
     return {
         "case": inp["case"], "generated_by": GENERATED_BY, "contract_refs": inp["contract_refs"],
@@ -1392,8 +1493,8 @@ def run_source_scope_variants(case_dir: Path, inp: dict) -> dict:
             "third_source_set_is_outside_in_convention": all(
                 not p.startswith("src/integrationTest/") for p in variants[b]["eligible"]) if variants[b]["source_scope"]["origin"] == "convention" else True,
             "scope_itself_reaches_id": (
-                analysis_input_id({**shared, "source_scope": variants[a]["source_scope"]}, env, eligible_files(files, variants[a]["source_scope"], tree), history)[0]
-                != analysis_input_id({**shared, "source_scope": {**variants[a]["source_scope"], "origin": "cli"}}, env, eligible_files(files, variants[a]["source_scope"], tree), history)[0]),
+                analysis_input_id({**shared, "source_scope": variants[a]["source_scope"]}, env, eligible_files(files, variants[a]["source_scope"], tree), history, state_id=rsid)[0]
+                != analysis_input_id({**shared, "source_scope": {**variants[a]["source_scope"], "origin": "cli"}}, env, eligible_files(files, variants[a]["source_scope"], tree), history, state_id=rsid)[0]),
         },
     }
 
@@ -1406,12 +1507,14 @@ def run_roots_order(case_dir: Path, inp: dict) -> dict:
     with tempfile.TemporaryDirectory() as tmp:
         history = build_history(tree, inp["repo"], Path(tmp) / "repo")
     shared, env = inp["shared_inputs"], inp["environment"]
+    rsid = repository_state_id(files)
     out, raw = {}, {}
     for name, declared in inp["roots_order_variants"].items():
         scope = canonical_source_scope(declared)
-        aid, _ = analysis_input_id({**shared, "source_scope": scope}, env, eligible_files(files, scope, tree), history)
+        aid, _ = analysis_input_id({**shared, "source_scope": scope}, env, eligible_files(files, scope, tree), history,
+                                   state_id=rsid)
         out[name] = {"declared": declared, "source_scope": scope, "analysis_input_id": aid}
-        raw[name] = analysis_input_id({**shared, "source_scope": declared}, env, eligible_files(files, declared, tree), history)[0]
+        raw[name] = analysis_input_id({**shared, "source_scope": declared}, env, eligible_files(files, declared, tree), history, state_id=rsid)[0]
     a, b = list(out)[:2]
     return {
         "case": inp["case"], "generated_by": GENERATED_BY, "contract_refs": inp["contract_refs"],
@@ -1610,6 +1713,104 @@ def run_state_id_file_set(case_dir: Path, inp: dict) -> dict:
     }
 
 
+# ── §2.8·D279 — 트리의 정체성과 `head`는 id 입력 ─────────────────────────────────────────────────────
+# §2.8 (i)·§7은 두 필드를 [id]로 적는데 v3.10.23까지 `analysis_input_id`의 정의에는 없었다(U8). 그 사이 두 스캔이 같은 id로
+# 다른 바이트를 냈다 — 적격 소스가 아닌 추적 파일만 작업트리에서 다른 두 스캔(D223 — 내용은 작업트리 바이트)과 메시지만 다른
+# 두 머지 HEAD(머지는 W 밖이라 비머지 목록이 같다, §2.7). 변조는 옛 정의(스펙에서 두 키를 뺀 것)다 — 반례의 값을 그대로 낸다.
+TREE_IDENTITY_KEYS = ("repository_state_id", "head")
+
+
+def _fixture_git(workdir: Path, *args: str, at: int | None = None) -> str:
+    env = {**os.environ, "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null",
+           "GIT_AUTHOR_NAME": "fixture", "GIT_AUTHOR_EMAIL": "fixture@example.invalid",
+           "GIT_COMMITTER_NAME": "fixture", "GIT_COMMITTER_EMAIL": "fixture@example.invalid"}
+    if at is not None:
+        env["GIT_AUTHOR_DATE"] = env["GIT_COMMITTER_DATE"] = f"@{at} +0000"
+    return subprocess.run(["git", "-C", str(workdir), *args], env=env, check=True,
+                          capture_output=True, text=True).stdout.strip()
+
+
+def _write_files(workdir: Path, files: dict[str, str]) -> None:
+    for rel, text in files.items():
+        (workdir / rel).parent.mkdir(parents=True, exist_ok=True)
+        (workdir / rel).write_text(text, encoding="utf-8")
+
+
+def _scan_identity(workdir: Path, shared: dict, env: dict, scope: dict) -> dict:
+    """한 스캔 — 트리의 id(D223), 적격 목록, 이력, 그리고 두 정의의 id."""
+    rsid, kept = state_id_d223(workdir)
+    files = [(pp, content_id((workdir / pp).read_bytes())) for pp in kept]
+    eligible = eligible_files(files, scope, workdir)
+    hist = history_facts(workdir, [pp for pp, _ in eligible], shared["parameters"])
+    aid, spec = analysis_input_id({**shared, "source_scope": scope}, env, eligible, hist, state_id=rsid)
+    return {"head": hist["head"], "repository_state_id": rsid, "eligible": [pp for pp, _ in eligible],
+            "commit_list_sha256": spec["commit_list_sha256"], "analysis_input_id": aid,
+            "legacy_analysis_input_id": sha256({k: v for k, v in spec.items() if k not in TREE_IDENTITY_KEYS})}
+
+
+def run_tree_identity(inp: dict) -> dict:
+    t = inp["tree_identity"]
+    shared, env, scope = inp["shared_inputs"], inp["environment"], canonical_source_scope(inp["source_scope"])
+    base = int(t["base_unix"])
+
+    def seed(wd: Path) -> None:
+        _fixture_git(wd, "init", "-q", "-b", "main")
+        _write_files(wd, t["seed"])
+        _fixture_git(wd, "add", "-A")
+        _fixture_git(wd, "commit", "-q", "-m", "seed", at=base)
+
+    with tempfile.TemporaryDirectory() as tmp:
+        # (1) 같은 커밋 — 작업트리에서 적격 소스가 아닌 추적 파일만 다르다
+        wd = Path(tmp) / "worktree"
+        wd.mkdir()
+        seed(wd)
+        clean = _scan_identity(wd, shared, env, scope)
+        _write_files(wd, t["worktree_only"]["write_uncommitted"])
+        dirty = _scan_identity(wd, shared, env, scope)
+        # (2) 같은 비머지 이력 — 머지 HEAD의 메시지만 다르다(커미터 시각 같음)
+        m = t["merge_head_only"]
+        heads = []
+        for k, message in enumerate(m["merge_messages"]):
+            w = Path(tmp) / f"merge-{k}"
+            w.mkdir()
+            seed(w)
+            _fixture_git(w, "checkout", "-q", "-b", "feature")
+            _write_files(w, m["feature"]["write"])
+            _fixture_git(w, "add", "-A")
+            _fixture_git(w, "commit", "-q", "-m", m["feature"]["message"], at=base + 86400)
+            _fixture_git(w, "checkout", "-q", "main")
+            _write_files(w, m["main"]["write"])
+            _fixture_git(w, "add", "-A")
+            _fixture_git(w, "commit", "-q", "-m", m["main"]["message"], at=base + 2 * 86400)
+            _fixture_git(w, "merge", "-q", "--no-ff", "-m", message, "feature", at=base + 3 * 86400)
+            heads.append(_scan_identity(w, shared, env, scope))
+
+    def shown(s: dict) -> dict:
+        return {k: s[k] for k in ("head", "repository_state_id", "analysis_input_id", "legacy_analysis_input_id")}
+
+    a, b = heads
+    return {
+        "case": inp["case"], "generated_by": GENERATED_BY, "contract_refs": inp["contract_refs"],
+        "what_this_pins": inp["what_this_pins"], "canonical_encoding": CANONICAL_ENCODING,
+        "worktree_only": {"eligible": clean["eligible"], "clean": shown(clean), "dirty": shown(dirty)},
+        "merge_head_only": {"eligible": a["eligible"], "messages": m["merge_messages"], "a": shown(a), "b": shown(b)},
+        "assertions": {
+            # 전제 — 두 쌍은 그 필드 하나만 다르다
+            "worktree_only_same_eligible_list_and_head": clean["eligible"] == dirty["eligible"] and clean["head"] == dirty["head"],
+            "worktree_only_repository_state_id_differs": clean["repository_state_id"] != dirty["repository_state_id"],
+            "merge_head_only_same_commit_list_and_tree": (a["commit_list_sha256"] == b["commit_list_sha256"]
+                                                          and a["repository_state_id"] == b["repository_state_id"]),
+            "merge_head_only_head_differs": a["head"] != b["head"],
+            # 단언 — 그 필드가 id에 닿는다(D279)
+            "worktree_only_analysis_input_id_differs": clean["analysis_input_id"] != dirty["analysis_input_id"],
+            "merge_head_only_analysis_input_id_differs": a["analysis_input_id"] != b["analysis_input_id"],
+            # 변조 — 옛 정의는 둘 다 같은 id(반례의 값)
+            "legacy_definition_same_id_for_worktree_only": clean["legacy_analysis_input_id"] == dirty["legacy_analysis_input_id"],
+            "legacy_definition_same_id_for_merge_head_only": a["legacy_analysis_input_id"] == b["legacy_analysis_input_id"],
+        },
+    }
+
+
 def run_case(case_dir: Path) -> dict:
     inp = json.loads((case_dir / "input.json").read_text(encoding="utf-8"))
     if "canonical_vectors" in inp:
@@ -1644,6 +1845,8 @@ def run_case(case_dir: Path) -> dict:
         return run_generated_eligibility(case_dir, inp)
     if "state_id_variant" in inp:
         return run_state_id_file_set(case_dir, inp)
+    if "tree_identity" in inp:
+        return run_tree_identity(inp)
     tree = case_dir / inp["repo"]["tree"]
     files = tree_files(tree)
     rsid = repository_state_id(files)
@@ -1653,7 +1856,7 @@ def run_case(case_dir: Path) -> dict:
 
     runs = {}
     for name, run in inp["runs"].items():
-        aid, _ = analysis_input_id(inp["shared_inputs"], run["environment"], files, history)
+        aid, _ = analysis_input_id(inp["shared_inputs"], run["environment"], files, history, state_id=rsid)
         runs[name] = {"environment": run["environment"],
                       "repository_state_id": rsid,
                       "analysis_input_id": aid}
@@ -1664,7 +1867,7 @@ def run_case(case_dir: Path) -> dict:
     files_again = tree_files(tree)
     rsid_again = repository_state_id(files_again)
     aid_again, _ = analysis_input_id(
-        inp["shared_inputs"], inp["runs"]["a"]["environment"], files_again, history)
+        inp["shared_inputs"], inp["runs"]["a"]["environment"], files_again, history, state_id=rsid_again)
 
     names = list(runs)
     a, b = runs[names[0]], runs[names[1]]

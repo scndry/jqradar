@@ -1,0 +1,108 @@
+{
+  "case": "tree-identity-is-id-input",
+  "contract_refs": [
+    "§2.8",
+    "§4.5",
+    "§2.9",
+    "D279",
+    "D87",
+    "D154",
+    "D223",
+    "D158"
+  ],
+  "what_this_pins": "**트리의 정체성(`repository_state_id`)과 `head`는 `analysis_input_id`의 입력이다**(D279 — §2.8 (i)·§7이 이미 [id]로 적은 두 필드). (1) 같은 커밋에서 적격 소스가 아닌 추적 파일(`README.md`)만 작업트리에서 고친 스캔 — 적격 목록·`head`는 같고 `repository_state_id`가 달라(D223 — 내용은 작업트리 바이트) id가 다르다. (2) 같은 비머지 이력 위에 메시지만 다른 두 머지 HEAD — 창 안 비머지 목록·트리는 같고(머지는 W 밖, §2.7) `head`가 달라 id가 다르다. 조립된 리포트가 두 필드를 인쇄하므로 같은 id에서 다른 바이트가 되면 D87·D154 위반이다. 변조는 옛 정의(스펙에서 두 키를 뺀 것)이고 두 쌍 모두 같은 id를 낸다 — U8 반례의 값. 층 캐시의 키는 이 두 필드를 읽지 않는다(D159·D192 — `history-cache-key-is-a-projection`·`transition-cache-hits-across-head`).",
+  "environment": {
+    "pmd": "7.16.0",
+    "archunit": "1.5.0",
+    "jgit": "7.3.0"
+  },
+  "shared_inputs": {
+    "schema_version": "jqradar/3",
+    "contract_version": "2026-09-21",
+    "tool_version": "3.9.0",
+    "history_backend": {
+      "name": "jgit",
+      "git_version": null
+    },
+    "component": {
+      "strategy": "auto",
+      "algorithm_version": "auto-1",
+      "split_share_basis": "class_count"
+    },
+    "algorithm_versions": {
+      "measures": "1",
+      "percentile": "1",
+      "succession": "1",
+      "cpd_aggregation": "1"
+    },
+    "parameters": {
+      "window.months": 12,
+      "window.max_commits": 2000,
+      "cpd.minimum_tokens": 100,
+      "percentile.min_population": 20,
+      "frozen.min_days": 180,
+      "rename.similarity": 60,
+      "hotspot.change_unit": "chg_commits",
+      "verify.min_changed_line_coverage": "0.8",
+      "profile": "jqradar-default",
+      "weights": {
+        "H": "0.5",
+        "Dx": "0.3",
+        "F": "0.2"
+      }
+    },
+    "bytecode_scope": {
+      "class_roots": [
+        "build/classes/java/main",
+        "build/classes/kotlin/main"
+      ],
+      "test_classes_included": false,
+      "generated_excluded": true,
+      "external_included_in_metrics": false
+    }
+  },
+  "source_scope": {
+    "origin": "build",
+    "main_roots": [
+      "src/main/java",
+      "src/main/kotlin"
+    ],
+    "test_roots": [
+      "src/test/java",
+      "src/test/kotlin"
+    ],
+    "generated_roots": [
+      "build/generated/sources"
+    ]
+  },
+  "tree_identity": {
+    "base_unix": 1767225600,
+    "seed": {
+      "src/main/java/com/example/A.java": "package com.example;\nclass A { int a; }\n",
+      "README.md": "# sample\n"
+    },
+    "worktree_only": {
+      "write_uncommitted": {
+        "README.md": "# sample — edited, not committed\n"
+      }
+    },
+    "merge_head_only": {
+      "feature": {
+        "message": "feature B",
+        "write": {
+          "src/main/java/com/example/B.java": "package com.example;\nclass B { int b; }\n"
+        }
+      },
+      "main": {
+        "message": "main A",
+        "write": {
+          "src/main/java/com/example/A.java": "package com.example;\nclass A { int a; int a2; }\n"
+        }
+      },
+      "merge_messages": [
+        "merge feature (m1)",
+        "merge feature (m2)"
+      ]
+    }
+  }
+}

@@ -41,6 +41,7 @@
 | [`identity-absent-when-attribution-off/`](identity-absent-when-attribution-off/) | **D48·D135** — 정체가 산출물에 없다. 모양이 아니라 **출처**로 가른다 |
 | [`authors-window-truncated-by-count/`](authors-window-truncated-by-count/) | **D137** — 90일 지표를 창 안으로 자른다. 같은 이력을 두 창으로 봐 `distinct_authors_90d`가 1과 2로 갈린다 |
 | [`team-folding-k-threshold/`](team-folding-k-threshold/) | **D161** — k 하한(≥3인)은 팀 집계의 조건. 3인 미만 팀은 `other`로 접혀 2인 팀 하나만 만진 파일은 `team_count: 1, teams_folded: 1` — 값은 있고 라벨은 없다. 정확히 3인 팀은 접히지 않는다 |
+| [`team-unmapped-author/`](team-unmapped-author/) | **D282** — 매핑 밖 저자는 team 모드에서도 `unmapped` 한 칸(팀이 아니라 표지 — k 하한 없음). 매핑 밖 저자만 만진 파일 → `team_count: 1`·`authors_unmapped: 1`, 매핑 팀과 함께 → `2`·`1`. 변조(매핑 팀만 센다)는 `0`·`1` — 0이 '만진 팀 없음'과 같은 바이트다 |
 | [`off-closed-list-absence/`](off-closed-list-absence/) | **D162·D126** — off가 내는 저자 유래 필드는 셋으로 닫힌다(`team_count`는 필드 부재, 저자 사실은 어느 모드에도 없다). 부재 검사라 `must_be_caught` 5 + `must_not_be_caught` 4 — `distinct_authors_90d = 1`은 잡히면 안 된다 |
 | [`shared-window-limited/`](shared-window-limited/) | **D164** — `shared`는 W 안. 같은 이력을 12개월·240개월 창으로 봐 `shared` 6 → 9, 두 창 모두 `tc ≤ 1`(불변식 인쇄). 근거는 일관성, 재현성이 아니다(D150) |
 | [`hidden-coupling-sort-order/`](hidden-coupling-sort-order/) | **D167·D176** — 정렬 키를 하나씩 밟는 쌍 다섯: (G,H) · (A,B) · (E,F) · (C,D) · (A,ATest). 정적 의존 있는 쌍은 `tc = 1`이어도 뒤, 동점은 `shared` 다음 `a`, 테스트-대상 쌍은 판정 없음(`null` + `reason`)이라 **맨 뒤** |
@@ -72,6 +73,14 @@
 금지 문자열 자체는 `expected.json`에 적지 않는다 — 적으면 그것이 정체의 사본이다. 개수와 판정만 기록한다.
 
 부재 검사이므로 `must_be_caught`(2) + `must_not_be_caught`(3)를 함께 둔다(D131). 후자가 특히 중요하다: 모양으로 가르려 하면 정상 산출물의 `repository_state_id`가 오탐으로 걸린다.
+
+## 매핑 밖 저자는 표지 한 칸이다 (D282)
+
+team 모드의 `team_count`는 "이 파일을 만진 팀 수"다(§2.1). 매핑에 없는 저자를 글자 그대로 어느 팀도 아니라고 읽으면, 매핑 밖 저자만 만진 파일의 `team_count`는 **0**이고 그것은 '아무 팀도 만지지 않았다'와 **같은 바이트**다 — 매핑이 저자를 다 덮지 않는 리포에서 `report.json`만 보는 소비자는 둘을 가르지 못한다(D208의 모양). 그래서 매핑 밖 저자는 두 모드 다 **`unmapped` 한 칸**으로 접혀 `teams`에 원소 하나·`team_count`에 하나로 든다. `team_count = len(teams)`는 그대로다.
+
+`unmapped`에 k 하한을 걸지 않는 이유는 `other`와 같다(D161) — 라벨이 아니라 **표지**라서, 1은 '매핑 밖 누군가가 만졌다'이지 누구인지가 아니다. 몇 명이 접혔는지는 `authors_unmapped`가 든다(`people.json`, D163). 이 계약의 파일 항목에 함께 인쇄하는 것은 `teams`와 같은 자리이기 때문이다.
+
+[`team-unmapped-author/`](team-unmapped-author/)의 변조 `mutation_mapped_teams_only`가 글자 그대로의 읽기를 같은 입력에 돌려 `0`·`1`을 인쇄한다. 매핑의 팀 이름이 표지(`other`·`unmapped`)와 같을 때는 기존 공백이다(`other`부터 있었다 — 5차 입력).
 
 ## 90일 지표는 창 안으로 자른다 (D137)
 

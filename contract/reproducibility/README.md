@@ -43,6 +43,7 @@
 | 정규 인코딩 = RFC 8785 JCS | RFC 벡터를 **같은 바이트로** 내는가. 순진한 sorted-key JSON이 그 벡터에서 **갈리는가**(검사가 무는가). id 입력 영역에서는 둘이 바이트 동일한가. float를 **거부**하는가 | [`jcs-canonical-encoding/`](jcs-canonical-encoding/) ✅ |
 | `build`의 세트 분류 | 빌드 모델의 사실(소스 세트의 출력 디렉터리, `Test` 태스크의 테스트 클래스 디렉터리) → `source_scope`(D257). 테스트 세트 = 어떤 `Test` 태스크가 실행하는 세트 — 이름에 test가 없는 `functional`도 `functionalTest`가 실행하면 테스트, 실행되지 않는 `jmh`·`testFixtures`는 어느 루트에도 없다. 변조 둘(이름 규칙·"main 아닌 전부")이 문다 | [`build-scope-from-test-tasks/`](build-scope-from-test-tasks/) ✅ |
 | 섞인 파일 | 최상위 선언 중 하나라도 `@Generated`인 파일은 적격 목록에 없다(D258) — 최상위 타입 셋 중 하나만 생성인 `.java`, `@Generated` 최상위 함수가 있는 `.kt`; 메서드에만 붙은 파일과 주석·문자열에만 나오는 파일은 적격. 계산기가 처음으로 소스에서 `@Generated`를 읽는다(`contract/tools/javasource.py` — `split_java`는 `history/`와 공용). 변조 "전부" 규칙이면 섞인 파일 둘이 목록에 든다 | [`mixed-generated-file-not-eligible/`](mixed-generated-file-not-eligible/) ✅ |
+| 트리의 정체성과 `head` | 같은 커밋에서 적격 소스가 아닌 추적 파일(`README.md`)만 작업트리에서 고친 두 스캔 → 적격 목록·`head` 같고 `repository_state_id`가 달라 `analysis_input_id` **다름**; 같은 비머지 이력 위에 메시지만 다른 두 머지 HEAD → 목록·트리 같고 `head`가 달라 id **다름**(D279). 변조(옛 정의 — 스펙에서 두 키를 뺀 것)는 두 쌍 모두 같은 id를 낸다 — U8 반례가 낸 id 넷과 바이트까지 같다 | [`tree-identity-is-id-input/`](tree-identity-is-id-input/) ✅ |
 
 창 밖 커밋과 id의 관계는 **두 계약이 절반씩** 진다. 여기(`unreachable-commits-do-not-leak`)는 **id가 같아야 하는 쪽** — 도달 불가 커밋은 창의 입력이 아니므로 세 id가 전부 불변이다. `history/authors-window-truncated-by-count`는 **값이 달라지는 쪽** — 창 상한이 90일 구간을 자르면 `distinct_authors_90d`가 달라진다. 창 밖만 다른 두 리포로는 전자를 만들 수 없다: 커밋 SHA가 조상을 물고 가서 `commit_list_sha256`이 갈리고 `analysis_input_id`가 구조적으로 달라진다(실험으로 확인). 버려진 브랜치는 HEAD의 조상이 아니라서 그 자리가 성립한다.
 
@@ -69,6 +70,14 @@ D128에 따라 **해시 형식(`pattern`)의 강제도 이 디렉터리가 진�
 ## 결정 — 저작 정책은 id 입력이다 (D160)
 
 "정책이지 파라미터가 아니다"(§4.3, B.6)는 조직이 **어디에** 적는가의 분류이지 **무엇이 결과를 바꾸는가**의 분류가 아니다 — 교차 검토 S2가 리뷰어 다섯 전원 모순으로 지목했다. v3.9.1이 `people.attribution`과 팀 매핑 파일의 해시를 §2.8 입력에 넣고 `reproduce.people`로 인쇄하게 했다(off에서도 `{off, null}`). 계산기의 id 스펙에 `people`이 들어가 기존 다섯 케이스의 id가 움직였다 — `fixture-changes/2026-09-22-people-in-analysis-input-id.json`. 매핑 파일의 해시는 정체가 아니다(파일 하나의 해시, `policy_hash`와 같은 부류) — 픽스처의 매핑 내용은 가짜 이름이고 `expected.json`에는 해시와 줄 수만 남는다. `team_count`의 키(§4.5 셋째 예)는 저자 집합·attribution·매핑 해시·k인데, 저자 집합은 창 안 커밋 목록의 함수라 이 픽스처는 `commit_list_sha256`을 그 자리에 둔다.
+
+## 결정 — 트리의 정체성과 `head`는 id 입력 (D279)
+
+§2.8 (i)·§7은 `repository_state_id`와 `head`를 [id]로 적었는데 같은 절의 `analysis_input_id` 정의에는 둘 다 없었고, 이 계산기는 정의를 따랐다(4차 U8). 그 사이 README만 다른 작업트리와 메시지만 다른 머지 HEAD가 **같은 id로 다른 바이트**를 냈다 — 조립된 리포트가 두 필드를 인쇄하기 때문이다(D87·D154). v3.10.24가 두 필드를 정의에 넣었다. 그래서 id를 인쇄하는 케이스 열셋의 id가 움직였고 참·거짓 단언은 하나도 바뀌지 않았다(`fixture_change` 2026-10-19). 층 캐시는 사영이라(D159·D192) 사영 케이스 넷의 캐시 키·미스 목록은 그대로다 — 움직인 것은 그 케이스들의 `analysis_input_id` 줄뿐이다.
+
+`analysis_input_id(…, state_id=…)`는 트리의 id를 **따로** 받고 기본값이 없다. 적격 목록에서 트리의 id를 만들어 넣는 것이 U8의 대리 이름이었다 — 적격 목록과 트리는 README 하나로 갈린다.
+
+**자기 반례(`--selftest`)는 값으로 대조한다.** 첫 판은 (i)의 이름을 스펙 키에 글자로 대응시켰고(`I_TO_SPEC`), `repository_state_id → source_files`·`head → commit_list_sha256`처럼 **다른 값을 담은 키**에 이름만 맞춘 대리 대응을 통과시켰다. 이제 표는 이름마다 (§7 `reproduce`의 인쇄 자리, 스펙 자리, 관계)이고 관계는 셋뿐이다 — `=`(같은 값) · `⊇`(인쇄가 스펙 값을 담는다 — `algorithm_versions`·`bytecode_scope`처럼 곁에 다른 필드가 붙은 블록) · `#`(인쇄 = 스펙 값의 해시 — `classes_id`). 표본은 대리 이름이 값에서 갈리도록 만든다(README가 있는 트리, 커밋 목록에 없는 머지 HEAD). 스펙 키 중 (i)의 이름이 아닌 것은 재생성되는 것뿐이고(`source_files` — 인쇄된 `source_scope`로 트리에서 고른 적격 목록, D111) 그것도 값으로 확인한다. 그리고 옛 대리 대응 둘을 같은 값 검사에 넣어 **둘 다 잡히는 것**을 단언한다 — 잡지 못하면 이 검사는 다시 이름만 보는 것이다(D131).
 
 ## 결정 — 비교 대상과 캐시 키의 경계 (D154·D158·D159)
 

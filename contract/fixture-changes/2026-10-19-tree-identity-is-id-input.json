@@ -1,0 +1,24 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "reproducibility.analysis_input_id와 그것을 담은 해시(output_sha256·comparison_target_sha256·재계산 id) — id의 입력에 repository_state_id·head(v3.10.24 D279)",
+    "old": "id 스펙에 두 필드가 없었다 — §2.8 (i)·§7은 [id]로 적었으나 정의에 없어, 적격 소스가 아닌 추적 파일만 다른 작업트리·메시지만 다른 머지 HEAD가 같은 id를 냈다(U8 반례)",
+    "new": "id 스펙에 `repository_state_id`(D223의 값 — 계산기에서는 케이스 트리의 `(path, content_id)`)와 `head` — 모든 케이스의 id가 움직인다",
+    "note": "움직인 줄은 전부 id에서 나온 해시이고 참·거짓 단언은 하나도 바뀌지 않았다. 층 캐시는 사영이라(D159·D192) `history-cache-key-is-a-projection`·`transition-cache-hits-across-head`·`parameter-change-cache-projection`·`team-mapping-edit-cache-projection`의 캐시 키(층 1 키·전이 키·측정 키)와 미스 목록은 그대로다 — 그 케이스에서 움직인 것은 `analysis_input_id`(조립된 리포트의 키) 줄뿐이다. 움직이지 않은 케이스는 id 스펙을 쓰지 않는다 — state-id 셋·jcs·build-scope·mixed-generated는 id를 인쇄하지 않고, time-notation은 입력의 골격을 해시한다.",
+    "fixtures": [
+      "reproducibility/attribution-toggle-changes-id",
+      "reproducibility/byte-identity-comparison-target",
+      "reproducibility/deep-shallow-same-id",
+      "reproducibility/history-cache-key-is-a-projection",
+      "reproducibility/parameter-change-cache-projection",
+      "reproducibility/recompute-id-from-reproduce",
+      "reproducibility/same-tree-different-origin",
+      "reproducibility/same-tree-different-pmd",
+      "reproducibility/shallow-then-unshallow-no-false-hit",
+      "reproducibility/source-scope-roots-order-canonical",
+      "reproducibility/team-mapping-edit-cache-projection",
+      "reproducibility/transition-cache-hits-across-head",
+      "reproducibility/unreachable-commits-do-not-leak"
+    ]
+  }
+}
