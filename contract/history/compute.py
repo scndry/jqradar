@@ -623,20 +623,30 @@ def build_expected(inp: dict, workdir: Path) -> dict:
     # 매핑은 명세의 저자 id → 팀. 3인 미만 팀은 `other`로 접고, 접힌 팀의 수를
     # `teams_folded`(파일 단위)와 `folded_from`(`other` 항목)에 남긴다 — 값은 있고
     # 라벨은 없다. 팀 라벨은 합성 리포의 가짜 값이라 expected에 남아도 정체가 아니다.
+    # D282 — 매핑에 없는 저자는 team·individual 둘 다 `unmapped` 한 칸으로 접힌다. `unmapped`는 팀이 아니라
+    # 표지라(`other`와 같다) k 하한을 걸지 않고 `teams`에 원소 하나·`team_count`에 하나로 든다 — 0이 '만진 팀
+    # 없음'과 '매핑 밖 저자만 만졌다'를 같은 바이트로 내지 않는다. 접힌 저자 수는 `authors_unmapped`(D163).
     people = inp.get("people")
+    mapped_teams_only = None
     if people and people.get("attribution") in ("team", "individual"):
         mapping = people["team_mapping"]
         key_of = {hashlib.sha256(spec["authors"][a]["email"].encode()).hexdigest(): team
                   for team, members in mapping.items() for a in members}
         small = {team for team, members in mapping.items() if len(members) < K_THRESHOLD}
+        if inp.get("mutation_mapped_teams_only"):
+            mapped_teams_only = {}
         for path, entry in files.items():
             touching = [c for c in selected
                         if any(canonical(p) == path for p in c["paths"])]
             per_team: dict[str, int] = {}
             folded: set[str] = set()
+            unmapped: set[str] = set()
             for c in touching:
-                team = key_of[c["_author_key"]]  # 매핑 밖 저자는 이 픽스처가 만들지 않는다
-                if team in small:
+                team = key_of.get(c["_author_key"])
+                if team is None:
+                    unmapped.add(c["_author_key"])
+                    team = "unmapped"
+                elif team in small:
                     folded.add(team)
                     team = "other"
                 per_team[team] = per_team.get(team, 0) + 1
@@ -647,6 +657,12 @@ def build_expected(inp: dict, workdir: Path) -> dict:
             entry["teams"] = teams
             entry["team_count"] = len(per_team)
             entry["teams_folded"] = len(folded)
+            entry["authors_unmapped"] = len(unmapped)
+            if mapped_teams_only is not None:
+                # 변조(S4-16) — §2.1의 "이 파일을 만진 팀 수"를 글자 그대로: 매핑의 팀만 센다. 매핑 밖 저자만 만진
+                # 파일이 0 — '만진 팀 없음'과 같은 바이트다.
+                n = len([t for t in per_team if t != "unmapped"])
+                mapped_teams_only[path] = {"team_count": n, "differs_from_contract": n != entry["team_count"]}
 
     # 변조(O3-4) — "창의 가장 오래된 커밋에서 뒤로"를 글자 그대로: 시작점 **하나**의 조상만 걷는다. 머지로 들어온
     # 브랜치 접촉을 못 보고 더 오래된 커밋을 마지막으로 잡는다 — 그럴듯한 틀린 수(D148의 종류).
@@ -714,6 +730,7 @@ def build_expected(inp: dict, workdir: Path) -> dict:
         "pairs": pairs,
         # 쌍이 있는 케이스만 인쇄한다 — 빈 배열을 열넷에 더하는 것은 계약이 아니라 잡음이다.
         **({"mutation_single_start_walk": single_start} if single_start is not None else {}),
+        **({"mutation_mapped_teams_only": mapped_teams_only} if mapped_teams_only is not None else {}),
         **({"shallow_invariants": shallow_invariants} if shallow_invariants is not None else {}),
         **({"hidden_couplings": hidden_couplings} if pairs else {}),
         **({"pair_population": {"excluded_from_pairs": sorted(excluded_from_pairs), "members": measured,

@@ -1,0 +1,528 @@
+{
+  "case": "team-unmapped-author",
+  "contract_refs": [
+    "§2.1",
+    "§2.7",
+    "D161",
+    "D163",
+    "D282"
+  ],
+  "what_this_pins": "**매핑 밖 저자는 team 모드에서도 `unmapped` 한 칸이다**(D282): 입력은 [`team-folding-k-threshold`](../team-folding-k-threshold/)(매핑 `payments` 4인·`platform` 3인·`billing` 1인)에 **매핑에 없는 저자 z**를 더한 것이다(S4-16의 반례 입력). `OnlyUnmapped.java`는 z만 만졌다 → **`team_count: 1`·`authors_unmapped: 1`** — `teams`에 `{\"team\": \"unmapped\"}` 한 칸, `unmapped`는 팀이 아니라 **표지**라 k 하한을 걸지 않는다(`other`와 같은 이유 — 1은 '매핑 밖 누군가가 만졌다'이지 누구인지가 아니다, D161). `PaymentsAndUnmapped.java`는 a(payments)와 z → **`2`·`1`**. 앞의 네 파일은 `team-folding-k-threshold`와 같은 값이고 `authors_unmapped: 0`이다. **변조**(`mutation_mapped_teams_only`): §2.1의 \"이 파일을 만진 팀 수\"를 글자 그대로 매핑의 팀만 세면 `OnlyUnmapped` **0**·`PaymentsAndUnmapped` **1** — 0이 '만진 팀 없음'과 '매핑 밖 저자만 만졌다'를 같은 바이트로 낸다(D208의 모양). `authors_unmapped`는 `people.json`의 필드다(D163) — 이 계약의 파일 항목에 함께 인쇄하는 것은 `teams`와 같은 자리이기 때문이다.",
+  "shallow_depth": null,
+  "window_anchor": {
+    "type": "head_committer_time",
+    "timestamp": "2026-05-10T11:46:40Z"
+  },
+  "head": "a1bd1a2ea",
+  "window_applied": {
+    "months": 12,
+    "max_commits": 2000,
+    "bound_hit": "none",
+    "commits_in_window": 22,
+    "merge_commits_excluded": 0,
+    "authors_window_truncated": false,
+    "authors_window_days": 9.49,
+    "commits_excluded_within_90d": 0
+  },
+  "commits": [
+    {
+      "sha": "a1bd1a2ea",
+      "at": "2026-05-10T11:46:40Z",
+      "subject": "z -> src/PaymentsAndUnmapped.java",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndUnmapped.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "93fb952bd",
+      "at": "2026-05-09T09:00:00Z",
+      "subject": "a -> src/PaymentsAndUnmapped.java #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndUnmapped.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "4c23440fd",
+      "at": "2026-05-09T08:00:00Z",
+      "subject": "a -> src/PaymentsAndUnmapped.java #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndUnmapped.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "ee060917f",
+      "at": "2026-05-08T05:13:20Z",
+      "subject": "z -> src/OnlyUnmapped.java #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyUnmapped.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "4d2ef2326",
+      "at": "2026-05-08T04:13:20Z",
+      "subject": "z -> src/OnlyUnmapped.java #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyUnmapped.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "c5cc6e0cc",
+      "at": "2026-05-07T00:26:40Z",
+      "subject": "g -> src/PlatformBoundary.java",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PlatformBoundary.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "f6816c88c",
+      "at": "2026-05-06T21:40:00Z",
+      "subject": "f -> src/PlatformBoundary.java",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PlatformBoundary.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "b7995d79e",
+      "at": "2026-05-06T18:53:20Z",
+      "subject": "e -> src/PlatformBoundary.java",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PlatformBoundary.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "37aff106e",
+      "at": "2026-05-05T17:06:40Z",
+      "subject": "b -> src/OnlyPayments.java #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyPayments.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "daee35c81",
+      "at": "2026-05-05T16:06:40Z",
+      "subject": "b -> src/OnlyPayments.java #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyPayments.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "7d414a727",
+      "at": "2026-05-05T15:06:40Z",
+      "subject": "b -> src/OnlyPayments.java #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyPayments.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "7e24469cb",
+      "at": "2026-05-04T12:20:00Z",
+      "subject": "a -> src/OnlyPayments.java #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyPayments.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "dcd0ea52a",
+      "at": "2026-05-04T11:20:00Z",
+      "subject": "a -> src/OnlyPayments.java #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyPayments.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "81b4b990e",
+      "at": "2026-05-03T08:33:20Z",
+      "subject": "h -> src/PaymentsAndBilling.java #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "dff2164b8",
+      "at": "2026-05-03T07:33:20Z",
+      "subject": "h -> src/PaymentsAndBilling.java #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "01cbd13fe",
+      "at": "2026-05-02T06:46:40Z",
+      "subject": "a -> src/PaymentsAndBilling.java #4",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "65d20747b",
+      "at": "2026-05-02T05:46:40Z",
+      "subject": "a -> src/PaymentsAndBilling.java #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "dcc5a3ac0",
+      "at": "2026-05-02T04:46:40Z",
+      "subject": "a -> src/PaymentsAndBilling.java #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "fbcdfe0f1",
+      "at": "2026-05-02T03:46:40Z",
+      "subject": "a -> src/PaymentsAndBilling.java #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/PaymentsAndBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "b7a36e866",
+      "at": "2026-05-01T02:00:00Z",
+      "subject": "h -> src/OnlyBilling.java #3",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "cb3cad46f",
+      "at": "2026-05-01T01:00:00Z",
+      "subject": "h -> src/OnlyBilling.java #2",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyBilling.java"
+      ],
+      "in_window": true
+    },
+    {
+      "sha": "9aebc5813",
+      "at": "2026-05-01T00:00:00Z",
+      "subject": "h -> src/OnlyBilling.java #1",
+      "is_merge": false,
+      "shallow_boundary": false,
+      "paths": [
+        "src/OnlyBilling.java"
+      ],
+      "in_window": true
+    }
+  ],
+  "median_files_per_commit": 1.00,
+  "commit_granularity": "fine",
+  "renames": [],
+  "last_commit_map": {
+    "src/OnlyBilling.java": "b7a36e866",
+    "src/OnlyPayments.java": "37aff106e",
+    "src/OnlyUnmapped.java": "ee060917f",
+    "src/PaymentsAndBilling.java": "81b4b990e",
+    "src/PaymentsAndUnmapped.java": "a1bd1a2ea",
+    "src/PlatformBoundary.java": "c5cc6e0cc"
+  },
+  "history_complete": true,
+  "graft_boundary_shas": [],
+  "walk": {
+    "frontier": [],
+    "files": {}
+  },
+  "files": {
+    "src/OnlyBilling.java": {
+      "chg_commits": 3,
+      "chg_days": 1,
+      "churn": 5,
+      "touched_by": [
+        "b7a36e866",
+        "cb3cad46f",
+        "9aebc5813"
+      ],
+      "age_basis": "in_window",
+      "last_commit": "b7a36e866",
+      "age_last_days": 9.41,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
+      "contribution_shares_sorted": [
+        1
+      ],
+      "teams": [
+        {
+          "team": "other",
+          "commits": 3,
+          "folded_from": 1
+        }
+      ],
+      "team_count": 1,
+      "teams_folded": 1,
+      "authors_unmapped": 0
+    },
+    "src/PaymentsAndBilling.java": {
+      "chg_commits": 6,
+      "chg_days": 2,
+      "churn": 11,
+      "touched_by": [
+        "81b4b990e",
+        "dff2164b8",
+        "01cbd13fe",
+        "65d20747b",
+        "dcc5a3ac0",
+        "fbcdfe0f1"
+      ],
+      "age_basis": "in_window",
+      "last_commit": "81b4b990e",
+      "age_last_days": 7.13,
+      "distinct_authors_90d": 2,
+      "contributor_count": 2,
+      "ownership_max_share": 0.6667,
+      "minor_contributor_share": 0.0000,
+      "contribution_shares_sorted": [
+        0.666666666667,
+        0.333333333333
+      ],
+      "teams": [
+        {
+          "team": "other",
+          "commits": 2,
+          "folded_from": 1
+        },
+        {
+          "team": "payments",
+          "commits": 4
+        }
+      ],
+      "team_count": 2,
+      "teams_folded": 1,
+      "authors_unmapped": 0
+    },
+    "src/OnlyPayments.java": {
+      "chg_commits": 5,
+      "chg_days": 2,
+      "churn": 9,
+      "touched_by": [
+        "37aff106e",
+        "daee35c81",
+        "7d414a727",
+        "7e24469cb",
+        "dcd0ea52a"
+      ],
+      "age_basis": "in_window",
+      "last_commit": "37aff106e",
+      "age_last_days": 4.78,
+      "distinct_authors_90d": 2,
+      "contributor_count": 2,
+      "ownership_max_share": 0.6000,
+      "minor_contributor_share": 0.0000,
+      "contribution_shares_sorted": [
+        0.6,
+        0.4
+      ],
+      "teams": [
+        {
+          "team": "payments",
+          "commits": 5
+        }
+      ],
+      "team_count": 1,
+      "teams_folded": 0,
+      "authors_unmapped": 0
+    },
+    "src/PlatformBoundary.java": {
+      "chg_commits": 3,
+      "chg_days": 2,
+      "churn": 5,
+      "touched_by": [
+        "c5cc6e0cc",
+        "f6816c88c",
+        "b7995d79e"
+      ],
+      "age_basis": "in_window",
+      "last_commit": "c5cc6e0cc",
+      "age_last_days": 3.47,
+      "distinct_authors_90d": 3,
+      "contributor_count": 3,
+      "ownership_max_share": 0.3333,
+      "minor_contributor_share": 0.0000,
+      "contribution_shares_sorted": [
+        0.333333333333,
+        0.333333333333,
+        0.333333333333
+      ],
+      "teams": [
+        {
+          "team": "platform",
+          "commits": 3
+        }
+      ],
+      "team_count": 1,
+      "teams_folded": 0,
+      "authors_unmapped": 0
+    },
+    "src/OnlyUnmapped.java": {
+      "chg_commits": 2,
+      "chg_days": 1,
+      "churn": 3,
+      "touched_by": [
+        "ee060917f",
+        "4d2ef2326"
+      ],
+      "age_basis": "in_window",
+      "last_commit": "ee060917f",
+      "age_last_days": 2.27,
+      "distinct_authors_90d": 1,
+      "contributor_count": 1,
+      "ownership_max_share": 1.0000,
+      "minor_contributor_share": 0.0000,
+      "contribution_shares_sorted": [
+        1
+      ],
+      "teams": [
+        {
+          "team": "unmapped",
+          "commits": 2
+        }
+      ],
+      "team_count": 1,
+      "teams_folded": 0,
+      "authors_unmapped": 1
+    },
+    "src/PaymentsAndUnmapped.java": {
+      "chg_commits": 3,
+      "chg_days": 2,
+      "churn": 5,
+      "touched_by": [
+        "a1bd1a2ea",
+        "93fb952bd",
+        "4c23440fd"
+      ],
+      "age_basis": "in_window",
+      "last_commit": "a1bd1a2ea",
+      "age_last_days": 0.00,
+      "distinct_authors_90d": 2,
+      "contributor_count": 2,
+      "ownership_max_share": 0.6667,
+      "minor_contributor_share": 0.0000,
+      "contribution_shares_sorted": [
+        0.666666666667,
+        0.333333333333
+      ],
+      "teams": [
+        {
+          "team": "payments",
+          "commits": 2
+        },
+        {
+          "team": "unmapped",
+          "commits": 1
+        }
+      ],
+      "team_count": 2,
+      "teams_folded": 0,
+      "authors_unmapped": 1
+    }
+  },
+  "pairs": [],
+  "mutation_mapped_teams_only": {
+    "src/OnlyBilling.java": {
+      "team_count": 1,
+      "differs_from_contract": false
+    },
+    "src/PaymentsAndBilling.java": {
+      "team_count": 2,
+      "differs_from_contract": false
+    },
+    "src/OnlyPayments.java": {
+      "team_count": 1,
+      "differs_from_contract": false
+    },
+    "src/PlatformBoundary.java": {
+      "team_count": 1,
+      "differs_from_contract": false
+    },
+    "src/OnlyUnmapped.java": {
+      "team_count": 0,
+      "differs_from_contract": true
+    },
+    "src/PaymentsAndUnmapped.java": {
+      "team_count": 1,
+      "differs_from_contract": true
+    }
+  },
+  "authorship_note": "저자 정체는 이 파일에 없다 — 익명 집계만 기록한다(§2.7·D48·D135). 합성 리포의 저자는 고정 가짜 값이고 계산기는 그것을 메모리에서만 쓴다.",
+  "exact": {
+    "/files/src/PaymentsAndBilling.java/ownership_max_share": "2/3",
+    "/files/src/PaymentsAndBilling.java/contribution_shares_sorted/0": "2/3",
+    "/files/src/PaymentsAndBilling.java/contribution_shares_sorted/1": "1/3",
+    "/files/src/PlatformBoundary.java/ownership_max_share": "1/3",
+    "/files/src/PlatformBoundary.java/contribution_shares_sorted/0": "1/3",
+    "/files/src/PlatformBoundary.java/contribution_shares_sorted/1": "1/3",
+    "/files/src/PlatformBoundary.java/contribution_shares_sorted/2": "1/3",
+    "/files/src/PaymentsAndUnmapped.java/ownership_max_share": "2/3",
+    "/files/src/PaymentsAndUnmapped.java/contribution_shares_sorted/0": "2/3",
+    "/files/src/PaymentsAndUnmapped.java/contribution_shares_sorted/1": "1/3"
+  },
+  "_fixture": {
+    "generated_by": "contract/history/compute.py",
+    "arithmetic": "exact rational (fractions.Fraction); irrational magnitudes at 34 digits HALF_EVEN",
+    "serialization": "표 D155-1의 이름인 필드는 표의 스케일로 고정 인쇄한다(HALF_EVEN, 후행 0 유지 — D275). 표에 없는 이름은 끝나는 십진수면 정확값 그대로, 아니면 소수점 12자리 ROUND_HALF_EVEN. 인쇄가 정확값이 아닌 모든 값의 정확 유리수를 exact에 함께 적는다. exact가 비어 있으면 이 파일 전체가 정확값이다."
+  }
+}

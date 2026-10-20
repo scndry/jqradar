@@ -1,0 +1,12 @@
+{
+  "fixture_change": {
+    "reason": "contract_change",
+    "measure": "history.files[].authors_unmapped — team 모드에서도 매핑 밖 저자의 수(v3.10.25 D282)",
+    "old": "팀 집계가 매핑 밖 저자를 정의하지 않았다 — 계산기는 `key_of[...]`에서 `KeyError`로 멈췄고(\"매핑 밖 저자는 이 픽스처가 만들지 않는다\"), `authors_unmapped`는 individual 전용이라 team 모드의 파일 항목에 없었다(S4-16 반례)",
+    "new": "매핑 밖 저자는 team·individual 둘 다 `unmapped` 한 칸으로 접혀 `teams`에 원소 하나·`team_count`에 하나로 들고(팀이 아니라 표지 — k 하한 없음), 파일마다 `authors_unmapped`(접힌 저자 수)를 낸다 — 이 케이스는 매핑 밖 저자가 없어 네 파일 모두 `authors_unmapped: 0`",
+    "note": "멈춤 조건(D282의 따라갈 자리) — `team_count`·`teams_folded`·`teams`는 네 파일 모두 그대로다: diff는 `authors_unmapped: 0` 넷과 그 앞 줄의 쉼표뿐이다. 매핑 밖 저자가 있는 값은 새 케이스 `history/team-unmapped-author`가 진다. 다른 history·reproducibility 케이스는 움직이지 않았다 — 팀 집계를 계산하는 history 케이스는 이것 하나다(`identity-absent-when-attribution-off`·`off-closed-list-absence`의 team은 손으로 준 문서 표본이라 계산기의 팀 집계를 지나지 않는다).",
+    "fixtures": [
+      "history/team-folding-k-threshold"
+    ]
+  }
+}

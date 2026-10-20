@@ -256,7 +256,8 @@
         }
       ],
       "team_count": 1,
-      "teams_folded": 1
+      "teams_folded": 1,
+      "authors_unmapped": 0
     },
     "src/PaymentsAndBilling.java": {
       "chg_commits": 6,
@@ -293,7 +294,8 @@
         }
       ],
       "team_count": 2,
-      "teams_folded": 1
+      "teams_folded": 1,
+      "authors_unmapped": 0
     },
     "src/OnlyPayments.java": {
       "chg_commits": 5,
@@ -324,7 +326,8 @@
         }
       ],
       "team_count": 1,
-      "teams_folded": 0
+      "teams_folded": 0,
+      "authors_unmapped": 0
     },
     "src/PlatformBoundary.java": {
       "chg_commits": 3,
@@ -354,7 +357,8 @@
         }
       ],
       "team_count": 1,
-      "teams_folded": 0
+      "teams_folded": 0,
+      "authors_unmapped": 0
     }
   },
   "pairs": [],
