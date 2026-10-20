@@ -70,7 +70,7 @@
       "properties": {
         "team": {
           "type": "string",
-          "description": "팀 라벨. `other`는 3인 미만 팀을 접은 자리(D161)."
+          "description": "팀 라벨. `other`는 3인 미만 팀을 접은 자리(D161), `unmapped`는 매핑에 없는 저자를 접은 자리(D282) — 둘 다 팀이 아니라 표지다."
         },
         "commits": {
           "type": "integer",
@@ -154,7 +154,7 @@
         "team_count": {
           "type": "integer",
           "minimum": 0,
-          "description": "3인 미만 팀을 `other`로 접은 뒤의 팀 수(`other`는 하나로 셈, §2.1·D161)."
+          "description": "3인 미만 팀을 `other`로 접은 뒤의 팀 수(`other`는 하나로 셈, §2.1·D161). 매핑에 없는 저자는 `unmapped` 한 칸으로 하나로 센다 — 팀이 아니라 표지라 k 하한을 걸지 않는다(D282)."
         },
         "teams_folded": {
           "type": "integer",
@@ -177,7 +177,7 @@
             "null"
           ],
           "minimum": 0,
-          "description": "매핑에 없어 `unmapped`로 접힌 저자의 수(D163) — 팀의 `other`·`teams_folded`와 같은 처리: 값은 있고 정체는 없다. `individual`에서 `authors`와 함께 정수, `team`에서는 `null`."
+          "description": "매핑에 없어 `unmapped`로 접힌 저자의 수(D163) — 팀의 `other`·`teams_folded`와 같은 처리: 값은 있고 정체는 없다. `team`·`individual` 둘 다 정수(D282). 여기 `null`을 남긴 것은 거부 위치를 모드의 `if/then` 하나로 두기 위해서다 — `attribution`이 두 모드뿐이라 `null`이 통과하는 길은 없다."
         }
       }
     }
@@ -203,13 +203,13 @@
                   "const": null
                 },
                 "authors_unmapped": {
-                  "const": null
+                  "type": "integer"
                 }
               }
             }
           }
         },
-        "description": "`team` 모드는 저자 사실을 내지 않는다 — 팀 라벨까지다(D161). `authors`·`authors_unmapped` 둘 다 `null`."
+        "description": "`team` 모드는 저자 사실을 내지 않는다 — 팀 라벨까지다(D161). `authors`는 `null`, `authors_unmapped`는 정수 — 매핑 밖 저자의 수는 누구인지가 아니라 몇인지라 team에서도 낸다(D282): 0이 '만진 팀 없음'과 '매핑 밖 저자만'을 가른다."
       }
     },
     {

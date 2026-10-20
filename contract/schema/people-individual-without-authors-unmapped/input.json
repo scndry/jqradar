@@ -28,6 +28,15 @@
           "commits": 9
         }
       ]
+    },
+    {
+      "op": "set",
+      "path": [
+        "files",
+        0,
+        "authors_unmapped"
+      ],
+      "value": null
     }
   ]
 }
